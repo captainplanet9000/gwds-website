@@ -12,8 +12,6 @@ async function getStripe() {
   return stripe;
 }
 
-const ORDERS_DIR = 'data/orders';
-
 export async function POST(req: NextRequest) {
   try {
     const { items, email, name, couponCode } = await req.json();
@@ -105,29 +103,38 @@ export async function POST(req: NextRequest) {
 }
 
 async function saveOrder(order: any) {
-  // Try Supabase first
+  // Save to Supabase
   try {
-    const { supabase } = await import('@/lib/supabase');
-    const { error } = await supabase.from('gwds_orders').insert({
-      order_id: order.orderId,
-      email: order.email,
-      name: order.name,
-      items: order.items,
-      total: order.total,
-      status: order.status,
-      stripe_session_id: order.stripeSessionId || null,
-    });
-    if (!error) return;
-    console.log('Supabase order save failed (table may not exist yet), falling back to file');
-  } catch (e) {}
+    const { createServerClient } = await import('@/lib/supabase');
+    const sb = createServerClient();
 
-  // Fallback: save to JSON file
-  const fs = await import('fs/promises');
-  const path = await import('path');
-  const dir = path.join(process.cwd(), ORDERS_DIR);
-  await fs.mkdir(dir, { recursive: true });
-  await fs.writeFile(
-    path.join(dir, `${order.orderId}.json`),
-    JSON.stringify(order, null, 2)
-  );
+    // Insert order into our schema
+    const { data: orderRow, error } = await sb.from('orders').insert({
+      stripe_session_id: order.stripeSessionId || `local-${order.orderId}`,
+      customer_email: order.email,
+      customer_name: order.name,
+      total_cents: Math.round(order.total * 100),
+      status: order.status,
+    }).select().single();
+
+    if (error) {
+      console.error('Supabase order insert error:', error.message);
+      return; // Don't crash checkout — Stripe session already created
+    }
+
+    // Insert order items
+    if (orderRow && order.items?.length) {
+      const items = order.items.map((item: any) => ({
+        order_id: orderRow.id,
+        product_id: item.productId,
+        quantity: item.quantity || 1,
+      }));
+      await sb.from('order_items').insert(items).catch((e: any) => 
+        console.error('Order items insert error:', e.message)
+      );
+    }
+  } catch (e: any) {
+    console.error('Save order error:', e.message);
+    // Don't crash — the Stripe session is already created
+  }
 }

@@ -19,7 +19,7 @@ async function useSupabase(): Promise<boolean> {
   if (_useSupabase !== null) return _useSupabase;
   const sb = getSupabase();
   if (!sb) { _useSupabase = false; return false; }
-  const { error } = await sb.from('gwds_orders').select('id').limit(1);
+  const { error } = await sb.from('orders').select('id').limit(1);
   _useSupabase = !error;
   return _useSupabase;
 }
@@ -51,9 +51,9 @@ export interface Customer {
 export async function getOrCreateCustomer(email: string, name?: string): Promise<Customer> {
   if (await useSupabase()) {
     const sb = getSupabase()!;
-    const { data: existing } = await sb.from('gwds_customers').select('*').eq('email', email).single();
+    const { data: existing } = await sb.from('customers').select('*').eq('email', email).single();
     if (existing) return existing;
-    const { data: created } = await sb.from('gwds_customers').insert({ email, name: name || '' }).select().single();
+    const { data: created } = await sb.from('customers').insert({ email, name: name || '' }).select().single();
     return created!;
   }
   // JSON fallback
@@ -70,7 +70,7 @@ export async function getOrCreateCustomer(email: string, name?: string): Promise
 export async function getAllCustomers(): Promise<Customer[]> {
   if (await useSupabase()) {
     const sb = getSupabase()!;
-    const { data } = await sb.from('gwds_customers').select('*').order('created_at', { ascending: false });
+    const { data } = await sb.from('customers').select('*').order('created_at', { ascending: false });
     return data || [];
   }
   return readJson<Customer[]>('customers.json', []);
@@ -104,13 +104,13 @@ export interface OrderItem {
 export async function createOrder(order: Omit<Order, 'id'>): Promise<Order> {
   if (await useSupabase()) {
     const sb = getSupabase()!;
-    const { data, error } = await sb.from('gwds_orders').insert(order).select().single();
+    const { data, error } = await sb.from('orders').insert(order).select().single();
     if (error) throw new Error(error.message);
     // Update customer stats
     await sb.rpc('', {}).catch(() => {});
-    const { data: cust } = await sb.from('gwds_customers').select('*').eq('email', order.email).single();
+    const { data: cust } = await sb.from('customers').select('*').eq('email', order.email).single();
     if (cust) {
-      await sb.from('gwds_customers').update({
+      await sb.from('customers').update({
         total_spent: (cust.total_spent || 0) + order.total,
         order_count: (cust.order_count || 0) + 1,
       }).eq('id', cust.id);
@@ -135,7 +135,7 @@ export async function createOrder(order: Omit<Order, 'id'>): Promise<Order> {
 export async function getOrder(orderId: string): Promise<Order | null> {
   if (await useSupabase()) {
     const sb = getSupabase()!;
-    const { data } = await sb.from('gwds_orders').select('*').eq('order_id', orderId).single();
+    const { data } = await sb.from('orders').select('*').eq('order_id', orderId).single();
     return data;
   }
   const orders = await readJson<Order[]>('orders.json', []);
@@ -145,7 +145,7 @@ export async function getOrder(orderId: string): Promise<Order | null> {
 export async function updateOrder(orderId: string, update: Partial<Order>): Promise<void> {
   if (await useSupabase()) {
     const sb = getSupabase()!;
-    await sb.from('gwds_orders').update(update).eq('order_id', orderId);
+    await sb.from('orders').update(update).eq('order_id', orderId);
     return;
   }
   const orders = await readJson<Order[]>('orders.json', []);
@@ -156,7 +156,7 @@ export async function updateOrder(orderId: string, update: Partial<Order>): Prom
 export async function getAllOrders(): Promise<Order[]> {
   if (await useSupabase()) {
     const sb = getSupabase()!;
-    const { data } = await sb.from('gwds_orders').select('*').order('created_at', { ascending: false });
+    const { data } = await sb.from('orders').select('*').order('created_at', { ascending: false });
     return data || [];
   }
   return readJson<Order[]>('orders.json', []);
@@ -186,7 +186,7 @@ export async function createDownloadTokens(orderId: string, productSlugs: string
 
   if (await useSupabase()) {
     const sb = getSupabase()!;
-    await sb.from('gwds_downloads').insert(tokens);
+    await sb.from('downloads').insert(tokens);
   } else {
     const existing = await readJson<DownloadToken[]>('downloads.json', []);
     await writeJson('downloads.json', [...existing, ...tokens]);
@@ -197,7 +197,7 @@ export async function createDownloadTokens(orderId: string, productSlugs: string
 export async function getDownloadToken(token: string): Promise<DownloadToken | null> {
   if (await useSupabase()) {
     const sb = getSupabase()!;
-    const { data } = await sb.from('gwds_downloads').select('*').eq('token', token).single();
+    const { data } = await sb.from('downloads').select('*').eq('token', token).single();
     return data;
   }
   const all = await readJson<DownloadToken[]>('downloads.json', []);
@@ -207,7 +207,7 @@ export async function getDownloadToken(token: string): Promise<DownloadToken | n
 export async function getDownloadsByOrder(orderId: string): Promise<DownloadToken[]> {
   if (await useSupabase()) {
     const sb = getSupabase()!;
-    const { data } = await sb.from('gwds_downloads').select('*').eq('order_id', orderId);
+    const { data } = await sb.from('downloads').select('*').eq('order_id', orderId);
     return data || [];
   }
   const all = await readJson<DownloadToken[]>('downloads.json', []);
@@ -222,7 +222,7 @@ export async function consumeDownload(token: string): Promise<boolean> {
 
   if (await useSupabase()) {
     const sb = getSupabase()!;
-    await sb.from('gwds_downloads').update({ downloads_remaining: dl.downloads_remaining - 1 }).eq('token', token);
+    await sb.from('downloads').update({ downloads_remaining: dl.downloads_remaining - 1 }).eq('token', token);
   } else {
     const all = await readJson<DownloadToken[]>('downloads.json', []);
     const idx = all.findIndex(d => d.token === token);
@@ -299,3 +299,4 @@ export async function getAdminStats() {
     recentOrders: orders.slice(0, 20),
   };
 }
+
