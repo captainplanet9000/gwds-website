@@ -272,9 +272,13 @@ function ProductCard({ product, index }: { product: any; index: number }) {
                 alt={product.name}
                 loading="lazy"
                 style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
                   width: '100%',
                   height: '100%',
                   objectFit: 'cover',
+                  objectPosition: 'top left',
                   transition: 'transform 0.4s ease',
                   transform: hovered ? 'scale(1.05)' : 'scale(1)',
                 }}
