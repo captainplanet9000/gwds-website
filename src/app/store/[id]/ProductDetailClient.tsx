@@ -94,7 +94,22 @@ export default function ProductDetailClient({ product, related, category }: { pr
               position: 'relative',
               overflow: 'hidden',
             }}>
-              <span style={{ fontSize: '6rem' }}>{product.emoji}</span>
+              {product.image ? (
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                  }}
+                />
+              ) : (
+                <span style={{ fontSize: '6rem' }}>{product.emoji}</span>
+              )}
 
               {/* Decorative grid */}
               <div style={{
