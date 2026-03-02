@@ -1,34 +1,88 @@
 import { NextRequest, NextResponse } from "next/server";
-import { promises as fs } from "fs";
-import path from "path";
+import { createServerClient } from "@/lib/supabase";
 
-const ORDERS_DIR = path.join(process.cwd(), "data", "orders");
-
-export async function POST(_req: NextRequest, { params }: { params: Promise<{ orderId: string; productId: string }> }) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ orderId: string; productId: string }> }
+) {
   try {
     const { orderId, productId } = await params;
+    const { searchParams } = new URL(req.url);
+    const token = searchParams.get("token");
 
-    // Verify order exists and contains product
-    const orderPath = path.join(ORDERS_DIR, `${orderId}.json`);
-    const orderData = JSON.parse(await fs.readFile(orderPath, "utf-8"));
-    const item = orderData.items.find((i: { productId: string }) => i.productId === productId);
-
-    if (!item) {
-      return NextResponse.json({ error: "Product not found in order" }, { status: 404 });
+    if (!token) {
+      return NextResponse.json({ error: "Missing download token" }, { status: 400 });
     }
 
-    // Placeholder: return a dummy zip file
-    // TODO: Replace with actual file delivery from storage (S3, etc.)
-    const content = `GWDS Digital Product: ${item.productName}\nOrder: ${orderId}\nThank you for your purchase!\n\nThis is a placeholder file. Actual product files will be delivered when the digital delivery system is connected.`;
-    const buffer = Buffer.from(content, "utf-8");
+    const supabase = createServerClient();
 
-    return new NextResponse(buffer, {
-      headers: {
-        "Content-Type": "application/zip",
-        "Content-Disposition": `attachment; filename="${productId}.zip"`,
-      },
+    // Verify download token
+    const { data: download, error } = await supabase
+      .from("downloads")
+      .select("*")
+      .eq("download_token", token)
+      .eq("order_id", orderId)
+      .eq("product_id", productId)
+      .single();
+
+    if (error || !download) {
+      return NextResponse.json({ error: "Invalid download token" }, { status: 404 });
+    }
+
+    // Check if expired
+    const now = new Date();
+    const expiresAt = new Date(download.expires_at);
+    if (now > expiresAt) {
+      return NextResponse.json(
+        { error: "Download link expired. Please contact support." },
+        { status: 403 }
+      );
+    }
+
+    // Check if max downloads exceeded
+    if (download.downloaded_count >= download.max_downloads) {
+      return NextResponse.json(
+        { error: "Download limit exceeded. Please contact support for additional downloads." },
+        { status: 403 }
+      );
+    }
+
+    // Increment download count
+    await supabase
+      .from("downloads")
+      .update({ downloaded_count: download.downloaded_count + 1 })
+      .eq("id", download.id);
+
+    // TODO: Replace with actual Supabase Storage URL or CDN link
+    // For now, redirect to a placeholder
+    const placeholderUrl = `https://placeholder.gwds.studio/downloads/${productId}.zip`;
+
+    // Get product info for better placeholder
+    const { data: product } = await supabase
+      .from("products")
+      .select("name, download_url")
+      .eq("id", productId)
+      .single();
+
+    if (product?.download_url) {
+      return NextResponse.redirect(product.download_url);
+    }
+
+    // Return JSON response with download info for now
+    return NextResponse.json({
+      message: "Download ready",
+      productId,
+      remainingDownloads: download.max_downloads - download.downloaded_count - 1,
+      expiresAt: download.expires_at,
+      // TODO: Replace with actual download URL
+      downloadUrl: placeholderUrl,
+      note: "Actual file delivery will be implemented with Supabase Storage",
     });
-  } catch {
-    return NextResponse.json({ error: "Download failed" }, { status: 500 });
+  } catch (error) {
+    console.error("Download error:", error);
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Download failed" },
+      { status: 500 }
+    );
   }
 }

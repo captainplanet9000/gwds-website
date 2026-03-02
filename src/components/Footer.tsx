@@ -136,8 +136,12 @@ export default function Footer() {
             © 2026 Gamma Waves Design Studio. All rights reserved.
           </span>
           <div style={{ display: 'flex', gap: 24 }}>
-            {['Privacy', 'Terms', 'License'].map(t => (
-              <Link key={t} href="#" style={{
+            {[
+              { label: 'Privacy', href: '/privacy' },
+              { label: 'Terms', href: '/terms' },
+              { label: 'Refunds', href: '/refunds' },
+            ].map(({ label, href }) => (
+              <Link key={label} href={href} style={{
                 fontFamily: 'var(--font-mono)',
                 fontSize: '0.7rem',
                 color: 'oklch(0.40 0.01 270)',
@@ -147,7 +151,7 @@ export default function Footer() {
               }}
               onMouseEnter={e => (e.currentTarget.style.color = 'oklch(0.68 0.01 250)')}
               onMouseLeave={e => (e.currentTarget.style.color = 'oklch(0.40 0.01 270)')}
-              >{t}</Link>
+              >{label}</Link>
             ))}
           </div>
         </div>
