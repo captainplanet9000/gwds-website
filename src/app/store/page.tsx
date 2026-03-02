@@ -265,15 +265,30 @@ function ProductCard({ product, index }: { product: any; index: number }) {
             position: 'relative',
             overflow: 'hidden',
           }}>
-            {/* Emoji as visual placeholder */}
-            <span style={{
-              fontSize: '4rem',
-              filter: hovered ? 'none' : 'grayscale(0.3)',
-              transition: 'all 0.4s ease',
-              transform: hovered ? 'scale(1.15) rotate(-3deg)' : 'scale(1)',
-            }}>
-              {product.emoji}
-            </span>
+            {/* Product image or emoji fallback */}
+            {product.image ? (
+              <img
+                src={product.image}
+                alt={product.name}
+                loading="lazy"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  transition: 'transform 0.4s ease',
+                  transform: hovered ? 'scale(1.05)' : 'scale(1)',
+                }}
+              />
+            ) : (
+              <span style={{
+                fontSize: '4rem',
+                filter: hovered ? 'none' : 'grayscale(0.3)',
+                transition: 'all 0.4s ease',
+                transform: hovered ? 'scale(1.15) rotate(-3deg)' : 'scale(1)',
+              }}>
+                {product.emoji}
+              </span>
+            )}
 
             {/* Badge */}
             {product.badge && (
