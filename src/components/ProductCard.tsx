@@ -35,7 +35,7 @@ export default function ProductCard({ product, view = "grid", onQuickView }: Pro
     onQuickView?.();
   };
 
-  const productImage = `/images/products/${product.id}.png`;
+  const productImage = product.image || `/images/products/${product.id}.png`;
 
   if (view === "list") {
     return (

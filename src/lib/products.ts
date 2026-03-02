@@ -33,6 +33,7 @@ export const products: Product[] = [
     badge: "FLAGSHIP",
     emoji: "📊",
     features: ["Next.js 15 + TypeScript", "Multi-exchange support", "Risk management suite", "Real-time WebSocket data", "Dark/light themes", "Mobile responsive"],
+    image: "/images/products/dashboard-overview.jpg",
   },
   {
     id: "second-brain-template",
@@ -43,6 +44,7 @@ export const products: Product[] = [
     badge: "POPULAR",
     emoji: "🧠",
     features: ["PARA methodology", "Full-text search", "AI chat integration", "Task management", "Weekly digests", "Vercel-ready"],
+    image: "/images/products/dashboard-analytics.jpg",
   },
   {
     id: "ai-saas-starter",
@@ -52,6 +54,7 @@ export const products: Product[] = [
     category: "templates",
     emoji: "🚀",
     features: ["Auth + billing", "AI API integration", "Admin dashboard", "Landing page", "Email templates", "Stripe payments"],
+    image: "/images/products/dashboard-goals.jpg",
   },
 
   // Trading
@@ -63,6 +66,7 @@ export const products: Product[] = [
     category: "trading",
     emoji: "📦",
     features: ["Multi-timeframe", "Auto box detection", "Alert system", "Backtesting data", "TradingView compatible"],
+    image: "/images/products/dashboard-performance.jpg",
   },
   {
     id: "elliott-wave-agent",
@@ -73,6 +77,7 @@ export const products: Product[] = [
     badge: "PREMIUM",
     emoji: "🌊",
     features: ["AI wave detection", "Auto entry/exit", "Risk management", "Multi-asset", "Telegram alerts", "Backtested strategy"],
+    image: "/images/products/dashboard-farms.jpg",
   },
   {
     id: "multi-strat-bundle",
@@ -83,6 +88,7 @@ export const products: Product[] = [
     badge: "BEST VALUE",
     emoji: "🏭",
     features: ["6 strategies included", "Farm orchestration", "Position management", "Margin-aware", "Telegram alerts", "Full source code"],
+    image: "/images/products/dashboard-flash-loans.jpg",
   },
 
   // Prompts

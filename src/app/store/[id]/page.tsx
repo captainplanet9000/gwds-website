@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     openGraph: {
       title: `${product.name} — GWDS`,
       description: product.description,
-      images: [{ url: `/images/products/${product.id}.png`, width: 800, height: 600 }],
+      images: [{ url: product.image || `/images/products/${product.id}.png`, width: 800, height: 600 }],
     },
     other: {
       "product:price:amount": String(product.price),

@@ -34,7 +34,7 @@ export default function ProductDetailClient({ product, category, related }: Prop
     }
   };
 
-  const productImage = `/images/products/${product.id}.png`;
+  const productImage = product.image || `/images/products/${product.id}.png`;
 
   // JSON-LD structured data
   const jsonLd = {
