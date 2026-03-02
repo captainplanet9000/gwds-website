@@ -32,7 +32,7 @@ function FeaturedSection() {
   const colors = ['#8B5CF6', '#10B981', '#F59E0B'];
 
   return (
-    <section style={{ padding: '8vw 5vw', maxWidth: 1400, margin: '0 auto' }}>
+    <section style={{ padding: '80px 5vw', maxWidth: 1400, margin: '0 auto' }}>
       <div style={{ marginBottom: 48 }}>
         <p style={{ fontSize: '0.7rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#555', marginBottom: 12, fontFamily: 'var(--font-body)' }}>
           Flagship Products
@@ -140,7 +140,7 @@ function StatsSection() {
 
   return (
     <section style={{
-      padding: '6vw 5vw',
+      padding: '60px 5vw',
       maxWidth: 1400,
       margin: '0 auto',
       borderTop: '1px solid #111',
@@ -181,7 +181,7 @@ function StatsSection() {
 
 function CategoriesSection() {
   return (
-    <section style={{ padding: '8vw 5vw', maxWidth: 1400, margin: '0 auto' }}>
+    <section style={{ padding: '80px 5vw', maxWidth: 1400, margin: '0 auto' }}>
       <div style={{ marginBottom: 48 }}>
         <p style={{ fontSize: '0.7rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#555', marginBottom: 12, fontFamily: 'var(--font-body)' }}>
           Browse by Category
@@ -244,7 +244,7 @@ function CategoriesSection() {
 function CTASection() {
   return (
     <section style={{
-      padding: '8vw 5vw',
+      padding: '80px 5vw 100px',
       maxWidth: 900,
       margin: '0 auto',
       textAlign: 'center',
