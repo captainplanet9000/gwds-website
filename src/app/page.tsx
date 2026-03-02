@@ -1,12 +1,12 @@
-"use client";
-import Navbar from "@/components/Navbar";
-import Hero from "@/components/Hero";
-import CategorySection from "@/components/CategorySection";
-import FeaturedProducts from "@/components/FeaturedProducts";
-import StickySections from "@/components/StickySections";
-import HowItWorks from "@/components/HowItWorks";
-import Newsletter from "@/components/Newsletter";
-import Footer from "@/components/Footer";
+'use client';
+
+import Navbar from '@/components/Navbar';
+import Hero from '@/components/Hero';
+import WorkShowcase from '@/components/WorkShowcase';
+import ProductGrid from '@/components/ProductGrid';
+import Philosophy from '@/components/Philosophy';
+import CTASection from '@/components/CTASection';
+import Footer from '@/components/Footer';
 
 export default function Home() {
   return (
@@ -14,11 +14,10 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero />
-        <CategorySection />
-        <FeaturedProducts />
-        <StickySections />
-        <HowItWorks />
-        <Newsletter />
+        <WorkShowcase />
+        <ProductGrid />
+        <Philosophy />
+        <CTASection />
       </main>
       <Footer />
     </>
