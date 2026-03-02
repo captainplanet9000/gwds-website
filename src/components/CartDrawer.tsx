@@ -1,10 +1,13 @@
-"use client";
-import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
-import { useCart } from "@/contexts/CartContext";
+'use client';
+import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
+import { useCart } from '@/contexts/CartContext';
 
 export default function CartDrawer() {
-  const { items, isOpen, closeCart, removeItem, updateQuantity, totalPrice, totalItems } = useCart();
+  const { state, dispatch, totalPrice, totalItems } = useCart();
+  const { items, isOpen } = state;
+
+  if (!isOpen) return null;
 
   return (
     <AnimatePresence>
@@ -15,120 +18,221 @@ export default function CartDrawer() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={closeCart}
+            onClick={() => dispatch({ type: 'CLOSE_CART' })}
             style={{
-              position: "fixed",
+              position: 'fixed',
               inset: 0,
-              background: "rgba(0,0,0,0.6)",
-              backdropFilter: "blur(4px)",
-              zIndex: 200,
+              background: 'rgba(0,0,0,0.7)',
+              backdropFilter: 'blur(4px)',
+              zIndex: 999,
             }}
           />
+
           {/* Drawer */}
           <motion.div
-            initial={{ x: "100%" }}
+            initial={{ x: '100%' }}
             animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
             style={{
-              position: "fixed",
+              position: 'fixed',
               top: 0,
               right: 0,
               bottom: 0,
-              width: "min(420px, 90vw)",
-              background: "#0F0F17",
-              borderLeft: "1px solid rgba(139,92,246,0.15)",
-              zIndex: 201,
-              display: "flex",
-              flexDirection: "column",
+              width: 420,
+              maxWidth: '90vw',
+              background: '#0a0a0a',
+              borderLeft: '1px solid #1a1a1a',
+              zIndex: 1000,
+              display: 'flex',
+              flexDirection: 'column',
             }}
           >
             {/* Header */}
-            <div style={{ padding: "24px 24px 16px", borderBottom: "1px solid rgba(139,92,246,0.1)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 22, color: "#F8FAFC" }}>
+            <div style={{
+              padding: '24px',
+              borderBottom: '1px solid #1a1a1a',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+              <h2 style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: '1.1rem',
+                fontWeight: 700,
+                color: '#E8E8E8',
+                letterSpacing: '-0.02em',
+              }}>
                 Cart ({totalItems})
               </h2>
-              <button onClick={closeCart} style={{ background: "none", border: "none", color: "#94A3B8", fontSize: 24, cursor: "pointer", padding: 4 }}>✕</button>
+              <button
+                onClick={() => dispatch({ type: 'CLOSE_CART' })}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#666',
+                  fontSize: '1.2rem',
+                  cursor: 'pointer',
+                  padding: '4px 8px',
+                }}
+              >
+                ✕
+              </button>
             </div>
 
             {/* Items */}
-            <div style={{ flex: 1, overflowY: "auto", padding: "16px 24px" }}>
+            <div style={{ flex: 1, overflowY: 'auto', padding: 24 }}>
               {items.length === 0 ? (
-                <div style={{ textAlign: "center", padding: "64px 0", color: "#475569" }}>
-                  <div style={{ fontSize: 48, marginBottom: 16 }}>🛒</div>
-                  <p style={{ fontSize: 15, marginBottom: 24 }}>Your cart is empty</p>
-                  <button onClick={closeCart} style={{ padding: "12px 28px", borderRadius: 10, border: "1px solid rgba(139,92,246,0.2)", background: "transparent", color: "#A78BFA", fontWeight: 600, fontSize: 14, cursor: "pointer" }}>
-                    Browse Store
-                  </button>
+                <div style={{ textAlign: 'center', padding: '60px 0', color: '#555' }}>
+                  <p style={{ fontSize: '2rem', marginBottom: 12 }}>🛒</p>
+                  <p style={{ fontSize: '0.9rem', marginBottom: 8 }}>Your cart is empty</p>
+                  <Link
+                    href="/store"
+                    onClick={() => dispatch({ type: 'CLOSE_CART' })}
+                    style={{ fontSize: '0.8rem', color: '#8B5CF6', textDecoration: 'none' }}
+                  >
+                    Browse products →
+                  </Link>
                 </div>
               ) : (
-                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                  <AnimatePresence>
-                    {items.map((item) => (
-                      <motion.div
-                        key={item.product.id}
-                        layout
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20, height: 0, marginBottom: 0 }}
-                        style={{
-                          display: "flex",
-                          gap: 16,
-                          padding: 16,
-                          borderRadius: 12,
-                          background: "rgba(139,92,246,0.04)",
-                          border: "1px solid rgba(139,92,246,0.08)",
-                        }}
-                      >
-                        <div style={{ width: 56, height: 56, borderRadius: 10, background: "rgba(139,92,246,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, flexShrink: 0 }}>
-                          {item.product.emoji}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  {items.map(item => (
+                    <div
+                      key={item.product.id}
+                      style={{
+                        display: 'flex',
+                        gap: 16,
+                        padding: 16,
+                        borderRadius: 10,
+                        background: '#111',
+                        border: '1px solid #1a1a1a',
+                      }}
+                    >
+                      {/* Emoji */}
+                      <div style={{
+                        width: 56,
+                        height: 56,
+                        borderRadius: 8,
+                        background: '#0a0a0a',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '1.5rem',
+                        flexShrink: 0,
+                      }}>
+                        {item.product.emoji}
+                      </div>
+
+                      {/* Info */}
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <h4 style={{
+                          fontFamily: 'var(--font-display)',
+                          fontSize: '0.85rem',
+                          fontWeight: 700,
+                          color: '#E8E8E8',
+                          marginBottom: 4,
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}>
+                          {item.product.name}
+                        </h4>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{
+                            fontFamily: 'var(--font-display)',
+                            fontSize: '0.95rem',
+                            fontWeight: 700,
+                            color: '#E8E8E8',
+                          }}>
+                            ${item.product.price}
+                          </span>
+                          <button
+                            onClick={() => dispatch({ type: 'REMOVE_ITEM', productId: item.product.id })}
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              color: '#555',
+                              fontSize: '0.72rem',
+                              cursor: 'pointer',
+                              textDecoration: 'underline',
+                              fontFamily: 'var(--font-body)',
+                            }}
+                          >
+                            Remove
+                          </button>
                         </div>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <h4 style={{ fontWeight: 600, fontSize: 14, color: "#F8FAFC", marginBottom: 4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item.product.name}</h4>
-                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                            <span style={{ fontWeight: 700, fontSize: 15, color: "#A78BFA" }}>${item.product.price}</span>
-                            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                              <button onClick={() => updateQuantity(item.product.id, item.quantity - 1)} style={{ width: 28, height: 28, borderRadius: 6, border: "1px solid rgba(139,92,246,0.2)", background: "transparent", color: "#94A3B8", cursor: "pointer", fontSize: 14 }}>−</button>
-                              <span style={{ fontSize: 14, color: "#CBD5E1", minWidth: 20, textAlign: "center" }}>{item.quantity}</span>
-                              <button onClick={() => updateQuantity(item.product.id, item.quantity + 1)} style={{ width: 28, height: 28, borderRadius: 6, border: "1px solid rgba(139,92,246,0.2)", background: "transparent", color: "#94A3B8", cursor: "pointer", fontSize: 14 }}>+</button>
-                              <button onClick={() => removeItem(item.product.id)} style={{ width: 28, height: 28, borderRadius: 6, border: "none", background: "rgba(239,68,68,0.1)", color: "#EF4444", cursor: "pointer", fontSize: 12, marginLeft: 4 }}>✕</button>
-                            </div>
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
 
             {/* Footer */}
             {items.length > 0 && (
-              <div style={{ padding: "16px 24px 24px", borderTop: "1px solid rgba(139,92,246,0.1)" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
-                  <span style={{ color: "#94A3B8", fontSize: 15 }}>Total</span>
-                  <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: 22, color: "#F8FAFC" }}>${totalPrice.toFixed(2)}</span>
+              <div style={{
+                padding: 24,
+                borderTop: '1px solid #1a1a1a',
+              }}>
+                {/* Total */}
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: 20,
+                }}>
+                  <span style={{ fontSize: '0.85rem', color: '#888', fontFamily: 'var(--font-body)' }}>Total</span>
+                  <span style={{
+                    fontFamily: 'var(--font-display)',
+                    fontSize: '1.3rem',
+                    fontWeight: 800,
+                    color: '#E8E8E8',
+                  }}>
+                    ${totalPrice.toFixed(2)}
+                  </span>
                 </div>
-                <Link href="/checkout" onClick={closeCart} style={{ textDecoration: "none", display: "block" }}>
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    style={{
-                      width: "100%",
-                      padding: "16px",
-                      borderRadius: 12,
-                      border: "none",
-                      background: "linear-gradient(135deg, #8B5CF6, #7C3AED)",
-                      color: "white",
-                      fontWeight: 700,
-                      fontSize: 16,
-                      cursor: "pointer",
-                      boxShadow: "0 0 30px rgba(139,92,246,0.3)",
-                    }}
-                  >
+
+                <Link
+                  href="/checkout"
+                  onClick={() => dispatch({ type: 'CLOSE_CART' })}
+                  style={{ textDecoration: 'none' }}
+                >
+                  <button style={{
+                    width: '100%',
+                    padding: '16px',
+                    borderRadius: 8,
+                    border: 'none',
+                    background: '#8B5CF6',
+                    color: '#fff',
+                    fontSize: '0.85rem',
+                    fontWeight: 700,
+                    fontFamily: 'var(--font-display)',
+                    letterSpacing: '0.05em',
+                    textTransform: 'uppercase',
+                    cursor: 'pointer',
+                    transition: 'background 0.2s',
+                  }}>
                     Checkout — ${totalPrice.toFixed(2)}
-                  </motion.button>
+                  </button>
                 </Link>
+
+                <button
+                  onClick={() => dispatch({ type: 'CLEAR_CART' })}
+                  style={{
+                    width: '100%',
+                    marginTop: 8,
+                    padding: '10px',
+                    borderRadius: 8,
+                    border: 'none',
+                    background: 'transparent',
+                    color: '#555',
+                    fontSize: '0.75rem',
+                    fontFamily: 'var(--font-body)',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Clear cart
+                </button>
               </div>
             )}
           </motion.div>

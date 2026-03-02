@@ -1,162 +1,243 @@
-"use client";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { useCart } from "@/contexts/CartContext";
+'use client';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import { useCart } from '@/contexts/CartContext';
 
 export default function CheckoutPage() {
-  const { items, totalPrice, clearCart } = useCart();
+  const { state, dispatch, totalPrice, totalItems } = useCart();
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleCheckout = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (items.length === 0) return;
+  const handleCheckout = async () => {
+    if (!email || !name) {
+      setError('Please fill in all fields');
+      return;
+    }
+    if (state.items.length === 0) {
+      setError('Your cart is empty');
+      return;
+    }
+
     setLoading(true);
+    setError('');
+
     try {
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          items: items.map((i) => ({ productId: i.product.id, quantity: i.quantity })),
+          items: state.items.map(i => ({ productId: i.product.id, quantity: i.quantity })),
           email,
           name,
         }),
       });
+
       const data = await res.json();
-      if (data.orderId) {
-        clearCart();
+
+      if (data.stripeUrl) {
+        // Redirect to Stripe Checkout
+        window.location.href = data.stripeUrl;
+      } else if (data.orderId) {
+        // Free order or direct completion
+        dispatch({ type: 'CLEAR_CART' });
         router.push(`/checkout/success?orderId=${data.orderId}`);
+      } else {
+        setError(data.error || 'Checkout failed');
       }
-    } catch {
-      alert("Something went wrong. Please try again.");
+    } catch (err) {
+      setError('Network error — please try again');
     } finally {
       setLoading(false);
     }
   };
 
-  const inputStyle: React.CSSProperties = {
-    width: "100%",
-    padding: "14px 16px",
-    borderRadius: 10,
-    border: "1px solid rgba(139,92,246,0.12)",
-    background: "rgba(10,10,15,0.6)",
-    color: "#F8FAFC",
-    fontSize: 14,
-    outline: "none",
-    fontFamily: "inherit",
+  const inputStyle = {
+    width: '100%',
+    padding: '14px 16px',
+    background: '#111',
+    border: '1px solid #222',
+    borderRadius: 8,
+    color: '#E8E8E8',
+    fontSize: '0.88rem',
+    fontFamily: 'var(--font-body)',
+    outline: 'none',
+    transition: 'border-color 0.2s',
   };
 
   return (
     <>
       <Navbar />
-      <main style={{ paddingTop: 72, minHeight: "100vh" }}>
-        <section style={{ maxWidth: 900, margin: "0 auto", padding: "64px 24px" }}>
-          <h1 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "clamp(32px, 5vw, 44px)", fontWeight: 800, letterSpacing: "-0.03em", marginBottom: 48, textAlign: "center" }}>
-            <span className="gradient-text">Checkout</span>
+      <main style={{ background: '#000', minHeight: '100vh', paddingTop: 120 }}>
+        <div style={{ maxWidth: 900, margin: '0 auto', padding: '0 5vw 8vw' }}>
+          <h1 style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(2rem, 4vw, 3rem)',
+            fontWeight: 800,
+            color: '#E8E8E8',
+            marginBottom: 48,
+            letterSpacing: '-0.03em',
+          }}>
+            Checkout
           </h1>
 
-          {items.length === 0 ? (
-            <div style={{ textAlign: "center", padding: 64, color: "#475569" }}>
-              <div style={{ fontSize: 64, marginBottom: 16 }}>🛒</div>
-              <p style={{ fontSize: 18, marginBottom: 24 }}>Your cart is empty</p>
-              <motion.a href="/store" whileHover={{ scale: 1.05 }} style={{ display: "inline-block", padding: "14px 32px", borderRadius: 10, background: "linear-gradient(135deg, #8B5CF6, #7C3AED)", color: "white", fontWeight: 600, textDecoration: "none" }}>
-                Browse Store
-              </motion.a>
+          {state.items.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '60px 0', color: '#555' }}>
+              <p style={{ fontSize: '1.2rem', marginBottom: 16 }}>Your cart is empty</p>
+              <Link href="/store" style={{ color: '#8B5CF6', textDecoration: 'none', fontSize: '0.9rem' }}>
+                ← Back to store
+              </Link>
             </div>
           ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 380px", gap: 48, alignItems: "start" }} className="checkout-grid">
-              {/* Form */}
-              <form onSubmit={handleCheckout} className="glass-card" style={{ borderRadius: 20, padding: 40, display: "flex", flexDirection: "column", gap: 20 }}>
-                <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 22, color: "#F8FAFC", marginBottom: 8 }}>Your Information</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 48, alignItems: 'start' }}>
+              {/* Left — form */}
+              <div>
+                <h2 style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: '1rem',
+                  fontWeight: 700,
+                  color: '#888',
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                  marginBottom: 24,
+                }}>
+                  Your Information
+                </h2>
 
-                <div>
-                  <label style={{ display: "block", fontSize: 13, fontWeight: 500, color: "#94A3B8", marginBottom: 6 }}>Full Name</label>
-                  <input type="text" required value={name} onChange={(e) => setName(e.target.value)} placeholder="John Doe" style={inputStyle} />
-                </div>
-                <div>
-                  <label style={{ display: "block", fontSize: 13, fontWeight: 500, color: "#94A3B8", marginBottom: 6 }}>Email Address</label>
-                  <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" style={inputStyle} />
-                </div>
-
-                <div style={{ borderTop: "1px solid rgba(139,92,246,0.08)", paddingTop: 20, marginTop: 8 }}>
-                  <h3 style={{ fontWeight: 600, fontSize: 14, color: "#94A3B8", marginBottom: 12, textTransform: "uppercase", letterSpacing: "0.05em" }}>Payment Details</h3>
-                  <p style={{ color: "#475569", fontSize: 13, marginBottom: 16 }}>💳 Payment integration coming soon. Orders are processed as demo transactions.</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                   <div>
-                    <label style={{ display: "block", fontSize: 13, fontWeight: 500, color: "#94A3B8", marginBottom: 6 }}>Card Number</label>
-                    <input type="text" placeholder="4242 4242 4242 4242" style={inputStyle} />
+                    <label style={{ display: 'block', fontSize: '0.75rem', color: '#666', marginBottom: 6, fontFamily: 'var(--font-body)' }}>
+                      Full Name
+                    </label>
+                    <input
+                      value={name}
+                      onChange={e => setName(e.target.value)}
+                      placeholder="John Doe"
+                      style={inputStyle}
+                    />
                   </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 12 }}>
-                    <div>
-                      <label style={{ display: "block", fontSize: 13, fontWeight: 500, color: "#94A3B8", marginBottom: 6 }}>Expiry</label>
-                      <input type="text" placeholder="MM/YY" style={inputStyle} />
-                    </div>
-                    <div>
-                      <label style={{ display: "block", fontSize: 13, fontWeight: 500, color: "#94A3B8", marginBottom: 6 }}>CVC</label>
-                      <input type="text" placeholder="123" style={inputStyle} />
-                    </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.75rem', color: '#666', marginBottom: 6, fontFamily: 'var(--font-body)' }}>
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      placeholder="you@example.com"
+                      style={inputStyle}
+                    />
+                    <p style={{ fontSize: '0.7rem', color: '#555', marginTop: 6, fontFamily: 'var(--font-body)' }}>
+                      Download links will be sent to this email
+                    </p>
                   </div>
                 </div>
 
-                <motion.button
-                  type="submit"
+                {error && (
+                  <div style={{
+                    marginTop: 16,
+                    padding: '12px 16px',
+                    borderRadius: 8,
+                    background: '#1a0a0a',
+                    border: '1px solid #EF444440',
+                    color: '#EF4444',
+                    fontSize: '0.82rem',
+                    fontFamily: 'var(--font-body)',
+                  }}>
+                    {error}
+                  </div>
+                )}
+
+                <button
+                  onClick={handleCheckout}
                   disabled={loading}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
                   style={{
-                    width: "100%",
-                    padding: "18px",
-                    borderRadius: 12,
-                    border: "none",
-                    background: loading ? "#475569" : "linear-gradient(135deg, #8B5CF6, #7C3AED)",
-                    color: "white",
+                    marginTop: 32,
+                    width: '100%',
+                    padding: '18px 32px',
+                    borderRadius: 8,
+                    border: 'none',
+                    background: loading ? '#333' : '#8B5CF6',
+                    color: '#fff',
+                    fontSize: '0.9rem',
                     fontWeight: 700,
-                    fontSize: 16,
-                    cursor: loading ? "wait" : "pointer",
-                    boxShadow: "0 0 30px rgba(139,92,246,0.3)",
-                    marginTop: 8,
+                    fontFamily: 'var(--font-display)',
+                    letterSpacing: '0.05em',
+                    textTransform: 'uppercase',
+                    cursor: loading ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.3s',
+                    opacity: loading ? 0.6 : 1,
                   }}
                 >
-                  {loading ? "Processing..." : `Complete Purchase — $${totalPrice.toFixed(2)}`}
-                </motion.button>
-              </form>
+                  {loading ? 'Processing...' : `Pay $${totalPrice.toFixed(2)}`}
+                </button>
 
-              {/* Order Summary */}
-              <div className="glass-card" style={{ borderRadius: 20, padding: 32, position: "sticky", top: 96 }}>
-                <h3 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 18, color: "#F8FAFC", marginBottom: 24 }}>Order Summary</h3>
-                <div style={{ display: "flex", flexDirection: "column", gap: 16, marginBottom: 24 }}>
-                  {items.map((item) => (
-                    <div key={item.product.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-                        <span style={{ fontSize: 24 }}>{item.product.emoji}</span>
-                        <div>
-                          <p style={{ fontSize: 14, fontWeight: 600, color: "#F8FAFC" }}>{item.product.name}</p>
-                          <p style={{ fontSize: 12, color: "#64748B" }}>Qty: {item.quantity}</p>
-                        </div>
+                <p style={{ fontSize: '0.7rem', color: '#444', marginTop: 12, textAlign: 'center', fontFamily: 'var(--font-body)' }}>
+                  Secure payment via Stripe. Your card details never touch our servers.
+                </p>
+              </div>
+
+              {/* Right — order summary */}
+              <div style={{
+                padding: 24,
+                borderRadius: 12,
+                background: '#0a0a0a',
+                border: '1px solid #1a1a1a',
+                position: 'sticky',
+                top: 120,
+              }}>
+                <h3 style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  color: '#888',
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                  marginBottom: 20,
+                }}>
+                  Order Summary
+                </h3>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {state.items.map(item => (
+                    <div key={item.product.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                        <span style={{ fontSize: '1.2rem' }}>{item.product.emoji}</span>
+                        <span style={{ fontSize: '0.82rem', color: '#ccc', fontFamily: 'var(--font-body)' }}>
+                          {item.product.name}
+                        </span>
                       </div>
-                      <span style={{ fontWeight: 600, color: "#CBD5E1" }}>${(item.product.price * item.quantity).toFixed(2)}</span>
+                      <span style={{ fontSize: '0.85rem', color: '#E8E8E8', fontWeight: 600, fontFamily: 'var(--font-display)' }}>
+                        ${item.product.price}
+                      </span>
                     </div>
                   ))}
                 </div>
-                <div style={{ borderTop: "1px solid rgba(139,92,246,0.1)", paddingTop: 16, display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ fontWeight: 600, color: "#94A3B8" }}>Total</span>
-                  <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: 24, color: "#F8FAFC" }}>${totalPrice.toFixed(2)}</span>
+
+                <div style={{ borderTop: '1px solid #1a1a1a', marginTop: 20, paddingTop: 16 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: '0.85rem', color: '#888', fontFamily: 'var(--font-body)' }}>Total</span>
+                    <span style={{
+                      fontFamily: 'var(--font-display)',
+                      fontSize: '1.3rem',
+                      fontWeight: 800,
+                      color: '#E8E8E8',
+                    }}>
+                      ${totalPrice.toFixed(2)}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
           )}
-        </section>
+        </div>
       </main>
       <Footer />
-      <style>{`
-        @media (max-width: 768px) {
-          .checkout-grid { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
     </>
   );
 }

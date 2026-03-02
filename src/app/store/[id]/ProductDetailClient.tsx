@@ -1,208 +1,405 @@
-"use client";
-import Link from "next/link";
-import { motion } from "framer-motion";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { ZoomImage, FadeIn, ScrollReveal, MagneticHover } from "@/components/motion";
-import { Product } from "@/lib/products";
-import { useCart } from "@/contexts/CartContext";
-import { useRef, useState } from "react";
+'use client';
+import { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import { useCart } from '@/contexts/CartContext';
 
-interface Props {
-  product: Product;
-  category: { id: string; label: string; emoji: string; description: string } | null;
-  related: Product[];
-}
+const categoryColors: Record<string, string> = {
+  templates: '#8B5CF6',
+  trading: '#10B981',
+  prompts: '#F59E0B',
+  wallpapers: '#EC4899',
+  nfts: '#6366F1',
+  animations: '#EF4444',
+};
 
-export default function ProductDetailClient({ product, category, related }: Props) {
-  const { addItem, openCart } = useCart();
-  const scrollRef = useRef<HTMLDivElement>(null);
+export default function ProductDetailClient({ product, related, category }: { product: any; related: any[]; category: any }) {
+  const { dispatch } = useCart();
   const [added, setAdded] = useState(false);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
+  const accent = categoryColors[product.category] || '#8B5CF6';
 
-  const handleAddToCart = () => {
-    if (product.price > 0) {
-      addItem(product);
-      setAdded(true);
-      openCart();
-      setTimeout(() => setAdded(false), 2000);
-    }
+  const addToCart = () => {
+    dispatch({ type: 'ADD_ITEM', product });
+    dispatch({ type: 'OPEN_CART' });
+    setAdded(true);
+    setTimeout(() => setAdded(false), 2000);
   };
 
-  const scroll = (dir: "left" | "right") => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: dir === "left" ? -340 : 340, behavior: "smooth" });
-    }
-  };
-
-  const productImage = `/images/products/${product.id}.png`;
-
-  // JSON-LD structured data
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: product.name,
-    description: product.description,
-    image: productImage,
-    offers: {
-      "@type": "Offer",
-      price: product.price,
-      priceCurrency: "USD",
-      availability: product.price === 0 ? "https://schema.org/PreOrder" : "https://schema.org/InStock",
-    },
-  };
+  // GSAP SplitText on headline
+  useEffect(() => {
+    const init = async () => {
+      if (!headlineRef.current) return;
+      const { gsap } = await import('gsap');
+      const { SplitText } = await import('gsap/SplitText');
+      gsap.registerPlugin(SplitText);
+      const split = new SplitText(headlineRef.current, { type: 'chars,words' });
+      gsap.from(split.chars, {
+        opacity: 0, y: 40, stagger: 0.02, duration: 0.6, ease: 'power3.out', delay: 0.2,
+      });
+      return () => split.revert();
+    };
+    init().catch(console.error);
+  }, []);
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <Navbar />
-      <main style={{ paddingTop: 72, minHeight: "100vh" }}>
-        <section style={{ maxWidth: 1080, margin: "0 auto", padding: "48px 24px" }}>
-          {/* Breadcrumb */}
-          <nav aria-label="Breadcrumb" style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 40, fontSize: 13, color: "#64748B" }}>
-            <Link href="/" style={{ color: "#475569", textDecoration: "none" }}>Home</Link>
-            <span aria-hidden>›</span>
-            <Link href="/store" style={{ color: "#8B5CF6", textDecoration: "none" }}>Store</Link>
-            <span aria-hidden>›</span>
-            <Link href={`/store?cat=${product.category}`} style={{ color: "#8B5CF6", textDecoration: "none" }}>{category?.label}</Link>
-            <span aria-hidden>›</span>
-            <span style={{ color: "#94A3B8" }}>{product.name}</span>
-          </nav>
+      <main style={{ background: '#000', minHeight: '100vh', paddingTop: 100 }}>
+        {/* Breadcrumb */}
+        <div style={{ padding: '0 5vw', maxWidth: 1200, margin: '0 auto' }}>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            style={{ fontSize: '0.72rem', color: '#555', fontFamily: 'var(--font-body)', marginBottom: 40, display: 'flex', gap: 8, alignItems: 'center' }}
+          >
+            <Link href="/store" style={{ color: '#666', textDecoration: 'none' }}>Store</Link>
+            <span>→</span>
+            <Link href={`/store?category=${product.category}`} style={{ color: accent, textDecoration: 'none', textTransform: 'capitalize' }}>
+              {product.category}
+            </Link>
+            <span>→</span>
+            <span style={{ color: '#888' }}>{product.name}</span>
+          </motion.div>
+        </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "start" }} className="product-grid">
-            {/* Image with real zoom */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <ZoomImage
-                src={productImage}
-                alt={product.name}
-                style={{
-                  aspectRatio: "4/3",
-                  borderRadius: 20,
-                  border: "1px solid rgba(139,92,246,0.1)",
-                }}
-              />
-            </motion.div>
+        {/* Hero section — split layout */}
+        <section style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '4vw',
+          padding: '0 5vw 6vw',
+          maxWidth: 1200,
+          margin: '0 auto',
+          alignItems: 'start',
+        }}>
+          {/* Left — product visual */}
+          <motion.div
+            initial={{ opacity: 0, x: -40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+          >
+            <div style={{
+              aspectRatio: '4/3',
+              borderRadius: 16,
+              background: `linear-gradient(135deg, ${accent}10 0%, #0a0a0a 50%, ${accent}08 100%)`,
+              border: `1px solid ${accent}20`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              position: 'relative',
+              overflow: 'hidden',
+            }}>
+              <span style={{ fontSize: '6rem' }}>{product.emoji}</span>
 
-            {/* Details */}
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1, duration: 0.5 }}>
+              {/* Decorative grid */}
+              <div style={{
+                position: 'absolute',
+                inset: 0,
+                backgroundImage: `linear-gradient(${accent}06 1px, transparent 1px), linear-gradient(90deg, ${accent}06 1px, transparent 1px)`,
+                backgroundSize: '40px 40px',
+                pointerEvents: 'none',
+              }} />
+
               {product.badge && (
-                <span style={{ display: "inline-block", background: "rgba(139,92,246,0.15)", color: "#A78BFA", fontSize: 11, fontWeight: 700, padding: "4px 12px", borderRadius: 6, letterSpacing: "0.05em", marginBottom: 16 }}>
+                <div style={{
+                  position: 'absolute',
+                  top: 20,
+                  left: 20,
+                  padding: '6px 14px',
+                  borderRadius: 6,
+                  background: accent,
+                  color: '#fff',
+                  fontSize: '0.65rem',
+                  fontWeight: 700,
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                }}>
                   {product.badge}
-                </span>
-              )}
-
-              <h1 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "clamp(28px, 4vw, 36px)", fontWeight: 700, letterSpacing: "-0.02em", marginBottom: 8, color: "#F8FAFC" }}>
-                {product.name}
-              </h1>
-              <p style={{ color: "#64748B", fontSize: 13, marginBottom: 20 }}>{category?.label}</p>
-              <p style={{ color: "#94A3B8", fontSize: 16, lineHeight: 1.7, marginBottom: 32 }}>{product.description}</p>
-
-              {/* Price */}
-              <div style={{ marginBottom: 32 }}>
-                <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 40, fontWeight: 800, color: product.price === 0 ? "#64748B" : "#F8FAFC" }}>
-                  {product.price === 0 ? "Coming Soon" : `$${product.price}`}
-                </span>
-                {product.price > 0 && <span style={{ color: "#64748B", fontSize: 14, marginLeft: 8 }}>one-time</span>}
-              </div>
-
-              {/* Buy / Add to Cart */}
-              {product.price > 0 ? (
-                <MagneticHover strength={0.15} style={{ marginBottom: 24 }}>
-                  <motion.button
-                    onClick={handleAddToCart}
-                    whileHover={{ boxShadow: "0 0 40px rgba(139,92,246,0.4)" }}
-                    whileTap={{ scale: 0.98 }}
-                    style={{
-                      width: "100%",
-                      padding: "18px 36px",
-                      borderRadius: 12,
-                      border: "none",
-                      background: added ? "linear-gradient(135deg, #10B981, #059669)" : "linear-gradient(135deg, #8B5CF6, #7C3AED)",
-                      color: "white",
-                      fontWeight: 700,
-                      fontSize: 16,
-                      cursor: "pointer",
-                      boxShadow: "0 0 30px rgba(139,92,246,0.3)",
-                      transition: "background 0.3s",
-                    }}
-                    aria-label={`Add ${product.name} to cart for $${product.price}`}
-                  >
-                    {added ? "✓ Added to Cart!" : `Add to Cart — $${product.price}`}
-                  </motion.button>
-                </MagneticHover>
-              ) : (
-                <button disabled style={{ width: "100%", padding: "18px 36px", borderRadius: 12, border: "1px solid rgba(139,92,246,0.15)", background: "rgba(139,92,246,0.05)", color: "#64748B", fontWeight: 600, fontSize: 16, cursor: "not-allowed", marginBottom: 24 }} aria-disabled="true">
-                  Coming Soon
-                </button>
-              )}
-
-              {/* Features */}
-              <div role="list" aria-label="Product features">
-                <h3 style={{ fontWeight: 600, fontSize: 14, color: "#94A3B8", marginBottom: 16, letterSpacing: "0.05em", textTransform: "uppercase" }}>
-                  What&apos;s Included
-                </h3>
-                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  {product.features.map((f, i) => (
-                    <motion.div
-                      key={f}
-                      role="listitem"
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.3 + i * 0.05 }}
-                      style={{ display: "flex", alignItems: "center", gap: 10 }}
-                    >
-                      <span style={{ color: "#8B5CF6", fontSize: 16 }} aria-hidden>✓</span>
-                      <span style={{ color: "#CBD5E1", fontSize: 14 }}>{f}</span>
-                    </motion.div>
-                  ))}
                 </div>
-              </div>
-            </motion.div>
-          </div>
+              )}
+            </div>
 
-          {/* Related Products Carousel */}
-          {related.length > 0 && (
-            <ScrollReveal style={{ marginTop: 100 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
-                <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 28, fontWeight: 700, color: "#F8FAFC" }}>
-                  Related Products
-                </h2>
-                {related.length > 3 && (
-                  <div style={{ display: "flex", gap: 8 }}>
-                    <button onClick={() => scroll("left")} aria-label="Scroll left" style={{ width: 40, height: 40, borderRadius: 10, border: "1px solid rgba(139,92,246,0.2)", background: "rgba(139,92,246,0.05)", color: "#A78BFA", cursor: "pointer", fontSize: 18 }}>←</button>
-                    <button onClick={() => scroll("right")} aria-label="Scroll right" style={{ width: 40, height: 40, borderRadius: 10, border: "1px solid rgba(139,92,246,0.2)", background: "rgba(139,92,246,0.05)", color: "#A78BFA", cursor: "pointer", fontSize: 18 }}>→</button>
-                  </div>
-                )}
+            {/* Tech stack */}
+            {product.techStack && product.techStack.length > 0 && (
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 16 }}>
+                {product.techStack.map((tech: string) => (
+                  <span key={tech} style={{
+                    padding: '4px 10px',
+                    borderRadius: 4,
+                    background: '#111',
+                    border: '1px solid #222',
+                    color: '#888',
+                    fontSize: '0.68rem',
+                    fontFamily: 'var(--font-mono, monospace)',
+                  }}>
+                    {tech}
+                  </span>
+                ))}
               </div>
-              <div ref={scrollRef} style={{ display: "flex", gap: 20, overflowX: "auto", scrollSnapType: "x mandatory", paddingBottom: 16, scrollbarWidth: "none" }}>
-                {related.map((p) => (
-                  <Link key={p.id} href={`/store/${p.id}`} style={{ textDecoration: "none", minWidth: 300, scrollSnapAlign: "start" }}>
-                    <motion.div className="glass-card" style={{ borderRadius: 16, overflow: "hidden" }} whileHover={{ y: -4, boxShadow: "0 10px 30px rgba(0,0,0,0.3)" }}>
-                      <div style={{ height: 120, overflow: "hidden" }}>
-                        <img src={`/images/products/${p.id}.png`} alt={p.name} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            )}
+          </motion.div>
+
+          {/* Right — product info */}
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, delay: 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
+            style={{ position: 'sticky', top: 120 }}
+          >
+            {/* Category */}
+            <div style={{
+              display: 'inline-block',
+              padding: '4px 12px',
+              borderRadius: 4,
+              background: accent + '15',
+              color: accent,
+              fontSize: '0.68rem',
+              fontWeight: 600,
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              fontFamily: 'var(--font-body)',
+              marginBottom: 16,
+            }}>
+              {category?.emoji} {product.category}
+            </div>
+
+            {/* Title */}
+            <h1
+              ref={headlineRef}
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: 'clamp(1.8rem, 3.5vw, 2.8rem)',
+                fontWeight: 800,
+                letterSpacing: '-0.03em',
+                lineHeight: 1.1,
+                color: '#E8E8E8',
+                marginBottom: 20,
+              }}
+            >
+              {product.name}
+            </h1>
+
+            {/* Price */}
+            <div style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '2rem',
+              fontWeight: 800,
+              color: product.price === 0 ? '#666' : '#E8E8E8',
+              marginBottom: 24,
+              letterSpacing: '-0.02em',
+            }}>
+              {product.price === 0 ? 'Coming Soon' : `$${product.price}.00`}
+            </div>
+
+            {/* Description */}
+            <p style={{
+              fontSize: '0.9rem',
+              color: '#999',
+              lineHeight: 1.7,
+              marginBottom: 32,
+              fontFamily: 'var(--font-body)',
+            }}>
+              {product.description}
+            </p>
+
+            {/* Add to cart */}
+            {product.price > 0 && (
+              <button
+                onClick={addToCart}
+                style={{
+                  width: '100%',
+                  padding: '16px 32px',
+                  borderRadius: 8,
+                  border: 'none',
+                  background: added ? '#10B981' : accent,
+                  color: '#fff',
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  fontFamily: 'var(--font-display)',
+                  letterSpacing: '0.05em',
+                  textTransform: 'uppercase',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s',
+                  marginBottom: 12,
+                }}
+              >
+                {added ? '✓ Added to Cart' : 'Add to Cart'}
+              </button>
+            )}
+
+            {product.price > 0 && (
+              <Link href="/checkout" style={{ textDecoration: 'none' }}>
+                <button
+                  onClick={() => { dispatch({ type: 'ADD_ITEM', product }); }}
+                  style={{
+                    width: '100%',
+                    padding: '16px 32px',
+                    borderRadius: 8,
+                    border: `1px solid ${accent}40`,
+                    background: 'transparent',
+                    color: '#E8E8E8',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    fontFamily: 'var(--font-display)',
+                    letterSpacing: '0.05em',
+                    textTransform: 'uppercase',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s',
+                  }}
+                >
+                  Buy Now
+                </button>
+              </Link>
+            )}
+
+            {/* Guarantee */}
+            <div style={{
+              marginTop: 24,
+              padding: '16px',
+              borderRadius: 8,
+              background: '#0a0a0a',
+              border: '1px solid #1a1a1a',
+            }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {[
+                  { icon: '⚡', text: 'Instant download after purchase' },
+                  { icon: '📂', text: 'Full source code included' },
+                  { icon: '🔄', text: 'Free updates for 1 year' },
+                  { icon: '💬', text: 'Discord community access' },
+                ].map(item => (
+                  <div key={item.text} style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                    <span style={{ fontSize: '0.9rem' }}>{item.icon}</span>
+                    <span style={{ fontSize: '0.78rem', color: '#888', fontFamily: 'var(--font-body)' }}>{item.text}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </section>
+
+        {/* Features section */}
+        <section style={{ padding: '0 5vw 6vw', maxWidth: 1200, margin: '0 auto' }}>
+          <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '4vw' }}>
+            <h2 style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '1.5rem',
+              fontWeight: 700,
+              color: '#E8E8E8',
+              marginBottom: 32,
+              letterSpacing: '-0.02em',
+            }}>
+              What&apos;s Included
+            </h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: 12 }}>
+              {product.features.map((feature: string, i: number) => (
+                <motion.div
+                  key={feature}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.05 }}
+                  style={{
+                    display: 'flex',
+                    gap: 12,
+                    alignItems: 'center',
+                    padding: '14px 18px',
+                    borderRadius: 8,
+                    background: '#0a0a0a',
+                    border: '1px solid #1a1a1a',
+                  }}
+                >
+                  <span style={{ color: accent, fontSize: '0.85rem' }}>✓</span>
+                  <span style={{ fontSize: '0.82rem', color: '#bbb', fontFamily: 'var(--font-body)' }}>{feature}</span>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Long description */}
+        {product.longDescription && (
+          <section style={{ padding: '0 5vw 6vw', maxWidth: 800, margin: '0 auto' }}>
+            <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '4vw' }}>
+              <h2 style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: '1.5rem',
+                fontWeight: 700,
+                color: '#E8E8E8',
+                marginBottom: 24,
+                letterSpacing: '-0.02em',
+              }}>
+                About This Product
+              </h2>
+              <div style={{
+                fontSize: '0.88rem',
+                color: '#999',
+                lineHeight: 1.8,
+                fontFamily: 'var(--font-body)',
+                whiteSpace: 'pre-wrap',
+              }}>
+                {product.longDescription.split('\n').map((line: string, i: number) => {
+                  if (line.startsWith('**') && line.endsWith('**')) {
+                    return <h3 key={i} style={{ color: '#E8E8E8', fontWeight: 700, fontSize: '1rem', margin: '24px 0 12px', fontFamily: 'var(--font-display)' }}>{line.replace(/\*\*/g, '')}</h3>;
+                  }
+                  if (line.startsWith('- ')) {
+                    return <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 4 }}><span style={{ color: accent }}>•</span><span>{line.slice(2)}</span></div>;
+                  }
+                  if (line.trim() === '') return <br key={i} />;
+                  return <p key={i} style={{ marginBottom: 8 }}>{line}</p>;
+                })}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Related products */}
+        {related.length > 0 && (
+          <section style={{ padding: '0 5vw 8vw', maxWidth: 1200, margin: '0 auto' }}>
+            <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '4vw' }}>
+              <h2 style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: '1.2rem',
+                fontWeight: 700,
+                color: '#888',
+                marginBottom: 24,
+                letterSpacing: '0.05em',
+                textTransform: 'uppercase',
+                fontSize: '0.85rem',
+              }}>
+                Similar Products
+              </h2>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 20 }}>
+                {related.map(p => (
+                  <Link key={p.id} href={`/store/${p.id}`} style={{ textDecoration: 'none' }}>
+                    <div style={{
+                      padding: 20,
+                      borderRadius: 12,
+                      background: '#0a0a0a',
+                      border: '1px solid #1a1a1a',
+                      transition: 'all 0.3s',
+                      cursor: 'pointer',
+                    }}>
+                      <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+                        <span style={{ fontSize: '2rem' }}>{p.emoji}</span>
+                        <div>
+                          <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '0.95rem', fontWeight: 700, color: '#E8E8E8', marginBottom: 4 }}>{p.name}</h3>
+                          <span style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 700, color: '#888' }}>
+                            {p.price === 0 ? 'Free' : `$${p.price}`}
+                          </span>
+                        </div>
                       </div>
-                      <div style={{ padding: "16px 20px" }}>
-                        <h4 style={{ fontWeight: 600, color: "#F8FAFC", marginBottom: 4, fontSize: 15 }}>{p.name}</h4>
-                        <span style={{ color: "#8B5CF6", fontWeight: 600 }}>{p.price === 0 ? "TBA" : `$${p.price}`}</span>
-                      </div>
-                    </motion.div>
+                    </div>
                   </Link>
                 ))}
               </div>
-            </ScrollReveal>
-          )}
-        </section>
+            </div>
+          </section>
+        )}
       </main>
       <Footer />
-
-      <style>{`
-        @media (max-width: 768px) {
-          .product-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
-        }
-      `}</style>
     </>
   );
 }

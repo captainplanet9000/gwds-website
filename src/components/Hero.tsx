@@ -1,225 +1,229 @@
 'use client';
-
-import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
+import { useRef, useEffect } from 'react';
 import Link from 'next/link';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import dynamic from 'next/dynamic';
+
+const GWDSLogo3D = dynamic(() => import('./GWDSLogo3D'), { ssr: false });
+const WaveTerrain3D = dynamic(() => import('./WaveTerrain3D'), { ssr: false });
 
 export default function Hero() {
+  const sectionRef = useRef<HTMLElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
-  const subtitleRef = useRef<HTMLParagraphElement>(null);
-  const ctaRef = useRef<HTMLDivElement>(null);
-  const scrollIndicatorRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end start'],
+  });
+
+  const textOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const textY = useTransform(scrollYProgress, [0, 0.5], [0, -80]);
+  const logo3dOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
 
   useEffect(() => {
-    // Split text animation on mount
-    if (headlineRef.current) {
-      const text = headlineRef.current.textContent || '';
-      const chars = text.split('');
-      headlineRef.current.innerHTML = chars
-        .map((char) => `<span style="display: inline-block; opacity: 0;">${char === ' ' ? '&nbsp;' : char}</span>`)
-        .join('');
-      
-      const charElements = headlineRef.current.querySelectorAll('span');
-      
-      gsap.to(charElements, {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        stagger: 0.03,
-        ease: 'power3.out',
-        delay: 0.3,
+    const init = async () => {
+      if (!headlineRef.current) return;
+      const { gsap } = await import('gsap');
+      const { SplitText } = await import('gsap/SplitText');
+      gsap.registerPlugin(SplitText);
+      const split = new SplitText(headlineRef.current, { type: 'chars,words' });
+      gsap.from(split.chars, {
+        opacity: 0, y: 60, rotateX: -60, filter: 'blur(6px)',
+        stagger: 0.03, duration: 0.8, ease: 'back.out(1.2)', delay: 0.5,
       });
-    }
-
-    // Fade in subtitle and CTA
-    gsap.fromTo(
-      subtitleRef.current,
-      { opacity: 0, y: 30 },
-      { opacity: 1, y: 0, duration: 1, delay: 0.8, ease: 'power3.out' }
-    );
-
-    gsap.fromTo(
-      ctaRef.current,
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.8, delay: 1.2, ease: 'power3.out' }
-    );
-
-    // Scroll indicator animation
-    gsap.to(scrollIndicatorRef.current, {
-      y: 10,
-      duration: 1.5,
-      repeat: -1,
-      yoyo: true,
-      ease: 'power1.inOut',
-    });
+      return () => split.revert();
+    };
+    init().catch(console.error);
   }, []);
 
   return (
     <section
+      ref={sectionRef}
       style={{
+        position: 'relative',
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
         alignItems: 'center',
-        padding: '0 5vw',
-        position: 'relative',
+        justifyContent: 'center',
+        overflow: 'hidden',
         background: '#000',
       }}
     >
-      {/* Main Content */}
-      <div
-        style={{
-          maxWidth: '1400px',
-          width: '100%',
-          textAlign: 'center',
-        }}
-      >
-        <h1
+      {/* 3D Wave terrain background */}
+      <WaveTerrain3D height="100vh" opacity={0.6} />
+
+      {/* Radial glow */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        background: 'radial-gradient(ellipse 60% 50% at 50% 40%, rgba(139,92,246,0.08) 0%, transparent 70%)',
+        pointerEvents: 'none',
+      }} />
+
+      {/* 3D Logo */}
+      <motion.div style={{
+        position: 'relative',
+        zIndex: 2,
+        width: '100%',
+        maxWidth: 800,
+        opacity: logo3dOpacity,
+      }}>
+        <GWDSLogo3D height="45vh" />
+      </motion.div>
+
+      {/* Text content */}
+      <motion.div style={{
+        position: 'relative',
+        zIndex: 3,
+        textAlign: 'center',
+        maxWidth: 700,
+        padding: '0 24px',
+        opacity: textOpacity,
+        y: textY,
+        marginTop: -40,
+      }}>
+        {/* Tagline */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.2, duration: 0.6 }}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            padding: '6px 16px',
+            borderRadius: 999,
+            border: '1px solid rgba(139,92,246,0.25)',
+            background: 'rgba(139,92,246,0.06)',
+            marginBottom: 24,
+          }}
+        >
+          <span style={{
+            width: 5, height: 5, borderRadius: '50%',
+            background: '#8B5CF6',
+            animation: 'pulse 2s ease-in-out infinite',
+          }} />
+          <span style={{
+            fontSize: '0.7rem', fontWeight: 600, letterSpacing: '0.15em',
+            textTransform: 'uppercase', color: '#8B5CF6',
+            fontFamily: 'var(--font-body)',
+          }}>
+            Digital Products Studio
+          </span>
+        </motion.div>
+
+        {/* Subtitle */}
+        <motion.h2
           ref={headlineRef}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
           style={{
-            fontFamily: 'Syne, sans-serif',
-            fontSize: '10vw',
-            fontWeight: 800,
-            lineHeight: 1.05,
-            letterSpacing: '-0.03em',
-            color: '#E8E8E8',
-            marginBottom: '3vw',
-          }}
-        >
-          WE DESIGN UNUSUAL DIGITAL PRODUCTS
-        </h1>
-
-        <p
-          ref={subtitleRef}
-          style={{
-            fontFamily: 'DM Sans, sans-serif',
-            fontSize: '1.5vw',
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(1.1rem, 2.5vw, 1.5rem)',
             fontWeight: 400,
+            color: '#888',
             lineHeight: 1.6,
-            color: '#A8A8A8',
-            marginBottom: '4vw',
-            maxWidth: '700px',
-            margin: '0 auto 4vw',
+            marginBottom: 40,
+            letterSpacing: '-0.01em',
           }}
         >
-          AI templates, trading dashboards, animations, NFTs, and creative tools. 
-          Built by makers, powered by technology.
-        </p>
+          AI templates, trading tools, and creative assets
+          <br />built by makers who ship.
+        </motion.h2>
 
-        <div ref={ctaRef} style={{ display: 'flex', gap: '2vw', justifyContent: 'center' }}>
-          <Link
-            href="/store"
-            style={{
-              display: 'inline-block',
-              padding: '1.2vw 2.5vw',
-              fontFamily: 'Syne, sans-serif',
-              fontSize: '1vw',
-              fontWeight: 600,
-              letterSpacing: '-0.01em',
-              textDecoration: 'none',
-              background: 'oklch(0.65 0.29 295)',
-              color: '#000',
-              border: '1px solid oklch(0.65 0.29 295)',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'transparent';
-              e.currentTarget.style.color = 'oklch(0.65 0.29 295)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'oklch(0.65 0.29 295)';
-              e.currentTarget.style.color = '#000';
-            }}
-          >
-            Browse Store
+        {/* CTAs */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.5, duration: 0.6 }}
+          style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}
+        >
+          <Link href="/store" style={{ textDecoration: 'none' }}>
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.97 }}
+              style={{
+                padding: '15px 36px',
+                borderRadius: 8,
+                border: 'none',
+                background: '#8B5CF6',
+                color: '#fff',
+                fontFamily: 'var(--font-display)',
+                fontSize: '0.82rem',
+                fontWeight: 700,
+                letterSpacing: '0.06em',
+                textTransform: 'uppercase',
+                cursor: 'pointer',
+              }}
+            >
+              Browse Store
+            </motion.button>
           </Link>
-
-          <Link
-            href="/about"
-            style={{
-              display: 'inline-block',
-              padding: '1.2vw 2.5vw',
-              fontFamily: 'Syne, sans-serif',
-              fontSize: '1vw',
-              fontWeight: 600,
-              letterSpacing: '-0.01em',
-              textDecoration: 'none',
-              border: '1px solid rgba(232, 232, 232, 0.2)',
-              background: 'transparent',
-              color: '#E8E8E8',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#E8E8E8';
-              e.currentTarget.style.color = '#000';
-              e.currentTarget.style.borderColor = '#E8E8E8';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'transparent';
-              e.currentTarget.style.color = '#E8E8E8';
-              e.currentTarget.style.borderColor = 'rgba(232, 232, 232, 0.2)';
-            }}
-          >
-            Learn More
+          <Link href="/about" style={{ textDecoration: 'none' }}>
+            <motion.button
+              whileHover={{ scale: 1.04, borderColor: '#8B5CF6' }}
+              whileTap={{ scale: 0.97 }}
+              style={{
+                padding: '15px 36px',
+                borderRadius: 8,
+                border: '1px solid #333',
+                background: 'transparent',
+                color: '#E8E8E8',
+                fontFamily: 'var(--font-display)',
+                fontSize: '0.82rem',
+                fontWeight: 600,
+                letterSpacing: '0.06em',
+                textTransform: 'uppercase',
+                cursor: 'pointer',
+                transition: 'border-color 0.3s',
+              }}
+            >
+              About Us
+            </motion.button>
           </Link>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
-      {/* Scroll Indicator */}
-      <div
-        ref={scrollIndicatorRef}
+      {/* Scroll indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2.5 }}
         style={{
           position: 'absolute',
-          bottom: '5vh',
+          bottom: 40,
           left: '50%',
           transform: 'translateX(-50%)',
+          zIndex: 3,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: '1vh',
-          opacity: 0.5,
+          gap: 8,
         }}
       >
-        <span
-          style={{
-            fontFamily: 'DM Sans, sans-serif',
-            fontSize: '0.8vw',
-            fontWeight: 500,
-            color: '#A8A8A8',
-            textTransform: 'uppercase',
-            letterSpacing: '0.1em',
-          }}
-        >
+        <span style={{ fontSize: '0.6rem', color: '#444', letterSpacing: '0.2em', textTransform: 'uppercase', fontFamily: 'var(--font-body)' }}>
           Scroll
         </span>
-        <div
-          style={{
-            width: '1px',
-            height: '40px',
-            background: 'linear-gradient(to bottom, #A8A8A8, transparent)',
-          }}
+        <motion.div
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+          style={{ width: 1, height: 24, background: 'linear-gradient(to bottom, #444, transparent)' }}
         />
-      </div>
+      </motion.div>
 
-      <style jsx>{`
-        @media (max-width: 768px) {
-          h1 {
-            font-size: 14vw !important;
-            margin-bottom: 6vw !important;
-          }
-          p {
-            font-size: 4vw !important;
-            margin-bottom: 8vw !important;
-          }
-          a {
-            padding: 3vw 6vw !important;
-            font-size: 3.5vw !important;
-          }
-        }
-      `}</style>
+      {/* Bottom fade */}
+      <div style={{
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: 200,
+        background: 'linear-gradient(to bottom, transparent, #000)',
+        pointerEvents: 'none',
+        zIndex: 4,
+      }} />
     </section>
   );
 }

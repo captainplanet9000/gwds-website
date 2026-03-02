@@ -1,16 +1,26 @@
-import { NextRequest, NextResponse } from "next/server";
-import { promises as fs } from "fs";
-import path from "path";
+import { NextRequest, NextResponse } from 'next/server';
+import { getOrder, getDownloadsByOrder } from '@/lib/store-db';
 
-const ORDERS_DIR = path.join(process.cwd(), "data", "orders");
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ orderId: string }> }
+) {
+  const { orderId } = await params;
+  const order = await getOrder(orderId);
 
-export async function GET(_req: NextRequest, { params }: { params: Promise<{ orderId: string }> }) {
-  try {
-    const { orderId } = await params;
-    const filePath = path.join(ORDERS_DIR, `${orderId}.json`);
-    const data = await fs.readFile(filePath, "utf-8");
-    return NextResponse.json(JSON.parse(data));
-  } catch {
-    return NextResponse.json({ error: "Order not found" }, { status: 404 });
+  if (!order) {
+    return NextResponse.json({ error: 'Order not found' }, { status: 404 });
   }
+
+  const downloads = await getDownloadsByOrder(orderId);
+
+  return NextResponse.json({
+    ...order,
+    downloads: downloads.map(d => ({
+      product_slug: d.product_slug,
+      token: d.token,
+      downloads_remaining: d.downloads_remaining,
+      expires_at: d.expires_at,
+    })),
+  });
 }
