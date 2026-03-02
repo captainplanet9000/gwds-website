@@ -1,88 +1,64 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createServerClient } from "@/lib/supabase";
+import { NextRequest, NextResponse } from 'next/server';
+import { getDownloadsByOrder, consumeDownload } from '@/lib/store-db';
+import { getProduct } from '@/lib/products';
+import { promises as fs } from 'fs';
+import path from 'path';
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ orderId: string; productId: string }> }
 ) {
+  const { orderId, productId } = await params;
+  const token = req.nextUrl.searchParams.get('token');
+
+  if (!token) {
+    return NextResponse.json({ error: 'Download token required' }, { status: 400 });
+  }
+
+  // Verify token belongs to this order and product
+  const downloads = await getDownloadsByOrder(orderId);
+  const dl = downloads.find(d => d.token === token && d.product_slug === productId);
+
+  if (!dl) {
+    return NextResponse.json({ error: 'Invalid download token' }, { status: 403 });
+  }
+
+  if (dl.downloads_remaining <= 0) {
+    return NextResponse.json({ error: 'Download limit reached (max 3 downloads)' }, { status: 403 });
+  }
+
+  if (new Date(dl.expires_at) < new Date()) {
+    return NextResponse.json({ error: 'Download link expired (7 day limit)' }, { status: 403 });
+  }
+
+  // Consume one download
+  await consumeDownload(token);
+
+  // Check for actual file
+  const product = getProduct(productId);
+  const fileName = `${productId}.zip`;
+  const filePath = path.join(process.cwd(), 'products', fileName);
+
   try {
-    const { orderId, productId } = await params;
-    const { searchParams } = new URL(req.url);
-    const token = searchParams.get("token");
-
-    if (!token) {
-      return NextResponse.json({ error: "Missing download token" }, { status: 400 });
-    }
-
-    const supabase = createServerClient();
-
-    // Verify download token
-    const { data: download, error } = await supabase
-      .from("downloads")
-      .select("*")
-      .eq("download_token", token)
-      .eq("order_id", orderId)
-      .eq("product_id", productId)
-      .single();
-
-    if (error || !download) {
-      return NextResponse.json({ error: "Invalid download token" }, { status: 404 });
-    }
-
-    // Check if expired
-    const now = new Date();
-    const expiresAt = new Date(download.expires_at);
-    if (now > expiresAt) {
-      return NextResponse.json(
-        { error: "Download link expired. Please contact support." },
-        { status: 403 }
-      );
-    }
-
-    // Check if max downloads exceeded
-    if (download.downloaded_count >= download.max_downloads) {
-      return NextResponse.json(
-        { error: "Download limit exceeded. Please contact support for additional downloads." },
-        { status: 403 }
-      );
-    }
-
-    // Increment download count
-    await supabase
-      .from("downloads")
-      .update({ downloaded_count: download.downloaded_count + 1 })
-      .eq("id", download.id);
-
-    // TODO: Replace with actual Supabase Storage URL or CDN link
-    // For now, redirect to a placeholder
-    const placeholderUrl = `https://placeholder.gwds.studio/downloads/${productId}.zip`;
-
-    // Get product info for better placeholder
-    const { data: product } = await supabase
-      .from("products")
-      .select("name, download_url")
-      .eq("id", productId)
-      .single();
-
-    if (product?.download_url) {
-      return NextResponse.redirect(product.download_url);
-    }
-
-    // Return JSON response with download info for now
-    return NextResponse.json({
-      message: "Download ready",
-      productId,
-      remainingDownloads: download.max_downloads - download.downloaded_count - 1,
-      expiresAt: download.expires_at,
-      // TODO: Replace with actual download URL
-      downloadUrl: placeholderUrl,
-      note: "Actual file delivery will be implemented with Supabase Storage",
+    const stat = await fs.stat(filePath);
+    const file = await fs.readFile(filePath);
+    
+    return new NextResponse(file, {
+      headers: {
+        'Content-Type': 'application/zip',
+        'Content-Disposition': `attachment; filename="${product?.name || productId}.zip"`,
+        'Content-Length': stat.size.toString(),
+      },
     });
-  } catch (error) {
-    console.error("Download error:", error);
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Download failed" },
-      { status: 500 }
-    );
+  } catch {
+    // No file yet — return a placeholder README
+    const readme = `# ${product?.name || productId}\n\nThank you for your purchase!\n\nOrder: ${orderId}\n\nThis product is being prepared. You'll receive an updated download link when the files are ready.\n\nQuestions? Contact us at gammawavesdesign@gmail.com\n`;
+    
+    return new NextResponse(readme, {
+      headers: {
+        'Content-Type': 'text/plain',
+        'Content-Disposition': `attachment; filename="${product?.name || productId}-README.txt"`,
+      },
+    });
   }
 }

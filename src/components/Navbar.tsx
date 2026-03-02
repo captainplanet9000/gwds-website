@@ -1,138 +1,214 @@
 'use client';
-import Link from 'next/link';
-import { useState, useEffect } from 'react';
-import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 
-const navLinks = [
-  { href: '/store', label: 'Store' },
-  { href: '/templates', label: 'Templates' },
-  { href: '/about', label: 'About' },
-];
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useCart } from '@/contexts/CartContext';
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-  const [hidden, setHidden] = useState(false);
-  const [lastY, setLastY] = useState(0);
-  const { scrollY } = useScroll();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { totalItems, toggleCart } = useCart();
 
-  useMotionValueEvent(scrollY, 'change', (y) => {
-    setScrolled(y > 40);
-    setHidden(y > lastY && y > 120);
-    setLastY(y);
-  });
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const navLinks = [
+    { href: '/', label: 'Work' },
+    { href: '/store', label: 'Store' },
+    { href: '/about', label: 'About' },
+    { href: '/contact', label: 'Contact' },
+  ];
 
   return (
-    <motion.nav
-      animate={{ y: hidden ? -80 : 0 }}
-      transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+    <nav
       style={{
         position: 'fixed',
         top: 0,
         left: 0,
         right: 0,
         zIndex: 1000,
-        height: 64,
-        display: 'flex',
-        alignItems: 'center',
-        padding: '0 24px',
-        justifyContent: 'space-between',
-        transition: 'background 0.4s ease, backdrop-filter 0.4s ease, border-color 0.4s ease',
-        background: scrolled
-          ? 'oklch(0.08 0 0 / 0.85)'
-          : 'transparent',
-        backdropFilter: scrolled ? 'blur(20px)' : 'none',
-        borderBottom: scrolled
-          ? '1px solid oklch(0.65 0.29 295 / 0.15)'
-          : '1px solid transparent',
+        padding: '2vw 5vw',
+        background: isScrolled ? 'rgba(0, 0, 0, 0.95)' : 'transparent',
+        backdropFilter: isScrolled ? 'blur(20px)' : 'none',
+        borderBottom: isScrolled ? '1px solid rgba(232, 232, 232, 0.1)' : 'none',
+        transition: 'all 0.3s ease',
       }}
     >
-      {/* Logo */}
-      <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-        {/* Sine wave logomark */}
-        <svg width="28" height="20" viewBox="0 0 56 40" fill="none">
-          <path
-            d="M2,20 C8,4 16,4 22,20 C28,36 36,36 42,20 C48,4 50,4 54,10"
-            stroke="oklch(0.65 0.29 295)"
-            strokeWidth="3"
-            strokeLinecap="round"
-            fill="none"
-          />
-          <path
-            d="M2,28 C8,12 16,12 22,28 C28,44 36,44 42,28"
-            stroke="oklch(0.75 0.15 195)"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            fill="none"
-            opacity="0.6"
-          />
-        </svg>
-        <span style={{
-          fontFamily: 'var(--font-display)',
-          fontWeight: 700,
-          fontSize: '1.1rem',
-          letterSpacing: '0.08em',
-          color: 'oklch(0.98 0 0)',
-          textTransform: 'uppercase',
-        }}>
-          GWDS
-        </span>
-      </Link>
-
-      {/* Nav links */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        {navLinks.map(({ href, label }) => (
-          <Link
-            key={href}
-            href={href}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          maxWidth: '1600px',
+          margin: '0 auto',
+        }}
+      >
+        {/* Logo */}
+        <Link href="/" style={{ textDecoration: 'none' }}>
+          <span
             style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: '0.875rem',
-              fontWeight: 500,
-              color: 'oklch(0.80 0 0)',
-              textDecoration: 'none',
-              padding: '6px 14px',
-              borderRadius: 6,
-              position: 'relative',
-              transition: 'color 0.2s ease',
-            }}
-            onMouseEnter={e => {
-              (e.currentTarget as HTMLAnchorElement).style.color = 'oklch(0.98 0 0)';
-            }}
-            onMouseLeave={e => {
-              (e.currentTarget as HTMLAnchorElement).style.color = 'oklch(0.80 0 0)';
+              fontFamily: 'Syne, sans-serif',
+              fontSize: '1.5vw',
+              fontWeight: 700,
+              color: '#E8E8E8',
+              letterSpacing: '-0.02em',
             }}
           >
-            {label}
-          </Link>
-        ))}
-
-        {/* CTA */}
-        <Link
-          href="/store"
-          style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: '0.875rem',
-            fontWeight: 600,
-            color: 'oklch(0.98 0 0)',
-            textDecoration: 'none',
-            padding: '8px 20px',
-            borderRadius: 8,
-            background: 'linear-gradient(135deg, oklch(0.65 0.29 295), oklch(0.55 0.25 250))',
-            boxShadow: '0 0 20px oklch(0.65 0.29 295 / 0.3)',
-            transition: 'box-shadow 0.2s ease, transform 0.2s ease',
-          }}
-          onMouseEnter={e => {
-            (e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 0 30px oklch(0.65 0.29 295 / 0.5)';
-            (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(-1px)';
-          }}
-          onMouseLeave={e => {
-            (e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 0 20px oklch(0.65 0.29 295 / 0.3)';
-            (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(0)';
-          }}
-        >
-          Shop
+            GWDS
+          </span>
         </Link>
+
+        {/* Desktop Nav */}
+        <div
+          style={{
+            display: 'flex',
+            gap: '3vw',
+            alignItems: 'center',
+          }}
+          className="desktop-nav"
+        >
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              style={{
+                fontFamily: 'DM Sans, sans-serif',
+                fontSize: '1vw',
+                fontWeight: 500,
+                color: '#A8A8A8',
+                textDecoration: 'none',
+                transition: 'color 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = '#E8E8E8';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = '#A8A8A8';
+              }}
+            >
+              {link.label}
+            </Link>
+          ))}
+
+          {/* Cart Button */}
+          <button
+            onClick={toggleCart}
+            style={{
+              background: 'transparent',
+              border: '1px solid rgba(232, 232, 232, 0.2)',
+              color: '#E8E8E8',
+              padding: '0.8vw 1.5vw',
+              fontFamily: 'DM Sans, sans-serif',
+              fontSize: '1vw',
+              fontWeight: 500,
+              cursor: 'pointer',
+              borderRadius: '2px',
+              transition: 'all 0.2s ease',
+              position: 'relative',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#E8E8E8';
+              e.currentTarget.style.color = '#000';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.color = '#E8E8E8';
+            }}
+          >
+            Cart ({totalItems})
+          </button>
+        </div>
+
+        {/* Mobile Hamburger */}
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          style={{
+            display: 'none',
+            background: 'transparent',
+            border: 'none',
+            color: '#E8E8E8',
+            fontSize: '6vw',
+            cursor: 'pointer',
+            padding: 0,
+          }}
+          className="mobile-menu-btn"
+        >
+          {isMobileMenuOpen ? '✕' : '☰'}
+        </button>
       </div>
-    </motion.nav>
+
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '100%',
+            left: 0,
+            right: 0,
+            background: '#000',
+            borderBottom: '1px solid rgba(232, 232, 232, 0.1)',
+            padding: '5vw',
+          }}
+          className="mobile-menu"
+        >
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={() => setIsMobileMenuOpen(false)}
+              style={{
+                display: 'block',
+                fontFamily: 'DM Sans, sans-serif',
+                fontSize: '5vw',
+                fontWeight: 500,
+                color: '#A8A8A8',
+                textDecoration: 'none',
+                padding: '3vw 0',
+                borderBottom: '1px solid rgba(232, 232, 232, 0.05)',
+              }}
+            >
+              {link.label}
+            </Link>
+          ))}
+          <button
+            onClick={() => {
+              toggleCart();
+              setIsMobileMenuOpen(false);
+            }}
+            style={{
+              marginTop: '5vw',
+              width: '100%',
+              background: 'transparent',
+              border: '1px solid rgba(232, 232, 232, 0.2)',
+              color: '#E8E8E8',
+              padding: '4vw',
+              fontFamily: 'DM Sans, sans-serif',
+              fontSize: '4vw',
+              fontWeight: 500,
+              cursor: 'pointer',
+            }}
+          >
+            Cart ({totalItems})
+          </button>
+        </div>
+      )}
+
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .desktop-nav {
+            display: none !important;
+          }
+          .mobile-menu-btn {
+            display: block !important;
+          }
+        }
+      `}</style>
+    </nav>
   );
 }

@@ -53,7 +53,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "GWDS — Gamma Waves Design Studio",
-    description: "Digital products studio crafting AI templates, trading tools, animations, NFTs, and creative assets.",
+    description: "We design unusual digital products.",
     images: ["/images/og-image.png"],
     creator: "@gwds_studio",
   },

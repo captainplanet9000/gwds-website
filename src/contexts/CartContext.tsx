@@ -64,6 +64,8 @@ function cartReducer(state: CartState, action: CartAction): CartState {
 }
 
 interface CartContextType {
+  state: CartState;
+  dispatch: React.Dispatch<CartAction>;
   items: CartItem[];
   isOpen: boolean;
   addItem: (product: Product) => void;
@@ -106,6 +108,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
   return (
     <CartContext.Provider
       value={{
+        state,
+        dispatch,
         items: state.items,
         isOpen: state.isOpen,
         addItem: (product) => dispatch({ type: "ADD_ITEM", product }),

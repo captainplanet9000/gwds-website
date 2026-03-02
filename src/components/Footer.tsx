@@ -1,161 +1,221 @@
 'use client';
-import Link from 'next/link';
-import { AnimatedWaveBorder } from './WaveDivider';
 
-const links = {
-  Products: ['/templates', '/trading', '/animations', '/3d', '/store'],
-  labels: ['AI Templates', 'Trading Tools', 'Animations', '3D Assets', 'All Products'],
-  Company: ['/about', '/blog', '/careers', '/contact'],
-  companyLabels: ['About', 'Blog', 'Careers', 'Contact'],
-};
+import Link from 'next/link';
 
 export default function Footer() {
+  const currentYear = new Date().getFullYear();
+
+  const footerLinks = [
+    { href: '/', label: 'Work' },
+    { href: '/store', label: 'Store' },
+    { href: '/about', label: 'About' },
+    { href: '/contact', label: 'Contact' },
+  ];
+
+  const socialLinks = [
+    { href: 'https://twitter.com/gwds', label: 'Twitter' },
+    { href: 'https://github.com/gwds', label: 'GitHub' },
+    { href: 'https://discord.gg/gwds', label: 'Discord' },
+  ];
+
   return (
-    <footer style={{
-      background: 'oklch(0.06 0 0)',
-      borderTop: '1px solid oklch(0.15 0.02 270)',
-      position: 'relative',
-      overflow: 'hidden',
-    }}>
-      {/* Animated top border wave */}
-      <AnimatedWaveBorder color="oklch(0.65 0.29 295)" opacity={0.15} />
-
-      {/* GWDS watermark */}
-      <div style={{
-        position: 'absolute',
-        bottom: -40,
-        left: '50%',
-        transform: 'translateX(-50%)',
-        fontFamily: 'var(--font-display)',
-        fontSize: 'clamp(80px, 15vw, 180px)',
-        fontWeight: 800,
-        color: 'oklch(0.98 0 0 / 0.03)',
-        letterSpacing: '0.1em',
-        whiteSpace: 'nowrap',
-        userSelect: 'none',
-        pointerEvents: 'none',
-        lineHeight: 1,
-      }}>
-        GWDS
-      </div>
-
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '60px 24px 40px', position: 'relative', zIndex: 1 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 48, marginBottom: 60 }}>
-          {/* Brand column */}
+    <footer
+      style={{
+        borderTop: '1px solid rgba(232, 232, 232, 0.1)',
+        background: '#000',
+        padding: '6vh 5vw 4vh',
+      }}
+    >
+      <div
+        style={{
+          maxWidth: '1600px',
+          margin: '0 auto',
+        }}
+      >
+        {/* Top Row */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: '5vw',
+            marginBottom: '5vh',
+          }}
+          className="footer-grid"
+        >
+          {/* Brand */}
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
-              <svg width="24" height="18" viewBox="0 0 56 40" fill="none">
-                <path d="M2,20 C8,4 16,4 22,20 C28,36 36,36 42,20 C48,4 50,4 54,10"
-                  stroke="oklch(0.65 0.29 295)" strokeWidth="3" strokeLinecap="round" fill="none"/>
-                <path d="M2,28 C8,12 16,12 22,28 C28,44 36,44 42,28"
-                  stroke="oklch(0.75 0.15 195)" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.6"/>
-              </svg>
-              <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1rem', letterSpacing: '0.08em', color: 'oklch(0.98 0 0)' }}>
+            <Link href="/" style={{ textDecoration: 'none' }}>
+              <span
+                style={{
+                  fontFamily: 'Syne, sans-serif',
+                  fontSize: '1.5vw',
+                  fontWeight: 700,
+                  color: '#E8E8E8',
+                  letterSpacing: '-0.02em',
+                }}
+              >
                 GWDS
               </span>
-            </div>
-            <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.875rem', color: 'oklch(0.55 0.01 250)', lineHeight: 1.7, maxWidth: 300, margin: '0 0 24px' }}>
-              Gamma Waves Design Studio. Digital products at the intersection of AI, design, and wave physics.
+            </Link>
+            <p
+              style={{
+                fontFamily: 'DM Sans, sans-serif',
+                fontSize: '0.9vw',
+                color: '#A8A8A8',
+                marginTop: '1vw',
+                lineHeight: 1.6,
+              }}
+            >
+              Gamma Waves Design Studio
+              <br />
+              Digital products & creative tools
             </p>
-            {/* Social links */}
-            <div style={{ display: 'flex', gap: 16 }}>
-              {['Twitter/X', 'Instagram', 'TikTok'].map(s => (
-                <a key={s} href="#" style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.7rem',
-                  color: 'oklch(0.50 0.02 270)',
-                  textDecoration: 'none',
-                  letterSpacing: '0.05em',
-                  transition: 'color 0.2s',
-                }}
-                onMouseEnter={e => (e.currentTarget.style.color = 'oklch(0.75 0.15 195)')}
-                onMouseLeave={e => (e.currentTarget.style.color = 'oklch(0.50 0.02 270)')}
-                >{s}</a>
+          </div>
+
+          {/* Navigation */}
+          <div>
+            <h4
+              style={{
+                fontFamily: 'Syne, sans-serif',
+                fontSize: '1vw',
+                fontWeight: 600,
+                color: '#E8E8E8',
+                marginBottom: '1.5vw',
+              }}
+            >
+              Navigation
+            </h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8vw' }}>
+              {footerLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  style={{
+                    fontFamily: 'DM Sans, sans-serif',
+                    fontSize: '0.9vw',
+                    color: '#A8A8A8',
+                    textDecoration: 'none',
+                    transition: 'color 0.2s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = '#E8E8E8';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = '#A8A8A8';
+                  }}
+                >
+                  {link.label}
+                </Link>
               ))}
             </div>
           </div>
 
-          {/* Products column */}
+          {/* Social */}
           <div>
-            <h4 style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', letterSpacing: '0.15em', color: 'oklch(0.65 0.29 295)', textTransform: 'uppercase', marginBottom: 20, fontWeight: 500 }}>
-              Products
+            <h4
+              style={{
+                fontFamily: 'Syne, sans-serif',
+                fontSize: '1vw',
+                fontWeight: 600,
+                color: '#E8E8E8',
+                marginBottom: '1.5vw',
+              }}
+            >
+              Connect
             </h4>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {links.labels.map((label, i) => (
-                <li key={label}>
-                  <Link href={links.Products[i]} style={{
-                    fontFamily: 'var(--font-body)',
-                    fontSize: '0.875rem',
-                    color: 'oklch(0.58 0.01 250)',
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8vw' }}>
+              {socialLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    fontFamily: 'DM Sans, sans-serif',
+                    fontSize: '0.9vw',
+                    color: '#A8A8A8',
                     textDecoration: 'none',
-                    transition: 'color 0.2s',
+                    transition: 'color 0.2s ease',
                   }}
-                  onMouseEnter={e => (e.currentTarget.style.color = 'oklch(0.98 0 0)')}
-                  onMouseLeave={e => (e.currentTarget.style.color = 'oklch(0.58 0.01 250)')}
-                  >{label}</Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Company column */}
-          <div>
-            <h4 style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', letterSpacing: '0.15em', color: 'oklch(0.65 0.29 295)', textTransform: 'uppercase', marginBottom: 20, fontWeight: 500 }}>
-              Company
-            </h4>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {links.companyLabels.map((label, i) => (
-                <li key={label}>
-                  <Link href={links.Company[i]} style={{
-                    fontFamily: 'var(--font-body)',
-                    fontSize: '0.875rem',
-                    color: 'oklch(0.58 0.01 250)',
-                    textDecoration: 'none',
-                    transition: 'color 0.2s',
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = '#E8E8E8';
                   }}
-                  onMouseEnter={e => (e.currentTarget.style.color = 'oklch(0.98 0 0)')}
-                  onMouseLeave={e => (e.currentTarget.style.color = 'oklch(0.58 0.01 250)')}
-                  >{label}</Link>
-                </li>
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = '#A8A8A8';
+                  }}
+                >
+                  {link.label}
+                </a>
               ))}
-            </ul>
+            </div>
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div style={{
-          borderTop: '1px solid oklch(0.15 0.02 270)',
-          paddingTop: 24,
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: 12,
-        }}>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'oklch(0.40 0.01 270)', letterSpacing: '0.05em' }}>
-            © 2026 Gamma Waves Design Studio. All rights reserved.
-          </span>
-          <div style={{ display: 'flex', gap: 24 }}>
+        {/* Bottom Row */}
+        <div
+          style={{
+            paddingTop: '3vh',
+            borderTop: '1px solid rgba(232, 232, 232, 0.05)',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+          className="footer-bottom"
+        >
+          <p
+            style={{
+              fontFamily: 'DM Sans, sans-serif',
+              fontSize: '0.8vw',
+              color: '#666',
+            }}
+          >
+            © {currentYear} Gamma Waves Design Studio. All rights reserved.
+          </p>
+
+          <div style={{ display: 'flex', gap: '2vw' }}>
             {[
               { label: 'Privacy', href: '/privacy' },
               { label: 'Terms', href: '/terms' },
               { label: 'Refunds', href: '/refunds' },
             ].map(({ label, href }) => (
-              <Link key={label} href={href} style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.7rem',
-                color: 'oklch(0.40 0.01 270)',
-                textDecoration: 'none',
-                letterSpacing: '0.05em',
-                transition: 'color 0.2s',
-              }}
-              onMouseEnter={e => (e.currentTarget.style.color = 'oklch(0.68 0.01 250)')}
-              onMouseLeave={e => (e.currentTarget.style.color = 'oklch(0.40 0.01 270)')}
-              >{label}</Link>
+              <Link
+                key={label}
+                href={href}
+                style={{
+                  fontFamily: 'DM Sans, sans-serif',
+                  fontSize: '0.8vw',
+                  color: '#666',
+                  textDecoration: 'none',
+                }}
+              >
+                {label}
+              </Link>
             ))}
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .footer-grid {
+            grid-template-columns: 1fr !important;
+            gap: 6vh !important;
+          }
+          .footer-bottom {
+            flex-direction: column !important;
+            gap: 3vh !important;
+            text-align: center !important;
+          }
+          span,
+          h4 {
+            font-size: 5vw !important;
+          }
+          p,
+          a {
+            font-size: 3.5vw !important;
+          }
+        }
+      `}</style>
     </footer>
   );
 }
