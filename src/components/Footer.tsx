@@ -13,9 +13,9 @@ export default function Footer() {
   ];
 
   const socialLinks = [
-    { href: 'https://twitter.com/gwds', label: 'Twitter' },
-    { href: 'https://github.com/gwds', label: 'GitHub' },
-    { href: 'https://discord.gg/gwds', label: 'Discord' },
+    { href: 'https://twitter.com/gwds_studio', label: 'Twitter' },
+    { href: 'https://github.com/captainplanet9000', label: 'GitHub' },
+    { href: '/content', label: 'Content' },
   ];
 
   return (
