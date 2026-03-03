@@ -146,7 +146,7 @@ Need help? Reply to this email or contact support@gwds.studio
 
   try {
     const { data, error } = await resend.emails.send({
-      from: "GWDS Store <orders@gwds.studio>",
+      from: "GWDS Store <onboarding@resend.dev>",
       to: email,
       subject: `Order Confirmation - ${order.id}`,
       html,

@@ -197,7 +197,16 @@ export async function createDownloadTokens(orderId: string, productSlugs: string
 export async function getDownloadToken(token: string): Promise<DownloadToken | null> {
   if (await useSupabase()) {
     const sb = getSupabase()!;
-    const { data } = await sb.from('downloads').select('*').eq('token', token).single();
+    // Try both column names — Supabase may use 'download_token' or 'token'
+    let { data } = await sb.from('downloads').select('*').eq('download_token', token).single();
+    if (!data) {
+      const res = await sb.from('downloads').select('*').eq('token', token).single();
+      data = res.data;
+    }
+    if (data) {
+      data.token = data.token || data.download_token;
+      data.product_slug = data.product_slug || data.product_id;
+    }
     return data;
   }
   const all = await readJson<DownloadToken[]>('downloads.json', []);
@@ -208,7 +217,12 @@ export async function getDownloadsByOrder(orderId: string): Promise<DownloadToke
   if (await useSupabase()) {
     const sb = getSupabase()!;
     const { data } = await sb.from('downloads').select('*').eq('order_id', orderId);
-    return data || [];
+    // Map Supabase column names to our interface (download_token → token, product_id → product_slug)
+    return (data || []).map((d: any) => ({
+      ...d,
+      token: d.token || d.download_token,
+      product_slug: d.product_slug || d.product_id,
+    }));
   }
   const all = await readJson<DownloadToken[]>('downloads.json', []);
   return all.filter(d => d.order_id === orderId);
@@ -222,7 +236,8 @@ export async function consumeDownload(token: string): Promise<boolean> {
 
   if (await useSupabase()) {
     const sb = getSupabase()!;
-    await sb.from('downloads').update({ downloads_remaining: dl.downloads_remaining - 1 }).eq('token', token);
+    // Try both column names for the update
+    await sb.from('downloads').update({ downloads_remaining: dl.downloads_remaining - 1 }).eq('download_token', token);
   } else {
     const all = await readJson<DownloadToken[]>('downloads.json', []);
     const idx = all.findIndex(d => d.token === token);
