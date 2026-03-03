@@ -145,6 +145,19 @@ export const products: Product[] = [
     id: "ai-saas-starter",
     name: "AI SaaS Starter Kit",
     description: "Production-ready SaaS template with auth, billing, AI API integration, and admin dashboard. Ship your AI product in days, not months.",
+    longDescription: `Skip the boilerplate. Start with a production-ready SaaS foundation.
+
+**What you get:**
+- Supabase Auth with email/password + OAuth (Google, GitHub)
+- Stripe billing integration (subscriptions + one-time payments)
+- AI API integration layer (OpenAI, Anthropic, or bring your own)
+- Admin dashboard with user management and analytics
+- Marketing landing page with pricing table
+- Transactional email templates (welcome, receipt, password reset)
+- Full TypeScript source code
+- One-click deploy to Vercel
+
+**Built for speed.** Clone, configure env vars, deploy. Your SaaS is live.`,
     price: 99,
     category: "templates",
     emoji: "🚀",
@@ -158,6 +171,17 @@ export const products: Product[] = [
     id: "darvas-indicator",
     name: "Darvas Box Indicator",
     description: "Classic Darvas Box breakout detection with modern enhancements. Auto-identifies consolidation zones and breakout signals across any timeframe.",
+    longDescription: `The Darvas Box method — modernized with AI and automated execution.
+
+**What you get:**
+- Darvas Box breakout detection algorithm (TypeScript)
+- Multi-timeframe analysis (1H, 4H, 1D)
+- Auto box identification with consolidation zone mapping
+- Entry/exit signal generation with confidence scoring
+- Alert system for breakout notifications
+- Backtesting data and historical performance metrics
+- TradingView-compatible overlay component
+- Full source code with documentation`,
     price: 49,
     category: "trading",
     emoji: "📦",
@@ -168,6 +192,19 @@ export const products: Product[] = [
     id: "elliott-wave-agent",
     name: "Elliott Wave Agent",
     description: "AI-powered Elliott Wave analysis. Identifies wave patterns, generates entry/exit signals, and manages risk automatically.",
+    longDescription: `An autonomous trading agent that reads Elliott Wave patterns and executes trades.
+
+**What you get:**
+- AI wave pattern detection using DeepSeek/GPT-4 analysis
+- Automatic wave counting (impulse + corrective patterns)
+- Entry/exit signal generation based on wave position
+- Built-in risk management (position sizing, stop-loss, take-profit)
+- Multi-asset support (crypto, forex, equities)
+- Telegram alert integration
+- Backtested strategy with performance metrics
+- Full TypeScript source code
+
+**This is the same agent running live in our Cival trading system.** Extracted, documented, and packaged for you to deploy.`,
     price: 199,
     category: "trading",
     badge: "PREMIUM",
@@ -179,6 +216,23 @@ export const products: Product[] = [
     id: "multi-strat-bundle",
     name: "Multi-Strategy Bundle",
     description: "Complete bundle of 6 trading strategies: Darvas, Williams, Elliott, Heikin Ashi, Renko, and Multi-Strat. Run them individually or as a farm.",
+    longDescription: `Six battle-tested trading strategies in one bundle. Run them individually or orchestrate them as a farm.
+
+**Strategies included:**
+1. **Darvas Box** — Breakout detection with consolidation zones
+2. **Williams Alligator** — Trend-following with jaw/teeth/lips smoothing
+3. **Elliott Wave** — AI-powered wave pattern analysis
+4. **Heikin Ashi** — Smoothed candle trend detection
+5. **Renko Breakout** — Noise-filtered brick analysis
+6. **Multi-Strategy** — VWAP + RSI + MACD combined signals
+
+**Plus:**
+- Farm orchestration system — run all 6 strategies simultaneously
+- Position management with margin awareness
+- Risk management and drawdown protection
+- Macro market regime detection
+- Full TypeScript source code
+- Deploy guide for Vercel + Supabase`,
     price: 399,
     category: "trading",
     badge: "BEST VALUE",
@@ -265,23 +319,44 @@ export const products: Product[] = [
   {
     id: "clay-verse-pack",
     name: "Clay Verse Animation Pack",
-    description: "10 claymation-style animated loops. Perfect for TikTok intros, social media, or creative projects.",
+    description: "Complete claymation content toolkit — 10 detailed AI video prompts, 5 style reference cards, 3 TikTok scripts, and platform-specific settings for Runway, Kling, and ComfyUI.",
+    longDescription: `Everything you need to create stunning claymation-style AI videos.
+
+**What you get:**
+- 10 detailed claymation prompts for AI video generation (Runway Gen-3, Kling, Pika)
+- 5 style reference cards — fingerprint-clay, smooth-polymer, rough-rustic, neon-glaze, pastel-whimsy
+- 3 ready-to-film TikTok scripts (60s format) for claymation content
+- Platform settings guides for Runway, Kling, and ComfyUI
+- Commercial license included
+
+**Each prompt includes:** scene description, camera angles, lighting setup, mood, and style notes. Drop these into any AI video tool and get professional clay animation results.`,
     price: 19,
     category: "animations",
-    badge: "COMING SOON",
+    badge: "NEW",
     emoji: "🏗️",
-    features: ["10 animations", "1080p quality", "Loopable", "Transparent BG option", "Commercial license"],
+    features: ["10 video prompts", "5 style guides", "3 TikTok scripts", "Runway + Kling + ComfyUI", "Commercial license"],
     image: "/images/products/clay-verse-pack.jpg",
   },
   {
     id: "3d-render-pack",
     name: "3D Product Renders Pack",
-    description: "20 isometric 3D product mockup animations. Floating devices, rotating objects, ambient lighting.",
+    description: "20 isometric 3D product render prompts, 5 Blender scene templates, 5 color palettes, and batch generation scripts. Create stunning product photography with AI.",
+    longDescription: `Professional-grade AI product photography toolkit.
+
+**What you get:**
+- 20 isometric 3D render prompts for Midjourney, DALL-E, and Flux
+- 10 product types × multiple scene setups (floating platform, studio lighting, neon accent, minimalist)
+- 5 Blender scene description templates for common product shot setups
+- 5 curated color palettes (tech-minimal, luxury-dark, vibrant-pop, earth-organic, neon-future)
+- 2 Python batch generation scripts (combine products × styles × palettes automatically)
+- Best practices guide for AI-generated product photography
+
+**Each prompt includes:** full prompt text, negative prompts, and recommended settings per platform.`,
     price: 34,
     category: "animations",
-    badge: "COMING SOON",
+    badge: "NEW",
     emoji: "🎥",
-    features: ["20 renders", "Isometric style", "4K output", "Loop-ready", "Ad-optimized"],
+    features: ["20 render prompts", "5 Blender templates", "5 color palettes", "Batch scripts", "Multi-platform"],
     image: "/images/products/3d-render-pack.jpg",
   },
 ];
