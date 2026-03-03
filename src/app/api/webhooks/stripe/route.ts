@@ -38,8 +38,17 @@ export async function POST(req: NextRequest) {
 
       // Extract metadata
       const customerEmail = session.customer_email || session.metadata?.customer_email;
-      const customerName = session.metadata?.customer_name || null;
-      const productIds = session.metadata?.product_ids?.split(",") || [];
+      const customerName = session.metadata?.customerName || session.metadata?.customer_name || null;
+      // Checkout stores items as JSON array: [{"productId":"trading-dashboard-template","quantity":1}]
+      let productIds: string[] = [];
+      try {
+        if (session.metadata?.product_ids) {
+          productIds = session.metadata.product_ids.split(",");
+        } else if (session.metadata?.items) {
+          const items = JSON.parse(session.metadata.items);
+          productIds = items.map((i: any) => i.productId);
+        }
+      } catch { productIds = []; }
 
       if (!customerEmail) {
         console.error("No customer email in session");

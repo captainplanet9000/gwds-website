@@ -62,8 +62,9 @@ export async function POST(req: NextRequest) {
         customer_email: email,
         metadata: {
           orderId,
-          customerName: name,
+          customerName: name || '',
           items: JSON.stringify(items),
+          product_ids: items.map((i: any) => i.productId).join(','),
         },
         success_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3457'}/checkout/success?orderId=${orderId}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3457'}/checkout`,
