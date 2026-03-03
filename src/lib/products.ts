@@ -62,7 +62,14 @@ export const products: Product[] = [
       "Vercel deploy ready"
     ],
     techStack: ["Next.js 15", "TypeScript", "Supabase", "Hyperliquid SDK", "TailwindCSS"],
-    image: "/images/products/dashboard-overview.jpg",
+    image: "/images/products/trading-dashboard-template.jpg",
+    images: [
+      "/images/products/trading-dashboard-template.jpg",
+      "/images/products/dashboard-analytics.jpg",
+      "/images/products/dashboard-trades.jpg",
+      "/images/products/dashboard-farms.jpg",
+      "/images/products/dashboard-goals.jpg",
+    ],
   },
   {
     id: "meme-trading-template",
@@ -96,6 +103,7 @@ export const products: Product[] = [
       "Full source code"
     ],
     techStack: ["Next.js 15", "TypeScript", "Hyperliquid SDK", "Supabase"],
+    image: "/images/products/meme-trading-template.jpg",
   },
   {
     id: "second-brain-template",
@@ -131,7 +139,7 @@ export const products: Product[] = [
       "Vercel deploy button"
     ],
     techStack: ["Next.js 15", "TypeScript", "Supabase", "Inworld TTS"],
-    image: "/images/products/dashboard-analytics.jpg",
+    image: "/images/products/second-brain-store.jpg",
   },
   {
     id: "ai-saas-starter",
@@ -142,7 +150,7 @@ export const products: Product[] = [
     emoji: "🚀",
     features: ["Auth + billing", "AI API integration", "Admin dashboard", "Landing page", "Email templates", "Stripe payments"],
     techStack: ["Next.js 15", "TypeScript", "Supabase Auth", "Stripe"],
-    image: "/images/products/dashboard-goals.jpg",
+    image: "/images/products/ai-saas-store.jpg",
   },
 
   // === TRADING TOOLS ===
@@ -154,7 +162,7 @@ export const products: Product[] = [
     category: "trading",
     emoji: "📦",
     features: ["Multi-timeframe", "Auto box detection", "Alert system", "Backtesting data", "TradingView compatible"],
-    image: "/images/products/dashboard-performance.jpg",
+    image: "/images/products/dashboard-analytics.jpg",
   },
   {
     id: "elliott-wave-agent",
@@ -165,7 +173,7 @@ export const products: Product[] = [
     badge: "PREMIUM",
     emoji: "🌊",
     features: ["AI wave detection", "Auto entry/exit", "Risk management", "Multi-asset", "Telegram alerts", "Backtested strategy"],
-    image: "/images/products/dashboard-farms.jpg",
+    image: "/images/products/dashboard-agents.jpg",
   },
   {
     id: "multi-strat-bundle",
@@ -176,7 +184,13 @@ export const products: Product[] = [
     badge: "BEST VALUE",
     emoji: "🏭",
     features: ["6 strategies included", "Farm orchestration", "Position management", "Margin-aware", "Telegram alerts", "Full source code"],
-    image: "/images/products/dashboard-flash-loans.jpg",
+    image: "/images/products/dashboard-trades.jpg",
+    images: [
+      "/images/products/dashboard-trades.jpg",
+      "/images/products/dashboard-farms.jpg",
+      "/images/products/dashboard-performance.jpg",
+      "/images/products/dashboard-correlation.jpg",
+    ],
   },
 
   // === PROMPTS ===
@@ -189,6 +203,7 @@ export const products: Product[] = [
     badge: "500+ PROMPTS",
     emoji: "✍️",
     features: ["TikTok scripts", "YouTube thumbnails", "Instagram captions", "Blog frameworks", "Viral hooks", "Niche-specific"],
+    image: "/images/products/content-creator-prompts.jpg",
   },
   {
     id: "trading-analysis-prompts",
@@ -198,6 +213,7 @@ export const products: Product[] = [
     category: "prompts",
     emoji: "🔍",
     features: ["Market analysis", "Signal generation", "Risk assessment", "Portfolio review", "Multi-model compatible"],
+    image: "/images/products/trading-analysis-prompts.jpg",
   },
   {
     id: "ai-art-prompts",
@@ -207,6 +223,7 @@ export const products: Product[] = [
     category: "prompts",
     emoji: "🎨",
     features: ["300+ art prompts", "Multiple AI platforms", "Style categories", "Negative prompts", "Commercial license"],
+    image: "/images/products/ai-art-prompts.jpg",
   },
 
   // === WALLPAPERS ===
@@ -218,6 +235,7 @@ export const products: Product[] = [
     category: "wallpapers",
     emoji: "🌆",
     features: ["20 wallpapers", "4K + 8K", "Desktop + mobile", "Cyberpunk aesthetic", "Commercial license"],
+    image: "/images/products/cyber-wave-pack.jpg",
   },
   {
     id: "abstract-flow-pack",
@@ -227,6 +245,7 @@ export const products: Product[] = [
     category: "wallpapers",
     emoji: "🌀",
     features: ["15 wallpapers", "4K resolution", "Desktop + mobile", "Abstract art", "Dark palette"],
+    image: "/images/products/abstract-flow-pack.jpg",
   },
 
   // === NFTs ===
@@ -239,6 +258,7 @@ export const products: Product[] = [
     badge: "COMING SOON",
     emoji: "🎭",
     features: ["9,400 unique pieces", "Ethereum mainnet", "Trait rarity", "Community access", "Holder benefits"],
+    image: "/images/products/400-club.jpg",
   },
 
   // === ANIMATIONS ===
@@ -251,6 +271,7 @@ export const products: Product[] = [
     badge: "COMING SOON",
     emoji: "🏗️",
     features: ["10 animations", "1080p quality", "Loopable", "Transparent BG option", "Commercial license"],
+    image: "/images/products/clay-verse-pack.jpg",
   },
   {
     id: "3d-render-pack",
@@ -261,6 +282,7 @@ export const products: Product[] = [
     badge: "COMING SOON",
     emoji: "🎥",
     features: ["20 renders", "Isometric style", "4K output", "Loop-ready", "Ad-optimized"],
+    image: "/images/products/3d-render-pack.jpg",
   },
 ];
 
