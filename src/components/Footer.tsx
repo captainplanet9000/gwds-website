@@ -10,6 +10,7 @@ export default function Footer() {
     { href: '/store', label: 'Store' },
     { href: '/about', label: 'About' },
     { href: '/contact', label: 'Contact' },
+    { href: '/docs/setup', label: 'Setup Guide' },
   ];
 
   const socialLinks = [
@@ -23,12 +24,12 @@ export default function Footer() {
       style={{
         borderTop: '1px solid rgba(232, 232, 232, 0.1)',
         background: '#000',
-        padding: '6vh 5vw 4vh',
+        padding: '48px 40px 32px',
       }}
     >
       <div
         style={{
-          maxWidth: '1600px',
+          maxWidth: '1200px',
           margin: '0 auto',
         }}
       >
@@ -37,8 +38,8 @@ export default function Footer() {
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '5vw',
-            marginBottom: '5vh',
+            gap: '48px',
+            marginBottom: '40px',
           }}
           className="footer-grid"
         >
@@ -48,7 +49,7 @@ export default function Footer() {
               <span
                 style={{
                   fontFamily: 'Syne, sans-serif',
-                  fontSize: '1.5vw',
+                  fontSize: '1.25rem',
                   fontWeight: 700,
                   color: '#E8E8E8',
                   letterSpacing: '-0.02em',
@@ -60,9 +61,9 @@ export default function Footer() {
             <p
               style={{
                 fontFamily: 'DM Sans, sans-serif',
-                fontSize: '0.9vw',
+                fontSize: '0.85rem',
                 color: '#A8A8A8',
-                marginTop: '1vw',
+                marginTop: '12px',
                 lineHeight: 1.6,
               }}
             >
@@ -77,22 +78,22 @@ export default function Footer() {
             <h4
               style={{
                 fontFamily: 'Syne, sans-serif',
-                fontSize: '1vw',
+                fontSize: '0.875rem',
                 fontWeight: 600,
                 color: '#E8E8E8',
-                marginBottom: '1.5vw',
+                marginBottom: '16px',
               }}
             >
               Navigation
             </h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8vw' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {footerLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
                   style={{
                     fontFamily: 'DM Sans, sans-serif',
-                    fontSize: '0.9vw',
+                    fontSize: '0.85rem',
                     color: '#A8A8A8',
                     textDecoration: 'none',
                     transition: 'color 0.2s ease',
@@ -115,15 +116,15 @@ export default function Footer() {
             <h4
               style={{
                 fontFamily: 'Syne, sans-serif',
-                fontSize: '1vw',
+                fontSize: '0.875rem',
                 fontWeight: 600,
                 color: '#E8E8E8',
-                marginBottom: '1.5vw',
+                marginBottom: '16px',
               }}
             >
               Connect
             </h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8vw' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {socialLinks.map((link) => (
                 <a
                   key={link.href}
@@ -132,7 +133,7 @@ export default function Footer() {
                   rel="noopener noreferrer"
                   style={{
                     fontFamily: 'DM Sans, sans-serif',
-                    fontSize: '0.9vw',
+                    fontSize: '0.85rem',
                     color: '#A8A8A8',
                     textDecoration: 'none',
                     transition: 'color 0.2s ease',
@@ -154,7 +155,7 @@ export default function Footer() {
         {/* Bottom Row */}
         <div
           style={{
-            paddingTop: '3vh',
+            paddingTop: '24px',
             borderTop: '1px solid rgba(232, 232, 232, 0.05)',
             display: 'flex',
             justifyContent: 'space-between',
@@ -165,14 +166,14 @@ export default function Footer() {
           <p
             style={{
               fontFamily: 'DM Sans, sans-serif',
-              fontSize: '0.8vw',
+              fontSize: '0.8rem',
               color: '#666',
             }}
           >
             © {currentYear} Gamma Waves Design Studio. All rights reserved.
           </p>
 
-          <div style={{ display: 'flex', gap: '2vw' }}>
+          <div style={{ display: 'flex', gap: '24px' }}>
             {[
               { label: 'Privacy', href: '/privacy' },
               { label: 'Terms', href: '/terms' },
@@ -183,7 +184,7 @@ export default function Footer() {
                 href={href}
                 style={{
                   fontFamily: 'DM Sans, sans-serif',
-                  fontSize: '0.8vw',
+                  fontSize: '0.8rem',
                   color: '#666',
                   textDecoration: 'none',
                 }}

@@ -372,6 +372,82 @@ export default function ProductDetailClient({ product, related, category }: { pr
           </section>
         )}
 
+        {/* How to Set Up — only for templates & trading products */}
+        {(product.category === 'templates' || product.category === 'trading') && product.price > 0 && (
+          <section style={{ padding: '0 5vw 6vw', maxWidth: 800, margin: '0 auto' }}>
+            <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '4vw' }}>
+              <h2 style={{
+                fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 700,
+                color: '#E8E8E8', marginBottom: 12, letterSpacing: '-0.02em',
+              }}>
+                How to Set Up
+              </h2>
+              <p style={{ fontSize: '0.85rem', color: '#777', fontFamily: 'var(--font-body)', marginBottom: 28, lineHeight: 1.6 }}>
+                Get up and running in under 10 minutes. Full documentation included in the download.
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                {[
+                  { step: '1', title: 'Download & extract', desc: 'After purchase, download the zip file and extract it to a folder on your machine.' },
+                  { step: '2', title: 'Install dependencies', desc: 'Open a terminal in the project folder and run npm install. Everything resolves automatically.' },
+                  { step: '3', title: 'Add your API keys', desc: 'Copy .env.example to .env.local and fill in your keys. Each variable is documented inline.' },
+                  { step: '4', title: 'Set up the database', desc: 'Create a free Supabase project and run the included SQL migration in the SQL Editor.' },
+                  { step: '5', title: 'Launch', desc: 'Run npm run dev and open localhost:3000. A setup wizard walks you through final configuration.' },
+                ].map((item) => (
+                  <div key={item.step} style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+                    <span style={{
+                      minWidth: 32, height: 32, borderRadius: '50%',
+                      background: accent, color: '#fff',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: '0.78rem', fontWeight: 700, fontFamily: 'var(--font-mono, monospace)',
+                      flexShrink: 0,
+                    }}>
+                      {item.step}
+                    </span>
+                    <div>
+                      <p style={{ fontSize: '0.9rem', fontWeight: 600, color: '#E8E8E8', fontFamily: 'var(--font-display)', marginBottom: 4 }}>
+                        {item.title}
+                      </p>
+                      <p style={{ fontSize: '0.82rem', color: '#777', fontFamily: 'var(--font-body)', lineHeight: 1.6 }}>
+                        {item.desc}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div style={{
+                marginTop: 28, padding: '16px 20px', borderRadius: 8,
+                background: `${accent}08`, border: `1px solid ${accent}20`,
+              }}>
+                <p style={{ fontSize: '0.78rem', color: '#999', fontFamily: 'var(--font-body)', lineHeight: 1.6 }}>
+                  <strong style={{ color: '#E8E8E8' }}>What you need:</strong> Node.js 18+, a free{' '}
+                  <a href="https://supabase.com" target="_blank" rel="noopener" style={{ color: accent, textDecoration: 'none' }}>Supabase</a> account, and API keys for your exchange and AI provider. Detailed setup guide included in{' '}
+                  <code style={{ color: accent, fontSize: '0.72rem' }}>docs/SETUP.md</code>.
+                </p>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* What's inside — for prompts, wallpapers, animations */}
+        {(product.category === 'prompts' || product.category === 'wallpapers' || product.category === 'animations') && product.price > 0 && (
+          <section style={{ padding: '0 5vw 6vw', maxWidth: 800, margin: '0 auto' }}>
+            <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '4vw' }}>
+              <h2 style={{
+                fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 700,
+                color: '#E8E8E8', marginBottom: 12, letterSpacing: '-0.02em',
+              }}>
+                After Purchase
+              </h2>
+              <p style={{ fontSize: '0.85rem', color: '#777', fontFamily: 'var(--font-body)', lineHeight: 1.6 }}>
+                Download the zip file instantly after payment. Extract it and you&apos;re ready to go — all files are organized and labeled. 
+                {product.category === 'prompts' && ' Copy and paste prompts directly into ChatGPT, Claude, Midjourney, or any AI tool.'}
+                {product.category === 'wallpapers' && ' High-resolution images ready for desktop, mobile, or print.'}
+                {product.category === 'animations' && ' Includes source files, style references, and production-ready assets.'}
+              </p>
+            </div>
+          </section>
+        )}
+
         {/* Related products */}
         {related.length > 0 && (
           <section style={{ padding: '0 5vw 8vw', maxWidth: 1200, margin: '0 auto' }}>

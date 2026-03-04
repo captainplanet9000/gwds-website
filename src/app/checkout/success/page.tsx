@@ -118,6 +118,53 @@ function SuccessContent() {
           </button>
         </Link>
       </motion.div>
+
+      {/* Next Steps */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.8 }}
+        style={{
+          marginTop: 48, padding: 32, borderRadius: 12,
+          background: '#0a0a0a', border: '1px solid #1a1a1a',
+          textAlign: 'left',
+        }}
+      >
+        <h2 style={{
+          fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 700,
+          color: '#E8E8E8', marginBottom: 20,
+        }}>
+          What to do next
+        </h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          {[
+            { num: '1', text: 'Click "Download Files" above to get your zip file' },
+            { num: '2', text: 'Extract it to a folder on your computer' },
+            { num: '3', text: 'Open the README.md for setup instructions' },
+            { num: '4', text: 'For templates: run npm install, configure .env.local, then npm run dev' },
+          ].map((item) => (
+            <div key={item.num} style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+              <span style={{
+                minWidth: 24, height: 24, borderRadius: '50%',
+                background: '#8B5CF6', color: '#fff',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '0.7rem', fontWeight: 700,
+              }}>
+                {item.num}
+              </span>
+              <span style={{ fontSize: '0.82rem', color: '#999', fontFamily: 'var(--font-body)' }}>
+                {item.text}
+              </span>
+            </div>
+          ))}
+        </div>
+        <p style={{
+          marginTop: 16, fontSize: '0.75rem', color: '#555',
+          fontFamily: 'var(--font-body)', lineHeight: 1.5,
+        }}>
+          Need help? Email <a href="mailto:support@gwds.studio" style={{ color: '#8B5CF6', textDecoration: 'none' }}>support@gwds.studio</a>
+        </p>
+      </motion.div>
     </div>
   );
 }
