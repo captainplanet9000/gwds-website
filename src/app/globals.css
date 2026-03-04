@@ -105,13 +105,80 @@ p {
 }
 
 @media (max-width: 768px) {
-  h1 { font-size: 14vw; }
-  h2 { font-size: 10vw; }
-  h3 { font-size: 7vw; }
-  h4 { font-size: 5vw; }
-  h5 { font-size: 4vw; }
-  h6 { font-size: 3.5vw; }
-  p { font-size: 4vw; }
+  h1 { font-size: 2.2rem; }
+  h2 { font-size: 1.6rem; }
+  h3 { font-size: 1.3rem; }
+  h4 { font-size: 1.1rem; }
+  h5 { font-size: 1rem; }
+  h6 { font-size: 0.9rem; }
+  p { font-size: 0.95rem; }
+}
+
+/* ==========================================
+   MOBILE RESPONSIVE OVERRIDES
+   ========================================== */
+
+@media (max-width: 768px) {
+  .container,
+  .container-narrow {
+    padding: 0 20px;
+  }
+
+  .section {
+    min-height: auto;
+    padding: 48px 0;
+  }
+
+  .section-half {
+    min-height: auto;
+    padding: 32px 0;
+  }
+
+  /* Product detail hero grid → stack on mobile */
+  .product-hero-grid {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+    padding: 0 20px 32px !important;
+  }
+
+  /* Fix sticky sidebar on mobile */
+  .product-hero-grid > div:last-child {
+    position: static !important;
+  }
+
+  /* All section padding on mobile */
+  section {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  /* Checkout grid → stack */
+  .checkout-grid {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+
+  /* Order summary unstick on mobile */
+  .checkout-grid > div:last-child {
+    position: static !important;
+  }
+
+  /* Cart drawer full width on mobile */
+  .cart-drawer {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Store filter pills scroll horizontally */
+  .filter-pills {
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .filter-pills::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* ==========================================

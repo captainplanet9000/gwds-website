@@ -133,7 +133,7 @@ export default function Navbar() {
             background: 'transparent',
             border: 'none',
             color: '#E8E8E8',
-            fontSize: '6vw',
+            fontSize: '1.5rem',
             cursor: 'pointer',
             padding: 0,
           }}
@@ -153,7 +153,7 @@ export default function Navbar() {
             right: 0,
             background: '#000',
             borderBottom: '1px solid rgba(232, 232, 232, 0.1)',
-            padding: '5vw',
+            padding: '20px',
           }}
           className="mobile-menu"
         >
@@ -165,11 +165,11 @@ export default function Navbar() {
               style={{
                 display: 'block',
                 fontFamily: 'DM Sans, sans-serif',
-                fontSize: '5vw',
+                fontSize: '1.1rem',
                 fontWeight: 500,
                 color: '#A8A8A8',
                 textDecoration: 'none',
-                padding: '3vw 0',
+                padding: '12px 0',
                 borderBottom: '1px solid rgba(232, 232, 232, 0.05)',
               }}
             >
@@ -182,16 +182,17 @@ export default function Navbar() {
               setIsMobileMenuOpen(false);
             }}
             style={{
-              marginTop: '5vw',
+              marginTop: '16px',
               width: '100%',
               background: 'transparent',
               border: '1px solid rgba(232, 232, 232, 0.2)',
               color: '#E8E8E8',
-              padding: '4vw',
+              padding: '14px',
               fontFamily: 'DM Sans, sans-serif',
-              fontSize: '4vw',
+              fontSize: '1rem',
               fontWeight: 500,
               cursor: 'pointer',
+              borderRadius: '4px',
             }}
           >
             Cart ({totalItems})

@@ -74,7 +74,7 @@ export default function CheckoutPage() {
     <>
       <Navbar />
       <main style={{ background: '#000', minHeight: '100vh', paddingTop: 120 }}>
-        <div style={{ maxWidth: 900, margin: '0 auto', padding: '0 5vw 8vw' }}>
+        <div style={{ maxWidth: 900, margin: '0 auto', padding: '0 24px 64px' }}>
           <h1 style={{
             fontFamily: 'var(--font-display)',
             fontSize: 'clamp(2rem, 4vw, 3rem)',
@@ -94,7 +94,7 @@ export default function CheckoutPage() {
               </Link>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 48, alignItems: 'start' }}>
+            <div className="checkout-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 48, alignItems: 'start' }}>
               {/* Left — form */}
               <div>
                 <h2 style={{

@@ -51,7 +51,7 @@ export default function ProductDetailClient({ product, related, category }: { pr
       <Navbar />
       <main style={{ background: '#000', minHeight: '100vh', paddingTop: 100 }}>
         {/* Breadcrumb */}
-        <div style={{ padding: '0 5vw', maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{ padding: '0 40px', maxWidth: 1200, margin: '0 auto' }}>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -68,11 +68,11 @@ export default function ProductDetailClient({ product, related, category }: { pr
         </div>
 
         {/* Hero section — split layout */}
-        <section style={{
+        <section className="product-hero-grid" style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
-          gap: '4vw',
-          padding: '0 5vw 6vw',
+          gap: '40px',
+          padding: '0 40px 48px',
           maxWidth: 1200,
           margin: '0 auto',
           alignItems: 'start',
@@ -298,8 +298,8 @@ export default function ProductDetailClient({ product, related, category }: { pr
         </section>
 
         {/* Features section */}
-        <section style={{ padding: '0 5vw 6vw', maxWidth: 1200, margin: '0 auto' }}>
-          <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '4vw' }}>
+        <section style={{ padding: '0 40px 48px', maxWidth: 1200, margin: '0 auto' }}>
+          <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '40px' }}>
             <h2 style={{
               fontFamily: 'var(--font-display)',
               fontSize: '1.5rem',
@@ -338,8 +338,8 @@ export default function ProductDetailClient({ product, related, category }: { pr
 
         {/* Long description */}
         {product.longDescription && (
-          <section style={{ padding: '0 5vw 6vw', maxWidth: 800, margin: '0 auto' }}>
-            <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '4vw' }}>
+          <section style={{ padding: '0 40px 48px', maxWidth: 800, margin: '0 auto' }}>
+            <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '40px' }}>
               <h2 style={{
                 fontFamily: 'var(--font-display)',
                 fontSize: '1.5rem',
@@ -374,8 +374,8 @@ export default function ProductDetailClient({ product, related, category }: { pr
 
         {/* How to Set Up — only for templates & trading products */}
         {(product.category === 'templates' || product.category === 'trading') && product.price > 0 && (
-          <section style={{ padding: '0 5vw 6vw', maxWidth: 800, margin: '0 auto' }}>
-            <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '4vw' }}>
+          <section style={{ padding: '0 40px 48px', maxWidth: 800, margin: '0 auto' }}>
+            <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '40px' }}>
               <h2 style={{
                 fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 700,
                 color: '#E8E8E8', marginBottom: 12, letterSpacing: '-0.02em',
@@ -430,8 +430,8 @@ export default function ProductDetailClient({ product, related, category }: { pr
 
         {/* What's inside — for prompts, wallpapers, animations */}
         {(product.category === 'prompts' || product.category === 'wallpapers' || product.category === 'animations') && product.price > 0 && (
-          <section style={{ padding: '0 5vw 6vw', maxWidth: 800, margin: '0 auto' }}>
-            <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '4vw' }}>
+          <section style={{ padding: '0 40px 48px', maxWidth: 800, margin: '0 auto' }}>
+            <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '40px' }}>
               <h2 style={{
                 fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 700,
                 color: '#E8E8E8', marginBottom: 12, letterSpacing: '-0.02em',
@@ -450,8 +450,8 @@ export default function ProductDetailClient({ product, related, category }: { pr
 
         {/* Related products */}
         {related.length > 0 && (
-          <section style={{ padding: '0 5vw 8vw', maxWidth: 1200, margin: '0 auto' }}>
-            <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '4vw' }}>
+          <section style={{ padding: '0 40px 64px', maxWidth: 1200, margin: '0 auto' }}>
+            <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '40px' }}>
               <h2 style={{
                 fontFamily: 'var(--font-display)',
                 fontSize: '1.2rem',

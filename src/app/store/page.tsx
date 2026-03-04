@@ -68,7 +68,7 @@ export default function StorePage() {
       <Navbar />
       <main style={{ background: '#000', minHeight: '100vh', paddingTop: 120 }}>
         {/* Header */}
-        <section style={{ padding: '0 5vw 4vw', maxWidth: 1400, margin: '0 auto' }}>
+        <section style={{ padding: '0 24px 32px', maxWidth: 1400, margin: '0 auto' }}>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -140,7 +140,7 @@ export default function StorePage() {
           </div>
 
           {/* Category tabs */}
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', borderBottom: '1px solid #1a1a1a', paddingBottom: 16 }}>
+          <div className="filter-pills" style={{ display: 'flex', gap: 8, flexWrap: 'wrap', borderBottom: '1px solid #1a1a1a', paddingBottom: 16 }}>
             <button
               onClick={() => setActiveCategory('all')}
               style={{
@@ -187,7 +187,7 @@ export default function StorePage() {
         </section>
 
         {/* Product Grid — gallery style */}
-        <section style={{ padding: '0 5vw 8vw', maxWidth: 1400, margin: '0 auto' }}>
+        <section style={{ padding: '0 24px 64px', maxWidth: 1400, margin: '0 auto' }}>
           {sorted.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '80px 0', color: '#555' }}>
               <p style={{ fontSize: '1.2rem', marginBottom: 8 }}>No products found</p>

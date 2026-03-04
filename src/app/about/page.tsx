@@ -88,7 +88,7 @@ export default function AboutPage() {
             sectionRefs.current[0] = el;
           }}
           style={{
-            padding: '10vh 5vw 15vh',
+            padding: '80px 24px 120px',
             textAlign: 'center',
           }}
         >
@@ -128,7 +128,7 @@ export default function AboutPage() {
             sectionRefs.current[1] = el;
           }}
           style={{
-            padding: '10vh 5vw',
+            padding: '80px 24px',
             borderTop: '1px solid rgba(232, 232, 232, 0.1)',
           }}
         >
@@ -137,7 +137,7 @@ export default function AboutPage() {
               style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(2, 1fr)',
-                gap: '4vw',
+                gap: '32px',
               }}
               className="values-grid"
             >
@@ -177,7 +177,7 @@ export default function AboutPage() {
             sectionRefs.current[2] = el;
           }}
           style={{
-            padding: '10vh 5vw',
+            padding: '80px 24px',
             borderTop: '1px solid rgba(232, 232, 232, 0.1)',
           }}
         >

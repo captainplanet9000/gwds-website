@@ -32,7 +32,7 @@ function FeaturedSection() {
   const colors = ['#8B5CF6', '#10B981', '#F59E0B'];
 
   return (
-    <section style={{ padding: '80px 5vw', maxWidth: 1400, margin: '0 auto' }}>
+    <section style={{ padding: '80px 24px', maxWidth: 1400, margin: '0 auto' }}>
       <div style={{ marginBottom: 48 }}>
         <p style={{ fontSize: '0.7rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#555', marginBottom: 12, fontFamily: 'var(--font-body)' }}>
           Flagship Products
@@ -50,7 +50,7 @@ function FeaturedSection() {
         </h2>
       </div>
 
-      <div ref={sectionRef} style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
+      <div ref={sectionRef} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 24 }}>
         {featured.map((product, i) => (
           <Link key={product.id} href={`/store/${product.id}`} style={{ textDecoration: 'none' }} className="featured-card">
             <div style={{
@@ -140,13 +140,13 @@ function StatsSection() {
 
   return (
     <section style={{
-      padding: '60px 5vw',
+      padding: '60px 24px',
       maxWidth: 1400,
       margin: '0 auto',
       borderTop: '1px solid #111',
       borderBottom: '1px solid #111',
     }}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 32 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 32 }}>
         {stats.map(s => (
           <motion.div
             key={s.label}
@@ -181,7 +181,7 @@ function StatsSection() {
 
 function CategoriesSection() {
   return (
-    <section style={{ padding: '80px 5vw', maxWidth: 1400, margin: '0 auto' }}>
+    <section style={{ padding: '80px 24px', maxWidth: 1400, margin: '0 auto' }}>
       <div style={{ marginBottom: 48 }}>
         <p style={{ fontSize: '0.7rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#555', marginBottom: 12, fontFamily: 'var(--font-body)' }}>
           Browse by Category
@@ -196,7 +196,7 @@ function CategoriesSection() {
         </h2>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
         {categories.map(cat => {
           const count = products.filter(p => p.category === cat.id).length;
           return (
@@ -244,7 +244,7 @@ function CategoriesSection() {
 function CTASection() {
   return (
     <section style={{
-      padding: '80px 5vw 100px',
+      padding: '80px 24px 100px',
       maxWidth: 900,
       margin: '0 auto',
       textAlign: 'center',

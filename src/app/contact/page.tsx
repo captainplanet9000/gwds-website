@@ -48,7 +48,7 @@ export default function ContactPage() {
           paddingBottom: '10vh',
         }}
       >
-        <div style={{ maxWidth: '800px', margin: '0 auto', padding: '0 5vw' }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto', padding: '0 24px' }}>
           {/* Header */}
           <div style={{ textAlign: 'center', marginBottom: '8vh' }}>
             <h1
@@ -57,7 +57,7 @@ export default function ContactPage() {
                 fontSize: '8vw',
                 fontWeight: 800,
                 color: '#E8E8E8',
-                marginBottom: '2vw',
+                marginBottom: '16px',
               }}
             >
               Get in Touch
@@ -65,7 +65,7 @@ export default function ContactPage() {
             <p
               style={{
                 fontFamily: 'DM Sans, sans-serif',
-                fontSize: '1.3vw',
+                fontSize: '1rem',
                 color: '#A8A8A8',
                 maxWidth: '500px',
                 margin: '0 auto',
@@ -83,15 +83,15 @@ export default function ContactPage() {
             style={{
               border: '1px solid rgba(232, 232, 232, 0.1)',
               background: '#050505',
-              padding: '4vw',
+              padding: '32px',
             }}
           >
             <div
               style={{
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr',
-                gap: '2vw',
-                marginBottom: '2vw',
+                gap: '16px',
+                marginBottom: '16px',
               }}
               className="form-row"
             >
@@ -100,10 +100,10 @@ export default function ContactPage() {
                   style={{
                     display: 'block',
                     fontFamily: 'DM Sans, sans-serif',
-                    fontSize: '0.9vw',
+                    fontSize: '0.85rem',
                     fontWeight: 500,
                     color: '#A8A8A8',
-                    marginBottom: '0.8vw',
+                    marginBottom: '8px',
                   }}
                 >
                   Name
@@ -116,9 +116,9 @@ export default function ContactPage() {
                   disabled={status === 'loading' || status === 'success'}
                   style={{
                     width: '100%',
-                    padding: '1vw',
+                    padding: '12px',
                     fontFamily: 'DM Sans, sans-serif',
-                    fontSize: '1vw',
+                    fontSize: '0.9rem',
                     background: '#000',
                     border: '1px solid rgba(232, 232, 232, 0.2)',
                     color: '#E8E8E8',
@@ -139,10 +139,10 @@ export default function ContactPage() {
                   style={{
                     display: 'block',
                     fontFamily: 'DM Sans, sans-serif',
-                    fontSize: '0.9vw',
+                    fontSize: '0.85rem',
                     fontWeight: 500,
                     color: '#A8A8A8',
-                    marginBottom: '0.8vw',
+                    marginBottom: '8px',
                   }}
                 >
                   Email
@@ -155,9 +155,9 @@ export default function ContactPage() {
                   disabled={status === 'loading' || status === 'success'}
                   style={{
                     width: '100%',
-                    padding: '1vw',
+                    padding: '12px',
                     fontFamily: 'DM Sans, sans-serif',
-                    fontSize: '1vw',
+                    fontSize: '0.9rem',
                     background: '#000',
                     border: '1px solid rgba(232, 232, 232, 0.2)',
                     color: '#E8E8E8',
@@ -174,15 +174,15 @@ export default function ContactPage() {
               </div>
             </div>
 
-            <div style={{ marginBottom: '2vw' }}>
+            <div style={{ marginBottom: '16px' }}>
               <label
                 style={{
                   display: 'block',
                   fontFamily: 'DM Sans, sans-serif',
-                  fontSize: '0.9vw',
+                  fontSize: '0.85rem',
                   fontWeight: 500,
                   color: '#A8A8A8',
-                  marginBottom: '0.8vw',
+                  marginBottom: '8px',
                 }}
               >
                 Subject
@@ -193,9 +193,9 @@ export default function ContactPage() {
                 disabled={status === 'loading' || status === 'success'}
                 style={{
                   width: '100%',
-                  padding: '1vw',
+                  padding: '12px',
                   fontFamily: 'DM Sans, sans-serif',
-                  fontSize: '1vw',
+                  fontSize: '0.9rem',
                   background: '#000',
                   border: '1px solid rgba(232, 232, 232, 0.2)',
                   color: '#E8E8E8',
@@ -211,15 +211,15 @@ export default function ContactPage() {
               </select>
             </div>
 
-            <div style={{ marginBottom: '2vw' }}>
+            <div style={{ marginBottom: '16px' }}>
               <label
                 style={{
                   display: 'block',
                   fontFamily: 'DM Sans, sans-serif',
-                  fontSize: '0.9vw',
+                  fontSize: '0.85rem',
                   fontWeight: 500,
                   color: '#A8A8A8',
-                  marginBottom: '0.8vw',
+                  marginBottom: '8px',
                 }}
               >
                 Message
@@ -232,9 +232,9 @@ export default function ContactPage() {
                 rows={6}
                 style={{
                   width: '100%',
-                  padding: '1vw',
+                  padding: '12px',
                   fontFamily: 'DM Sans, sans-serif',
-                  fontSize: '1vw',
+                  fontSize: '0.9rem',
                   background: '#000',
                   border: '1px solid rgba(232, 232, 232, 0.2)',
                   color: '#E8E8E8',
@@ -257,9 +257,9 @@ export default function ContactPage() {
               disabled={status === 'loading' || status === 'success'}
               style={{
                 width: '100%',
-                padding: '1.2vw',
+                padding: '14px',
                 fontFamily: 'Syne, sans-serif',
-                fontSize: '1vw',
+                fontSize: '0.9rem',
                 fontWeight: 600,
                 background: 'oklch(0.65 0.29 295)',
                 color: '#000',
@@ -290,7 +290,7 @@ export default function ContactPage() {
               <p
                 style={{
                   fontFamily: 'DM Sans, sans-serif',
-                  fontSize: '0.9vw',
+                  fontSize: '0.85rem',
                   color: 'oklch(0.65 0.29 295)',
                   marginTop: '1.5vw',
                   textAlign: 'center',
@@ -306,7 +306,7 @@ export default function ContactPage() {
             <p
               style={{
                 fontFamily: 'DM Sans, sans-serif',
-                fontSize: '0.9vw',
+                fontSize: '0.85rem',
                 color: '#A8A8A8',
                 marginBottom: '1vh',
               }}
@@ -317,7 +317,7 @@ export default function ContactPage() {
               href="mailto:gammawavesdesign@gmail.com"
               style={{
                 fontFamily: 'Syne, sans-serif',
-                fontSize: '1.1vw',
+                fontSize: '0.95rem',
                 fontWeight: 600,
                 color: 'oklch(0.65 0.29 295)',
                 textDecoration: 'none',
