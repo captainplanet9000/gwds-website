@@ -27,12 +27,8 @@ function cartReducer(state: CartState, action: CartAction): CartState {
     case "ADD_ITEM": {
       const existing = state.items.find((i) => i.product.id === action.product.id);
       if (existing) {
-        return {
-          ...state,
-          items: state.items.map((i) =>
-            i.product.id === action.product.id ? { ...i, quantity: i.quantity + 1 } : i
-          ),
-        };
+        // Digital products — no duplicate quantity
+        return state;
       }
       return { ...state, items: [...state.items, { product: action.product, quantity: 1 }] };
     }

@@ -29,6 +29,7 @@ export async function POST(req: NextRequest) {
         quantity: item.quantity || 1,
         price: product?.price || 0,
         emoji: product?.emoji || '',
+        stripePriceId: product?.stripePriceId || null,
       };
     });
 
@@ -44,17 +45,24 @@ export async function POST(req: NextRequest) {
     if (stripeClient && total > 0) {
       const lineItems = orderItems
         .filter((i: any) => i.price > 0)
-        .map((i: any) => ({
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: `${i.emoji} ${i.productName}`,
-              description: `GWDS Digital Product`,
+        .map((i: any) => {
+          // Use Stripe price ID if available (pre-created in Stripe dashboard)
+          if (i.stripePriceId) {
+            return { price: i.stripePriceId, quantity: i.quantity };
+          }
+          // Fallback: create price on the fly
+          return {
+            price_data: {
+              currency: 'usd',
+              product_data: {
+                name: `${i.emoji} ${i.productName}`,
+                description: `GWDS Digital Product`,
+              },
+              unit_amount: Math.round(i.price * 100),
             },
-            unit_amount: Math.round(i.price * 100),
-          },
-          quantity: i.quantity,
-        }));
+            quantity: i.quantity,
+          };
+        });
 
       const session = await stripeClient.checkout.sessions.create({
         mode: 'payment',
@@ -129,6 +137,7 @@ async function saveOrder(order: any) {
         order_id: orderRow.id,
         product_id: item.productId,
         quantity: item.quantity || 1,
+        price_cents: Math.round((item.price || 0) * 100),
       }));
       await sb.from('order_items').insert(items).catch((e: any) => 
         console.error('Order items insert error:', e.message)

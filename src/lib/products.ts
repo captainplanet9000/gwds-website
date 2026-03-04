@@ -15,6 +15,7 @@ export interface Product {
   images?: string[];
   downloadUrl?: string;
   demoUrl?: string;
+  stripePriceId?: string;
   isFeatured?: boolean;
 }
 
@@ -31,6 +32,7 @@ export const products: Product[] = [
   // === FLAGSHIP TEMPLATES ===
   {
     id: "trading-dashboard-template",
+    stripePriceId: "price_1T7AnhLLyk0oaesNcsOUw8UU",
     name: "AI Trading Dashboard",
     description: "Full-featured AI trading dashboard with autonomous agents, goal-based execution, multi-exchange support, and real-time analytics. Built with Next.js 15, TypeScript, and Supabase.",
     longDescription: `The same dashboard powering Cival Systems — packaged as a template you can deploy in minutes.
@@ -70,9 +72,12 @@ export const products: Product[] = [
       "/images/products/dashboard-farms.jpg",
       "/images/products/dashboard-goals.jpg",
     ],
+    downloadUrl: "downloads/ai-trading-dashboard-v1.0.0.zip",
+    demoUrl: "https://github.com/gwds/ai-trading-dashboard",
   },
   {
     id: "meme-trading-template",
+    stripePriceId: "price_1T7AnhLLyk0oaesNWVz1hMTi",
     name: "Meme Trading System",
     description: "Automated meme coin trading with discovery, auto-execution, position monitoring, and risk management. The system that finds trending memes and trades them before the crowd.",
     longDescription: `Our battle-tested meme trading system — the same one running live on Hyperliquid.
@@ -103,10 +108,11 @@ export const products: Product[] = [
       "Full source code"
     ],
     techStack: ["Next.js 15", "TypeScript", "Hyperliquid SDK", "Supabase"],
-    image: "/images/products/meme-trading-template.jpg",
+        downloadUrl: "downloads/meme-trading-template-v1.0.0.zip",
   },
   {
     id: "second-brain-template",
+    stripePriceId: "price_1T7AniLLyk0oaesN0hgWMRRO",
     name: "Second Brain",
     description: "PARA-organized personal knowledge base with tasks, documents, search, AI chat, weekly digests, and a script library with TTS. Your productivity command center.",
     longDescription: `A complete second brain built on the PARA methodology — Projects, Areas, Resources, Archive.
@@ -140,9 +146,11 @@ export const products: Product[] = [
     ],
     techStack: ["Next.js 15", "TypeScript", "Supabase", "Inworld TTS"],
     image: "/images/products/second-brain-store.jpg",
+    downloadUrl: "downloads/second-brain-template-v1.0.0.zip",
   },
   {
     id: "ai-saas-starter",
+    stripePriceId: "price_1T7AniLLyk0oaesNEpAd01o0",
     name: "AI SaaS Starter Kit",
     description: "Production-ready SaaS template with auth, billing, AI API integration, and admin dashboard. Ship your AI product in days, not months.",
     longDescription: `Skip the boilerplate. Start with a production-ready SaaS foundation.
@@ -163,12 +171,13 @@ export const products: Product[] = [
     emoji: "🚀",
     features: ["Auth + billing", "AI API integration", "Admin dashboard", "Landing page", "Email templates", "Stripe payments"],
     techStack: ["Next.js 15", "TypeScript", "Supabase Auth", "Stripe"],
-    image: "/images/products/ai-saas-store.jpg",
+        downloadUrl: "downloads/ai-saas-starter-v1.0.0.zip",
   },
 
   // === TRADING TOOLS ===
   {
     id: "darvas-indicator",
+    stripePriceId: "price_1T7AnjLLyk0oaesNqcWp4O2U",
     name: "Darvas Box Indicator",
     description: "Classic Darvas Box breakout detection with modern enhancements. Auto-identifies consolidation zones and breakout signals across any timeframe.",
     longDescription: `The Darvas Box method — modernized with AI and automated execution.
@@ -187,9 +196,11 @@ export const products: Product[] = [
     emoji: "📦",
     features: ["Multi-timeframe", "Auto box detection", "Alert system", "Backtesting data", "TradingView compatible"],
     image: "/images/products/dashboard-analytics.jpg",
+    downloadUrl: "downloads/darvas-indicator-v1.0.0.zip",
   },
   {
     id: "elliott-wave-agent",
+    stripePriceId: "price_1T7AnjLLyk0oaesNmpnD45PO",
     name: "Elliott Wave Agent",
     description: "AI-powered Elliott Wave analysis. Identifies wave patterns, generates entry/exit signals, and manages risk automatically.",
     longDescription: `An autonomous trading agent that reads Elliott Wave patterns and executes trades.
@@ -211,9 +222,11 @@ export const products: Product[] = [
     emoji: "🌊",
     features: ["AI wave detection", "Auto entry/exit", "Risk management", "Multi-asset", "Telegram alerts", "Backtested strategy"],
     image: "/images/products/dashboard-agents.jpg",
+    downloadUrl: "downloads/elliott-wave-agent-v1.0.0.zip",
   },
   {
     id: "multi-strat-bundle",
+    stripePriceId: "price_1T7AnkLLyk0oaesNv8HuW24O",
     name: "Multi-Strategy Bundle",
     description: "Complete bundle of 6 trading strategies: Darvas, Williams, Elliott, Heikin Ashi, Renko, and Multi-Strat. Run them individually or as a farm.",
     longDescription: `Six battle-tested trading strategies in one bundle. Run them individually or orchestrate them as a farm.
@@ -239,6 +252,7 @@ export const products: Product[] = [
     emoji: "🏭",
     features: ["6 strategies included", "Farm orchestration", "Position management", "Margin-aware", "Telegram alerts", "Full source code"],
     image: "/images/products/dashboard-trades.jpg",
+    downloadUrl: "downloads/multi-strat-bundle-v1.0.0.zip",
     images: [
       "/images/products/dashboard-trades.jpg",
       "/images/products/dashboard-farms.jpg",
@@ -250,6 +264,7 @@ export const products: Product[] = [
   // === PROMPTS ===
   {
     id: "content-creator-prompts",
+    stripePriceId: "price_1T7AnkLLyk0oaesNyHeUB0FO",
     name: "Content Creator Mega Pack",
     description: "500+ prompts for TikTok scripts, YouTube thumbnails, Instagram captions, blog posts, and viral hooks. Organized by platform and niche.",
     price: 29,
@@ -258,9 +273,11 @@ export const products: Product[] = [
     emoji: "✍️",
     features: ["TikTok scripts", "YouTube thumbnails", "Instagram captions", "Blog frameworks", "Viral hooks", "Niche-specific"],
     image: "/images/products/content-creator-prompts.jpg",
+    downloadUrl: "downloads/content-creator-prompts-v1.0.0.zip",
   },
   {
     id: "trading-analysis-prompts",
+    stripePriceId: "price_1T7AnlLLyk0oaesNF7r5OOG9",
     name: "Trading Analysis Prompts",
     description: "200+ prompts for market analysis, signal generation, risk assessment, and portfolio review. Built for GPT-4, Claude, and Gemini.",
     price: 39,
@@ -268,9 +285,11 @@ export const products: Product[] = [
     emoji: "🔍",
     features: ["Market analysis", "Signal generation", "Risk assessment", "Portfolio review", "Multi-model compatible"],
     image: "/images/products/trading-analysis-prompts.jpg",
+    downloadUrl: "downloads/trading-analysis-prompts-v1.0.0.zip",
   },
   {
     id: "ai-art-prompts",
+    stripePriceId: "price_1T7AnlLLyk0oaesNO8J0tY3i",
     name: "AI Art Direction Pack",
     description: "300+ curated prompts for Midjourney, DALL-E, Flux, and Stable Diffusion. Claymation, cyberpunk, minimalist, abstract, and more.",
     price: 24,
@@ -278,11 +297,13 @@ export const products: Product[] = [
     emoji: "🎨",
     features: ["300+ art prompts", "Multiple AI platforms", "Style categories", "Negative prompts", "Commercial license"],
     image: "/images/products/ai-art-prompts.jpg",
+    downloadUrl: "downloads/ai-art-prompts-v1.0.0.zip",
   },
 
   // === WALLPAPERS ===
   {
     id: "cyber-wave-pack",
+    stripePriceId: "price_1T7AnmLLyk0oaesNju8f36zt",
     name: "Cyber Wave Collection",
     description: "20 ultra-high-res AI wallpapers. Cyberpunk meets synthwave — neon grids, chrome structures, digital horizons.",
     price: 12,
@@ -290,9 +311,11 @@ export const products: Product[] = [
     emoji: "🌆",
     features: ["20 wallpapers", "4K + 8K", "Desktop + mobile", "Cyberpunk aesthetic", "Commercial license"],
     image: "/images/products/cyber-wave-pack.jpg",
+    downloadUrl: "downloads/cyber-wave-pack-v1.0.0.zip",
   },
   {
     id: "abstract-flow-pack",
+    stripePriceId: "price_1T7AnmLLyk0oaesN2Nsd1Ati",
     name: "Abstract Flow Collection",
     description: "15 premium abstract wallpapers. Fluid gradients, geometric patterns, and organic forms in a dark palette.",
     price: 9,
@@ -300,6 +323,7 @@ export const products: Product[] = [
     emoji: "🌀",
     features: ["15 wallpapers", "4K resolution", "Desktop + mobile", "Abstract art", "Dark palette"],
     image: "/images/products/abstract-flow-pack.jpg",
+    downloadUrl: "downloads/abstract-flow-pack-v1.0.0.zip",
   },
 
   // === NFTs ===
@@ -318,6 +342,7 @@ export const products: Product[] = [
   // === ANIMATIONS ===
   {
     id: "clay-verse-pack",
+    stripePriceId: "price_1T7AnmLLyk0oaesNJeQr3uRq",
     name: "Clay Verse Animation Pack",
     description: "Complete claymation content toolkit — 10 detailed AI video prompts, 5 style reference cards, 3 TikTok scripts, and platform-specific settings for Runway, Kling, and ComfyUI.",
     longDescription: `Everything you need to create stunning claymation-style AI videos.
@@ -336,9 +361,11 @@ export const products: Product[] = [
     emoji: "🏗️",
     features: ["10 video prompts", "5 style guides", "3 TikTok scripts", "Runway + Kling + ComfyUI", "Commercial license"],
     image: "/images/products/clay-verse-pack.jpg",
+    downloadUrl: "downloads/clay-verse-pack-v1.0.0.zip",
   },
   {
     id: "3d-render-pack",
+    stripePriceId: "price_1T7AnnLLyk0oaesNtJf28hMp",
     name: "3D Product Renders Pack",
     description: "20 isometric 3D product render prompts, 5 Blender scene templates, 5 color palettes, and batch generation scripts. Create stunning product photography with AI.",
     longDescription: `Professional-grade AI product photography toolkit.
@@ -358,6 +385,7 @@ export const products: Product[] = [
     emoji: "🎥",
     features: ["20 render prompts", "5 Blender templates", "5 color palettes", "Batch scripts", "Multi-platform"],
     image: "/images/products/3d-render-pack.jpg",
+    downloadUrl: "downloads/3d-render-pack-v1.0.0.zip",
   },
 ];
 

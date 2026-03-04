@@ -250,7 +250,7 @@ export default function ProductDetailClient({ product, related, category }: { pr
             {product.price > 0 && (
               <Link href="/checkout" style={{ textDecoration: 'none' }}>
                 <button
-                  onClick={() => { dispatch({ type: 'ADD_ITEM', product }); }}
+                  onClick={() => { dispatch({ type: 'CLEAR_CART' }); dispatch({ type: 'ADD_ITEM', product }); }}
                   style={{
                     width: '100%',
                     padding: '16px 32px',

@@ -1,6 +1,6 @@
 'use client';
 import { useSearchParams } from 'next/navigation';
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import Navbar from '@/components/Navbar';
@@ -8,7 +8,24 @@ import Footer from '@/components/Footer';
 
 function SuccessContent() {
   const params = useSearchParams();
-  const orderId = params.get('orderId');
+  const sessionId = params.get('session_id');
+  const [orderId, setOrderId] = useState<string | null>(params.get('orderId'));
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Look up the real order ID from the Stripe session
+    if (sessionId && !orderId) {
+      fetch(`/api/orders/lookup?session_id=${sessionId}`)
+        .then(r => r.json())
+        .then(d => {
+          if (d.orderId) setOrderId(d.orderId);
+          setLoading(false);
+        })
+        .catch(() => setLoading(false));
+    } else {
+      setLoading(false);
+    }
+  }, [sessionId, orderId]);
 
   return (
     <div style={{ textAlign: 'center', maxWidth: 600, margin: '0 auto', padding: '0 24px' }}>
@@ -61,7 +78,7 @@ function SuccessContent() {
         >
           <span style={{ fontSize: '0.72rem', color: '#555', fontFamily: 'var(--font-body)' }}>Order ID: </span>
           <span style={{ fontSize: '0.82rem', color: '#E8E8E8', fontFamily: 'var(--font-mono, monospace)', fontWeight: 600 }}>
-            {orderId}
+            {orderId.substring(0, 8)}...
           </span>
         </motion.div>
       )}
@@ -84,6 +101,9 @@ function SuccessContent() {
               Download Files
             </button>
           </Link>
+        )}
+        {loading && !orderId && (
+          <p style={{ fontSize: '0.85rem', color: '#555' }}>Loading your order...</p>
         )}
         <Link href="/store" style={{ textDecoration: 'none' }}>
           <button style={{

@@ -18,28 +18,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No signature" }, { status: 400 });
     }
 
-    // Verify webhook signature
     let event: Stripe.Event;
     try {
       event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
     } catch (err) {
       console.error("Webhook signature verification failed:", err);
-      return NextResponse.json(
-        { error: "Invalid signature" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
     }
 
-    // Handle checkout.session.completed
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as Stripe.Checkout.Session;
-
       const supabase = createServerClient();
 
-      // Extract metadata
       const customerEmail = session.customer_email || session.metadata?.customer_email;
       const customerName = session.metadata?.customerName || session.metadata?.customer_name || null;
-      // Checkout stores items as JSON array: [{"productId":"trading-dashboard-template","quantity":1}]
+
       let productIds: string[] = [];
       try {
         if (session.metadata?.product_ids) {
@@ -55,62 +48,117 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "No customer email" }, { status: 400 });
       }
 
-      // Create order
-      const { data: order, error: orderError } = await supabase
+      // Try to find existing pending order (created during checkout)
+      let order: any = null;
+      const { data: existingOrder } = await supabase
         .from("orders")
-        .insert({
-          stripe_session_id: session.id,
-          customer_email: customerEmail,
-          customer_name: customerName,
-          total_cents: session.amount_total || 0,
-          status: "completed",
-        })
-        .select()
+        .select("*")
+        .eq("stripe_session_id", session.id)
         .single();
 
-      if (orderError || !order) {
-        console.error("Failed to create order:", orderError);
-        return NextResponse.json({ error: "Failed to create order" }, { status: 500 });
+      if (existingOrder) {
+        // Update existing order to completed
+        const { data: updated } = await supabase
+          .from("orders")
+          .update({ status: "completed", total_cents: session.amount_total || 0 })
+          .eq("id", existingOrder.id)
+          .select()
+          .single();
+        order = updated || existingOrder;
+      } else {
+        // No existing order — create one
+        const { data: newOrder, error: orderError } = await supabase
+          .from("orders")
+          .insert({
+            stripe_session_id: session.id,
+            customer_email: customerEmail,
+            customer_name: customerName,
+            total_cents: session.amount_total || 0,
+            status: "completed",
+          })
+          .select()
+          .single();
+
+        if (orderError || !newOrder) {
+          console.error("Failed to create order:", orderError);
+          return NextResponse.json({ error: "Failed to create order" }, { status: 500 });
+        }
+        order = newOrder;
       }
 
       // Get line items from Stripe
       const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
 
-      // Create order items and download tokens
+      // Check if order items already exist (from checkout route)
+      const { data: existingItems } = await supabase
+        .from("order_items")
+        .select("*")
+        .eq("order_id", order.id);
+
       const downloadLinks: { productId: string; productName: string; downloadUrl: string }[] = [];
 
-      for (let i = 0; i < lineItems.data.length; i++) {
-        const item = lineItems.data[i];
-        const productId = productIds[i] || `unknown-${i}`;
+      // Only create items + tokens if they don't already exist
+      if (!existingItems?.length) {
+        for (let i = 0; i < lineItems.data.length; i++) {
+          const item = lineItems.data[i];
+          const productId = productIds[i] || `unknown-${i}`;
 
-        // Create order item
-        await supabase.from("order_items").insert({
-          order_id: order.id,
-          product_id: productId,
-          quantity: item.quantity || 1,
-          price_cents: item.amount_total,
-        });
-
-        // Create download token (expires in 7 days, max 5 downloads)
-        const expiresAt = new Date();
-        expiresAt.setDate(expiresAt.getDate() + 7);
-
-        const { data: download } = await supabase
-          .from("downloads")
-          .insert({
+          await supabase.from("order_items").insert({
             order_id: order.id,
             product_id: productId,
-            expires_at: expiresAt.toISOString(),
-            max_downloads: 5,
-          })
-          .select()
-          .single();
+            quantity: item.quantity || 1,
+            price_cents: item.amount_total,
+          });
+        }
+      }
 
-        if (download) {
-          const downloadUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/api/downloads/${order.id}/${productId}?token=${download.download_token}`;
+      // Create download tokens (always — in case they don't exist yet)
+      const { data: existingDownloads } = await supabase
+        .from("downloads")
+        .select("*")
+        .eq("order_id", order.id);
+
+      if (!existingDownloads?.length) {
+        for (let i = 0; i < lineItems.data.length; i++) {
+          const item = lineItems.data[i];
+          const productId = productIds[i] || `unknown-${i}`;
+
+          const expiresAt = new Date();
+          expiresAt.setDate(expiresAt.getDate() + 7);
+
+          const dlToken = crypto.randomUUID();
+
+          const { data: download } = await supabase
+            .from("downloads")
+            .insert({
+              order_id: order.id,
+              product_id: productId,
+              download_token: dlToken,
+              max_downloads: 5,
+              downloaded_count: 0,
+              expires_at: expiresAt.toISOString(),
+            })
+            .select()
+            .single();
+
+          if (download) {
+            const downloadUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/api/downloads/${order.id}/${productId}?token=${download.download_token}`;
+            downloadLinks.push({
+              productId,
+              productName: item.description || productId,
+              downloadUrl,
+            });
+          }
+        }
+      } else {
+        // Tokens exist — build links from them
+        for (const dl of existingDownloads) {
+          const productId = dl.product_id;
+          const downloadUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/api/downloads/${order.id}/${productId}?token=${dl.download_token}`;
+          const item = lineItems.data.find((_: any, idx: number) => productIds[idx] === productId);
           downloadLinks.push({
             productId,
-            productName: item.description || productId,
+            productName: item?.description || productId,
             downloadUrl,
           });
         }
@@ -121,13 +169,11 @@ export async function POST(req: NextRequest) {
         await sendOrderConfirmation(customerEmail, order, downloadLinks);
       } catch (emailError) {
         console.error("Failed to send confirmation email:", emailError);
-        // Don't fail the webhook if email fails
       }
 
       return NextResponse.json({ received: true });
     }
 
-    // Handle other event types if needed
     return NextResponse.json({ received: true });
   } catch (error) {
     console.error("Webhook error:", error);

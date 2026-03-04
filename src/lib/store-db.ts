@@ -163,69 +163,79 @@ export async function getAllOrders(): Promise<Order[]> {
 }
 
 // ─── Download Tokens ───
+// Actual Supabase schema: id (uuid), order_id (uuid), product_id (text),
+// download_token (uuid), expires_at (timestamptz), downloaded_count (int), max_downloads (int), created_at
 export interface DownloadToken {
   id: string;
   order_id: string;
-  product_slug: string;
-  token: string;
-  downloads_remaining: number;
+  product_id: string;
+  download_token: string;
+  downloaded_count: number;
+  max_downloads: number;
+  downloads_remaining: number; // computed: max_downloads - downloaded_count
   expires_at: string;
   created_at: string;
+  // Aliases for backward compat
+  token: string;
+  product_slug: string;
+}
+
+function mapDownload(d: any): DownloadToken {
+  const remaining = (d.max_downloads || 5) - (d.downloaded_count || 0);
+  return {
+    ...d,
+    product_id: d.product_id,
+    download_token: d.download_token,
+    downloaded_count: d.downloaded_count || 0,
+    max_downloads: d.max_downloads || 5,
+    downloads_remaining: remaining,
+    // Aliases
+    token: d.download_token,
+    product_slug: d.product_id,
+  };
 }
 
 export async function createDownloadTokens(orderId: string, productSlugs: string[]): Promise<DownloadToken[]> {
-  const tokens: DownloadToken[] = productSlugs.map(slug => ({
-    id: crypto.randomUUID(),
+  const rows = productSlugs.map(slug => ({
     order_id: orderId,
-    product_slug: slug,
-    token: crypto.randomUUID().replace(/-/g, '') + crypto.randomUUID().replace(/-/g, ''),
-    downloads_remaining: 3,
-    expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days
-    created_at: new Date().toISOString(),
+    product_id: slug,
+    download_token: crypto.randomUUID(),
+    max_downloads: 5,
+    downloaded_count: 0,
+    expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
   }));
 
   if (await useSupabase()) {
     const sb = getSupabase()!;
-    await sb.from('downloads').insert(tokens);
+    const { data } = await sb.from('downloads').insert(rows).select();
+    return (data || []).map(mapDownload);
   } else {
-    const existing = await readJson<DownloadToken[]>('downloads.json', []);
-    await writeJson('downloads.json', [...existing, ...tokens]);
+    const existing = await readJson<any[]>('downloads.json', []);
+    const full = rows.map(r => ({ ...r, id: crypto.randomUUID(), created_at: new Date().toISOString() }));
+    await writeJson('downloads.json', [...existing, ...full]);
+    return full.map(mapDownload);
   }
-  return tokens;
 }
 
 export async function getDownloadToken(token: string): Promise<DownloadToken | null> {
   if (await useSupabase()) {
     const sb = getSupabase()!;
-    // Try both column names — Supabase may use 'download_token' or 'token'
-    let { data } = await sb.from('downloads').select('*').eq('download_token', token).single();
-    if (!data) {
-      const res = await sb.from('downloads').select('*').eq('token', token).single();
-      data = res.data;
-    }
-    if (data) {
-      data.token = data.token || data.download_token;
-      data.product_slug = data.product_slug || data.product_id;
-    }
-    return data;
+    const { data } = await sb.from('downloads').select('*').eq('download_token', token).single();
+    return data ? mapDownload(data) : null;
   }
-  const all = await readJson<DownloadToken[]>('downloads.json', []);
-  return all.find(d => d.token === token) || null;
+  const all = await readJson<any[]>('downloads.json', []);
+  const found = all.find(d => d.download_token === token);
+  return found ? mapDownload(found) : null;
 }
 
 export async function getDownloadsByOrder(orderId: string): Promise<DownloadToken[]> {
   if (await useSupabase()) {
     const sb = getSupabase()!;
     const { data } = await sb.from('downloads').select('*').eq('order_id', orderId);
-    // Map Supabase column names to our interface (download_token → token, product_id → product_slug)
-    return (data || []).map((d: any) => ({
-      ...d,
-      token: d.token || d.download_token,
-      product_slug: d.product_slug || d.product_id,
-    }));
+    return (data || []).map(mapDownload);
   }
-  const all = await readJson<DownloadToken[]>('downloads.json', []);
-  return all.filter(d => d.order_id === orderId);
+  const all = await readJson<any[]>('downloads.json', []);
+  return all.filter(d => d.order_id === orderId).map(mapDownload);
 }
 
 export async function consumeDownload(token: string): Promise<boolean> {
@@ -236,12 +246,11 @@ export async function consumeDownload(token: string): Promise<boolean> {
 
   if (await useSupabase()) {
     const sb = getSupabase()!;
-    // Try both column names for the update
-    await sb.from('downloads').update({ downloads_remaining: dl.downloads_remaining - 1 }).eq('download_token', token);
+    await sb.from('downloads').update({ downloaded_count: dl.downloaded_count + 1 }).eq('download_token', token);
   } else {
-    const all = await readJson<DownloadToken[]>('downloads.json', []);
-    const idx = all.findIndex(d => d.token === token);
-    if (idx >= 0) { all[idx].downloads_remaining -= 1; await writeJson('downloads.json', all); }
+    const all = await readJson<any[]>('downloads.json', []);
+    const idx = all.findIndex(d => d.download_token === token);
+    if (idx >= 0) { all[idx].downloaded_count = (all[idx].downloaded_count || 0) + 1; await writeJson('downloads.json', all); }
   }
   return true;
 }

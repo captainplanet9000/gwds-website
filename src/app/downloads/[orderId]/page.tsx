@@ -60,7 +60,10 @@ export default function DownloadsPage({ params }: { params: Promise<{ orderId: s
                   </div>
                   {order.status === 'completed' ? (
                     <button
-                      onClick={() => window.open(`/api/downloads/${orderId}/${item.productId}`, '_blank')}
+                      onClick={() => {
+                        const tokenParam = item.downloadToken ? `?token=${item.downloadToken}` : '';
+                        window.open(`/api/downloads/${orderId}/${item.productId}${tokenParam}`, '_blank');
+                      }}
                       style={{
                         padding: '10px 20px', borderRadius: 6, border: 'none',
                         background: '#8B5CF6', color: '#fff',
