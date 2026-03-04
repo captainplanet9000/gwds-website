@@ -33,7 +33,7 @@ export default function Navbar() {
         left: 0,
         right: 0,
         zIndex: 1000,
-        padding: '2vw 5vw',
+        padding: '16px 40px',
         background: isScrolled ? 'rgba(0, 0, 0, 0.95)' : 'transparent',
         backdropFilter: isScrolled ? 'blur(20px)' : 'none',
         borderBottom: isScrolled ? '1px solid rgba(232, 232, 232, 0.1)' : 'none',
@@ -45,7 +45,7 @@ export default function Navbar() {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          maxWidth: '1600px',
+          maxWidth: '1200px',
           margin: '0 auto',
         }}
       >
@@ -54,7 +54,7 @@ export default function Navbar() {
           <span
             style={{
               fontFamily: 'Syne, sans-serif',
-              fontSize: '1.5vw',
+              fontSize: '1.25rem',
               fontWeight: 700,
               color: '#E8E8E8',
               letterSpacing: '-0.02em',
@@ -68,7 +68,7 @@ export default function Navbar() {
         <div
           style={{
             display: 'flex',
-            gap: '3vw',
+            gap: '32px',
             alignItems: 'center',
           }}
           className="desktop-nav"
@@ -79,7 +79,7 @@ export default function Navbar() {
               href={link.href}
               style={{
                 fontFamily: 'DM Sans, sans-serif',
-                fontSize: '1vw',
+                fontSize: '0.875rem',
                 fontWeight: 500,
                 color: '#A8A8A8',
                 textDecoration: 'none',
@@ -103,9 +103,9 @@ export default function Navbar() {
               background: 'transparent',
               border: '1px solid rgba(232, 232, 232, 0.2)',
               color: '#E8E8E8',
-              padding: '0.8vw 1.5vw',
+              padding: '8px 16px',
               fontFamily: 'DM Sans, sans-serif',
-              fontSize: '1vw',
+              fontSize: '0.875rem',
               fontWeight: 500,
               cursor: 'pointer',
               borderRadius: '2px',

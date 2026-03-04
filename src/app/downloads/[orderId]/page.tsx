@@ -24,7 +24,7 @@ export default function DownloadsPage({ params }: { params: Promise<{ orderId: s
   return (
     <>
       <Navbar />
-      <main style={{ background: '#000', minHeight: '100vh', paddingTop: 120 }}>
+      <main style={{ background: '#000', minHeight: '100vh', paddingTop: 140 }}>
         <div style={{ maxWidth: 700, margin: '0 auto', padding: '0 24px 80px' }}>
           <h1 style={{
             fontFamily: 'var(--font-display)', fontSize: '1.8rem',
@@ -81,6 +81,53 @@ export default function DownloadsPage({ params }: { params: Promise<{ orderId: s
                   )}
                 </div>
               ))}
+
+              {/* Getting Started Instructions */}
+              <div style={{
+                marginTop: 40, padding: 32, borderRadius: 12,
+                background: '#0a0a0a', border: '1px solid #1a1a1a',
+              }}>
+                <h2 style={{
+                  fontFamily: 'var(--font-display)', fontSize: '1.1rem',
+                  fontWeight: 700, color: '#E8E8E8', marginBottom: 20,
+                }}>
+                  Getting Started
+                </h2>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  {[
+                    { step: '1', title: 'Extract the zip', desc: 'Unzip the downloaded file to a folder on your computer.' },
+                    { step: '2', title: 'Install dependencies', desc: 'Open a terminal in the folder and run: npm install' },
+                    { step: '3', title: 'Configure your API keys', desc: 'Copy .env.example to .env.local and fill in your Hyperliquid, Supabase, and OpenRouter keys.' },
+                    { step: '4', title: 'Set up the database', desc: 'Create a free Supabase project and run the SQL migration from supabase/migrations/001_initial.sql in the SQL Editor.' },
+                    { step: '5', title: 'Start the dashboard', desc: 'Run: npm run dev — then open localhost:3000. The Setup Wizard will guide you through the rest.' },
+                  ].map((item) => (
+                    <div key={item.step} style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+                      <span style={{
+                        minWidth: 28, height: 28, borderRadius: '50%',
+                        background: '#8B5CF6', color: '#fff',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: '0.75rem', fontWeight: 700, fontFamily: 'var(--font-mono, monospace)',
+                      }}>
+                        {item.step}
+                      </span>
+                      <div>
+                        <p style={{ fontSize: '0.85rem', fontWeight: 600, color: '#E8E8E8', fontFamily: 'var(--font-display)', marginBottom: 2 }}>
+                          {item.title}
+                        </p>
+                        <p style={{ fontSize: '0.78rem', color: '#777', fontFamily: 'var(--font-body)', lineHeight: 1.5 }}>
+                          {item.desc}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <p style={{
+                  marginTop: 20, fontSize: '0.75rem', color: '#555',
+                  fontFamily: 'var(--font-body)', lineHeight: 1.5,
+                }}>
+                  Full setup guide included in the download at <code style={{ color: '#8B5CF6', fontSize: '0.72rem' }}>docs/SETUP.md</code>
+                </p>
+              </div>
 
               <div style={{ marginTop: 24, textAlign: 'center' }}>
                 <Link href="/store" style={{ fontSize: '0.82rem', color: '#8B5CF6', textDecoration: 'none' }}>
