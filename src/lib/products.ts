@@ -34,7 +34,7 @@ export const products: Product[] = [
     id: "trading-dashboard-template",
     stripePriceId: "price_1T7AnhLLyk0oaesNcsOUw8UU",
     name: "AI Trading Dashboard",
-    description: "Full-featured AI trading dashboard with autonomous agents, goal-based execution, multi-exchange support, and real-time analytics. Built with Next.js 15, TypeScript, and Supabase.",
+    description: "Full-featured AI trading dashboard with autonomous agents, goal-based execution, multi-exchange support, 44 built-in themes, and a modular plugin system. Built with Next.js 15, TypeScript, and Supabase.",
     longDescription: `The same dashboard powering Cival Systems — packaged as a template you can deploy in 5 minutes.
 
 **Deploy in 3 steps:**
@@ -44,14 +44,22 @@ export const products: Product[] = [
 
 **What you get:**
 - Autonomous trading agents with configurable strategies (VWAP, Darvas, Elliott Wave, Heikin Ashi, Renko, Williams Alligator, and more)
-- Multi-strategy farm system — run multiple agents coordinated under one portfolio
+- Multi-strategy farm system — run multiple agents coordinated under one portfolio with shared scratchpad for inter-agent communication
 - Goal-based trading — set profit targets and let agents execute
 - Real-time trade tracking, P&L, positions, and order management
 - Risk analytics with drawdown monitoring, correlation checks, and position sizing
 - Agent health monitoring, performance scoring, and benchmarking
-- Plugin system for extending with new strategies
+- Plugin system — extend with add-on modules (Meme Trading, Flash Loans, and more)
 - Full source code (Next.js 15, TypeScript, Supabase, 2,400+ files)
 - One-click deploy to Vercel — no local setup required
+
+**🎨 44 Built-In Themes**
+Make it yours. Choose from 44 professionally designed themes — from Cyberpunk and Cosmic Night to Clean Slate and Mocha Mousse. Switch themes instantly or customize your own. Need a branded look for your fund? We offer custom theme design as a service.
+
+**Themes include:** Default, Amber Minimal, Amethyst Haze, Bold Tech, Bubblegum, Caffeine, Candyland, Catppuccin, Claude, Claymorphism, Clean Slate, Cosmic Night, Cyberpunk, Darkmatter, Doom 64, Elegant Luxury, Graphite, Kodama Grove, Midnight Bloom, Mocha Mousse, Modern Minimal, Mono, Nature, Neo Brutalism, Northern Lights, Notebook, Ocean Breeze, Pastel Dreams, Perpetuity, Quantum Rose, Retro Arcade, Sage Garden, Soft Pop, Solar Dusk, Starry Night, Sunset Horizon, Supabase, T3 Chat, Tangerine, Twitter, Vercel, Vintage Paper, Violet Bloom, and more.
+
+**🧩 Modular Plugin System**
+Start with the base dashboard and add capabilities as you need them. Each add-on plugs directly into the dashboard — no code changes required. Available add-ons include Meme Trading System, Flash Loans, Command Center, and strategy-specific agents.
 
 **Not included:** Live API keys or exchange accounts (you bring your own).`,
     price: 149,
@@ -62,12 +70,16 @@ export const products: Product[] = [
     features: [
       "Autonomous AI trading agents",
       "Goal-based execution engine",
+      "44 built-in themes",
+      "Modular plugin system",
       "Hyperliquid + Bybit integration",
       "Real-time P&L tracking",
       "Risk analytics suite",
       "Agent health monitoring",
+      "Farm orchestration & scratchpad",
       "Full TypeScript source code",
-      "Vercel deploy ready"
+      "Vercel deploy ready",
+      "Custom theme service available"
     ],
     techStack: ["Next.js 15", "TypeScript", "Supabase", "Hyperliquid SDK", "TailwindCSS"],
     image: "/images/products/trading-dashboard-template.jpg",

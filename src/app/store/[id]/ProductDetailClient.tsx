@@ -465,6 +465,86 @@ export default function ProductDetailClient({ product, related, category }: { pr
           </section>
         )}
 
+        {/* Theme Showcase — only for trading dashboard */}
+        {product.id === 'trading-dashboard-template' && (
+          <section style={{ padding: '0 40px 48px', maxWidth: 900, margin: '0 auto' }}>
+            <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '40px' }}>
+              <h2 style={{ fontSize: 28, fontWeight: 800, marginBottom: 8, letterSpacing: '-0.5px' }}>
+                🎨 44 Built-In Themes
+              </h2>
+              <p style={{ color: '#888', marginBottom: 24, fontSize: 16, lineHeight: 1.6 }}>
+                Switch themes instantly. From dark hacker aesthetics to clean minimalist designs — make the dashboard feel like yours. Need a custom branded theme for your fund? We offer theme design as a service.
+              </p>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: 10, marginBottom: 24 }}>
+                {[
+                  { name: 'Cyberpunk', colors: ['#0a0a0a', '#f0e68c', '#ff00ff', '#00ffff'] },
+                  { name: 'Cosmic Night', colors: ['#0d0d2b', '#6366f1', '#a855f7', '#818cf8'] },
+                  { name: 'Northern Lights', colors: ['#0a1628', '#22d3ee', '#34d399', '#06b6d4'] },
+                  { name: 'Midnight Bloom', colors: ['#0f0f23', '#ec4899', '#f43f5e', '#fb7185'] },
+                  { name: 'Darkmatter', colors: ['#000000', '#22c55e', '#16a34a', '#4ade80'] },
+                  { name: 'Ocean Breeze', colors: ['#0c1929', '#0ea5e9', '#38bdf8', '#7dd3fc'] },
+                  { name: 'Mocha Mousse', colors: ['#1c1210', '#d4a574', '#b8860b', '#deb887'] },
+                  { name: 'Retro Arcade', colors: ['#1a0a2e', '#ff6b35', '#f7c948', '#e84393'] },
+                  { name: 'Neo Brutalism', colors: ['#fffef0', '#000000', '#ff5733', '#ffc300'] },
+                  { name: 'Sage Garden', colors: ['#0f1a0f', '#4ade80', '#86efac', '#22c55e'] },
+                  { name: 'Sunset Horizon', colors: ['#1a0a00', '#f97316', '#fb923c', '#fbbf24'] },
+                  { name: 'Clean Slate', colors: ['#fafafa', '#18181b', '#71717a', '#a1a1aa'] },
+                  { name: 'Amethyst Haze', colors: ['#1a0a2e', '#a855f7', '#c084fc', '#e9d5ff'] },
+                  { name: 'Bold Tech', colors: ['#020617', '#3b82f6', '#60a5fa', '#93c5fd'] },
+                  { name: 'Caffeine', colors: ['#1a1209', '#92400e', '#b45309', '#d97706'] },
+                  { name: 'Violet Bloom', colors: ['#1a0033', '#8b5cf6', '#a78bfa', '#c4b5fd'] },
+                ].map((theme) => (
+                  <div key={theme.name} style={{ padding: '12px 10px', borderRadius: 8, border: '1px solid #222', background: '#0a0a0a', textAlign: 'center', cursor: 'default' }}>
+                    <div style={{ display: 'flex', gap: 3, justifyContent: 'center', marginBottom: 8 }}>
+                      {theme.colors.map((c, i) => (
+                        <div key={i} style={{ width: 16, height: 16, borderRadius: '50%', background: c, border: '1px solid #333' }} />
+                      ))}
+                    </div>
+                    <div style={{ fontSize: 11, color: '#aaa', fontWeight: 500 }}>{theme.name}</div>
+                  </div>
+                ))}
+              </div>
+              <p style={{ color: '#666', fontSize: 13, textAlign: 'center' }}>
+                + 28 more themes included — Catppuccin, Claude, Doom 64, Graphite, Kodama Grove, Notebook, Pastel Dreams, Quantum Rose, Starry Night, Supabase, T3 Chat, Tangerine, Twitter, Vercel, and more.
+              </p>
+              <div style={{ textAlign: 'center', marginTop: 20, padding: '16px 24px', background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)', borderRadius: 10, border: '1px solid #2a2a4a' }}>
+                <p style={{ color: '#a5b4fc', fontSize: 14, fontWeight: 600, margin: 0 }}>
+                  🏢 Need a custom branded theme for your fund or trading desk? <span style={{ color: '#818cf8' }}>Contact us</span> for bespoke theme design.
+                </p>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Plugin System Showcase — only for trading dashboard */}
+        {product.id === 'trading-dashboard-template' && (
+          <section style={{ padding: '0 40px 48px', maxWidth: 900, margin: '0 auto' }}>
+            <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '40px' }}>
+              <h2 style={{ fontSize: 28, fontWeight: 800, marginBottom: 8, letterSpacing: '-0.5px' }}>
+                🧩 Modular Plugin System
+              </h2>
+              <p style={{ color: '#888', marginBottom: 24, fontSize: 16, lineHeight: 1.6 }}>
+                Start with the base dashboard and add capabilities as you grow. Each add-on drops right in — no code changes needed.
+              </p>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16 }}>
+                {[
+                  { name: 'Meme Trading System', price: '$99', emoji: '🐸', desc: 'Automated meme coin discovery, sentiment analysis, and sniper execution', href: '/store/meme-trading-template' },
+                  { name: 'Elliott Wave Agent', price: '$199', emoji: '📐', desc: 'AI-powered Elliott Wave pattern detection and autonomous trading', href: '/store/elliott-wave-agent' },
+                  { name: 'Darvas Box Indicator', price: '$49', emoji: '📦', desc: 'Classic breakout detection with modern volume confirmation', href: '/store/darvas-indicator' },
+                  { name: 'Multi-Strategy Bundle', price: '$399', emoji: '🎯', desc: 'All strategies in one package — the complete trading arsenal', href: '/store/multi-strat-bundle' },
+                ].map((addon) => (
+                  <a key={addon.name} href={addon.href} style={{ padding: 20, borderRadius: 10, border: '1px solid #222', background: '#0a0a0a', textDecoration: 'none', color: 'inherit', transition: 'border-color 0.2s' }}>
+                    <div style={{ fontSize: 28, marginBottom: 8 }}>{addon.emoji}</div>
+                    <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4, color: '#fff' }}>{addon.name}</div>
+                    <div style={{ fontSize: 13, color: '#888', marginBottom: 8, lineHeight: 1.4 }}>{addon.desc}</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: '#8b5cf6' }}>{addon.price}</div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* How to Set Up — only for templates & trading products */}
         {(product.category === 'templates' || product.category === 'trading') && product.price > 0 && (
           <section style={{ padding: '0 40px 48px', maxWidth: 800, margin: '0 auto' }}>
