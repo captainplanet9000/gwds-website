@@ -98,7 +98,7 @@ Start with the base dashboard and add capabilities as you need them. Each add-on
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app",
   },
   {
-    id: "meme-trading-template",
+    id: "meme-trading-system",
     stripePriceId: "price_1T7AnhLLyk0oaesNWVz1hMTi",
     name: "Meme Trading System",
     description: "Automated meme coin trading plugin for the AI Trading Dashboard. Meme coin discovery, auto-execution, position monitoring, and risk management.",
@@ -541,7 +541,7 @@ Three production-ready codebases. Fork, customize, deploy.`,
 
 **14 products included:**
 - [AI Trading Dashboard](/store/trading-dashboard-template) ($149)
-- [Meme Trading System](/store/meme-trading-template) ($99)
+- [Meme Trading System](/store/meme-trading-system) ($99)
 - [Second Brain](/store/second-brain-template) ($79)
 - [AI SaaS Starter Kit](/store/ai-saas-starter) ($99)
 - [Darvas Box Indicator](/store/darvas-indicator) ($49)
