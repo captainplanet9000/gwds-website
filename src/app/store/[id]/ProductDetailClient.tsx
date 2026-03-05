@@ -304,10 +304,41 @@ export default function ProductDetailClient({ product, related, category }: { pr
               </a>
             )}
 
-            {/* View on GitHub */}
+            {/* Live Demo */}
             {product.demoUrl && (
               <a
                 href={product.demoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 8,
+                  width: '100%',
+                  padding: '14px 32px',
+                  borderRadius: 8,
+                  border: '1px solid #333',
+                  background: 'linear-gradient(135deg, #1a1a2e 0%, #0a0a1a 100%)',
+                  color: '#fff',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  fontFamily: 'var(--font-display)',
+                  letterSpacing: '0.03em',
+                  textDecoration: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s',
+                  marginTop: 8,
+                }}
+              >
+                🔗 View Live Demo ↗
+              </a>
+            )}
+
+            {/* View source on GitHub */}
+            {product.id === 'trading-dashboard-template' && (
+              <a
+                href="https://github.com/captainplanet9000/ai-trading-dashboard"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{

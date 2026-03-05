@@ -79,7 +79,7 @@ export const products: Product[] = [
       "/images/products/dashboard-goals.jpg",
     ],
     downloadUrl: "downloads/ai-trading-dashboard-v1.0.0.zip",
-    demoUrl: "https://github.com/captainplanet9000/ai-trading-dashboard",
+    demoUrl: "https://ai-trading-dashboard-demo.vercel.app",
   },
   {
     id: "meme-trading-template",
