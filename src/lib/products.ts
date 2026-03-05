@@ -96,8 +96,10 @@ Start with the base dashboard and add capabilities as you need them. Each add-on
     id: "meme-trading-template",
     stripePriceId: "price_1T7AnhLLyk0oaesNWVz1hMTi",
     name: "Meme Trading System",
-    description: "Automated meme coin trading with discovery, auto-execution, position monitoring, and risk management. The system that finds trending memes and trades them before the crowd.",
-    longDescription: `Our battle-tested meme trading system — the same one running live on Hyperliquid.
+    description: "Automated meme coin trading plugin for the AI Trading Dashboard. Meme coin discovery, auto-execution, position monitoring, and risk management.",
+    longDescription: `🔌 **Plugin for AI Trading Dashboard** — Drop this into your dashboard's \`plugins/\` folder and start trading meme coins automatically.
+
+Our battle-tested meme trading system — the same one running live on Hyperliquid.
 
 **What you get:**
 - Meme coin discovery engine (trending detection, volume analysis)
@@ -107,25 +109,31 @@ Start with the base dashboard and add capabilities as you need them. Each add-on
 - Risk management (max positions, position sizing, drawdown limits)
 - Performance dashboard with trade history
 - Full source code + setup wizard
+- manifest.json for plug-and-play installation
 
-**Warning:** Meme trading is high-risk. This tool gives you an edge, not a guarantee.`,
+👉 **Try the live demo** to see the meme trading interface in action with real-time mock data.
+
+**Warning:** Meme trading is high-risk. This tool gives you an edge, not a guarantee.
+
+**Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
     price: 99,
-    category: "templates",
+    category: "trading",
     badge: "HOT",
     emoji: "🐸",
     isFeatured: true,
     features: [
+      "Dashboard plugin",
       "Meme coin discovery engine",
       "Auto-trade execution",
       "Position monitoring",
       "Auto stop-loss",
       "Risk management",
       "Performance analytics",
-      "Configurable scanner",
-      "Full source code"
+      "Plug-and-play install"
     ],
     techStack: ["Next.js 15", "TypeScript", "Hyperliquid SDK", "Supabase"],
-        downloadUrl: "downloads/meme-trading-template-v1.0.0.zip",
+    downloadUrl: "downloads/meme-trading-template-v1.0.0.zip",
+    demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/meme-coins",
   },
   {
     id: "second-brain-template",
@@ -211,6 +219,8 @@ Start with the base dashboard and add capabilities as you need them. Each add-on
 - manifest.json for plug-and-play installation
 - Full source code with documentation
 
+👉 **Try the live demo** to see the Darvas agent running with real-time mock data in the Agents dashboard.
+
 **Integrates with:** AI Trading Dashboard ($149) — just copy the folder into \`plugins/\` and restart.`,
     price: 49,
     category: "trading",
@@ -218,6 +228,7 @@ Start with the base dashboard and add capabilities as you need them. Each add-on
     features: ["Dashboard plugin", "Multi-timeframe", "Auto box detection", "Alert system", "Confidence scoring", "Plug-and-play install"],
     image: "/images/products/dashboard-analytics.jpg",
     downloadUrl: "downloads/darvas-indicator-v1.0.0.zip",
+    demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/agents",
   },
   {
     id: "elliott-wave-agent",
@@ -238,6 +249,8 @@ Start with the base dashboard and add capabilities as you need them. Each add-on
 - manifest.json for plug-and-play installation
 - Full TypeScript source code
 
+👉 **Try the live demo** to see the Elliott Wave agent analyzing patterns in real-time with mock data.
+
 **This is the same agent running live in our Cival trading system.** Extracted, documented, and packaged for you to deploy.
 
 **Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
@@ -248,6 +261,7 @@ Start with the base dashboard and add capabilities as you need them. Each add-on
     features: ["Dashboard plugin", "AI wave detection", "Auto entry/exit", "Fibonacci validation", "Risk management", "Plug-and-play"],
     image: "/images/products/dashboard-agents.jpg",
     downloadUrl: "downloads/elliott-wave-agent-v1.0.0.zip",
+    demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/agents",
   },
   {
     id: "multi-strat-bundle",
@@ -255,6 +269,8 @@ Start with the base dashboard and add capabilities as you need them. Each add-on
     name: "Multi-Strategy Bundle",
     description: "6 trading strategies that plug into the AI Trading Dashboard. Darvas, Williams, Elliott, Heikin Ashi, Renko, and Multi-Strat. Run as a coordinated farm.",
     longDescription: `Six battle-tested trading strategies in one bundle. Run them individually or orchestrate them as a farm.
+
+**🔌 Plugin for the AI Trading Dashboard** — drop all six strategies into \`plugins/\` and use the farm orchestrator to coordinate them.
 
 **Strategies included:**
 1. **Darvas Box** — Breakout detection with consolidation zones
@@ -270,7 +286,11 @@ Start with the base dashboard and add capabilities as you need them. Each add-on
 - Risk management and drawdown protection
 - Macro market regime detection
 - Full TypeScript source code
-- Deploy guide for Vercel + Supabase`,
+- Deploy guide for Vercel + Supabase
+
+👉 **Try the live demo** to see the farm orchestration in action — multiple strategies coordinated under one portfolio.
+
+**Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
     price: 399,
     category: "trading",
     badge: "BEST VALUE",
@@ -278,6 +298,7 @@ Start with the base dashboard and add capabilities as you need them. Each add-on
     features: ["6 strategies included", "Farm orchestration", "Position management", "Margin-aware", "Telegram alerts", "Full source code"],
     image: "/images/products/dashboard-trades.jpg",
     downloadUrl: "downloads/multi-strat-bundle-v1.0.0.zip",
+    demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/farms",
     images: [
       "/images/products/dashboard-trades.jpg",
       "/images/products/dashboard-farms.jpg",
@@ -419,12 +440,14 @@ Start with the base dashboard and add capabilities as you need them. Each add-on
     longDescription: `Save $137 — get the complete trading toolkit in one purchase.
 
 **What's included:**
-- **AI Trading Dashboard** ($149) — Full autonomous trading platform with 10+ strategies
-- **Darvas Box Indicator** ($49) — Classic breakout detection adapted for crypto
-- **Elliott Wave Agent** ($199) — AI-powered wave pattern recognition and trade execution
-- **Trading Analysis Prompts** ($39) — 50+ prompts for technical and fundamental analysis
+- [AI Trading Dashboard](/store/trading-dashboard-template) ($149) — Full autonomous trading platform with 10+ strategies
+- [Darvas Box Indicator](/store/darvas-indicator) ($49) — Classic breakout detection adapted for crypto
+- [Elliott Wave Agent](/store/elliott-wave-agent) ($199) — AI-powered wave pattern recognition and trade execution
+- [Trading Analysis Prompts](/store/trading-analysis-prompts) ($39) — 50+ prompts for technical and fundamental analysis
 
 **Total value: $436 — You pay $299.**
+
+👉 **Try the live demo** to see all these systems working together in one unified dashboard.
 
 All four products delivered instantly. Same source code, same updates, same support.`,
     price: 299,
@@ -434,6 +457,7 @@ All four products delivered instantly. Same source code, same updates, same supp
     features: ["AI Trading Dashboard", "Darvas Box Indicator", "Elliott Wave Agent", "Trading Analysis Prompts", "All future updates", "$137 savings"],
     isFeatured: true,
     stripePriceId: "",
+    demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard",
   },
   {
     id: "ai-builder-bundle",
@@ -442,9 +466,9 @@ All four products delivered instantly. Same source code, same updates, same supp
     longDescription: `Save $108 — the complete toolkit for building and launching AI products.
 
 **What's included:**
-- **AI Trading Dashboard** ($149) — Production-ready Next.js trading platform
-- **AI SaaS Starter Kit** ($99) — Auth, billing, AI integration boilerplate
-- **Second Brain** ($79) — PARA-organized knowledge management system
+- [AI Trading Dashboard](/store/trading-dashboard-template) ($149) — Production-ready Next.js trading platform
+- [AI SaaS Starter Kit](/store/ai-saas-starter) ($99) — Auth, billing, AI integration boilerplate
+- [Second Brain](/store/second-brain-template) ($79) — PARA-organized knowledge management system
 
 **Total value: $327 — You pay $219.**
 
@@ -463,9 +487,9 @@ Three production-ready codebases. Fork, customize, deploy.`,
     longDescription: `Save $33 — every prompt pack in one download.
 
 **What's included:**
-- **Content Creator Mega Pack** ($29) — 200+ prompts for TikTok, YouTube, Twitter, newsletters
-- **AI Art Direction Pack** ($24) — 150+ prompts for Midjourney, DALL-E, Stable Diffusion
-- **Trading Analysis Prompts** ($39) — 50+ prompts for technical and fundamental analysis
+- [Content Creator Mega Pack](/store/content-creator-prompts) ($29) — 200+ prompts for TikTok, YouTube, Twitter, newsletters
+- [AI Art Direction Pack](/store/ai-art-prompts) ($24) — 150+ prompts for Midjourney, DALL-E, Stable Diffusion
+- [Trading Analysis Prompts](/store/trading-analysis-prompts) ($39) — 50+ prompts for technical and fundamental analysis
 
 **Total value: $92 — You pay $59.**`,
     price: 59,
@@ -482,22 +506,24 @@ Three production-ready codebases. Fork, customize, deploy.`,
     longDescription: `The ultimate deal — every single product in the GWDS store for 55% off.
 
 **14 products included:**
-- AI Trading Dashboard ($149)
-- Meme Trading System ($99)
-- Second Brain ($79)
-- AI SaaS Starter Kit ($99)
-- Darvas Box Indicator ($49)
-- Elliott Wave Agent ($199)
-- Multi-Strategy Bundle ($399)
-- Content Creator Mega Pack ($29)
-- Trading Analysis Prompts ($39)
-- AI Art Direction Pack ($24)
-- Cyber Wave Collection ($12)
-- Abstract Flow Collection ($9)
-- Clay Verse Animation Pack ($19)
-- 3D Product Renders Pack ($34)
+- [AI Trading Dashboard](/store/trading-dashboard-template) ($149)
+- [Meme Trading System](/store/meme-trading-template) ($99)
+- [Second Brain](/store/second-brain-template) ($79)
+- [AI SaaS Starter Kit](/store/ai-saas-starter) ($99)
+- [Darvas Box Indicator](/store/darvas-indicator) ($49)
+- [Elliott Wave Agent](/store/elliott-wave-agent) ($199)
+- [Multi-Strategy Bundle](/store/multi-strat-bundle) ($399)
+- [Content Creator Mega Pack](/store/content-creator-prompts) ($29)
+- [Trading Analysis Prompts](/store/trading-analysis-prompts) ($39)
+- [AI Art Direction Pack](/store/ai-art-prompts) ($24)
+- [Cyber Wave Collection](/store/cyber-wave-pack) ($12)
+- [Abstract Flow Collection](/store/abstract-flow-pack) ($9)
+- [Clay Verse Animation Pack](/store/clay-verse-pack) ($19)
+- [3D Product Renders Pack](/store/3d-render-pack) ($34)
 
 **Total value: $1,339 — You pay $599.**
+
+👉 **Try the live demo** to see the flagship trading dashboard — the centerpiece of this bundle.
 
 Lifetime access. All future updates included.`,
     price: 599,
@@ -507,6 +533,7 @@ Lifetime access. All future updates included.`,
     features: ["All 14 products", "Every template & tool", "Every prompt pack", "All wallpapers & animations", "Lifetime updates", "$740 savings"],
     isFeatured: true,
     stripePriceId: "",
+    demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard",
   },
 ];
 

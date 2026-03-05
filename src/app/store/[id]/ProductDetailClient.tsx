@@ -314,24 +314,37 @@ export default function ProductDetailClient({ product, related, category }: { pr
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: 8,
+                  gap: 10,
                   width: '100%',
-                  padding: '14px 32px',
+                  padding: '18px 32px',
                   borderRadius: 8,
-                  border: '1px solid #333',
-                  background: 'linear-gradient(135deg, #1a1a2e 0%, #0a0a1a 100%)',
+                  border: `1px solid ${accent}40`,
+                  background: `linear-gradient(135deg, ${accent}20 0%, ${accent}05 100%)`,
                   color: '#fff',
-                  fontSize: '0.85rem',
-                  fontWeight: 600,
+                  fontSize: '0.9rem',
+                  fontWeight: 700,
                   fontFamily: 'var(--font-display)',
-                  letterSpacing: '0.03em',
+                  letterSpacing: '0.05em',
+                  textTransform: 'uppercase',
                   textDecoration: 'none',
                   cursor: 'pointer',
                   transition: 'all 0.3s',
-                  marginTop: 8,
+                  marginTop: 12,
+                  position: 'relative',
+                  overflow: 'hidden',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = `linear-gradient(135deg, ${accent}30 0%, ${accent}15 100%)`;
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = `linear-gradient(135deg, ${accent}20 0%, ${accent}05 100%)`;
+                  e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
-                🔗 View Live Demo ↗
+                <span style={{ fontSize: '1.2rem' }}>▶</span>
+                <span>View Live Demo</span>
+                <span style={{ fontSize: '0.85rem', opacity: 0.8 }}>↗</span>
               </a>
             )}
 
