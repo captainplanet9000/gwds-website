@@ -403,6 +403,73 @@ export default function ProductDetailClient({ product, related, category }: { pr
           </motion.div>
         </section>
 
+        {/* Screenshot Gallery */}
+        {product.images && product.images.length > 1 && (
+          <section style={{ padding: '0 40px 48px', maxWidth: 1200, margin: '0 auto' }}>
+            <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '40px' }}>
+              <h2 style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: '1.5rem',
+                fontWeight: 700,
+                color: '#E8E8E8',
+                marginBottom: 24,
+                letterSpacing: '-0.02em',
+              }}>
+                📸 Screenshots
+              </h2>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
+                gap: 16,
+              }}>
+                {product.images.map((img: string, i: number) => {
+                  const label = img.split('/').pop()?.replace('dashboard-', '').replace('.jpg', '').replace(/-/g, ' ') || '';
+                  return (
+                    <motion.div
+                      key={img}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.08 }}
+                      style={{
+                        borderRadius: 12,
+                        overflow: 'hidden',
+                        border: `1px solid ${accent}20`,
+                        background: '#0a0a0a',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s',
+                      }}
+                      whileHover={{ scale: 1.02, borderColor: accent + '50' }}
+                    >
+                      <img
+                        src={img}
+                        alt={`${product.name} - ${label}`}
+                        style={{
+                          width: '100%',
+                          height: 220,
+                          objectFit: 'cover',
+                          objectPosition: 'top',
+                          display: 'block',
+                        }}
+                      />
+                      <div style={{
+                        padding: '10px 14px',
+                        fontSize: '0.72rem',
+                        color: '#888',
+                        fontFamily: 'var(--font-body)',
+                        textTransform: 'capitalize',
+                        fontWeight: 500,
+                      }}>
+                        {label}
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Features section */}
         <section style={{ padding: '0 40px 48px', maxWidth: 1200, margin: '0 auto' }}>
           <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '40px' }}>
