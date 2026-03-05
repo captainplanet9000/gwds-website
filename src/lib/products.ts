@@ -393,6 +393,102 @@ export const products: Product[] = [
     image: "/images/products/3d-render-pack.jpg",
     downloadUrl: "downloads/3d-render-pack-v1.0.0.zip",
   },
+  {
+    id: "full-stack-trader-bundle",
+    name: "The Full Stack Trader",
+    description: "Dashboard + Darvas Box + Elliott Wave + Analysis Prompts. Everything you need to run AI-powered trading.",
+    longDescription: `Save $137 — get the complete trading toolkit in one purchase.
+
+**What's included:**
+- **AI Trading Dashboard** ($149) — Full autonomous trading platform with 10+ strategies
+- **Darvas Box Indicator** ($49) — Classic breakout detection adapted for crypto
+- **Elliott Wave Agent** ($199) — AI-powered wave pattern recognition and trade execution
+- **Trading Analysis Prompts** ($39) — 50+ prompts for technical and fundamental analysis
+
+**Total value: $436 — You pay $299.**
+
+All four products delivered instantly. Same source code, same updates, same support.`,
+    price: 299,
+    category: "trading" as ProductCategory,
+    badge: "SAVE $137",
+    emoji: "🎯",
+    features: ["AI Trading Dashboard", "Darvas Box Indicator", "Elliott Wave Agent", "Trading Analysis Prompts", "All future updates", "$137 savings"],
+    isFeatured: true,
+    stripePriceId: "",
+  },
+  {
+    id: "ai-builder-bundle",
+    name: "AI Builder Pack",
+    description: "Dashboard + SaaS Starter + Second Brain. Ship AI-powered products faster.",
+    longDescription: `Save $108 — the complete toolkit for building and launching AI products.
+
+**What's included:**
+- **AI Trading Dashboard** ($149) — Production-ready Next.js trading platform
+- **AI SaaS Starter Kit** ($99) — Auth, billing, AI integration boilerplate
+- **Second Brain** ($79) — PARA-organized knowledge management system
+
+**Total value: $327 — You pay $219.**
+
+Three production-ready codebases. Fork, customize, deploy.`,
+    price: 219,
+    category: "templates" as ProductCategory,
+    badge: "SAVE $108",
+    emoji: "🏗️",
+    features: ["AI Trading Dashboard", "AI SaaS Starter Kit", "Second Brain Template", "All source code", "Vercel-ready", "$108 savings"],
+    stripePriceId: "",
+  },
+  {
+    id: "content-empire-bundle",
+    name: "Content Empire Pack",
+    description: "All three prompt packs for content creators, traders, and AI artists.",
+    longDescription: `Save $33 — every prompt pack in one download.
+
+**What's included:**
+- **Content Creator Mega Pack** ($29) — 200+ prompts for TikTok, YouTube, Twitter, newsletters
+- **AI Art Direction Pack** ($24) — 150+ prompts for Midjourney, DALL-E, Stable Diffusion
+- **Trading Analysis Prompts** ($39) — 50+ prompts for technical and fundamental analysis
+
+**Total value: $92 — You pay $59.**`,
+    price: 59,
+    category: "prompts" as ProductCategory,
+    badge: "SAVE $33",
+    emoji: "👑",
+    features: ["Content Creator Mega Pack", "AI Art Direction Pack", "Trading Analysis Prompts", "400+ total prompts", "All formats", "$33 savings"],
+    stripePriceId: "",
+  },
+  {
+    id: "everything-bundle",
+    name: "GWDS Everything Bundle",
+    description: "All 14 products. Every template, every tool, every prompt pack. One price.",
+    longDescription: `The ultimate deal — every single product in the GWDS store for 55% off.
+
+**14 products included:**
+- AI Trading Dashboard ($149)
+- Meme Trading System ($99)
+- Second Brain ($79)
+- AI SaaS Starter Kit ($99)
+- Darvas Box Indicator ($49)
+- Elliott Wave Agent ($199)
+- Multi-Strategy Bundle ($399)
+- Content Creator Mega Pack ($29)
+- Trading Analysis Prompts ($39)
+- AI Art Direction Pack ($24)
+- Cyber Wave Collection ($12)
+- Abstract Flow Collection ($9)
+- Clay Verse Animation Pack ($19)
+- 3D Product Renders Pack ($34)
+
+**Total value: $1,339 — You pay $599.**
+
+Lifetime access. All future updates included.`,
+    price: 599,
+    category: "templates" as ProductCategory,
+    badge: "55% OFF",
+    emoji: "💎",
+    features: ["All 14 products", "Every template & tool", "Every prompt pack", "All wallpapers & animations", "Lifetime updates", "$740 savings"],
+    isFeatured: true,
+    stripePriceId: "",
+  },
 ];
 
 export function getProductsByCategory(cat: ProductCategory): Product[] {
