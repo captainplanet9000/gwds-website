@@ -35,17 +35,23 @@ export const products: Product[] = [
     stripePriceId: "price_1T7AnhLLyk0oaesNcsOUw8UU",
     name: "AI Trading Dashboard",
     description: "Full-featured AI trading dashboard with autonomous agents, goal-based execution, multi-exchange support, and real-time analytics. Built with Next.js 15, TypeScript, and Supabase.",
-    longDescription: `The same dashboard powering Cival Systems — packaged as a template you can deploy in minutes.
+    longDescription: `The same dashboard powering Cival Systems — packaged as a template you can deploy in 5 minutes.
+
+**Deploy in 3 steps:**
+1. Set up a free Supabase project and run the included SQL migration
+2. Get your Hyperliquid API wallet key (trading only — can't withdraw your funds)
+3. Click "Deploy with Vercel" — paste your keys, and you're live
 
 **What you get:**
-- Autonomous trading agents with configurable strategies (VWAP, Darvas, Elliott Wave, Heikin Ashi, and more)
+- Autonomous trading agents with configurable strategies (VWAP, Darvas, Elliott Wave, Heikin Ashi, Renko, Williams Alligator, and more)
+- Multi-strategy farm system — run multiple agents coordinated under one portfolio
 - Goal-based trading — set profit targets and let agents execute
-- Multi-exchange support: Hyperliquid + Bybit with API key management
-- Real-time trade tracking, P&L, and position management
-- Risk analytics dashboard with drawdown monitoring
-- Agent health monitoring and performance scoring
-- Full source code (Next.js 15 + TypeScript + Supabase)
-- One-click deploy to Vercel
+- Real-time trade tracking, P&L, positions, and order management
+- Risk analytics with drawdown monitoring, correlation checks, and position sizing
+- Agent health monitoring, performance scoring, and benchmarking
+- Plugin system for extending with new strategies
+- Full source code (Next.js 15, TypeScript, Supabase, 2,400+ files)
+- One-click deploy to Vercel — no local setup required
 
 **Not included:** Live API keys or exchange accounts (you bring your own).`,
     price: 149,
@@ -73,7 +79,7 @@ export const products: Product[] = [
       "/images/products/dashboard-goals.jpg",
     ],
     downloadUrl: "downloads/ai-trading-dashboard-v1.0.0.zip",
-    demoUrl: "https://github.com/gwds/ai-trading-dashboard",
+    demoUrl: "https://github.com/captainplanet9000/ai-trading-dashboard",
   },
   {
     id: "meme-trading-template",
