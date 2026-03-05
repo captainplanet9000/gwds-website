@@ -37,6 +37,8 @@ export const products: Product[] = [
     description: "Full-featured AI trading dashboard with autonomous agents, goal-based execution, multi-exchange support, 44 built-in themes, and a modular plugin system. Built with Next.js 15, TypeScript, and Supabase.",
     longDescription: `The same dashboard powering Cival Systems — packaged as a template you can deploy in 5 minutes.
 
+**See it running right now:** $184K portfolio from $80K start, 6 autonomous agents, 68% win rate, 2,847 trades. The live demo isn't showing you what's possible — it's showing you what's already working.
+
 **Deploy in 3 steps:**
 1. Set up a free Supabase project and run the included SQL migration
 2. Get your Hyperliquid API wallet key (trading only — can't withdraw your funds)
@@ -82,17 +84,17 @@ Start with the base dashboard and add capabilities as you need them. Each add-on
       "Custom theme service available"
     ],
     techStack: ["Next.js 15", "TypeScript", "Supabase", "Hyperliquid SDK", "TailwindCSS"],
-    image: "/images/products/dashboard-overview.jpg",
+    image: "/images/products/dashboard-overview-new.jpg",
     images: [
-      "/images/products/dashboard-overview.jpg",
-      "/images/products/dashboard-agents.jpg",
-      "/images/products/dashboard-farms.jpg",
-      "/images/products/dashboard-themes.jpg",
-      "/images/products/dashboard-analytics.jpg",
-      "/images/products/dashboard-performance.jpg",
-      "/images/products/dashboard-goals.jpg",
-      "/images/products/dashboard-plugins.jpg",
-      "/images/products/dashboard-strategy-performance.jpg",
+      "/images/products/dashboard-overview-new.jpg",
+      "/images/products/dashboard-agents-new.jpg",
+      "/images/products/dashboard-farms-new.jpg",
+      "/images/products/dashboard-performance-new.jpg",
+      "/images/products/dashboard-analytics-new.jpg",
+      "/images/products/dashboard-goals-new.jpg",
+      "/images/products/dashboard-strategy-performance-new.jpg",
+      "/images/products/dashboard-plugins-new.jpg",
+      "/images/products/dashboard-correlation-new.jpg",
     ],
     downloadUrl: "downloads/ai-trading-dashboard-v1.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app",
@@ -101,10 +103,10 @@ Start with the base dashboard and add capabilities as you need them. Each add-on
     id: "meme-trading-system",
     stripePriceId: "price_1T7AnhLLyk0oaesNWVz1hMTi",
     name: "Meme Trading System",
-    description: "Automated meme coin trading plugin for the AI Trading Dashboard. Meme coin discovery, auto-execution, position monitoring, and risk management.",
+    description: "The same system that finds trending meme coins before they 10x. Plugs into your AI Trading Dashboard in 30 seconds. Scan, execute, manage — fully automated.",
     longDescription: `🔌 **Plugin for AI Trading Dashboard** — Drop this into your dashboard's \`plugins/\` folder and start trading meme coins automatically.
 
-Our battle-tested meme trading system — the same one running live on Hyperliquid.
+The same system that finds trending meme coins before they 10x. Plugs into your AI Trading Dashboard in 30 seconds. Scan, execute, manage — fully automated.
 
 **What you get:**
 - Meme coin discovery engine (trending detection, volume analysis)
@@ -116,7 +118,7 @@ Our battle-tested meme trading system — the same one running live on Hyperliqu
 - Full source code + setup wizard
 - manifest.json for plug-and-play installation
 
-👉 **Try the live demo** to see the meme trading interface in action with real-time mock data.
+👉 **Try the live demo** to see the meme trading interface in action with real-time data.
 
 **Warning:** Meme trading is high-risk. This tool gives you an edge, not a guarantee.
 
@@ -137,11 +139,10 @@ Our battle-tested meme trading system — the same one running live on Hyperliqu
       "Plug-and-play install"
     ],
     techStack: ["Next.js 15", "TypeScript", "Hyperliquid SDK", "Supabase"],
-    image: "/images/products/dashboard-meme-trading.jpg",
+    image: "/images/products/dashboard-agents-new.jpg",
     images: [
-      "/images/products/dashboard-meme-trading.jpg",
-      "/images/products/dashboard-agents.jpg",
-      "/images/products/dashboard-overview.jpg",
+      "/images/products/dashboard-agents-new.jpg",
+      "/images/products/dashboard-overview-new.jpg",
     ],
     downloadUrl: "downloads/meme-trading-template-v1.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/meme-coins",
@@ -150,8 +151,8 @@ Our battle-tested meme trading system — the same one running live on Hyperliqu
     id: "second-brain-template",
     stripePriceId: "price_1T7AniLLyk0oaesN0hgWMRRO",
     name: "Second Brain",
-    description: "PARA-organized personal knowledge base with tasks, documents, search, AI chat, weekly digests, and a script library with TTS. Your productivity command center.",
-    longDescription: `A complete second brain built on the PARA methodology — Projects, Areas, Resources, Archive.
+    description: "Your entire life, organized. Tasks, docs, scripts, AI chat, weekly digests — all in one place. PARA methodology. Deploy to Vercel in 2 minutes.",
+    longDescription: `Your entire life, organized. Tasks, docs, scripts, AI chat, weekly digests — all in one place. PARA methodology. Deploy to Vercel in 2 minutes.
 
 **What you get:**
 - Kanban task management with priorities
@@ -188,8 +189,8 @@ Our battle-tested meme trading system — the same one running live on Hyperliqu
     id: "ai-saas-starter",
     stripePriceId: "price_1T7AniLLyk0oaesNEpAd01o0",
     name: "AI SaaS Starter Kit",
-    description: "Production-ready SaaS template with auth, billing, AI API integration, and admin dashboard. Ship your AI product in days, not months.",
-    longDescription: `Skip the boilerplate. Start with a production-ready SaaS foundation.
+    description: "Skip 3 months of boilerplate. Auth, billing, AI API integration, admin dashboard, landing page — all wired up. Configure your env vars and ship.",
+    longDescription: `Skip 3 months of boilerplate. Auth, billing, AI API integration, admin dashboard, landing page — all wired up. Configure your env vars and ship.
 
 **What you get:**
 - Supabase Auth with email/password + OAuth (Google, GitHub)
@@ -215,8 +216,8 @@ Our battle-tested meme trading system — the same one running live on Hyperliqu
     id: "darvas-indicator",
     stripePriceId: "price_1T7AnjLLyk0oaesNqcWp4O2U",
     name: "Darvas Box Indicator",
-    description: "Classic Darvas Box breakout detection. Plugs directly into the AI Trading Dashboard as a strategy plugin. Multi-timeframe, confidence-scored signals.",
-    longDescription: `The Darvas Box method — modernized with AI and automated execution.
+    description: "Nicolas Darvas turned $36,000 into $2.25 million using box breakouts. This plugin automates his method with modern AI. Multi-timeframe analysis, confidence scoring, and auto-execution.",
+    longDescription: `Nicolas Darvas turned $36,000 into $2.25 million using box breakouts. This plugin automates his method with modern AI. Multi-timeframe analysis, confidence scoring, and auto-execution.
 
 **🔌 Plugin for the AI Trading Dashboard** — drop into your dashboard's \`plugins/\` folder and restart. Instant Darvas Box strategy.
 
@@ -230,18 +231,18 @@ Our battle-tested meme trading system — the same one running live on Hyperliqu
 - manifest.json for plug-and-play installation
 - Full source code with documentation
 
-👉 **Try the live demo** to see the Darvas agent running with real-time mock data in the Agents dashboard.
+👉 **Try the live demo** to see the Darvas agent running with real-time data in the Agents dashboard.
 
 **Integrates with:** AI Trading Dashboard ($149) — just copy the folder into \`plugins/\` and restart.`,
     price: 49,
     category: "trading",
     emoji: "📦",
     features: ["Dashboard plugin", "Multi-timeframe", "Auto box detection", "Alert system", "Confidence scoring", "Plug-and-play install"],
-    image: "/images/products/dashboard-agents.jpg",
+    image: "/images/products/dashboard-agents-new.jpg",
     images: [
-      "/images/products/dashboard-agents.jpg",
-      "/images/products/dashboard-strategy-performance.jpg",
-      "/images/products/dashboard-overview.jpg",
+      "/images/products/dashboard-agents-new.jpg",
+      "/images/products/dashboard-strategy-performance-new.jpg",
+      "/images/products/dashboard-overview-new.jpg",
     ],
     downloadUrl: "downloads/darvas-indicator-v1.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/agents",
@@ -250,8 +251,8 @@ Our battle-tested meme trading system — the same one running live on Hyperliqu
     id: "elliott-wave-agent",
     stripePriceId: "price_1T7AnjLLyk0oaesNmpnD45PO",
     name: "Elliott Wave Agent",
-    description: "AI-powered Elliott Wave analysis. Plugs into the AI Trading Dashboard. Identifies wave patterns and generates autonomous trade signals.",
-    longDescription: `An autonomous trading agent that reads Elliott Wave patterns and executes trades.
+    description: "The most sophisticated wave analysis you can deploy yourself. AI-powered wave counting, Fibonacci validation, autonomous trade execution. This is the same agent running live in our $184K portfolio.",
+    longDescription: `The most sophisticated wave analysis you can deploy yourself. AI-powered wave counting, Fibonacci validation, autonomous trade execution. This is the same agent running live in our $184K portfolio.
 
 **🔌 Plugin for the AI Trading Dashboard** — install into \`plugins/\` and the agent starts analyzing waves immediately.
 
@@ -265,9 +266,9 @@ Our battle-tested meme trading system — the same one running live on Hyperliqu
 - manifest.json for plug-and-play installation
 - Full TypeScript source code
 
-👉 **Try the live demo** to see the Elliott Wave agent analyzing patterns in real-time with mock data.
+👉 **Try the live demo** to see the Elliott Wave agent analyzing patterns in real-time.
 
-**This is the same agent running live in our Cival trading system.** Extracted, documented, and packaged for you to deploy.
+**This is the same agent running live in our $184K portfolio.** Extracted, documented, and packaged for you to deploy.
 
 **Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
     price: 199,
@@ -275,11 +276,11 @@ Our battle-tested meme trading system — the same one running live on Hyperliqu
     badge: "PREMIUM",
     emoji: "🌊",
     features: ["Dashboard plugin", "AI wave detection", "Auto entry/exit", "Fibonacci validation", "Risk management", "Plug-and-play"],
-    image: "/images/products/dashboard-agents.jpg",
+    image: "/images/products/dashboard-agents-new.jpg",
     images: [
-      "/images/products/dashboard-agents.jpg",
-      "/images/products/dashboard-strategy-performance.jpg",
-      "/images/products/dashboard-performance.jpg",
+      "/images/products/dashboard-agents-new.jpg",
+      "/images/products/dashboard-strategy-performance-new.jpg",
+      "/images/products/dashboard-performance-new.jpg",
     ],
     downloadUrl: "downloads/elliott-wave-agent-v1.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/agents",
@@ -288,8 +289,8 @@ Our battle-tested meme trading system — the same one running live on Hyperliqu
     id: "multi-strat-bundle",
     stripePriceId: "price_1T7AnkLLyk0oaesNv8HuW24O",
     name: "Multi-Strategy Bundle",
-    description: "6 trading strategies that plug into the AI Trading Dashboard. Darvas, Williams, Elliott, Heikin Ashi, Renko, and Multi-Strat. Run as a coordinated farm.",
-    longDescription: `Six battle-tested trading strategies in one bundle. Run them individually or orchestrate them as a farm.
+    description: "Six proven strategies working together. Darvas, Elliott Wave, Williams Alligator, Heikin Ashi, Renko, and VWAP-RSI-MACD. Run them as a coordinated farm with shared risk management. The full arsenal.",
+    longDescription: `Six proven strategies working together. Darvas, Elliott Wave, Williams Alligator, Heikin Ashi, Renko, and VWAP-RSI-MACD. Run them as a coordinated farm with shared risk management. The full arsenal.
 
 **🔌 Plugin for the AI Trading Dashboard** — drop all six strategies into \`plugins/\` and use the farm orchestrator to coordinate them.
 
@@ -317,15 +318,15 @@ Our battle-tested meme trading system — the same one running live on Hyperliqu
     badge: "BEST VALUE",
     emoji: "🏭",
     features: ["6 strategies included", "Farm orchestration", "Position management", "Margin-aware", "Telegram alerts", "Full source code"],
-    image: "/images/products/dashboard-farms.jpg",
+    image: "/images/products/dashboard-farms-new.jpg",
     downloadUrl: "downloads/multi-strat-bundle-v1.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/farms",
     images: [
-      "/images/products/dashboard-farms.jpg",
-      "/images/products/dashboard-agents.jpg",
-      "/images/products/dashboard-performance.jpg",
-      "/images/products/dashboard-strategy-performance.jpg",
-      "/images/products/dashboard-analytics.jpg",
+      "/images/products/dashboard-farms-new.jpg",
+      "/images/products/dashboard-agents-new.jpg",
+      "/images/products/dashboard-performance-new.jpg",
+      "/images/products/dashboard-strategy-performance-new.jpg",
+      "/images/products/dashboard-analytics-new.jpg",
     ],
   },
 
@@ -334,7 +335,7 @@ Our battle-tested meme trading system — the same one running live on Hyperliqu
     id: "content-creator-prompts",
     stripePriceId: "price_1T7AnkLLyk0oaesNyHeUB0FO",
     name: "Content Creator Mega Pack",
-    description: "500+ prompts for TikTok scripts, YouTube thumbnails, Instagram captions, blog posts, and viral hooks. Organized by platform and niche.",
+    description: "500+ prompts organized by platform. TikTok hooks, YouTube thumbnails, Instagram captions, blog frameworks, email sequences. Copy, paste, customize, post.",
     price: 29,
     category: "prompts",
     badge: "500+ PROMPTS",
@@ -347,7 +348,7 @@ Our battle-tested meme trading system — the same one running live on Hyperliqu
     id: "trading-analysis-prompts",
     stripePriceId: "price_1T7AnlLLyk0oaesNF7r5OOG9",
     name: "Trading Analysis Prompts",
-    description: "200+ prompts for market analysis, signal generation, risk assessment, and portfolio review. Built for GPT-4, Claude, and Gemini.",
+    description: "200+ prompts for market analysis. Technical setups, fundamental research, risk assessment, portfolio review. Works with GPT-4, Claude, and Gemini.",
     price: 39,
     category: "prompts",
     emoji: "🔍",
@@ -359,7 +360,7 @@ Our battle-tested meme trading system — the same one running live on Hyperliqu
     id: "ai-art-prompts",
     stripePriceId: "price_1T7AnlLLyk0oaesNO8J0tY3i",
     name: "AI Art Direction Pack",
-    description: "300+ curated prompts for Midjourney, DALL-E, Flux, and Stable Diffusion. Claymation, cyberpunk, minimalist, abstract, and more.",
+    description: "300+ curated prompts for Midjourney, DALL-E, Flux, and Stable Diffusion. Claymation, cyberpunk, minimalist, abstract, photorealistic. Negative prompts included.",
     price: 24,
     category: "prompts",
     emoji: "🎨",
@@ -412,8 +413,8 @@ Our battle-tested meme trading system — the same one running live on Hyperliqu
     id: "clay-verse-pack",
     stripePriceId: "price_1T7AnmLLyk0oaesNJeQr3uRq",
     name: "Clay Verse Animation Pack",
-    description: "Complete claymation content toolkit — 10 detailed AI video prompts, 5 style reference cards, 3 TikTok scripts, and platform-specific settings for Runway, Kling, and ComfyUI.",
-    longDescription: `Everything you need to create stunning claymation-style AI videos.
+    description: "10 detailed AI video prompts + 5 style reference cards + 3 TikTok scripts. Everything you need to create stunning claymation content.",
+    longDescription: `10 detailed AI video prompts + 5 style reference cards + 3 TikTok scripts. Everything you need to create stunning claymation content.
 
 **What you get:**
 - 10 detailed claymation prompts for AI video generation (Runway Gen-3, Kling, Pika)
@@ -435,8 +436,8 @@ Our battle-tested meme trading system — the same one running live on Hyperliqu
     id: "3d-render-pack",
     stripePriceId: "price_1T7AnnLLyk0oaesNtJf28hMp",
     name: "3D Product Renders Pack",
-    description: "20 isometric 3D product render prompts, 5 Blender scene templates, 5 color palettes, and batch generation scripts. Create stunning product photography with AI.",
-    longDescription: `Professional-grade AI product photography toolkit.
+    description: "20 isometric 3D render prompts + 5 Blender scene templates + batch generation scripts. Professional product photography powered by AI.",
+    longDescription: `20 isometric 3D render prompts + 5 Blender scene templates + batch generation scripts. Professional product photography powered by AI.
 
 **What you get:**
 - 20 isometric 3D render prompts for Midjourney, DALL-E, and Flux
@@ -461,11 +462,11 @@ Our battle-tested meme trading system — the same one running live on Hyperliqu
     description: "Dashboard + Darvas Box + Elliott Wave + Analysis Prompts. Everything you need to run AI-powered trading.",
     longDescription: `Save $137 — get the complete trading toolkit in one purchase.
 
-**What's included:**
-- [AI Trading Dashboard](/store/trading-dashboard-template) ($149) — Full autonomous trading platform with 10+ strategies
-- [Darvas Box Indicator](/store/darvas-indicator) ($49) — Classic breakout detection adapted for crypto
-- [Elliott Wave Agent](/store/elliott-wave-agent) ($199) — AI-powered wave pattern recognition and trade execution
-- [Trading Analysis Prompts](/store/trading-analysis-prompts) ($39) — 50+ prompts for technical and fundamental analysis
+**4 products included:**
+• **AI Trading Dashboard** ($149) — Full autonomous trading platform with 10+ strategies
+• **Darvas Box Indicator** ($49) — Classic breakout detection adapted for crypto
+• **Elliott Wave Agent** ($199) — AI-powered wave pattern recognition and trade execution
+• **Trading Analysis Prompts** ($39) — 50+ prompts for technical and fundamental analysis
 
 **Total value: $436 — You pay $299.**
 
@@ -479,12 +480,12 @@ All four products delivered instantly. Same source code, same updates, same supp
     features: ["AI Trading Dashboard", "Darvas Box Indicator", "Elliott Wave Agent", "Trading Analysis Prompts", "All future updates", "$137 savings"],
     isFeatured: true,
     stripePriceId: "",
-    image: "/images/products/dashboard-overview.jpg",
+    image: "/images/products/dashboard-overview-new.jpg",
     images: [
-      "/images/products/dashboard-overview.jpg",
-      "/images/products/dashboard-agents.jpg",
-      "/images/products/dashboard-farms.jpg",
-      "/images/products/dashboard-analytics.jpg",
+      "/images/products/dashboard-overview-new.jpg",
+      "/images/products/dashboard-agents-new.jpg",
+      "/images/products/dashboard-farms-new.jpg",
+      "/images/products/dashboard-analytics-new.jpg",
     ],
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard",
   },
@@ -494,10 +495,10 @@ All four products delivered instantly. Same source code, same updates, same supp
     description: "Dashboard + SaaS Starter + Second Brain. Ship AI-powered products faster.",
     longDescription: `Save $108 — the complete toolkit for building and launching AI products.
 
-**What's included:**
-- [AI Trading Dashboard](/store/trading-dashboard-template) ($149) — Production-ready Next.js trading platform
-- [AI SaaS Starter Kit](/store/ai-saas-starter) ($99) — Auth, billing, AI integration boilerplate
-- [Second Brain](/store/second-brain-template) ($79) — PARA-organized knowledge management system
+**3 products included:**
+• **AI Trading Dashboard** ($149) — Production-ready Next.js trading platform
+• **AI SaaS Starter Kit** ($99) — Auth, billing, AI integration boilerplate
+• **Second Brain** ($79) — PARA-organized knowledge management system
 
 **Total value: $327 — You pay $219.**
 
@@ -508,10 +509,9 @@ Three production-ready codebases. Fork, customize, deploy.`,
     emoji: "🏗️",
     features: ["AI Trading Dashboard", "AI SaaS Starter Kit", "Second Brain Template", "All source code", "Vercel-ready", "$108 savings"],
     stripePriceId: "",
-    image: "/images/products/dashboard-overview.jpg",
+    image: "/images/products/dashboard-overview-new.jpg",
     images: [
-      "/images/products/dashboard-overview.jpg",
-      "/images/products/dashboard-themes.jpg",
+      "/images/products/dashboard-overview-new.jpg",
     ],
   },
   {
@@ -520,10 +520,10 @@ Three production-ready codebases. Fork, customize, deploy.`,
     description: "All three prompt packs for content creators, traders, and AI artists.",
     longDescription: `Save $33 — every prompt pack in one download.
 
-**What's included:**
-- [Content Creator Mega Pack](/store/content-creator-prompts) ($29) — 200+ prompts for TikTok, YouTube, Twitter, newsletters
-- [AI Art Direction Pack](/store/ai-art-prompts) ($24) — 150+ prompts for Midjourney, DALL-E, Stable Diffusion
-- [Trading Analysis Prompts](/store/trading-analysis-prompts) ($39) — 50+ prompts for technical and fundamental analysis
+**3 products included:**
+• **Content Creator Mega Pack** ($29) — 500+ prompts for TikTok, YouTube, Twitter, newsletters
+• **AI Art Direction Pack** ($24) — 300+ prompts for Midjourney, DALL-E, Stable Diffusion
+• **Trading Analysis Prompts** ($39) — 200+ prompts for technical and fundamental analysis
 
 **Total value: $92 — You pay $59.**`,
     price: 59,
@@ -540,20 +540,20 @@ Three production-ready codebases. Fork, customize, deploy.`,
     longDescription: `The ultimate deal — every single product in the GWDS store for 55% off.
 
 **14 products included:**
-- [AI Trading Dashboard](/store/trading-dashboard-template) ($149)
-- [Meme Trading System](/store/meme-trading-system) ($99)
-- [Second Brain](/store/second-brain-template) ($79)
-- [AI SaaS Starter Kit](/store/ai-saas-starter) ($99)
-- [Darvas Box Indicator](/store/darvas-indicator) ($49)
-- [Elliott Wave Agent](/store/elliott-wave-agent) ($199)
-- [Multi-Strategy Bundle](/store/multi-strat-bundle) ($399)
-- [Content Creator Mega Pack](/store/content-creator-prompts) ($29)
-- [Trading Analysis Prompts](/store/trading-analysis-prompts) ($39)
-- [AI Art Direction Pack](/store/ai-art-prompts) ($24)
-- [Cyber Wave Collection](/store/cyber-wave-pack) ($12)
-- [Abstract Flow Collection](/store/abstract-flow-pack) ($9)
-- [Clay Verse Animation Pack](/store/clay-verse-pack) ($19)
-- [3D Product Renders Pack](/store/3d-render-pack) ($34)
+• **AI Trading Dashboard** ($149)
+• **Meme Trading System** ($99)
+• **Second Brain** ($79)
+• **AI SaaS Starter Kit** ($99)
+• **Darvas Box Indicator** ($49)
+• **Elliott Wave Agent** ($199)
+• **Multi-Strategy Bundle** ($399)
+• **Content Creator Mega Pack** ($29)
+• **Trading Analysis Prompts** ($39)
+• **AI Art Direction Pack** ($24)
+• **Cyber Wave Collection** ($12)
+• **Abstract Flow Collection** ($9)
+• **Clay Verse Animation Pack** ($19)
+• **3D Product Renders Pack** ($34)
 
 **Total value: $1,339 — You pay $599.**
 
@@ -567,13 +567,13 @@ Lifetime access. All future updates included.`,
     features: ["All 14 products", "Every template & tool", "Every prompt pack", "All wallpapers & animations", "Lifetime updates", "$740 savings"],
     isFeatured: true,
     stripePriceId: "",
-    image: "/images/products/dashboard-overview.jpg",
+    image: "/images/products/dashboard-overview-new.jpg",
     images: [
-      "/images/products/dashboard-overview.jpg",
-      "/images/products/dashboard-agents.jpg",
-      "/images/products/dashboard-farms.jpg",
-      "/images/products/dashboard-themes.jpg",
-      "/images/products/dashboard-plugins.jpg",
+      "/images/products/dashboard-overview-new.jpg",
+      "/images/products/dashboard-agents-new.jpg",
+      "/images/products/dashboard-farms-new.jpg",
+      "/images/products/dashboard-performance-new.jpg",
+      "/images/products/dashboard-plugins-new.jpg",
     ],
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard",
   },

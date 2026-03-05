@@ -531,14 +531,47 @@ export default function ProductDetailClient({ product, related, category }: { pr
                 whiteSpace: 'pre-wrap',
               }}>
                 {product.longDescription.split('\n').map((line: string, i: number) => {
+                  // Helper function to parse inline markdown links [text](url)
+                  const parseLinks = (text: string) => {
+                    const parts: (string | JSX.Element)[] = [];
+                    let lastIndex = 0;
+                    const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+                    let match;
+                    
+                    while ((match = linkRegex.exec(text)) !== null) {
+                      // Add text before the link
+                      if (match.index > lastIndex) {
+                        parts.push(text.substring(lastIndex, match.index));
+                      }
+                      // Add the link
+                      parts.push(
+                        <a
+                          key={`link-${i}-${match.index}`}
+                          href={match[2]}
+                          style={{ color: accent, textDecoration: 'underline' }}
+                        >
+                          {match[1]}
+                        </a>
+                      );
+                      lastIndex = match.index + match[0].length;
+                    }
+                    
+                    // Add remaining text
+                    if (lastIndex < text.length) {
+                      parts.push(text.substring(lastIndex));
+                    }
+                    
+                    return parts.length > 0 ? parts : text;
+                  };
+
                   if (line.startsWith('**') && line.endsWith('**')) {
                     return <h3 key={i} style={{ color: '#E8E8E8', fontWeight: 700, fontSize: '1rem', margin: '24px 0 12px', fontFamily: 'var(--font-display)' }}>{line.replace(/\*\*/g, '')}</h3>;
                   }
                   if (line.startsWith('- ')) {
-                    return <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 4 }}><span style={{ color: accent }}>•</span><span>{line.slice(2)}</span></div>;
+                    return <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 4 }}><span style={{ color: accent }}>•</span><span>{parseLinks(line.slice(2))}</span></div>;
                   }
                   if (line.trim() === '') return <br key={i} />;
-                  return <p key={i} style={{ marginBottom: 8 }}>{line}</p>;
+                  return <p key={i} style={{ marginBottom: 8 }}>{parseLinks(line)}</p>;
                 })}
               </div>
             </div>
