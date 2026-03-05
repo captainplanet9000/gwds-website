@@ -185,8 +185,10 @@ export const products: Product[] = [
     id: "darvas-indicator",
     stripePriceId: "price_1T7AnjLLyk0oaesNqcWp4O2U",
     name: "Darvas Box Indicator",
-    description: "Classic Darvas Box breakout detection with modern enhancements. Auto-identifies consolidation zones and breakout signals across any timeframe.",
+    description: "Classic Darvas Box breakout detection. Plugs directly into the AI Trading Dashboard as a strategy plugin. Multi-timeframe, confidence-scored signals.",
     longDescription: `The Darvas Box method — modernized with AI and automated execution.
+
+**🔌 Plugin for the AI Trading Dashboard** — drop into your dashboard's \`plugins/\` folder and restart. Instant Darvas Box strategy.
 
 **What you get:**
 - Darvas Box breakout detection algorithm (TypeScript)
@@ -194,13 +196,15 @@ export const products: Product[] = [
 - Auto box identification with consolidation zone mapping
 - Entry/exit signal generation with confidence scoring
 - Alert system for breakout notifications
-- Backtesting data and historical performance metrics
-- TradingView-compatible overlay component
-- Full source code with documentation`,
+- Dashboard widget component (DarvasOverlay.tsx)
+- manifest.json for plug-and-play installation
+- Full source code with documentation
+
+**Integrates with:** AI Trading Dashboard ($149) — just copy the folder into \`plugins/\` and restart.`,
     price: 49,
     category: "trading",
     emoji: "📦",
-    features: ["Multi-timeframe", "Auto box detection", "Alert system", "Backtesting data", "TradingView compatible"],
+    features: ["Dashboard plugin", "Multi-timeframe", "Auto box detection", "Alert system", "Confidence scoring", "Plug-and-play install"],
     image: "/images/products/dashboard-analytics.jpg",
     downloadUrl: "downloads/darvas-indicator-v1.0.0.zip",
   },
@@ -208,25 +212,29 @@ export const products: Product[] = [
     id: "elliott-wave-agent",
     stripePriceId: "price_1T7AnjLLyk0oaesNmpnD45PO",
     name: "Elliott Wave Agent",
-    description: "AI-powered Elliott Wave analysis. Identifies wave patterns, generates entry/exit signals, and manages risk automatically.",
+    description: "AI-powered Elliott Wave analysis. Plugs into the AI Trading Dashboard. Identifies wave patterns and generates autonomous trade signals.",
     longDescription: `An autonomous trading agent that reads Elliott Wave patterns and executes trades.
+
+**🔌 Plugin for the AI Trading Dashboard** — install into \`plugins/\` and the agent starts analyzing waves immediately.
 
 **What you get:**
 - AI wave pattern detection using DeepSeek/GPT-4 analysis
 - Automatic wave counting (impulse + corrective patterns)
 - Entry/exit signal generation based on wave position
-- Built-in risk management (position sizing, stop-loss, take-profit)
-- Multi-asset support (crypto, forex, equities)
-- Telegram alert integration
-- Backtested strategy with performance metrics
+- Fibonacci ratio validation for wave relationships
+- Built-in risk management (position sizing, stop-loss, multi-target take-profit)
+- Dashboard panel component (ElliottWavePanel.tsx)
+- manifest.json for plug-and-play installation
 - Full TypeScript source code
 
-**This is the same agent running live in our Cival trading system.** Extracted, documented, and packaged for you to deploy.`,
+**This is the same agent running live in our Cival trading system.** Extracted, documented, and packaged for you to deploy.
+
+**Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
     price: 199,
     category: "trading",
     badge: "PREMIUM",
     emoji: "🌊",
-    features: ["AI wave detection", "Auto entry/exit", "Risk management", "Multi-asset", "Telegram alerts", "Backtested strategy"],
+    features: ["Dashboard plugin", "AI wave detection", "Auto entry/exit", "Fibonacci validation", "Risk management", "Plug-and-play"],
     image: "/images/products/dashboard-agents.jpg",
     downloadUrl: "downloads/elliott-wave-agent-v1.0.0.zip",
   },
@@ -234,7 +242,7 @@ export const products: Product[] = [
     id: "multi-strat-bundle",
     stripePriceId: "price_1T7AnkLLyk0oaesNv8HuW24O",
     name: "Multi-Strategy Bundle",
-    description: "Complete bundle of 6 trading strategies: Darvas, Williams, Elliott, Heikin Ashi, Renko, and Multi-Strat. Run them individually or as a farm.",
+    description: "6 trading strategies that plug into the AI Trading Dashboard. Darvas, Williams, Elliott, Heikin Ashi, Renko, and Multi-Strat. Run as a coordinated farm.",
     longDescription: `Six battle-tested trading strategies in one bundle. Run them individually or orchestrate them as a farm.
 
 **Strategies included:**
