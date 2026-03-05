@@ -82,11 +82,10 @@ Start with the base dashboard and add capabilities as you need them. Each add-on
       "Custom theme service available"
     ],
     techStack: ["Next.js 15", "TypeScript", "Supabase", "Hyperliquid SDK", "TailwindCSS"],
-    image: "/images/products/trading-dashboard-template.jpg",
+    image: "/images/products/dashboard-overview.jpg",
     images: [
-      "/images/products/trading-dashboard-template.jpg",
-      "/images/products/dashboard-analytics.jpg",
-      "/images/products/dashboard-trades.jpg",
+      "/images/products/dashboard-overview.jpg",
+      "/images/products/dashboard-agents.jpg",
       "/images/products/dashboard-farms.jpg",
       "/images/products/dashboard-goals.jpg",
     ],
