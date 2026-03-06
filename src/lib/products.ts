@@ -245,32 +245,6 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
     image: "/images/products/second-brain-store.jpg",
     downloadUrl: "downloads/second-brain-template-v1.0.0.zip",
   },
-  {
-    id: "ai-saas-starter",
-    stripePriceId: "price_1T7AniLLyk0oaesNEpAd01o0",
-    name: "AI SaaS Starter Kit",
-    description: "Skip 3 months of boilerplate. Auth, billing, AI API integration, admin dashboard, landing page — all wired up. Configure your env vars and ship.",
-    longDescription: `Skip 3 months of boilerplate. Auth, billing, AI API integration, admin dashboard, landing page — all wired up. Configure your env vars and ship.
-
-**What you get:**
-- Supabase Auth with email/password + OAuth (Google, GitHub)
-- Stripe billing integration (subscriptions + one-time payments)
-- AI API integration layer (OpenAI, Anthropic, or bring your own)
-- Admin dashboard with user management and analytics
-- Marketing landing page with pricing table
-- Transactional email templates (welcome, receipt, password reset)
-- Full TypeScript source code
-- One-click deploy to Vercel
-
-**Built for speed.** Clone, configure env vars, deploy. Your SaaS is live.`,
-    price: 99,
-    category: "templates",
-    emoji: "🚀",
-    features: ["Auth + billing", "AI API integration", "Admin dashboard", "Landing page", "Email templates", "Stripe payments"],
-    techStack: ["Next.js 15", "TypeScript", "Supabase Auth", "Stripe"],
-        downloadUrl: "downloads/ai-saas-starter-v1.0.0.zip",
-  },
-
   // === TRADING TOOLS ===
   {
     id: "darvas-indicator",
@@ -712,22 +686,21 @@ All four products delivered instantly. Same source code, same updates, same supp
     id: "ai-builder-bundle",
     stripePriceId: "price_1T7p7aLLyk0oaesNR2K45OWk",
     name: "AI Builder Pack",
-    description: "Dashboard + SaaS Starter + Second Brain. Ship AI-powered products faster.",
-    longDescription: `Save $108 — the complete toolkit for building and launching AI products.
+    description: "Dashboard + Second Brain. Two production-ready Next.js templates in one package.",
+    longDescription: `Save $29 — two production-ready codebases in one download.
 
-**3 products included:**
-• **AI Trading Dashboard** ($149) — Production-ready Next.js trading platform
-• **AI SaaS Starter Kit** ($99) — Auth, billing, AI integration boilerplate
+**2 products included:**
+• **AI Trading Dashboard** ($149) — Production-ready Next.js trading platform with 10+ strategies
 • **Second Brain** ($79) — PARA-organized knowledge management system
 
-**Total value: $327 — You pay $219.**
+**Total value: $228 — You pay $199.**
 
-Three production-ready codebases. Fork, customize, deploy.`,
-    price: 219,
+Two production-ready codebases. Fork, customize, deploy.`,
+    price: 199,
     category: "templates" as ProductCategory,
-    badge: "SAVE $108",
+    badge: "SAVE $29",
     emoji: "🏗️",
-    features: ["AI Trading Dashboard", "AI SaaS Starter Kit", "Second Brain Template", "All source code", "Vercel-ready", "$108 savings"],
+    features: ["AI Trading Dashboard", "Second Brain Template", "All source code", "Vercel-ready", "$29 savings"],
     downloadUrl: "downloads/ai-builder-bundle-v1.0.0.zip",
     image: "/images/products/dashboard-overview-new.jpg",
     images: [
@@ -760,10 +733,10 @@ Three production-ready codebases. Fork, customize, deploy.`,
     id: "everything-bundle",
     stripePriceId: "price_1T7p7aLLyk0oaesNjdZqcSEx",
     name: "GWDS Everything Bundle",
-    description: "All 19 products. Every agent, every template, every tool, every prompt pack. One price.",
+    description: "All 17 products. Every agent, every template, every tool, every prompt pack. One price.",
     longDescription: `The ultimate deal — every single product in the GWDS store for over 60% off.
 
-**19 products included:**
+**17 products included:**
 • **AI Trading Dashboard** ($149)
 • **Flash Loan Arbitrage** ($49)
 • **Meme Trading System** ($99)
@@ -775,7 +748,6 @@ Three production-ready codebases. Fork, customize, deploy.`,
 • **Macro & On-Chain Sentiment Agent** ($199)
 • **Multi-Strategy Bundle** ($399)
 • **Second Brain** ($79)
-• **AI SaaS Starter Kit** ($99)
 • **Content Creator Mega Pack** ($29)
 • **Trading Analysis Prompts** ($39)
 • **AI Art Direction Pack** ($24)
@@ -784,16 +756,16 @@ Three production-ready codebases. Fork, customize, deploy.`,
 • **Clay Verse Animation Pack** ($19)
 • **3D Product Renders Pack** ($34)
 
-**Total value: $2,234 — You pay $899.**
+**Total value: $2,135 — You pay $899.**
 
 👉 **Try the live demo** to see all 6 trading agents working together in real-time.
 
 Lifetime access. All future updates included.`,
     price: 899,
     category: "templates" as ProductCategory,
-    badge: "60% OFF",
+    badge: "58% OFF",
     emoji: "💎",
-    features: ["All 19 products", "6 trading agents", "Every template & tool", "Every prompt pack", "All wallpapers & animations", "Lifetime updates", "$1,341 savings"],
+    features: ["All 17 products", "6 trading agents", "Every template & tool", "Every prompt pack", "All wallpapers & animations", "Lifetime updates", "$1,236 savings"],
     isFeatured: true,
     downloadUrl: "downloads/everything-bundle-v1.0.0.zip",
     image: "/images/products/dashboard-overview-new.jpg",
