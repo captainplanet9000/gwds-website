@@ -529,7 +529,7 @@ All three products delivered instantly. Same source code, same updates, same sup
   },
   {
     id: "everything-bundle",
-    stripePriceId: "price_1T7p7aLLyk0oaesNjdZqcSEx",
+    stripePriceId: "price_1T7tb4LLyk0oaesN76sJI7HL",
     name: "GWDS Everything Bundle",
     description: "Every agent, every template, every tool. The entire GWDS trading arsenal in one package.",
     longDescription: `The ultimate deal — every single product in the GWDS store.
