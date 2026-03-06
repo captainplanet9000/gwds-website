@@ -24,7 +24,6 @@ export const categories: { id: ProductCategory; label: string; emoji: string; co
   { id: "trading", label: "Trading", emoji: "📈", color: "#10B981", description: "Indicators, agents, and systems for real-money execution." },
   { id: "prompts", label: "Prompts", emoji: "💬", color: "#F59E0B", description: "Curated prompt libraries for content, code, and trading." },
   { id: "wallpapers", label: "Wallpapers", emoji: "🎨", color: "#EC4899", description: "AI-generated wallpapers and digital art." },
-  { id: "nfts", label: "NFTs", emoji: "💎", color: "#6366F1", description: "Limited-edition generative art and collectibles." },
   { id: "animations", label: "Animations", emoji: "🎬", color: "#EF4444", description: "Claymation, 3D renders, and animated content." },
 ];
 
@@ -623,19 +622,6 @@ This isn't just another indicator. The Macro & On-Chain Sentiment Agent reads th
     features: ["15 wallpapers", "4K resolution", "Desktop + mobile", "Abstract art", "Dark palette"],
     image: "/images/products/abstract-flow-pack.jpg",
     downloadUrl: "downloads/abstract-flow-pack-v1.0.0.zip",
-  },
-
-  // === NFTs ===
-  {
-    id: "400-club",
-    name: "The 400 Club",
-    description: "9,400-piece generative art collection on Ethereum. Unique character NFTs with trait-based rarity and community perks.",
-    price: 0,
-    category: "nfts",
-    badge: "COMING SOON",
-    emoji: "🎭",
-    features: ["9,400 unique pieces", "Ethereum mainnet", "Trait rarity", "Community access", "Holder benefits"],
-    image: "/images/products/400-club.jpg",
   },
 
   // === ANIMATIONS ===
