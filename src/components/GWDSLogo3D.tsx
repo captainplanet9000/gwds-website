@@ -120,7 +120,7 @@ function Scene() {
 
       <FloatingParticles />
 
-      <Environment preset="city" />
+      <Environment preset="city" background={false} />
     </>
   );
 }
@@ -131,27 +131,9 @@ export default function GWDSLogo3D({ height = '50vh' }: { height?: string }) {
       width: '100%',
       height,
       position: 'relative',
+      background: 'transparent',
     }}>
-      <Suspense fallback={
-        <div style={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-          <span style={{
-            fontSize: '3rem',
-            fontWeight: 800,
-            letterSpacing: '0.12em',
-            color: '#8B5CF6',
-            fontFamily: 'var(--font-display)',
-            opacity: 0.5,
-          }}>
-            GWDS
-          </span>
-        </div>
-      }>
+      <Suspense fallback={null}>
         <Canvas
           camera={{ position: [0, 0.2, 5.5], fov: 42 }}
           dpr={[1, 2]}

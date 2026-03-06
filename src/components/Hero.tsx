@@ -108,7 +108,7 @@ export default function Hero() {
             textTransform: 'uppercase', color: '#A78BFA',
             fontFamily: 'var(--font-body)',
           }}>
-            Digital Products Studio
+            Trading Systems
           </span>
         </motion.div>
 

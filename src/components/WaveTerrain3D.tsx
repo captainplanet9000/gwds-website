@@ -7,8 +7,8 @@ function Terrain() {
   const meshRef = useRef<THREE.Mesh>(null);
   const { viewport } = useThree();
 
-  // Much larger grid to fill entire viewport
-  const geo = useMemo(() => new THREE.PlaneGeometry(60, 60, 200, 200), []);
+  // Large grid with BIG squares — zoomed in, fewer subdivisions = larger cells
+  const geo = useMemo(() => new THREE.PlaneGeometry(80, 80, 60, 60), []);
 
   useFrame((state) => {
     if (!meshRef.current) return;
@@ -24,11 +24,11 @@ function Terrain() {
       const falloff = Math.max(0, 1 - dist / 30);
 
       const wave =
-        Math.sin(x * 0.2 + t) * 0.8 +
-        Math.sin(y * 0.25 + t * 1.1) * 0.6 +
-        Math.sin((x * 0.15 + y * 0.2) + t * 0.7) * 0.5 +
-        Math.sin(x * 0.5 + y * 0.4 + t * 0.4) * 0.25 +
-        Math.sin(dist * 0.3 + t * 0.6) * 0.3;
+        Math.sin(x * 0.15 + t) * 1.4 +
+        Math.sin(y * 0.18 + t * 1.1) * 1.0 +
+        Math.sin((x * 0.1 + y * 0.15) + t * 0.7) * 0.8 +
+        Math.sin(x * 0.3 + y * 0.25 + t * 0.4) * 0.4 +
+        Math.sin(dist * 0.2 + t * 0.6) * 0.5;
 
       pos.setZ(i, wave * falloff);
     }
@@ -42,7 +42,7 @@ function Terrain() {
         color="#7C3AED"
         wireframe
         transparent
-        opacity={0.12}
+        opacity={0.15}
         side={THREE.DoubleSide}
       />
     </mesh>
@@ -51,7 +51,7 @@ function Terrain() {
 
 function TerrainGlow() {
   const meshRef = useRef<THREE.Mesh>(null);
-  const geo = useMemo(() => new THREE.PlaneGeometry(60, 60, 100, 100), []);
+  const geo = useMemo(() => new THREE.PlaneGeometry(80, 80, 50, 50), []);
 
   useFrame((state) => {
     if (!meshRef.current) return;
@@ -150,7 +150,7 @@ export default function WaveTerrain3D({ height = '100vh', opacity = 1 }: { heigh
     }}>
       <Suspense fallback={null}>
         <Canvas
-          camera={{ position: [0, 5, 14], fov: 55, near: 0.1, far: 100 }}
+          camera={{ position: [0, 4, 8], fov: 60, near: 0.1, far: 150 }}
           dpr={[1, 1.5]}
           style={{ background: 'transparent' }}
           gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
