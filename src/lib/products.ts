@@ -558,10 +558,10 @@ All three products delivered instantly. Same source code, same updates, same sup
     description: "Every agent, every template, every tool. The entire GWDS trading arsenal in one package.",
     longDescription: `The ultimate deal — every single product in the GWDS store.
 
-**10 products included:**
+**9 products included:**
 • **AI Trading Dashboard** ($149) — Full autonomous trading platform
+• **Meme Trading Suite** ($499) — DexScreener scanner, meme agents, smart money tracking, 9-tab trading system
 • **Flash Loan Arbitrage** ($49) — Cross-DEX arbitrage with Aave V3
-• **Meme Trading Suite** ($499) — Full meme trading system (9 tabs, agents, smart money)
 • **Darvas Box Breakout Agent** ($199) — Volume-confirmed breakout detection
 • **Elliott Wave Pattern Agent** ($199) — AI-powered wave counting
 • **VWAP Volume Breakout Agent** ($199) — Volume-weighted momentum
@@ -569,16 +569,16 @@ All three products delivered instantly. Same source code, same updates, same sup
 • **Bollinger Band Mean Reversion Agent** ($199) — Statistical mean reversion
 • **Macro & On-Chain Sentiment Agent** ($199) — Macro + on-chain signals
 
-**Total value: $2,289 — You pay $699.**
+**Total value: $1,891 — You pay $899.**
 
-👉 **Try the live demo** to see all 6 trading agents working together in real-time.
+👉 **Try the live demo** to see all these systems working together in real-time.
 
 Lifetime access. All future updates included.`,
-    price: 699,
+    price: 899,
     category: "trading" as ProductCategory,
-    badge: "60% OFF",
+    badge: "52% OFF",
     emoji: "💎",
-    features: ["All 10 products", "6 trading agents", "Dashboard + Flash Loans + Meme Trading Suite", "Lifetime updates", "$1,590 savings"],
+    features: ["All 9 products", "6 trading agents", "Dashboard + Meme Trading Suite + Flash Loans", "Lifetime updates", "$992 savings"],
     isFeatured: true,
     downloadUrl: "downloads/everything-bundle-v1.0.0.zip",
     image: "/images/products/dashboard-overview-new.jpg",
