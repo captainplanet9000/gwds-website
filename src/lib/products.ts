@@ -101,52 +101,75 @@ Start with the base dashboard and add capabilities as you need them. Each add-on
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app",
   },
   {
-    id: "meme-trading-system",
+    id: "meme-trading-suite",
     stripePriceId: "price_1T7AnhLLyk0oaesNWVz1hMTi",
-    name: "Meme Trading System",
-    description: "The same system that finds trending meme coins before they 10x. Plugs into your AI Trading Dashboard in 30 seconds. Scan, execute, manage — fully automated.",
-    longDescription: `🔌 **Plugin for AI Trading Dashboard** — Drop this into your dashboard's \`plugins/\` folder and start trading meme coins automatically.
+    name: "Meme Trading Suite",
+    description: "The complete meme coin trading system — 9-tab dashboard with DexScreener scanner, autonomous agents, smart money tracking, Solana execution, and signal engine. 28 source files, fully integrated.",
+    longDescription: `🚀 **Premium Plugin for AI Trading Dashboard** — The most comprehensive meme trading system you can deploy.
 
-The same system that finds trending meme coins before they 10x. Plugs into your AI Trading Dashboard in 30 seconds. Scan, execute, manage — fully automated.
+This isn't a basic scanner. It's a full autonomous trading operation for meme coins — the same system scanning DexScreener, tracking smart money, and executing trades on Solana.
 
-**What you get:**
-- Meme coin discovery engine (trending detection, volume analysis)
-- Auto-trade execution on Hyperliquid
-- Position monitoring with auto-stop-loss
-- Meme agent scheduler (configurable scan intervals)
-- Risk management (max positions, position sizing, drawdown limits)
-- Performance dashboard with trade history
-- Full source code + setup wizard
-- manifest.json for plug-and-play installation
+**9-Tab Dashboard:**
+1. **Scanner** — Real-time DexScreener trending tokens with volume/mcap filters
+2. **New Pairs** — Tokens less than 24h old across all chains
+3. **Watchlist** — Track tokens with configurable price alerts
+4. **Search** — Find any token across all supported chains
+5. **Trades** — Full trade history with P&L analytics
+6. **Alerts** — Price, volume, and market cap alert system
+7. **Smart Money** — Track whale wallets and copy their moves
+8. **Agents** — Autonomous meme trading agents (momentum, sniper, scalper strategies)
+9. **Settings** — Agent config, wallet management, risk parameters
 
-👉 **Try the live demo** to see the meme trading interface in action with real-time data.
+**Engine & Backend (28 files):**
+- Meme Agent Engine with autonomous cycle management
+- Multi-factor Signal Engine for trade scoring
+- Strategy library (momentum, sniper, scalper)
+- Solana trade execution via Jupiter aggregator
+- Encrypted wallet management
+- Agent scheduler, monitor, and sync system
+- Full DexScreener API integration
 
-**Warning:** Meme trading is high-risk. This tool gives you an edge, not a guarantee.
+**What makes this different:**
+- Not just alerts — actual automated execution on Solana mainnet
+- Smart money tracking identifies whale accumulation before pumps
+- Signal engine scores every opportunity across multiple factors
+- Agents run autonomously with configurable risk limits
+- 1960-line dashboard UI with full inline styles (no component library needed)
 
-**Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
-    price: 99,
+👉 **Try the live demo** to see the full 9-tab meme trading interface with real-time DexScreener data.
+
+**Warning:** Meme trading is inherently high-risk. This system gives you a serious edge — automated scanning, smart money signals, and instant execution — but no tool eliminates the risk of meme coins.
+
+**Requires:** AI Trading Dashboard ($149) + Supabase + Solana RPC endpoint`,
+    price: 499,
     category: "trading",
-    badge: "HOT",
-    emoji: "🐸",
+    badge: "PREMIUM",
+    emoji: "🚀",
     isFeatured: true,
     features: [
-      "Dashboard plugin",
-      "Meme coin discovery engine",
-      "Auto-trade execution",
-      "Position monitoring",
-      "Auto stop-loss",
-      "Risk management",
-      "Performance analytics",
+      "9-tab dashboard plugin",
+      "DexScreener token scanner",
+      "New pairs discovery engine",
+      "Smart money wallet tracking",
+      "Autonomous meme trading agents",
+      "Solana on-chain execution",
+      "Multi-factor signal engine",
+      "3 built-in strategies (momentum, sniper, scalper)",
+      "Encrypted wallet management",
+      "Configurable price & volume alerts",
+      "Agent scheduling & monitoring",
+      "Trade history with P&L analytics",
+      "28 source files, full TypeScript",
       "Plug-and-play install"
     ],
-    techStack: ["Next.js 15", "TypeScript", "Hyperliquid SDK", "Supabase"],
+    techStack: ["Next.js 15", "TypeScript", "@solana/web3.js", "Supabase", "DexScreener API"],
     image: "/images/products/dashboard-plugins-new.jpg",
     images: [
       "/images/products/dashboard-plugins-new.jpg",
       "/images/products/dashboard-agents-new.jpg",
       "/images/products/dashboard-overview-new.jpg",
     ],
-    downloadUrl: "downloads/meme-trading-template-v1.0.0.zip",
+    downloadUrl: "downloads/meme-trading-suite-v1.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/meme-coins",
   },
   {
@@ -538,7 +561,7 @@ All three products delivered instantly. Same source code, same updates, same sup
 **10 products included:**
 • **AI Trading Dashboard** ($149) — Full autonomous trading platform
 • **Flash Loan Arbitrage** ($49) — Cross-DEX arbitrage with Aave V3
-• **Meme Trading System** ($99) — Meme token scanner & trader
+• **Meme Trading Suite** ($499) — Full meme trading system (9 tabs, agents, smart money)
 • **Darvas Box Breakout Agent** ($199) — Volume-confirmed breakout detection
 • **Elliott Wave Pattern Agent** ($199) — AI-powered wave counting
 • **VWAP Volume Breakout Agent** ($199) — Volume-weighted momentum
@@ -546,7 +569,7 @@ All three products delivered instantly. Same source code, same updates, same sup
 • **Bollinger Band Mean Reversion Agent** ($199) — Statistical mean reversion
 • **Macro & On-Chain Sentiment Agent** ($199) — Macro + on-chain signals
 
-**Total value: $1,889 — You pay $699.**
+**Total value: $2,289 — You pay $699.**
 
 👉 **Try the live demo** to see all 6 trading agents working together in real-time.
 
@@ -555,7 +578,7 @@ Lifetime access. All future updates included.`,
     category: "trading" as ProductCategory,
     badge: "60% OFF",
     emoji: "💎",
-    features: ["All 10 products", "6 trading agents", "Dashboard + Flash Loans + Meme Trading", "Lifetime updates", "$991 savings"],
+    features: ["All 10 products", "6 trading agents", "Dashboard + Flash Loans + Meme Trading Suite", "Lifetime updates", "$1,590 savings"],
     isFeatured: true,
     downloadUrl: "downloads/everything-bundle-v1.0.0.zip",
     image: "/images/products/dashboard-overview-new.jpg",
