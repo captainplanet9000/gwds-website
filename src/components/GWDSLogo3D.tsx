@@ -1,69 +1,82 @@
 'use client';
 import { useRef, useMemo, Suspense } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Text3D, Center, Float, MeshTransmissionMaterial, Environment } from '@react-three/drei';
+import { Text3D, Center, Float, Environment } from '@react-three/drei';
 import * as THREE from 'three';
 
 function GWDSText() {
   const groupRef = useRef<THREE.Group>(null);
-  const materialRef = useRef<any>(null);
-  const { pointer } = useThree();
+  const { pointer, viewport } = useThree();
 
   useFrame((state) => {
     if (!groupRef.current) return;
     const t = state.clock.getElapsedTime();
 
-    // Gentle auto-rotation
-    groupRef.current.rotation.y = Math.sin(t * 0.3) * 0.15 + pointer.x * 0.3;
-    groupRef.current.rotation.x = Math.sin(t * 0.2) * 0.05 + pointer.y * 0.15;
+    // Gentle auto-rotation with mouse parallax
+    groupRef.current.rotation.y = Math.sin(t * 0.25) * 0.1 + pointer.x * 0.15;
+    groupRef.current.rotation.x = Math.sin(t * 0.15) * 0.03 + pointer.y * 0.08;
 
-    // Breathing scale
-    const scale = 1 + Math.sin(t * 0.5) * 0.02;
+    // Subtle breathing
+    const scale = 1 + Math.sin(t * 0.4) * 0.015;
     groupRef.current.scale.setScalar(scale);
   });
+
+  // Scale text to viewport
+  const textScale = Math.min(viewport.width / 8, 1.3);
 
   return (
     <group ref={groupRef}>
       <Center>
         <Text3D
           font="/fonts/helvetiker_bold.typeface.json"
-          size={1.2}
-          height={0.35}
-          curveSegments={24}
+          size={1.4 * textScale}
+          height={0.5}
+          curveSegments={32}
           bevelEnabled
-          bevelThickness={0.03}
-          bevelSize={0.02}
+          bevelThickness={0.04}
+          bevelSize={0.025}
           bevelOffset={0}
-          bevelSegments={8}
+          bevelSegments={12}
+          letterSpacing={0.08}
         >
           GWDS
-          <meshStandardMaterial
-            color="#8B5CF6"
-            metalness={0.9}
-            roughness={0.1}
-            envMapIntensity={2}
+          {/* Main face — rich metallic purple */}
+          <meshPhysicalMaterial
+            color="#9333EA"
+            metalness={1}
+            roughness={0.12}
+            envMapIntensity={3}
+            clearcoat={1}
+            clearcoatRoughness={0.1}
+            reflectivity={1}
           />
         </Text3D>
       </Center>
+
+      {/* Glow plane behind text */}
+      <mesh position={[0, 0, -0.5]}>
+        <planeGeometry args={[8 * textScale, 3 * textScale]} />
+        <meshBasicMaterial color="#8B5CF6" transparent opacity={0.03} />
+      </mesh>
     </group>
   );
 }
 
 function FloatingParticles() {
-  const count = 120;
+  const count = 80;
   const meshRef = useRef<THREE.InstancedMesh>(null);
   const dummy = useMemo(() => new THREE.Object3D(), []);
 
   const particles = useMemo(() => {
     return Array.from({ length: count }, () => ({
       position: [
-        (Math.random() - 0.5) * 12,
+        (Math.random() - 0.5) * 14,
         (Math.random() - 0.5) * 8,
-        (Math.random() - 0.5) * 8,
+        (Math.random() - 0.5) * 6,
       ],
-      speed: 0.1 + Math.random() * 0.4,
+      speed: 0.08 + Math.random() * 0.25,
       offset: Math.random() * Math.PI * 2,
-      scale: 0.01 + Math.random() * 0.03,
+      scale: 0.008 + Math.random() * 0.025,
     }));
   }, []);
 
@@ -73,9 +86,9 @@ function FloatingParticles() {
 
     particles.forEach((p, i) => {
       dummy.position.set(
-        p.position[0] + Math.sin(t * p.speed + p.offset) * 0.5,
-        p.position[1] + Math.cos(t * p.speed * 0.7 + p.offset) * 0.3,
-        p.position[2] + Math.sin(t * p.speed * 0.5 + p.offset) * 0.4,
+        p.position[0] + Math.sin(t * p.speed + p.offset) * 0.4,
+        p.position[1] + Math.cos(t * p.speed * 0.7 + p.offset) * 0.25,
+        p.position[2] + Math.sin(t * p.speed * 0.4 + p.offset) * 0.3,
       );
       dummy.scale.setScalar(p.scale);
       dummy.updateMatrix();
@@ -87,68 +100,32 @@ function FloatingParticles() {
   return (
     <instancedMesh ref={meshRef} args={[undefined, undefined, count]}>
       <sphereGeometry args={[1, 8, 8]} />
-      <meshBasicMaterial color="#8B5CF6" transparent opacity={0.4} />
+      <meshBasicMaterial color="#A78BFA" transparent opacity={0.35} />
     </instancedMesh>
-  );
-}
-
-function WaveGrid() {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const geo = useMemo(() => {
-    const g = new THREE.PlaneGeometry(20, 20, 80, 80);
-    return g;
-  }, []);
-
-  useFrame((state) => {
-    if (!meshRef.current) return;
-    const t = state.clock.getElapsedTime();
-    const pos = meshRef.current.geometry.attributes.position;
-
-    for (let i = 0; i < pos.count; i++) {
-      const x = pos.getX(i);
-      const y = pos.getY(i);
-      const wave = Math.sin(x * 0.5 + t * 0.8) * 0.3 +
-                   Math.sin(y * 0.3 + t * 0.6) * 0.2 +
-                   Math.sin((x + y) * 0.4 + t * 0.4) * 0.15;
-      pos.setZ(i, wave);
-    }
-    pos.needsUpdate = true;
-    meshRef.current.geometry.computeVertexNormals();
-  });
-
-  return (
-    <mesh ref={meshRef} geometry={geo} rotation={[-Math.PI / 2.5, 0, 0]} position={[0, -2, -3]}>
-      <meshStandardMaterial
-        color="#8B5CF6"
-        wireframe
-        transparent
-        opacity={0.15}
-      />
-    </mesh>
   );
 }
 
 function Scene() {
   return (
     <>
-      <ambientLight intensity={0.3} />
-      <directionalLight position={[5, 5, 5]} intensity={1.2} color="#E8E8E8" />
-      <directionalLight position={[-3, 3, -3]} intensity={0.5} color="#8B5CF6" />
-      <pointLight position={[0, 0, 4]} intensity={0.8} color="#8B5CF6" distance={10} />
+      <ambientLight intensity={0.2} />
+      <directionalLight position={[5, 8, 5]} intensity={1.5} color="#E8E8E8" />
+      <directionalLight position={[-4, 4, -4]} intensity={0.7} color="#8B5CF6" />
+      <pointLight position={[0, 0, 5]} intensity={1.2} color="#A78BFA" distance={12} />
+      <pointLight position={[-3, 2, 3]} intensity={0.4} color="#C084FC" distance={8} />
 
-      <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.3}>
+      <Float speed={1.2} rotationIntensity={0.15} floatIntensity={0.25}>
         <GWDSText />
       </Float>
 
       <FloatingParticles />
-      <WaveGrid />
 
       <Environment preset="city" />
     </>
   );
 }
 
-export default function GWDSLogo3D({ height = '60vh' }: { height?: string }) {
+export default function GWDSLogo3D({ height = '50vh' }: { height?: string }) {
   return (
     <div style={{
       width: '100%',
@@ -162,19 +139,24 @@ export default function GWDSLogo3D({ height = '60vh' }: { height?: string }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: '#333',
-          fontFamily: 'var(--font-display)',
-          fontSize: '0.8rem',
-          letterSpacing: '0.2em',
         }}>
-          LOADING
+          <span style={{
+            fontSize: '3rem',
+            fontWeight: 800,
+            letterSpacing: '0.12em',
+            color: '#8B5CF6',
+            fontFamily: 'var(--font-display)',
+            opacity: 0.5,
+          }}>
+            GWDS
+          </span>
         </div>
       }>
         <Canvas
-          camera={{ position: [0, 0, 6], fov: 45 }}
+          camera={{ position: [0, 0.2, 5.5], fov: 42 }}
           dpr={[1, 2]}
           style={{ background: 'transparent' }}
-          gl={{ antialias: true, alpha: true }}
+          gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
         >
           <Scene />
         </Canvas>

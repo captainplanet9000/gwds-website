@@ -9,7 +9,6 @@ const WaveTerrain3D = dynamic(() => import('./WaveTerrain3D'), { ssr: false });
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
-  const headlineRef = useRef<HTMLHeadingElement>(null);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -19,22 +18,7 @@ export default function Hero() {
   const textOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const textY = useTransform(scrollYProgress, [0, 0.5], [0, -80]);
   const logo3dOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
-
-  useEffect(() => {
-    const init = async () => {
-      if (!headlineRef.current) return;
-      const { gsap } = await import('gsap');
-      const { SplitText } = await import('gsap/SplitText');
-      gsap.registerPlugin(SplitText);
-      const split = new SplitText(headlineRef.current, { type: 'chars,words' });
-      gsap.from(split.chars, {
-        opacity: 0, y: 60, rotateX: -60, filter: 'blur(6px)',
-        stagger: 0.03, duration: 0.8, ease: 'back.out(1.2)', delay: 0.5,
-      });
-      return () => split.revert();
-    };
-    init().catch(console.error);
-  }, []);
+  const waveOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0.3]);
 
   return (
     <section
@@ -50,15 +34,28 @@ export default function Hero() {
         background: '#000',
       }}
     >
-      {/* 3D Wave terrain background */}
-      <WaveTerrain3D height="100vh" opacity={0.6} />
+      {/* 3D Wave terrain — FULL BLEED background, covers entire section */}
+      <motion.div style={{ position: 'absolute', inset: 0, opacity: waveOpacity }}>
+        <WaveTerrain3D height="100%" opacity={0.9} />
+      </motion.div>
 
-      {/* Radial glow */}
+      {/* Radial glow — purple center wash */}
       <div style={{
         position: 'absolute',
         inset: 0,
-        background: 'radial-gradient(ellipse 60% 50% at 50% 40%, rgba(139,92,246,0.08) 0%, transparent 70%)',
+        background: 'radial-gradient(ellipse 70% 55% at 50% 35%, rgba(139,92,246,0.1) 0%, rgba(124,58,237,0.03) 40%, transparent 70%)',
         pointerEvents: 'none',
+        zIndex: 1,
+      }} />
+
+      {/* Top vignette */}
+      <div style={{
+        position: 'absolute',
+        top: 0, left: 0, right: 0,
+        height: 120,
+        background: 'linear-gradient(to bottom, rgba(0,0,0,0.5), transparent)',
+        pointerEvents: 'none',
+        zIndex: 1,
       }} />
 
       {/* 3D Logo */}
@@ -66,10 +63,11 @@ export default function Hero() {
         position: 'relative',
         zIndex: 2,
         width: '100%',
-        maxWidth: 800,
+        maxWidth: 900,
         opacity: logo3dOpacity,
+        marginTop: '-2vh',
       }}>
-        <GWDSLogo3D height="45vh" />
+        <GWDSLogo3D height="42vh" />
       </motion.div>
 
       {/* Text content */}
@@ -81,9 +79,9 @@ export default function Hero() {
         padding: '0 24px',
         opacity: textOpacity,
         y: textY,
-        marginTop: -40,
+        marginTop: -32,
       }}>
-        {/* Tagline */}
+        {/* Tagline pill */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -94,9 +92,10 @@ export default function Hero() {
             gap: 8,
             padding: '6px 16px',
             borderRadius: 999,
-            border: '1px solid rgba(139,92,246,0.25)',
-            background: 'rgba(139,92,246,0.06)',
+            border: '1px solid rgba(139,92,246,0.3)',
+            background: 'rgba(139,92,246,0.08)',
             marginBottom: 24,
+            backdropFilter: 'blur(8px)',
           }}
         >
           <span style={{
@@ -106,7 +105,7 @@ export default function Hero() {
           }} />
           <span style={{
             fontSize: '0.7rem', fontWeight: 600, letterSpacing: '0.15em',
-            textTransform: 'uppercase', color: '#8B5CF6',
+            textTransform: 'uppercase', color: '#A78BFA',
             fontFamily: 'var(--font-body)',
           }}>
             Digital Products Studio
@@ -115,43 +114,48 @@ export default function Hero() {
 
         {/* Main Headline */}
         <motion.h1
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 0.3, duration: 0.8 }}
           style={{
             fontFamily: 'var(--font-display)',
             fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
             fontWeight: 800,
-            color: '#E8E8E8',
-            lineHeight: 1.1,
+            color: '#F0ECF9',
+            lineHeight: 1.08,
             marginBottom: 16,
             letterSpacing: '-0.03em',
           }}
         >
           AI Trading Systems.
           <br />
-          <span style={{ color: '#8B5CF6' }}>Deployed in Minutes.</span>
+          <span style={{
+            background: 'linear-gradient(135deg, #8B5CF6, #C084FC, #A78BFA)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+          }}>
+            Deployed in Minutes.
+          </span>
         </motion.h1>
 
         {/* Subtitle */}
-        <motion.h2
-          ref={headlineRef}
+        <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
+          transition={{ delay: 0.6, duration: 0.8 }}
           style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: 'clamp(1rem, 2vw, 1.25rem)',
+            fontFamily: 'var(--font-body)',
+            fontSize: 'clamp(0.9rem, 1.8vw, 1.1rem)',
             fontWeight: 400,
-            color: '#888',
-            lineHeight: 1.6,
+            color: '#9CA3AF',
+            lineHeight: 1.7,
             marginBottom: 40,
-            letterSpacing: '-0.01em',
           }}
         >
           The same dashboard running a $184K portfolio — packaged as a template.
-          <br />Full source code, 44 themes, 6 autonomous agents.
-        </motion.h2>
+          <br />Full source code. 44 themes. 6 autonomous agents.
+        </motion.p>
 
         {/* CTAs */}
         <motion.div
@@ -162,13 +166,13 @@ export default function Hero() {
         >
           <a href="https://ai-trading-dashboard-demo.vercel.app" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
             <motion.button
-              whileHover={{ scale: 1.04 }}
+              whileHover={{ scale: 1.04, boxShadow: '0 0 30px rgba(139,92,246,0.4)' }}
               whileTap={{ scale: 0.97 }}
               style={{
                 padding: '15px 36px',
                 borderRadius: 8,
                 border: 'none',
-                background: '#8B5CF6',
+                background: 'linear-gradient(135deg, #7C3AED, #8B5CF6)',
                 color: '#fff',
                 fontFamily: 'var(--font-display)',
                 fontSize: '0.82rem',
@@ -176,6 +180,8 @@ export default function Hero() {
                 letterSpacing: '0.06em',
                 textTransform: 'uppercase',
                 cursor: 'pointer',
+                boxShadow: '0 0 20px rgba(139,92,246,0.25)',
+                transition: 'box-shadow 0.3s',
               }}
             >
               View Live Demo →
@@ -188,8 +194,8 @@ export default function Hero() {
               style={{
                 padding: '15px 36px',
                 borderRadius: 8,
-                border: '1px solid #333',
-                background: 'transparent',
+                border: '1px solid rgba(255,255,255,0.12)',
+                background: 'rgba(255,255,255,0.03)',
                 color: '#E8E8E8',
                 fontFamily: 'var(--font-display)',
                 fontSize: '0.82rem',
@@ -197,6 +203,7 @@ export default function Hero() {
                 letterSpacing: '0.06em',
                 textTransform: 'uppercase',
                 cursor: 'pointer',
+                backdropFilter: 'blur(8px)',
                 transition: 'border-color 0.3s',
               }}
             >
@@ -216,20 +223,20 @@ export default function Hero() {
           bottom: 40,
           left: '50%',
           transform: 'translateX(-50%)',
-          zIndex: 3,
+          zIndex: 5,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           gap: 8,
         }}
       >
-        <span style={{ fontSize: '0.6rem', color: '#444', letterSpacing: '0.2em', textTransform: 'uppercase', fontFamily: 'var(--font-body)' }}>
+        <span style={{ fontSize: '0.6rem', color: '#555', letterSpacing: '0.2em', textTransform: 'uppercase', fontFamily: 'var(--font-body)' }}>
           Scroll
         </span>
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 1.5, repeat: Infinity }}
-          style={{ width: 1, height: 24, background: 'linear-gradient(to bottom, #444, transparent)' }}
+          style={{ width: 1, height: 24, background: 'linear-gradient(to bottom, #555, transparent)' }}
         />
       </motion.div>
 
@@ -239,7 +246,7 @@ export default function Hero() {
         bottom: 0,
         left: 0,
         right: 0,
-        height: 200,
+        height: 250,
         background: 'linear-gradient(to bottom, transparent, #000)',
         pointerEvents: 'none',
         zIndex: 4,
