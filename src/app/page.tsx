@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import Footer from '@/components/Footer';
-import { getFeaturedProducts, categories, products } from '@/lib/products';
+import { getFeaturedProducts } from '@/lib/products';
 import { motion } from 'framer-motion';
 import { useRef, useEffect } from 'react';
 import Link from 'next/link';
@@ -216,63 +216,127 @@ function StatsSection() {
   );
 }
 
-function CategoriesSection() {
+function IDESection() {
+  const ides = [
+    { name: 'Cursor', desc: 'AI-native editing', color: '#00D4AA', letter: 'C' },
+    { name: 'Windsurf', desc: 'Agentic IDE', color: '#3B82F6', letter: 'W' },
+    { name: 'VS Code', desc: 'Industry standard', color: '#007ACC', letter: 'VS' },
+    { name: 'Zed', desc: 'Lightning fast', color: '#F59E0B', letter: 'Z' },
+    { name: 'WebStorm', desc: 'Full IntelliSense', color: '#00CDD7', letter: 'WS' },
+    { name: 'Neovim', desc: 'Terminal power', color: '#57A143', letter: 'NV' },
+  ];
+
   return (
-    <section style={{ padding: '80px 24px', maxWidth: 1400, margin: '0 auto' }}>
-      <div style={{ marginBottom: 48 }}>
-        <p style={{ fontSize: '0.7rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#555', marginBottom: 12, fontFamily: 'var(--font-body)' }}>
-          Browse by Category
+    <section style={{ padding: '100px 24px', maxWidth: 1200, margin: '0 auto' }}>
+      <div style={{ textAlign: 'center', marginBottom: 64 }}>
+        <p style={{ fontSize: '0.7rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#8B5CF6', marginBottom: 12, fontFamily: 'var(--font-body)' }}>
+          Full Source Code
         </p>
         <h2 style={{
           fontFamily: 'var(--font-display)',
-          fontSize: 'clamp(1.8rem, 3.5vw, 2.8rem)',
+          fontSize: 'clamp(2rem, 4vw, 3.2rem)',
           fontWeight: 800, color: '#E8E8E8',
-          letterSpacing: '-0.03em',
+          letterSpacing: '-0.03em', lineHeight: 1.1,
+          marginBottom: 20,
         }}>
-          What are you building?
+          Open it in your favorite IDE.<br />
+          <span style={{ color: '#8B5CF6' }}>Make it yours.</span>
         </h2>
+        <p style={{
+          fontSize: '0.95rem', color: '#666', lineHeight: 1.7,
+          fontFamily: 'var(--font-body)', maxWidth: 640, margin: '0 auto',
+        }}>
+          Every product ships as clean TypeScript source code. No lock-in, no black boxes, no compiled binaries.
+          Open the project in Cursor, Windsurf, VS Code, or any editor and customize every strategy, every threshold, every UI element.
+        </p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
-        {categories.map(cat => {
-          const count = products.filter(p => p.category === cat.id).length;
-          return (
-            <Link key={cat.id} href={`/store?category=${cat.id}`} style={{ textDecoration: 'none' }}>
-              <motion.div
-                whileHover={{ y: -4, borderColor: cat.color + '40' }}
-                style={{
-                  padding: '28px 24px',
-                  borderRadius: 12,
-                  background: '#0a0a0a',
-                  border: '1px solid #1a1a1a',
-                  cursor: 'pointer',
-                  transition: 'box-shadow 0.3s',
-                }}
-              >
-                <span style={{ fontSize: '2rem' }}>{cat.emoji}</span>
-                <h3 style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '1.05rem', fontWeight: 700,
-                  color: '#E8E8E8', marginTop: 12, marginBottom: 6,
-                }}>
-                  {cat.label}
-                </h3>
-                <p style={{
-                  fontSize: '0.78rem', color: '#666', lineHeight: 1.4,
-                  fontFamily: 'var(--font-body)', marginBottom: 12,
-                }}>
-                  {cat.description}
-                </p>
-                <span style={{
-                  fontSize: '0.68rem', color: cat.color,
-                  fontWeight: 600, fontFamily: 'var(--font-body)',
-                }}>
-                  {count} {count === 1 ? 'product' : 'products'} →
-                </span>
-              </motion.div>
-            </Link>
-          );
-        })}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))', gap: 16, marginBottom: 64 }}>
+        {ides.map(ide => (
+          <motion.div
+            key={ide.name}
+            whileHover={{ y: -6, borderColor: ide.color + '50' }}
+            style={{
+              padding: '28px 20px', borderRadius: 12,
+              background: '#0a0a0a', border: '1px solid #1a1a1a',
+              textAlign: 'center', cursor: 'default',
+              transition: 'box-shadow 0.3s',
+            }}
+          >
+            <div style={{
+              width: 48, height: 48, borderRadius: 12,
+              background: ide.color + '15', border: `1px solid ${ide.color}30`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              margin: '0 auto 14px',
+              fontSize: '0.85rem', fontWeight: 800, color: ide.color,
+              fontFamily: 'var(--font-mono, monospace)',
+            }}>
+              {ide.letter}
+            </div>
+            <h3 style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '0.95rem', fontWeight: 700,
+              color: '#E8E8E8', marginBottom: 4,
+            }}>
+              {ide.name}
+            </h3>
+            <p style={{
+              fontSize: '0.7rem', color: '#555',
+              fontFamily: 'var(--font-body)',
+            }}>
+              {ide.desc}
+            </p>
+          </motion.div>
+        ))}
+      </div>
+
+      <div style={{
+        display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 24,
+      }}>
+        {[
+          {
+            icon: '\uD83E\uDD16',
+            title: 'AI-Assisted Customization',
+            desc: 'Open in Cursor or Windsurf and use AI to modify strategies, add indicators, or build entirely new agents. The codebase is structured for AI-assisted development.',
+          },
+          {
+            icon: '\uD83D\uDD27',
+            title: 'Full TypeScript Source',
+            desc: 'Every line of code \u2014 strategies, risk management, UI components, API routes. No obfuscation, no compiled modules. Read it, modify it, own it.',
+          },
+          {
+            icon: '\u26A1',
+            title: 'npm install \u2192 npm run dev',
+            desc: 'Clone, install dependencies, set your API keys, run. Full trading dashboard live on localhost in under 3 minutes. Deploy to Vercel when ready.',
+          },
+        ].map(item => (
+          <motion.div
+            key={item.title}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            style={{
+              padding: 32, borderRadius: 14,
+              background: '#0a0a0a', border: '1px solid #1a1a1a',
+            }}
+          >
+            <span style={{ fontSize: '2rem' }}>{item.icon}</span>
+            <h3 style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '1.05rem', fontWeight: 700,
+              color: '#E8E8E8', marginTop: 16, marginBottom: 10,
+              letterSpacing: '-0.01em',
+            }}>
+              {item.title}
+            </h3>
+            <p style={{
+              fontSize: '0.82rem', color: '#777', lineHeight: 1.6,
+              fontFamily: 'var(--font-body)',
+            }}>
+              {item.desc}
+            </p>
+          </motion.div>
+        ))}
       </div>
     </section>
   );
@@ -312,7 +376,7 @@ function CTASection() {
           fontFamily: 'var(--font-body)', marginBottom: 40,
         }}
       >
-        Every template ships with full source code, documentation, and setup wizard.
+        Full TypeScript source. Open in Cursor, Windsurf, or VS Code. Customize everything.
       </motion.p>
       <Link href="/store" style={{ textDecoration: 'none' }}>
         <motion.button
@@ -343,7 +407,7 @@ export default function Home() {
         <FeaturedSection />
         <DemoSection />
         <StatsSection />
-        <CategoriesSection />
+        <IDESection />
         <CTASection />
       </main>
       <Footer />
