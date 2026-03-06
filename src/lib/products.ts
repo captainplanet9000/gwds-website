@@ -22,7 +22,6 @@ export interface Product {
 export const categories: { id: ProductCategory; label: string; emoji: string; color: string; description: string }[] = [
   { id: "templates", label: "Templates", emoji: "🧩", color: "#8B5CF6", description: "Production-ready dashboards, apps, and tools." },
   { id: "trading", label: "Trading", emoji: "📈", color: "#10B981", description: "Indicators, agents, and systems for real-money execution." },
-  { id: "prompts", label: "Prompts", emoji: "💬", color: "#F59E0B", description: "Curated prompt libraries for content, code, and trading." },
   { id: "wallpapers", label: "Wallpapers", emoji: "🎨", color: "#EC4899", description: "AI-generated wallpapers and digital art." },
   { id: "animations", label: "Animations", emoji: "🎬", color: "#EF4444", description: "Claymation, 3D renders, and animated content." },
 ];
@@ -533,45 +532,6 @@ This isn't just another indicator. The Macro & On-Chain Sentiment Agent reads th
     ],
   },
 
-  // === PROMPTS ===
-  {
-    id: "content-creator-prompts",
-    stripePriceId: "price_1T7AnkLLyk0oaesNyHeUB0FO",
-    name: "Content Creator Mega Pack",
-    description: "500+ prompts organized by platform. TikTok hooks, YouTube thumbnails, Instagram captions, blog frameworks, email sequences. Copy, paste, customize, post.",
-    price: 29,
-    category: "prompts",
-    badge: "500+ PROMPTS",
-    emoji: "✍️",
-    features: ["TikTok scripts", "YouTube thumbnails", "Instagram captions", "Blog frameworks", "Viral hooks", "Niche-specific"],
-    image: "/images/products/content-creator-prompts.jpg",
-    downloadUrl: "downloads/content-creator-prompts-v1.0.0.zip",
-  },
-  {
-    id: "trading-analysis-prompts",
-    stripePriceId: "price_1T7AnlLLyk0oaesNF7r5OOG9",
-    name: "Trading Analysis Prompts",
-    description: "200+ prompts for market analysis. Technical setups, fundamental research, risk assessment, portfolio review. Works with GPT-4, Claude, and Gemini.",
-    price: 39,
-    category: "prompts",
-    emoji: "🔍",
-    features: ["Market analysis", "Signal generation", "Risk assessment", "Portfolio review", "Multi-model compatible"],
-    image: "/images/products/trading-analysis-prompts.jpg",
-    downloadUrl: "downloads/trading-analysis-prompts-v1.0.0.zip",
-  },
-  {
-    id: "ai-art-prompts",
-    stripePriceId: "price_1T7AnlLLyk0oaesNO8J0tY3i",
-    name: "AI Art Direction Pack",
-    description: "300+ curated prompts for Midjourney, DALL-E, Flux, and Stable Diffusion. Claymation, cyberpunk, minimalist, abstract, photorealistic. Negative prompts included.",
-    price: 24,
-    category: "prompts",
-    emoji: "🎨",
-    features: ["300+ art prompts", "Multiple AI platforms", "Style categories", "Negative prompts", "Commercial license"],
-    image: "/images/products/ai-art-prompts.jpg",
-    downloadUrl: "downloads/ai-art-prompts-v1.0.0.zip",
-  },
-
   // === WALLPAPERS ===
   {
     id: "cyber-wave-pack",
@@ -650,25 +610,24 @@ This isn't just another indicator. The Macro & On-Chain Sentiment Agent reads th
     id: "full-stack-trader-bundle",
     stripePriceId: "price_1T7p7ZLLyk0oaesN9Mt54Oaz",
     name: "The Full Stack Trader",
-    description: "Dashboard + Darvas Box + Elliott Wave + Analysis Prompts. Everything you need to run AI-powered trading.",
-    longDescription: `Save $289 — get the core trading toolkit in one purchase.
+    description: "Dashboard + Darvas Box + Elliott Wave. The core AI trading toolkit in one purchase.",
+    longDescription: `Save $248 — get the core trading toolkit in one purchase.
 
-**4 products included:**
+**3 products included:**
 • **AI Trading Dashboard** ($149) — Full autonomous trading platform with 10+ strategies
 • **Darvas Box Breakout Agent** ($199) — Volume-confirmed box breakout detection
 • **Elliott Wave Pattern Agent** ($199) — AI-powered wave counting with Fibonacci targets
-• **Trading Analysis Prompts** ($39) — 50+ prompts for technical and fundamental analysis
 
-**Total value: $588 — You pay $299.**
+**Total value: $547 — You pay $299.**
 
 👉 **Try the live demo** to see all these systems working together in one unified dashboard.
 
-All four products delivered instantly. Same source code, same updates, same support.`,
+All three products delivered instantly. Same source code, same updates, same support.`,
     price: 299,
     category: "trading" as ProductCategory,
-    badge: "SAVE $289",
+    badge: "SAVE $248",
     emoji: "🎯",
-    features: ["AI Trading Dashboard", "Darvas Box Breakout Agent", "Elliott Wave Pattern Agent", "Trading Analysis Prompts", "All future updates", "$289 savings"],
+    features: ["AI Trading Dashboard", "Darvas Box Breakout Agent", "Elliott Wave Pattern Agent", "All future updates", "$248 savings"],
     isFeatured: true,
     image: "/images/products/dashboard-overview-new.jpg",
     images: [
@@ -710,33 +669,13 @@ Two production-ready codebases. Fork, customize, deploy.`,
     ],
   },
   {
-    id: "content-empire-bundle",
-    stripePriceId: "price_1T7p7aLLyk0oaesNByy8qtOV",
-    name: "Content Empire Pack",
-    description: "All three prompt packs for content creators, traders, and AI artists.",
-    longDescription: `Save $33 — every prompt pack in one download.
-
-**3 products included:**
-• **Content Creator Mega Pack** ($29) — 500+ prompts for TikTok, YouTube, Twitter, newsletters
-• **AI Art Direction Pack** ($24) — 300+ prompts for Midjourney, DALL-E, Stable Diffusion
-• **Trading Analysis Prompts** ($39) — 200+ prompts for technical and fundamental analysis
-
-**Total value: $92 — You pay $59.**`,
-    price: 59,
-    category: "prompts" as ProductCategory,
-    badge: "SAVE $33",
-    emoji: "👑",
-    features: ["Content Creator Mega Pack", "AI Art Direction Pack", "Trading Analysis Prompts", "400+ total prompts", "All formats", "$33 savings"],
-    downloadUrl: "downloads/content-empire-bundle-v1.0.0.zip",
-  },
-  {
     id: "everything-bundle",
     stripePriceId: "price_1T7p7aLLyk0oaesNjdZqcSEx",
     name: "GWDS Everything Bundle",
-    description: "All 17 products. Every agent, every template, every tool, every prompt pack. One price.",
+    description: "All 14 products. Every agent, every template, every tool. One price.",
     longDescription: `The ultimate deal — every single product in the GWDS store for over 60% off.
 
-**17 products included:**
+**14 products included:**
 • **AI Trading Dashboard** ($149)
 • **Flash Loan Arbitrage** ($49)
 • **Meme Trading System** ($99)
@@ -748,24 +687,21 @@ Two production-ready codebases. Fork, customize, deploy.`,
 • **Macro & On-Chain Sentiment Agent** ($199)
 • **Multi-Strategy Bundle** ($399)
 • **Second Brain** ($79)
-• **Content Creator Mega Pack** ($29)
-• **Trading Analysis Prompts** ($39)
-• **AI Art Direction Pack** ($24)
 • **Cyber Wave Collection** ($12)
 • **Abstract Flow Collection** ($9)
 • **Clay Verse Animation Pack** ($19)
 • **3D Product Renders Pack** ($34)
 
-**Total value: $2,135 — You pay $899.**
+**Total value: $2,043 — You pay $799.**
 
 👉 **Try the live demo** to see all 6 trading agents working together in real-time.
 
 Lifetime access. All future updates included.`,
-    price: 899,
+    price: 799,
     category: "templates" as ProductCategory,
-    badge: "58% OFF",
+    badge: "60% OFF",
     emoji: "💎",
-    features: ["All 17 products", "6 trading agents", "Every template & tool", "Every prompt pack", "All wallpapers & animations", "Lifetime updates", "$1,236 savings"],
+    features: ["All 14 products", "6 trading agents", "Every template & tool", "All wallpapers & design assets", "Lifetime updates", "$1,225 savings"],
     isFeatured: true,
     downloadUrl: "downloads/everything-bundle-v1.0.0.zip",
     image: "/images/products/dashboard-overview-new.jpg",
