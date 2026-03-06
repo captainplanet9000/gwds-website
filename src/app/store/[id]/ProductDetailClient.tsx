@@ -288,37 +288,7 @@ export default function ProductDetailClient({ product, related, category }: { pr
               </Link>
             )}
 
-            {/* Deploy with Vercel CTA — only for trading dashboard */}
-            {product.demoUrl && product.id === 'trading-dashboard-template' && (
-              <a
-                href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fcaptainplanet9000%2Fai-trading-dashboard&env=NEXT_PUBLIC_MAIN_WALLET_ADDRESS,MAIN_WALLET_PRIVATE_KEY,NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY,SUPABASE_SERVICE_ROLE_KEY,OPENROUTER_API_KEY&envDescription=Required%20API%20keys%20for%20the%20trading%20dashboard&envLink=https%3A%2F%2Fgithub.com%2Fcaptainplanet9000%2Fai-trading-dashboard%2Fblob%2Fmain%2Fdocs%2FSETUP.md&project-name=ai-trading-dashboard"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 10,
-                  width: '100%',
-                  padding: '14px 32px',
-                  borderRadius: 8,
-                  border: '1px solid #333',
-                  background: '#000',
-                  color: '#fff',
-                  fontSize: '0.85rem',
-                  fontWeight: 600,
-                  fontFamily: 'var(--font-display)',
-                  letterSpacing: '0.03em',
-                  textDecoration: 'none',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s',
-                  marginTop: 12,
-                }}
-              >
-                <svg height="16" viewBox="0 0 76 65" fill="white"><path d="M37.5274 0L75.0548 65H0L37.5274 0Z"/></svg>
-                Deploy with Vercel — Free
-              </a>
-            )}
+            {/* Deploy with Vercel — removed, repo is private. Buyers get source via download. */}
 
             {/* Live Demo */}
             {product.demoUrl && (
@@ -364,35 +334,7 @@ export default function ProductDetailClient({ product, related, category }: { pr
               </a>
             )}
 
-            {/* View source on GitHub */}
-            {product.id === 'trading-dashboard-template' && (
-              <a
-                href="https://github.com/captainplanet9000/ai-trading-dashboard"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 8,
-                  width: '100%',
-                  padding: '12px 32px',
-                  borderRadius: 8,
-                  border: '1px solid #222',
-                  background: 'transparent',
-                  color: '#888',
-                  fontSize: '0.8rem',
-                  fontWeight: 500,
-                  fontFamily: 'var(--font-body)',
-                  textDecoration: 'none',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s',
-                  marginTop: 8,
-                }}
-              >
-                View source on GitHub ↗
-              </a>
-            )}
+            {/* GitHub link removed — repo is private, source delivered via download */}
 
             {/* Guarantee */}
             <div style={{
