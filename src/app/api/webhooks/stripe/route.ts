@@ -123,9 +123,6 @@ export async function POST(req: NextRequest) {
           const item = lineItems.data[i];
           const productId = productIds[i] || `unknown-${i}`;
 
-          const expiresAt = new Date();
-          expiresAt.setDate(expiresAt.getDate() + 7);
-
           const dlToken = crypto.randomUUID();
 
           const { data: download } = await supabase
@@ -134,9 +131,9 @@ export async function POST(req: NextRequest) {
               order_id: order.id,
               product_id: productId,
               download_token: dlToken,
-              max_downloads: 5,
+              max_downloads: 999999,
               downloaded_count: 0,
-              expires_at: expiresAt.toISOString(),
+              expires_at: null,
             })
             .select()
             .single();

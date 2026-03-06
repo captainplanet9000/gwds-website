@@ -21,15 +21,7 @@ export async function GET(
     return NextResponse.json({ error: 'Invalid download token' }, { status: 403 });
   }
 
-  if (dl.downloads_remaining <= 0) {
-    return NextResponse.json({ error: 'Download limit reached (max 5 downloads)' }, { status: 403 });
-  }
-
-  if (new Date(dl.expires_at) < new Date()) {
-    return NextResponse.json({ error: 'Download link expired (7 day limit)' }, { status: 403 });
-  }
-
-  // Consume one download
+  // Track download count (no limits enforced)
   await consumeDownload(dl.download_token);
 
   const product = getProduct(productId);
