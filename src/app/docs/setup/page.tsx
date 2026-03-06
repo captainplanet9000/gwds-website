@@ -191,7 +191,7 @@ export default function SetupGuidePage() {
                 { q: 'Is Supabase free?', a: 'Yes. The free tier includes 500MB of database storage and 1GB of file storage — more than enough to run the dashboard.' },
                 { q: 'Can I deploy this publicly?', a: 'Yes. The dashboard is designed to deploy to Vercel (free tier works). You can also self-host on any Node.js-compatible platform.' },
                 { q: 'Do I get updates?', a: 'Yes — all purchases include 1 year of free updates. You\'ll receive an email when new versions are available.' },
-                { q: 'What if I need help?', a: 'Email support@gwds.studio and we\'ll help you get set up. Most issues are resolved within 24 hours.' },
+                { q: 'What if I need help?', a: 'Email gammawavesdesign@gmail.com and we\'ll help you get set up. Most issues are resolved within 24 hours.' },
               ].map(item => (
                 <div key={item.q} style={{ padding: '20px 24px', borderRadius: 10, background: '#0a0a0a', border: '1px solid #1a1a1a' }}>
                   <h3 style={{ fontSize: '0.9rem', fontWeight: 600, color: '#E8E8E8', fontFamily: 'var(--font-display)', marginBottom: 8 }}>

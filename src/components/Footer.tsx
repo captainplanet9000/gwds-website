@@ -24,7 +24,7 @@ export default function Footer() {
       style={{
         borderTop: '1px solid rgba(232, 232, 232, 0.1)',
         background: '#000',
-        padding: '48px 40px 32px',
+        padding: '48px 40px 0',
       }}
     >
       <div
@@ -148,6 +148,24 @@ export default function Footer() {
                   {link.label}
                 </a>
               ))}
+              <a
+                href="mailto:gammawavesdesign@gmail.com"
+                style={{
+                  fontFamily: 'DM Sans, sans-serif',
+                  fontSize: '0.85rem',
+                  color: '#A8A8A8',
+                  textDecoration: 'none',
+                  transition: 'color 0.2s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = '#E8E8E8';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = '#A8A8A8';
+                }}
+              >
+                Email
+              </a>
             </div>
           </div>
         </div>
@@ -160,6 +178,7 @@ export default function Footer() {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
+            paddingBottom: '24px',
           }}
           className="footer-bottom"
         >
@@ -178,6 +197,7 @@ export default function Footer() {
               { label: 'Privacy', href: '/privacy' },
               { label: 'Terms', href: '/terms' },
               { label: 'Refunds', href: '/refunds' },
+              { label: 'Disclaimer', href: '/disclaimer' },
             ].map(({ label, href }) => (
               <Link
                 key={label}
@@ -193,6 +213,31 @@ export default function Footer() {
               </Link>
             ))}
           </div>
+        </div>
+
+        {/* Disclaimer Bar */}
+        <div
+          style={{
+            borderTop: '1px solid rgba(232, 232, 232, 0.08)',
+            paddingTop: '20px',
+            paddingBottom: '24px',
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
+          <p
+            style={{
+              fontFamily: 'DM Sans, sans-serif',
+              fontSize: '12px',
+              color: '#64748B',
+              lineHeight: 1.7,
+              maxWidth: '800px',
+              textAlign: 'center',
+              margin: 0,
+            }}
+          >
+            GWDS products are software templates and source code sold as development starting points. They are not financial advice. Trading cryptocurrencies, futures, and digital assets involves substantial risk of loss. Past performance shown in demos or marketing does not guarantee future results. GWDS is not a registered investment advisor or broker-dealer.
+          </p>
         </div>
       </div>
 

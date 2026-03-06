@@ -31,9 +31,9 @@ export const products: Product[] = [
     stripePriceId: "price_1T7AnhLLyk0oaesNcsOUw8UU",
     name: "AI Trading Dashboard",
     description: "Full-featured AI trading dashboard with autonomous agents, goal-based execution, multi-exchange support, 44 built-in themes, and a modular plugin system. Built with Next.js 15, TypeScript, and Supabase.",
-    longDescription: `The same dashboard powering Cival Systems — packaged as a template you can deploy in 5 minutes.
+    longDescription: `A production-grade trading dashboard architecture — 2,400+ files of TypeScript source code you can deploy, customize, and build on top of.
 
-**See it running right now:** $184K portfolio from $80K start, 6 autonomous agents, 68% win rate, 2,847 trades. The live demo isn't showing you what's possible — it's showing you what's already working.
+**What you're buying:** The UI, the architecture, and the engineering. This is the same codebase the developer uses personally. You get the full source code — every component, every agent framework, every strategy template — as a starting point for building your own trading system.
 
 **Deploy in 3 steps:**
 1. Set up a free Supabase project and run the included SQL migration
@@ -41,9 +41,9 @@ export const products: Product[] = [
 3. Run \`npm run dev\` locally or deploy to Vercel — paste your keys, and you're live
 
 **What you get:**
-- Autonomous trading agents with configurable strategies (VWAP, Darvas, Elliott Wave, Heikin Ashi, Renko, Williams Alligator, and more)
-- Multi-strategy farm system — run multiple agents coordinated under one portfolio with shared scratchpad for inter-agent communication
-- Goal-based trading — set profit targets and let agents execute
+- Agent framework with configurable strategy templates (VWAP, Darvas, Elliott Wave, Heikin Ashi, and more)
+- Multi-strategy farm system — run multiple agents coordinated under one portfolio with shared scratchpad
+- Goal-based trading engine — set targets and let agents execute
 - Real-time trade tracking, P&L, positions, and order management
 - Risk analytics with drawdown monitoring, correlation checks, and position sizing
 - Agent health monitoring, performance scoring, and benchmarking
@@ -52,14 +52,16 @@ export const products: Product[] = [
 - One-click deploy to Vercel — no local setup required
 
 **🎨 44 Built-In Themes**
-Make it yours. Choose from 44 professionally designed themes — from Cyberpunk and Cosmic Night to Clean Slate and Mocha Mousse. Switch themes instantly or customize your own. Need a branded look for your fund? We offer custom theme design as a service.
+Choose from 44 professionally designed themes — from Cyberpunk and Cosmic Night to Clean Slate and Mocha Mousse. Switch instantly or build your own. Need a branded look for your fund? We offer custom theme design as a service.
 
 **Themes include:** Default, Amber Minimal, Amethyst Haze, Bold Tech, Bubblegum, Caffeine, Candyland, Catppuccin, Claude, Claymorphism, Clean Slate, Cosmic Night, Cyberpunk, Darkmatter, Doom 64, Elegant Luxury, Graphite, Kodama Grove, Midnight Bloom, Mocha Mousse, Modern Minimal, Mono, Nature, Neo Brutalism, Northern Lights, Notebook, Ocean Breeze, Pastel Dreams, Perpetuity, Quantum Rose, Retro Arcade, Sage Garden, Soft Pop, Solar Dusk, Starry Night, Sunset Horizon, Supabase, T3 Chat, Tangerine, Twitter, Vercel, Vintage Paper, Violet Bloom, and more.
 
 **🧩 Modular Plugin System**
-Start with the base dashboard and add capabilities as you need them. Each add-on plugs directly into the dashboard — no code changes required. Available add-ons include Meme Trading System, Flash Loans, Command Center, and strategy-specific agents.
+Start with the base dashboard and add capabilities as you need them. Each add-on plugs directly into the dashboard. Available add-ons include Meme Trading System, Flash Loans, Command Center, and strategy-specific agents.
 
-**Not included:** Live API keys or exchange accounts (you bring your own).`,
+**Not included:** Live API keys, exchange accounts, funded accounts, or trading signals. You bring your own keys, your own capital, and your own risk management. This is a software tool — not financial advice. See our [Trading Disclaimer](/disclaimer).
+
+⚠️ *Trading involves substantial risk of loss. Past performance of the developer's personal use does not guarantee your results. See full [disclaimer](/disclaimer).*`,
     price: 149,
     category: "trading",
     badge: "FLAGSHIP",
@@ -105,42 +107,43 @@ Start with the base dashboard and add capabilities as you need them. Each add-on
     stripePriceId: "price_1T83k3LLyk0oaesNL7bGZ12J",
     name: "Meme Trading Suite",
     description: "The complete meme coin trading system — 9-tab dashboard with DexScreener scanner, autonomous agents, smart money tracking, Solana execution, and signal engine. 28 source files, fully integrated.",
-    longDescription: `🚀 **Premium Plugin for AI Trading Dashboard** — The most comprehensive meme trading system you can deploy.
+    longDescription: `🚀 **Premium Plugin for AI Trading Dashboard** — A comprehensive meme coin trading UI and engine architecture. 28 source files of production TypeScript.
 
-This isn't a basic scanner. It's a full autonomous trading operation for meme coins — the same system scanning DexScreener, tracking smart money, and executing trades on Solana.
+**What you're buying:** The complete frontend, backend, and agent framework for meme coin trading — scanner UI, agent engine, signal system, and execution templates. This is source code and architecture you customize and deploy yourself.
 
-**9-Tab Dashboard:**
-1. **Scanner** — Real-time DexScreener trending tokens with volume/mcap filters
+**9-Tab Dashboard UI:**
+1. **Scanner** — DexScreener trending tokens with volume/mcap filters
 2. **New Pairs** — Tokens less than 24h old across all chains
 3. **Watchlist** — Track tokens with configurable price alerts
 4. **Search** — Find any token across all supported chains
-5. **Trades** — Full trade history with P&L analytics
+5. **Trades** — Trade history with P&L analytics
 6. **Alerts** — Price, volume, and market cap alert system
-7. **Smart Money** — Track whale wallets and copy their moves
-8. **Agents** — Autonomous meme trading agents (momentum, sniper, scalper strategies)
+7. **Smart Money** — Whale wallet tracking interface
+8. **Agents** — Autonomous agent framework (momentum, sniper, scalper strategy templates)
 9. **Settings** — Agent config, wallet management, risk parameters
 
 **Engine & Backend (28 files):**
 - Meme Agent Engine with autonomous cycle management
 - Multi-factor Signal Engine for trade scoring
-- Strategy library (momentum, sniper, scalper)
-- Solana trade execution via Jupiter aggregator
+- Strategy template library (momentum, sniper, scalper)
+- Solana trade execution framework via Jupiter aggregator
 - Encrypted wallet management
 - Agent scheduler, monitor, and sync system
 - Full DexScreener API integration
 
 **What makes this different:**
-- Not just alerts — actual automated execution on Solana mainnet
-- Smart money tracking identifies whale accumulation before pumps
-- Signal engine scores every opportunity across multiple factors
-- Agents run autonomously with configurable risk limits
+- Complete architecture — not just alerts, but a full execution framework
+- Smart money tracking interface for whale wallet analysis
+- Signal engine architecture that scores opportunities across multiple factors
+- Agent framework with configurable risk limits
 - 1960-line dashboard UI with full inline styles (no component library needed)
 
-👉 **Try the live demo** to see the full 9-tab meme trading interface with real-time DexScreener data.
+👉 **Try the live demo** to see the 9-tab interface with real-time DexScreener data.
 
-**Warning:** Meme trading is inherently high-risk. This system gives you a serious edge — automated scanning, smart money signals, and instant execution — but no tool eliminates the risk of meme coins.
+⚠️ **Risk Warning:** Meme coin trading is extremely high-risk. Most meme coins lose most or all of their value. This software provides tools for trading — it does not guarantee profits or reduce the inherent risk of meme coin markets. You could lose your entire investment. See our [Trading Disclaimer](/disclaimer).
 
-**Requires:** AI Trading Dashboard ($149) + Supabase + Solana RPC endpoint`,
+**Requires:** AI Trading Dashboard ($149) + Supabase + Solana RPC endpoint
+**You provide:** Your own exchange keys, wallets, capital, and risk management.`,
     price: 499,
     category: "trading",
     badge: "PREMIUM",
@@ -205,9 +208,10 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
 3. Atomic transaction: borrow → buy low → sell high → repay → profit
 4. If the trade isn't profitable, the entire transaction reverts (you lose nothing)
 
-**Risk profile:** Very low. Flash loans are atomic — either you profit or the transaction reverts. The only cost of a failed attempt is gas (~$0.50-3 on Arbitrum).
+⚠️ **Risk Warning:** While flash loans are atomic (failed trades revert), this does NOT mean risk-free. Smart contract bugs, gas estimation errors, MEV attacks, and market manipulation can result in losses. DeFi protocols carry inherent smart contract risk. You are responsible for auditing, testing, and deploying any smart contracts. See our [Trading Disclaimer](/disclaimer).
 
-**Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
+**Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.
+**You provide:** Your own wallet, private keys, ETH for gas, and risk management.`,
     price: 99,
     category: "trading",
     badge: "UPGRADED",
@@ -240,9 +244,9 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
     stripePriceId: "price_1T7pe5LLyk0oaesNNXwg2VwU",
     name: "Darvas Box Breakout Agent",
     description: "Automated box breakout detection based on the Nicolas Darvas method. Identifies consolidation boxes, confirms breakouts with volume, and executes entries with trailing stops. Multi-timeframe analysis across 15m/1H/4H.",
-    longDescription: `Nicolas Darvas turned $36,000 into $2.25 million using box breakouts. This plugin automates his method with modern AI. Multi-timeframe analysis, confidence scoring, and auto-execution.
+    longDescription: `Darvas Box breakout detection framework — inspired by the Nicolas Darvas method. Multi-timeframe analysis, confidence scoring, and signal generation architecture. Full TypeScript source code.
 
-**🔌 Plugin for the AI Trading Dashboard** — drop into your dashboard's \`plugins/\` folder and restart. Instant Darvas Box strategy.
+**🔌 Plugin for the AI Trading Dashboard** — drop into your dashboard's \`plugins/\` folder and restart.
 
 **What you get:**
 - Darvas Box breakout detection algorithm (TypeScript)
@@ -254,9 +258,13 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
 - manifest.json for plug-and-play installation
 - Full source code with documentation
 
-👉 **Try the live demo** to see the Darvas agent running with real-time data in the Agents dashboard.
+👉 **Try the live demo** to see the Darvas interface with sample data.
 
-**Integrates with:** AI Trading Dashboard ($149) — just copy the folder into \`plugins/\` and restart.`,
+**What you're buying:** Source code and strategy architecture. A development starting point — not a guaranteed trading system.
+
+⚠️ *Trading involves substantial risk. Historical strategy performance does not guarantee future results. See [disclaimer](/disclaimer).*
+
+**Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
     price: 199,
     category: "trading",
     emoji: "📦",
@@ -275,23 +283,25 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
     stripePriceId: "price_1T7pe6LLyk0oaesNN61g0lrl",
     name: "Elliott Wave Pattern Agent",
     description: "AI-powered Elliott Wave counting with automatic Fibonacci extension targets. Detects impulse waves (1-5) and corrective patterns (A-B-C), validates with Fibonacci ratios, and executes entries at high-probability wave positions.",
-    longDescription: `The most sophisticated wave analysis you can deploy yourself. AI-powered wave counting, Fibonacci validation, autonomous trade execution. This is the same agent running live in our $184K portfolio.
+    longDescription: `AI-powered Elliott Wave analysis architecture — wave counting, Fibonacci validation, and trade signal generation. Full TypeScript source code.
 
-**🔌 Plugin for the AI Trading Dashboard** — install into \`plugins/\` and the agent starts analyzing waves immediately.
+**🔌 Plugin for the AI Trading Dashboard** — install into \`plugins/\` and the agent starts analyzing wave patterns.
 
 **What you get:**
-- AI wave pattern detection using DeepSeek/GPT-4 analysis
+- AI wave pattern detection framework using DeepSeek/GPT-4 analysis
 - Automatic wave counting (impulse + corrective patterns)
 - Entry/exit signal generation based on wave position
 - Fibonacci ratio validation for wave relationships
-- Built-in risk management (position sizing, stop-loss, multi-target take-profit)
+- Risk management templates (position sizing, stop-loss, multi-target take-profit)
 - Dashboard panel component (ElliottWavePanel.tsx)
 - manifest.json for plug-and-play installation
 - Full TypeScript source code
 
-👉 **Try the live demo** to see the Elliott Wave agent analyzing patterns in real-time.
+👉 **Try the live demo** to see the wave analysis interface with sample data.
 
-**This is the same agent running live in our $184K portfolio.** Extracted, documented, and packaged for you to deploy.
+**What you're buying:** The source code, UI components, and algorithmic framework. This is a development starting point — not a guaranteed trading system. Your results depend on market conditions, configuration, and your own risk management.
+
+⚠️ *Trading involves substantial risk. No strategy guarantees profits. See [disclaimer](/disclaimer).*
 
 **Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
     price: 199,
@@ -314,9 +324,9 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
     stripePriceId: "price_1T7pe7LLyk0oaesN9l7hI7Zd",
     name: "VWAP Volume Breakout Agent",
     description: "Trades breakouts from the Volume Weighted Average Price with RSI divergence confirmation. Tracks accumulation/distribution zones, detects volume spikes, and enters when price breaks VWAP with momentum. 6-hour average hold time.",
-    longDescription: `🔌 **Plugin for AI Trading Dashboard** — The same VWAP agent running live in our $184K portfolio.
+    longDescription: `🔌 **Plugin for AI Trading Dashboard** — VWAP-based volume analysis and trade signal framework.
 
-Combines VWAP (Volume Weighted Average Price) with volume divergence analysis and RSI momentum signals. Identifies accumulation zones, volume spikes, and momentum shifts to enter high-probability trades.
+Combines VWAP (Volume Weighted Average Price) with volume divergence analysis and RSI momentum signals. Architecture for identifying accumulation zones, volume spikes, and momentum shifts.
 
 **What you get:**
 - VWAP calculation engine with dynamic support/resistance levels
@@ -324,20 +334,22 @@ Combines VWAP (Volume Weighted Average Price) with volume divergence analysis an
 - RSI momentum overlay with divergence alerts
 - Multi-timeframe analysis (15m, 1H, 4H)
 - Order flow analysis — buy/sell volume ratio tracking
-- Auto-entry with confidence scoring (0-100)
+- Auto-entry framework with confidence scoring (0-100)
 - Trailing stop-loss with dynamic adjustment
-- Agent thought stream — see exactly why it enters/exits
+- Agent thought stream — see the agent's analysis logic
 - Dashboard panel component (VWAPPanel.tsx)
 - manifest.json for plug-and-play installation
 
-👉 **Try the live demo** to watch the VWAP agent analyzing volume patterns in real-time.
+👉 **Try the live demo** to see the VWAP interface with sample data.
 
-**Live stats:** 892 trades | 64% win rate | +$7,100 P&L | 6.2h avg hold time | 82% confidence
+**What you're buying:** Source code and strategy architecture. Your results will depend entirely on market conditions, configuration, and risk management.
+
+⚠️ *Trading involves substantial risk. No strategy guarantees profits. See [disclaimer](/disclaimer).*
 
 **Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
     price: 199,
     category: "trading",
-    badge: "LIVE AGENT",
+    badge: "PLUGIN",
     emoji: "📊",
     features: ["Dashboard plugin", "VWAP analysis", "Volume divergence", "RSI momentum", "Order flow tracking", "Auto-execution", "Confidence scoring", "Plug-and-play install"],
     techStack: ["TypeScript", "Next.js 15", "Hyperliquid SDK", "Supabase"],
@@ -356,30 +368,32 @@ Combines VWAP (Volume Weighted Average Price) with volume divergence analysis an
     stripePriceId: "price_1T7pe7LLyk0oaesNiRtA8Q70",
     name: "Heikin Ashi Trend Following Agent",
     description: "Trend-following agent using Heikin Ashi smoothed candles to filter market noise. Enters on consecutive bullish/bearish candle sequences, confirms with ADX trend strength, and rides moves with trailing stops. 22-hour average hold time.",
-    longDescription: `🔌 **Plugin for AI Trading Dashboard** — Trend-following agent using Heikin Ashi smoothed candles.
+    longDescription: `🔌 **Plugin for AI Trading Dashboard** — Trend-following agent framework using Heikin Ashi smoothed candles.
 
-Heikin Ashi candles filter market noise to reveal the true trend. This agent identifies consecutive bullish/bearish sequences, confirms with ADX trend strength, and rides momentum with trailing stops.
+Heikin Ashi candles filter market noise to reveal the underlying trend. This agent framework identifies consecutive bullish/bearish sequences, confirms with ADX trend strength, and manages positions with trailing stops.
 
 **What you get:**
 - Heikin Ashi candle transformation engine
 - Consecutive candle pattern detection (7+ candle sequences)
 - ADX trend strength validation (enters only when ADX > 25)
 - +DI/-DI crossover confirmation
-- Trailing stop-loss that rides trends
+- Trailing stop-loss with trend-riding logic
 - Multi-timeframe trend alignment (1H + 4H + 1D)
 - Reversal doji detection for exit timing
-- Agent thought stream — see trend analysis in real-time
+- Agent thought stream — see the analysis logic
 - Dashboard panel component (HeikinAshiPanel.tsx)
 - manifest.json for plug-and-play installation
 
-👉 **Try the live demo** to see the Heikin Ashi agent riding trends across crypto assets.
+👉 **Try the live demo** to see the Heikin Ashi interface with sample data.
 
-**Live stats:** 412 trades | 61% win rate | +$3,750 P&L | 22.4h avg hold time | Catches multi-day trends
+**What you're buying:** Source code and strategy architecture. A starting point for your own trend-following system.
+
+⚠️ *Trading involves substantial risk. No strategy guarantees profits. See [disclaimer](/disclaimer).*
 
 **Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
     price: 199,
     category: "trading",
-    badge: "LIVE AGENT",
+    badge: "PLUGIN",
     emoji: "🕯️",
     features: ["Dashboard plugin", "Heikin Ashi candles", "ADX trend strength", "Trailing stops", "Multi-timeframe", "Reversal detection", "Noise filtering", "Plug-and-play install"],
     techStack: ["TypeScript", "Next.js 15", "Hyperliquid SDK", "Supabase"],
@@ -398,25 +412,27 @@ Heikin Ashi candles filter market noise to reveal the true trend. This agent ide
     stripePriceId: "price_1T7pe8LLyk0oaesNtleC9nah",
     name: "Bollinger Band Mean Reversion Agent",
     description: "Buys oversold assets and sells overbought using RSI extremes, Bollinger Band touches, and Z-score deviation. Enters with scaled 1/3 position sizing at each level. Conservative, statistical approach to catching bounces.",
-    longDescription: `🔌 **Plugin for AI Trading Dashboard** — Finds oversold assets and trades the bounce.
+    longDescription: `🔌 **Plugin for AI Trading Dashboard** — Mean reversion strategy framework using Bollinger Bands, RSI, and Z-score analysis.
 
-When assets deviate significantly from their statistical mean, they tend to revert. This agent detects extreme deviations using RSI, Bollinger Bands, and Z-score calculations, then enters positions with scaled entries.
+Statistical approach to identifying overbought/oversold conditions. This agent framework detects extreme deviations using RSI, Bollinger Bands, and Z-score calculations, with a scaled entry architecture.
 
 **What you get:**
 - RSI oversold/overbought detection (configurable thresholds)
 - Bollinger Band squeeze and expansion analysis
 - Z-score statistical deviation measurement
 - Scaled entry system (1/3 position sizing at each level)
-- Mean reversion probability calculator (historical backtest)
+- Mean reversion probability calculator framework
 - Correlation-aware positioning (avoids concentrated exposure)
 - Auto stop-loss at extended deviation levels
-- Agent thought stream — see statistical analysis live
+- Agent thought stream — see the statistical analysis logic
 - Dashboard panel component (MeanReversionPanel.tsx)
 - manifest.json for plug-and-play installation
 
-👉 **Try the live demo** to watch the agent finding oversold setups across crypto markets.
+👉 **Try the live demo** to see the mean reversion interface with sample data.
 
-**Live stats:** 381 trades | 59% win rate | +$1,980 P&L | 8.6h avg hold time | 78% reversion accuracy
+**What you're buying:** Source code and strategy architecture. Statistical models require your own backtesting, tuning, and risk management.
+
+⚠️ *Trading involves substantial risk. No strategy guarantees profits. See [disclaimer](/disclaimer).*
 
 **Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
     price: 199,
@@ -439,31 +455,33 @@ When assets deviate significantly from their statistical mean, they tend to reve
     stripePriceId: "price_1T7pe8LLyk0oaesNKFWCuZHo",
     name: "Macro & On-Chain Sentiment Agent",
     description: "Analyzes Fed policy, on-chain whale flows, social media sentiment scores, and exchange inflow/outflow data. Broadcasts risk-on/risk-off signals to all other agents. The coordination layer that decides when the farm goes aggressive or defensive.",
-    longDescription: `🔌 **Plugin for AI Trading Dashboard** — The intelligence layer that coordinates your trading farm.
+    longDescription: `🔌 **Plugin for AI Trading Dashboard** — Macro and on-chain analysis framework that coordinates your trading farm.
 
-This isn't just another indicator. The Macro & On-Chain Sentiment Agent reads the entire market environment — Fed policy, on-chain whale movements, social media sentiment, exchange flows — and broadcasts risk assessments to all other agents.
+An architecture for reading the broader market environment — news sentiment, on-chain metrics, social signals, and macro indicators — and broadcasting risk assessments to other agents in your farm.
 
 **What you get:**
-- News sentiment analysis (Fed speeches, macro events, crypto news)
+- News sentiment analysis framework (Fed speeches, macro events, crypto news)
 - On-chain metrics tracking (whale accumulation, exchange flows, supply dynamics)
-- Social sentiment scoring (Twitter/X crypto sentiment 0-100)
+- Social sentiment scoring architecture (Twitter/X crypto sentiment 0-100)
 - Google Trends integration for retail interest detection
 - Macro risk score calculator (0-10 scale)
 - VIX, DXY, and gold correlation monitoring
 - Farm-wide broadcasting — sends risk signals to all agents
 - Green-light/red-light system for portfolio-wide risk management
-- Agent thought stream — see macro analysis in real-time
+- Agent thought stream — see the macro analysis logic
 - Dashboard panel component (MacroSentimentPanel.tsx)
 - manifest.json for plug-and-play installation
 
-👉 **Try the live demo** to see the Macro Analyzer broadcasting risk signals to the entire farm.
+👉 **Try the live demo** to see the macro analysis interface with sample data.
 
-**Live stats:** 251 trades | 71% win rate | +$6,370 P&L | 31.2h avg hold time | Coordinates 5 other agents
+**What you're buying:** Source code and analysis framework. Sentiment analysis accuracy depends on data sources, market conditions, and your configuration.
+
+⚠️ *Trading involves substantial risk. No strategy guarantees profits. See [disclaimer](/disclaimer).*
 
 **Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
     price: 199,
     category: "trading",
-    badge: "LIVE AGENT",
+    badge: "PLUGIN",
     emoji: "🧠",
     features: ["Dashboard plugin", "News sentiment", "On-chain analytics", "Social scoring", "Macro risk score", "Farm broadcasting", "VIX/DXY correlation", "Plug-and-play install"],
     techStack: ["TypeScript", "Next.js 15", "Hyperliquid SDK", "Supabase", "OpenRouter AI"],
@@ -482,28 +500,29 @@ This isn't just another indicator. The Macro & On-Chain Sentiment Agent reads th
     id: "multi-strat-bundle",
     stripePriceId: "price_1T7AnkLLyk0oaesNv8HuW24O",
     name: "Multi-Strategy Bundle",
-    description: "Six proven strategies working together. Darvas Box, Elliott Wave, VWAP Breakout, Heikin Ashi, Mean Reversion, and Macro Sentiment. Run them as a coordinated farm with shared risk management. The full arsenal.",
-    longDescription: `Six proven strategies working together. Darvas, Elliott Wave, Williams Alligator, Heikin Ashi, Renko, and VWAP-RSI-MACD. Run them as a coordinated farm with shared risk management. The full arsenal.
+    description: "Six strategy frameworks in one package. Darvas Box, Elliott Wave, VWAP Breakout, Heikin Ashi, Mean Reversion, and Macro Sentiment. Run them as a coordinated farm with shared risk management.",
+    longDescription: `Six strategy architectures in one package — Darvas Box, Elliott Wave, VWAP Breakout, Heikin Ashi, Bollinger Band Mean Reversion, and Macro Sentiment. Run them as a coordinated farm with shared risk management.
 
 **🔌 Plugin for the AI Trading Dashboard** — drop all six strategies into \`plugins/\` and use the farm orchestrator to coordinate them.
 
-**Strategies included:**
+**Strategy frameworks included:**
 1. **Darvas Box** — Breakout detection with consolidation zones
-2. **Williams Alligator** — Trend-following with jaw/teeth/lips smoothing
-3. **Elliott Wave** — AI-powered wave pattern analysis
+2. **Elliott Wave** — AI-powered wave pattern analysis
+3. **VWAP Volume Breakout** — Volume-weighted momentum signals
 4. **Heikin Ashi** — Smoothed candle trend detection
-5. **Renko Breakout** — Noise-filtered brick analysis
-6. **Multi-Strategy** — VWAP + RSI + MACD combined signals
+5. **Bollinger Band Mean Reversion** — Statistical mean reversion
+6. **Macro Sentiment** — Market regime detection and farm coordination
 
 **Plus:**
 - Farm orchestration system — run all 6 strategies simultaneously
 - Position management with margin awareness
-- Risk management and drawdown protection
-- Macro market regime detection
+- Risk management and drawdown protection templates
 - Full TypeScript source code
 - Deploy guide for Vercel + Supabase
 
-👉 **Try the live demo** to see the farm orchestration in action — multiple strategies coordinated under one portfolio.
+**What you're buying:** Six agent frameworks and a farm orchestration architecture. Source code you customize, test, and deploy yourself.
+
+⚠️ *Trading involves substantial risk. No strategy guarantees profits. See [disclaimer](/disclaimer).*
 
 **Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
     price: 399,
@@ -539,7 +558,9 @@ This isn't just another indicator. The Macro & On-Chain Sentiment Agent reads th
 
 👉 **Try the live demo** to see all these systems working together in one unified dashboard.
 
-All three products delivered instantly. Same source code, same updates, same support.`,
+All three products delivered as source code. Same architecture, same engineering — a complete starting point.
+
+⚠️ *Software tools, not financial advice. Trading involves substantial risk. See [disclaimer](/disclaimer).*`,
     price: 299,
     category: "trading" as ProductCategory,
     badge: "SAVE $248",
@@ -578,9 +599,11 @@ All three products delivered instantly. Same source code, same updates, same sup
 
 **Total value: $1,941 — You pay $899.**
 
-👉 **Try the live demo** to see all these systems working together in real-time.
+👉 **Try the live demo** to see the full dashboard interface with sample data.
 
-Lifetime access. All future updates included.`,
+All products delivered as source code. You get the architecture, the UI, and the engineering — a complete starting point for building your own trading system.
+
+⚠️ *These are software tools — not financial advice. Trading involves substantial risk of loss. See [disclaimer](/disclaimer).*`,
     price: 899,
     category: "trading" as ProductCategory,
     badge: "54% OFF",

@@ -198,7 +198,7 @@ function SuccessContent() {
           marginTop: 16, fontSize: '0.75rem', color: '#555',
           fontFamily: 'var(--font-body)', lineHeight: 1.5,
         }}>
-          Need help? Email <a href="mailto:support@gwds.studio" style={{ color: '#8B5CF6', textDecoration: 'none' }}>support@gwds.studio</a>
+          Need help? Email <a href="mailto:gammawavesdesign@gmail.com" style={{ color: '#8B5CF6', textDecoration: 'none' }}>gammawavesdesign@gmail.com</a>
         </p>
       </motion.div>
     </div>

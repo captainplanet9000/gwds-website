@@ -288,7 +288,23 @@ export default function ProductDetailClient({ product, related, category }: { pr
               </Link>
             )}
 
-            {/* Deploy with Vercel — removed, repo is private. Buyers get source via download. */}
+            {/* Disclaimer notice */}
+            {product.category === 'trading' && (
+              <p style={{
+                fontSize: 11,
+                color: '#64748B',
+                lineHeight: 1.5,
+                marginTop: 12,
+                marginBottom: 16,
+                padding: '10px 12px',
+                background: 'rgba(139,92,246,0.05)',
+                borderRadius: 6,
+                border: '1px solid rgba(139,92,246,0.1)',
+              }}>
+                You are purchasing software source code and architecture — not financial advice or guaranteed returns. Trading involves substantial risk of loss.{' '}
+                <a href="/disclaimer" style={{ color: '#8B5CF6', textDecoration: 'none' }}>Full disclaimer →</a>
+              </p>
+            )}
 
             {/* Live Demo */}
             {product.demoUrl && (

@@ -211,6 +211,29 @@ export default function StorePage() {
             </div>
           )}
         </section>
+
+        {/* Trading Disclaimer Banner */}
+        <div style={{
+          maxWidth: 900,
+          margin: '48px auto 0',
+          padding: '16px 24px',
+          background: 'rgba(139,92,246,0.05)',
+          border: '1px solid rgba(139,92,246,0.15)',
+          borderRadius: 8,
+          textAlign: 'center',
+        }}>
+          <p style={{
+            fontSize: 12,
+            color: '#64748B',
+            lineHeight: 1.6,
+            margin: 0,
+          }}>
+            All products are software source code and development templates sold as starting points for building trading systems. 
+            They are not financial advice and do not guarantee trading performance or returns. 
+            Trading involves substantial risk of loss including potential loss of all invested capital.{' '}
+            <a href="/disclaimer" style={{ color: '#8B5CF6', textDecoration: 'none' }}>Read full disclaimer →</a>
+          </p>
+        </div>
       </main>
       <Footer />
     </>

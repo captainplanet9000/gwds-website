@@ -172,8 +172,8 @@ export default function PrivacyPage() {
             </ul>
             <p style={{ color: "#94A3B8", fontSize: 16, lineHeight: 1.7, marginBottom: 16 }}>
               To exercise these rights, contact us at{" "}
-              <a href="mailto:privacy@gwds.studio" style={{ color: "#8B5CF6", textDecoration: "none" }}>
-                privacy@gwds.studio
+              <a href="mailto:gammawavesdesign@gmail.com" style={{ color: "#8B5CF6", textDecoration: "none" }}>
+                gammawavesdesign@gmail.com
               </a>
             </p>
           </section>
@@ -225,14 +225,14 @@ export default function PrivacyPage() {
             </p>
             <p style={{ color: "#8B5CF6", fontSize: 16, lineHeight: 1.7, marginBottom: 8 }}>
               Email:{" "}
-              <a href="mailto:privacy@gwds.studio" style={{ color: "#8B5CF6", textDecoration: "none" }}>
-                privacy@gwds.studio
+              <a href="mailto:gammawavesdesign@gmail.com" style={{ color: "#8B5CF6", textDecoration: "none" }}>
+                gammawavesdesign@gmail.com
               </a>
             </p>
             <p style={{ color: "#8B5CF6", fontSize: 16, lineHeight: 1.7 }}>
               Support:{" "}
-              <a href="mailto:support@gwds.studio" style={{ color: "#8B5CF6", textDecoration: "none" }}>
-                support@gwds.studio
+              <a href="mailto:gammawavesdesign@gmail.com" style={{ color: "#8B5CF6", textDecoration: "none" }}>
+                gammawavesdesign@gmail.com
               </a>
             </p>
           </section>

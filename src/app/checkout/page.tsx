@@ -13,10 +13,15 @@ export default function CheckoutPage() {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const handleCheckout = async () => {
     if (!email || !name) {
       setError('Please fill in all fields');
+      return;
+    }
+    if (!agreedToTerms) {
+      setError('You must agree to the Terms of Service and Trading Disclaimer to proceed');
       return;
     }
     if (state.items.length === 0) {
@@ -87,6 +92,8 @@ export default function CheckoutPage() {
     transition: 'border-color 0.2s',
   };
 
+  const canCheckout = agreedToTerms && !loading;
+
   return (
     <>
       <Navbar />
@@ -155,6 +162,59 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
+                {/* TOS Agreement Checkbox */}
+                <div
+                  style={{
+                    marginTop: 24,
+                    padding: '16px 20px',
+                    border: '1px solid #1a1a1a',
+                    borderRadius: 10,
+                    background: '#0a0a0a',
+                  }}
+                >
+                  <label
+                    style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: 12,
+                      cursor: 'pointer',
+                      userSelect: 'none',
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={agreedToTerms}
+                      onChange={e => setAgreedToTerms(e.target.checked)}
+                      style={{
+                        width: 18,
+                        height: 18,
+                        marginTop: 2,
+                        accentColor: '#8B5CF6',
+                        cursor: 'pointer',
+                        flexShrink: 0,
+                      }}
+                    />
+                    <span
+                      style={{
+                        fontSize: '0.82rem',
+                        color: '#94A3B8',
+                        lineHeight: 1.6,
+                        fontFamily: 'var(--font-body)',
+                      }}
+                    >
+                      I agree to the{' '}
+                      <Link href="/terms" style={{ color: '#8B5CF6', textDecoration: 'none' }}>
+                        Terms of Service
+                      </Link>{' '}
+                      and acknowledge the{' '}
+                      <Link href="/disclaimer" style={{ color: '#8B5CF6', textDecoration: 'none' }}>
+                        Trading Disclaimer
+                      </Link>
+                      . I understand I am purchasing software source code and architecture, not financial advice or guaranteed returns.
+                    </span>
+                  </label>
+                </div>
+
                 {error && (
                   <div style={{
                     marginTop: 16,
@@ -172,23 +232,23 @@ export default function CheckoutPage() {
 
                 <button
                   onClick={handleCheckout}
-                  disabled={loading}
+                  disabled={!canCheckout}
                   style={{
                     marginTop: 32,
                     width: '100%',
                     padding: '18px 32px',
                     borderRadius: 8,
                     border: 'none',
-                    background: loading ? '#333' : '#8B5CF6',
+                    background: !canCheckout ? '#333' : '#8B5CF6',
                     color: '#fff',
                     fontSize: '0.9rem',
                     fontWeight: 700,
                     fontFamily: 'var(--font-display)',
                     letterSpacing: '0.05em',
                     textTransform: 'uppercase',
-                    cursor: loading ? 'not-allowed' : 'pointer',
+                    cursor: !canCheckout ? 'not-allowed' : 'pointer',
                     transition: 'all 0.3s',
-                    opacity: loading ? 0.6 : 1,
+                    opacity: !canCheckout ? 0.5 : 1,
                   }}
                 >
                   {loading ? 'Processing...' : `Pay $${totalPrice.toFixed(2)}`}

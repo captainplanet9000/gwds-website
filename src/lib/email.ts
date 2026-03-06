@@ -97,7 +97,7 @@ export async function sendOrderConfirmation(
                     <!-- Support -->
                     <p style="margin: 32px 0 0; font-size: 14px; line-height: 1.6; color: #94A3B8;">
                       Need help? Reply to this email or contact us at 
-                      <a href="mailto:support@gwds.studio" style="color: #8B5CF6; text-decoration: none;">support@gwds.studio</a>
+                      <a href="mailto:gammawavesdesign@gmail.com" style="color: #8B5CF6; text-decoration: none;">gammawavesdesign@gmail.com</a>
                     </p>
                   </td>
                 </tr>
@@ -139,7 +139,7 @@ IMPORTANT:
 • You can download each product up to 5 times
 • Save your files to a secure location
 
-Need help? Reply to this email or contact support@gwds.studio
+Need help? Reply to this email or contact gammawavesdesign@gmail.com
 
 © ${new Date().getFullYear()} Gamma Waves Design Studio
   `;

@@ -101,7 +101,7 @@ const jsonLd = {
       ],
       contactPoint: {
         "@type": "ContactPoint",
-        email: "support@gwds.studio",
+        email: "gammawavesdesign@gmail.com",
         contactType: "Customer Service",
       },
     },
