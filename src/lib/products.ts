@@ -155,7 +155,7 @@ The same system that finds trending meme coins before they 10x. Plugs into your 
   },
   {
     id: "flash-loan-arbitrage",
-    stripePriceId: "",
+    stripePriceId: "price_1T7p7YLLyk0oaesNdr4UMLMS",
     name: "Flash Loan Arbitrage",
     description: "Automated cross-DEX arbitrage using Aave V3 flash loans on Arbitrum. Zero collateral, atomic execution, MEV protection. The same system scanning 15+ DEXes for profit opportunities 24/7.",
     longDescription: `🔌 **Plugin for AI Trading Dashboard** — Drop into your dashboard's \`plugins/\` folder and start finding arbitrage opportunities automatically.
@@ -275,7 +275,7 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
   // === TRADING TOOLS ===
   {
     id: "darvas-indicator",
-    stripePriceId: "price_1T7AnjLLyk0oaesNqcWp4O2U",
+    stripePriceId: "price_1T7p7nLLyk0oaesNxPiaIpCt",
     name: "Darvas Box Indicator",
     description: "Nicolas Darvas turned $36,000 into $2.25 million using box breakouts. This plugin automates his method with modern AI. Multi-timeframe analysis, confidence scoring, and auto-execution.",
     longDescription: `Nicolas Darvas turned $36,000 into $2.25 million using box breakouts. This plugin automates his method with modern AI. Multi-timeframe analysis, confidence scoring, and auto-execution.
@@ -310,7 +310,7 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
   },
   {
     id: "elliott-wave-agent",
-    stripePriceId: "price_1T7AnjLLyk0oaesNmpnD45PO",
+    stripePriceId: "price_1T7p7nLLyk0oaesNV4c2euvc",
     name: "Elliott Wave Agent",
     description: "The most sophisticated wave analysis you can deploy yourself. AI-powered wave counting, Fibonacci validation, autonomous trade execution. This is the same agent running live in our $184K portfolio.",
     longDescription: `The most sophisticated wave analysis you can deploy yourself. AI-powered wave counting, Fibonacci validation, autonomous trade execution. This is the same agent running live in our $184K portfolio.
@@ -349,7 +349,7 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
   },
   {
     id: "vwap-momentum-agent",
-    stripePriceId: "",
+    stripePriceId: "price_1T7p7YLLyk0oaesNw7u3HRTQ",
     name: "VWAP Momentum Alpha",
     description: "Volume-weighted average price momentum trading with RSI divergence detection. 892 trades, 64% win rate, +$7,100 P&L in the live demo. High-frequency entries with precise volume analysis.",
     longDescription: `🔌 **Plugin for AI Trading Dashboard** — The same VWAP agent running live in our $184K portfolio.
@@ -391,7 +391,7 @@ Combines VWAP (Volume Weighted Average Price) with volume divergence analysis an
   },
   {
     id: "heikin-ashi-agent",
-    stripePriceId: "",
+    stripePriceId: "price_1T7p7YLLyk0oaesNONGoRtht",
     name: "Heikin Ashi Trend Rider",
     description: "Smoothed candlestick trend-following agent. Catches extended moves by filtering noise. 412 trades, 61% win rate, +$3,750 P&L. Rides trends for 22+ hours average hold time.",
     longDescription: `🔌 **Plugin for AI Trading Dashboard** — Trend-following agent using Heikin Ashi smoothed candles.
@@ -433,7 +433,7 @@ Heikin Ashi candles filter market noise to reveal the true trend. This agent ide
   },
   {
     id: "mean-reversion-agent",
-    stripePriceId: "",
+    stripePriceId: "price_1T7p7ZLLyk0oaesN282vNmVt",
     name: "Mean Reversion Scout",
     description: "Statistical mean reversion agent using RSI, Bollinger Bands, and Z-score analysis. Buys oversold, sells overbought. 381 trades, 59% win rate, +$1,980 P&L. Consistent, conservative returns.",
     longDescription: `🔌 **Plugin for AI Trading Dashboard** — Finds oversold assets and trades the bounce.
@@ -474,7 +474,7 @@ When assets deviate significantly from their statistical mean, they tend to reve
   },
   {
     id: "macro-sentiment-agent",
-    stripePriceId: "",
+    stripePriceId: "price_1T7p7ZLLyk0oaesNd1A6FRmL",
     name: "Macro Sentiment Analyzer",
     description: "Reads the macro environment — Fed speeches, on-chain flows, social sentiment, exchange data. 251 trades, 71% win rate, +$6,370 P&L. The brain that tells other agents when to be aggressive.",
     longDescription: `🔌 **Plugin for AI Trading Dashboard** — The intelligence layer that coordinates your trading farm.
@@ -688,6 +688,7 @@ This isn't just another indicator. The Macro Sentiment Analyzer reads the entire
   },
   {
     id: "full-stack-trader-bundle",
+    stripePriceId: "price_1T7p7ZLLyk0oaesN9Mt54Oaz",
     name: "The Full Stack Trader",
     description: "Dashboard + Darvas Box + Elliott Wave + Analysis Prompts. Everything you need to run AI-powered trading.",
     longDescription: `Save $137 — get the complete trading toolkit in one purchase.
@@ -723,6 +724,7 @@ All four products delivered instantly. Same source code, same updates, same supp
   },
   {
     id: "ai-builder-bundle",
+    stripePriceId: "price_1T7p7aLLyk0oaesNR2K45OWk",
     name: "AI Builder Pack",
     description: "Dashboard + SaaS Starter + Second Brain. Ship AI-powered products faster.",
     longDescription: `Save $108 — the complete toolkit for building and launching AI products.
@@ -750,6 +752,7 @@ Three production-ready codebases. Fork, customize, deploy.`,
   },
   {
     id: "content-empire-bundle",
+    stripePriceId: "price_1T7p7aLLyk0oaesNByy8qtOV",
     name: "Content Empire Pack",
     description: "All three prompt packs for content creators, traders, and AI artists.",
     longDescription: `Save $33 — every prompt pack in one download.
@@ -769,6 +772,7 @@ Three production-ready codebases. Fork, customize, deploy.`,
   },
   {
     id: "everything-bundle",
+    stripePriceId: "price_1T7p7aLLyk0oaesNjdZqcSEx",
     name: "GWDS Everything Bundle",
     description: "All 19 products. Every agent, every template, every tool, every prompt pack. One price.",
     longDescription: `The ultimate deal — every single product in the GWDS store for over 60% off.
