@@ -176,31 +176,36 @@ This isn't a basic scanner. It's a full autonomous trading operation for meme co
     id: "flash-loan-arbitrage",
     stripePriceId: "price_1T83kgLLyk0oaesNpjgeKsdR",
     name: "Flash Loan Arbitrage Engine",
-    description: "Automated cross-DEX arbitrage using Aave V3 flash loans on Arbitrum. Zero collateral, atomic execution, MEV protection. The same system scanning 15+ DEXes for profit opportunities 24/7.",
+    description: "Automated cross-DEX arbitrage with multi-DEX scanning (Uniswap V3, PancakeSwap V3, Camelot V3, Ramses V2), server-side auto-executor, and real-time opportunity detection. Zero collateral via Aave V3 flash loans on Arbitrum.",
     longDescription: `🔌 **Plugin for AI Trading Dashboard** — Drop into your dashboard's \`plugins/\` folder and start finding arbitrage opportunities automatically.
 
 Borrow millions with zero collateral. Buy low on one DEX, sell high on another. Repay in the same transaction. Keep the profit — or the whole thing reverts and you lose nothing but gas.
 
+**v1.1 — What's new:**
+- 🚀 **Auto-Executor** — Server-side continuous scanner that runs independently. Set your min profit, scan interval, and max gas price, then let it find and execute opportunities 24/7
+- 🔍 **Multi-DEX Scanning** — Scans Uniswap V3, PancakeSwap V3, Camelot V3, and Ramses V2 simultaneously for best buy/sell spreads
+- 📊 **Enhanced Charts** — Cumulative profit, success rate, profit by pair, and gas vs profit visualizations
+- 🛡️ **Dry Run Mode** — Log opportunities without executing transactions
+
 **What you get:**
-- Real-time price scanner across 15+ DEXes (Uniswap V3, Camelot, PancakeSwap, SushiSwap, etc.)
+- Real-time price scanner across 4 DEXes on Arbitrum
 - Aave V3 flash loan integration (0.05% fee, zero collateral)
-- Multi-hop arbitrage pathfinding (up to 4 swaps per route)
+- Server-side auto-executor with configurable thresholds
 - Gas optimization and profitability calculator
 - MEV protection with private transaction submission
-- Execution history with P&L tracking
-- Auto-execute mode with configurable min profit threshold
-- Smart contract (Solidity) + TypeScript execution engine
-- manifest.json for plug-and-play installation
+- Execution history with P&L tracking and charts
+- Dry run mode for risk-free observation
+- TypeScript execution engine + manifest.json for plug-and-play install
 
 👉 **Try the live demo** to see the scanner finding real-time opportunities across DEXes.
 
 **How it works:**
-1. Scanner monitors price differences across 15+ DEXes every 12 seconds
+1. Scanner monitors price differences across 4 DEXes every 12 seconds
 2. When spread exceeds gas + fees, it triggers a flash loan from Aave V3
 3. Atomic transaction: borrow → buy low → sell high → repay → profit
 4. If the trade isn't profitable, the entire transaction reverts (you lose nothing)
 
-**Risk profile:** Very low. Flash loans are atomic — either you profit or the transaction reverts. The only cost of a failed attempt is gas (~$2-3 on Arbitrum).
+**Risk profile:** Very low. Flash loans are atomic — either you profit or the transaction reverts. The only cost of a failed attempt is gas (~$0.50-3 on Arbitrum).
 
 **Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
     price: 99,
@@ -209,14 +214,14 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
     emoji: "⚡",
     features: [
       "Dashboard plugin",
-      "15+ DEX monitoring",
+      "Multi-DEX scanning (4 DEXes)",
       "Aave V3 flash loans",
-      "Auto-executor engine",
-      "Multi-DEX scanning",
+      "Server-side auto-executor",
+      "Dry run mode",
       "MEV protection",
       "Gas optimization",
-      "Multi-hop pathfinding",
-      "Configurable profit threshold",
+      "Real-time profit charts",
+      "Configurable thresholds",
       "Plug-and-play install"
     ],
     techStack: ["Solidity", "TypeScript", "Aave V3", "Arbitrum", "Next.js 15"],
