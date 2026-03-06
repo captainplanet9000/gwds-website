@@ -448,10 +448,72 @@ This isn't just another indicator. The Macro & On-Chain Sentiment Agent reads th
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/agents",
   },
   {
+    id: "vwap-adx-agent",
+    stripePriceId: "price_1T7v5fLLyk0oaesNHXkVTm95",
+    name: "VWAP ADX Hybrid Agent",
+    description: "Dual-mode strategy that adapts to market conditions. Uses ADX to detect trending vs ranging markets, then applies VWAP analysis accordingly — trend-following on pullbacks when ADX confirms trend, mean-reversion to VWAP bands when ranging.",
+    longDescription: `Dual-mode strategy that adapts to market conditions. Uses ADX to detect trending vs ranging markets, then applies VWAP analysis accordingly.
+
+**🔌 Plugin for the AI Trading Dashboard** — drop into \`plugins/vwap-adx/\` and restart. Agent appears automatically.
+
+**How it works:**
+
+When ADX > 25 (trending market):
+- +DI > -DI = confirmed uptrend → buys on VWAP pullbacks
+- -DI > +DI = confirmed downtrend → sells on VWAP rallies
+- Uses VWAP as dynamic support/resistance for precision entries
+
+When ADX < 20 (ranging market):
+- Switches to mean reversion mode
+- Buys at lower VWAP band, sells at upper VWAP band
+- Tighter stops since moves are smaller in ranges
+
+**Why this combination works:**
+
+Most strategies fail because they don't adapt. Trend-following loses money in ranges. Mean reversion loses money in trends. This agent detects the regime FIRST, then applies the right strategy. ADX tells you WHEN to trade directionally. VWAP tells you WHERE to enter.
+
+**Signal logic:**
+- DI crossover with ADX confirmation = high-confidence signal
+- Rising ADX = strengthening trend → hold positions longer
+- Falling ADX = weakening trend → tighten stops
+- VWAP deviation bands for precision entry/exit targets
+
+**Includes:**
+- Full ADX calculation (+DI, -DI, DX, ADX with smoothing)
+- Anchored VWAP with standard deviation bands
+- Regime detection (trending/ranging/transitioning)
+- Dynamic position sizing based on ADX strength
+- Configurable parameters (ADX period, threshold, VWAP bands)`,
+    price: 199,
+    category: "trading",
+    badge: "NEW",
+    emoji: "🎯",
+    features: [
+      "ADX trend strength detection",
+      "VWAP pullback entries in trends",
+      "Mean reversion mode for ranges",
+      "Dual-mode regime adaptation",
+      "DI crossover signals",
+      "Dynamic stop-loss adjustment",
+      "Volume-weighted precision entries",
+      "Configurable ADX thresholds",
+      "Full TypeScript source code",
+      "Dashboard plugin architecture",
+    ],
+    techStack: ["TypeScript", "ADX/DMI", "VWAP", "Plugin System"],
+    images: [
+      "/images/products/dashboard-agents-new.jpg",
+      "/images/products/dashboard-strategy-new.jpg",
+      "/images/products/dashboard-risk-new.jpg",
+    ],
+    downloadUrl: "downloads/vwap-adx-agent-v1.0.0.zip",
+    demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/agents",
+  },
+  {
     id: "multi-strat-bundle",
     stripePriceId: "price_1T7AnkLLyk0oaesNv8HuW24O",
     name: "Multi-Strategy Bundle",
-    description: "Six proven strategies working together. Darvas, Elliott Wave, Williams Alligator, Heikin Ashi, Renko, and VWAP-RSI-MACD. Run them as a coordinated farm with shared risk management. The full arsenal.",
+    description: "Seven proven strategies working together. Darvas Box, Elliott Wave, VWAP Breakout, Heikin Ashi, Mean Reversion, Macro Sentiment, and the new VWAP ADX Hybrid. Run them as a coordinated farm with shared risk management. The full arsenal.",
     longDescription: `Six proven strategies working together. Darvas, Elliott Wave, Williams Alligator, Heikin Ashi, Renko, and VWAP-RSI-MACD. Run them as a coordinated farm with shared risk management. The full arsenal.
 
 **🔌 Plugin for the AI Trading Dashboard** — drop all six strategies into \`plugins/\` and use the farm orchestrator to coordinate them.
@@ -534,7 +596,7 @@ All three products delivered instantly. Same source code, same updates, same sup
     description: "Every agent, every template, every tool. The entire GWDS trading arsenal in one package.",
     longDescription: `The ultimate deal — every single product in the GWDS store.
 
-**9 products included:**
+**10 products included:**
 • **AI Trading Dashboard** ($149) — Full autonomous trading platform
 • **Flash Loan Arbitrage** ($49) — Cross-DEX arbitrage with Aave V3
 • **Meme Trading System** ($99) — Meme token scanner & trader
@@ -545,7 +607,7 @@ All three products delivered instantly. Same source code, same updates, same sup
 • **Bollinger Band Mean Reversion Agent** ($199) — Statistical mean reversion
 • **Macro & On-Chain Sentiment Agent** ($199) — Macro + on-chain signals
 
-**Total value: $1,690 — You pay $699.**
+**Total value: $1,889 — You pay $699.**
 
 👉 **Try the live demo** to see all 6 trading agents working together in real-time.
 
@@ -554,7 +616,7 @@ Lifetime access. All future updates included.`,
     category: "trading" as ProductCategory,
     badge: "60% OFF",
     emoji: "💎",
-    features: ["All 9 products", "6 trading agents", "Dashboard + Flash Loans + Meme Trading", "Lifetime updates", "$991 savings"],
+    features: ["All 10 products", "6 trading agents", "Dashboard + Flash Loans + Meme Trading", "Lifetime updates", "$991 savings"],
     isFeatured: true,
     downloadUrl: "downloads/everything-bundle-v1.0.0.zip",
     image: "/images/products/dashboard-overview-new.jpg",
