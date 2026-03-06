@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useCart } from '@/contexts/CartContext';
@@ -18,6 +18,7 @@ const categoryColors: Record<string, string> = {
 export default function ProductDetailClient({ product, related, category }: { product: any; related: any[]; category: any }) {
   const { dispatch } = useCart();
   const [added, setAdded] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const accent = categoryColors[product.category] || '#8B5CF6';
 
@@ -29,6 +30,19 @@ export default function ProductDetailClient({ product, related, category }: { pr
   };
 
   const productImage = product.image || `/images/products/${product.id}.png`;
+
+  // Lightbox keyboard navigation
+  useEffect(() => {
+    if (lightboxIndex === null) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setLightboxIndex(null);
+      if (e.key === 'ArrowRight' && product.images && lightboxIndex < product.images.length - 1) setLightboxIndex(lightboxIndex + 1);
+      if (e.key === 'ArrowLeft' && lightboxIndex > 0) setLightboxIndex(lightboxIndex - 1);
+    };
+    window.addEventListener('keydown', handler);
+    document.body.style.overflow = 'hidden';
+    return () => { window.removeEventListener('keydown', handler); document.body.style.overflow = ''; };
+  }, [lightboxIndex, product.images]);
 
   // GSAP SplitText on headline
   useEffect(() => {
@@ -98,6 +112,7 @@ export default function ProductDetailClient({ product, related, category }: { pr
                 <img
                   src={product.image}
                   alt={product.name}
+                  onClick={() => product.images && product.images.length > 0 && setLightboxIndex(0)}
                   style={{
                     width: '100%',
                     height: '100%',
@@ -105,6 +120,7 @@ export default function ProductDetailClient({ product, related, category }: { pr
                     position: 'absolute',
                     top: 0,
                     left: 0,
+                    cursor: product.images?.length > 0 ? 'zoom-in' : 'default',
                   }}
                 />
               ) : (
@@ -423,7 +439,7 @@ export default function ProductDetailClient({ product, related, category }: { pr
                 gap: 16,
               }}>
                 {product.images.map((img: string, i: number) => {
-                  const label = img.split('/').pop()?.replace('dashboard-', '').replace('.jpg', '').replace(/-/g, ' ') || '';
+                  const label = img.split('/').pop()?.replace('dashboard-', '').replace('.jpg', '').replace('.png', '').replace(/-/g, ' ').replace(' new', '') || '';
                   return (
                     <motion.div
                       key={img}
@@ -431,6 +447,7 @@ export default function ProductDetailClient({ product, related, category }: { pr
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.08 }}
+                      onClick={() => setLightboxIndex(i)}
                       style={{
                         borderRadius: 12,
                         overflow: 'hidden',
@@ -779,6 +796,140 @@ export default function ProductDetailClient({ product, related, category }: { pr
         )}
       </main>
       <Footer />
+
+      {/* Lightbox */}
+      <AnimatePresence>
+        {lightboxIndex !== null && product.images && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setLightboxIndex(null)}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 9999,
+              background: 'rgba(0,0,0,0.92)',
+              backdropFilter: 'blur(12px)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'zoom-out',
+            }}
+          >
+            {/* Close button */}
+            <button
+              onClick={() => setLightboxIndex(null)}
+              style={{
+                position: 'absolute',
+                top: 20,
+                right: 24,
+                background: 'rgba(255,255,255,0.1)',
+                border: '1px solid rgba(255,255,255,0.2)',
+                borderRadius: 8,
+                color: '#fff',
+                fontSize: '1.2rem',
+                width: 44,
+                height: 44,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 10,
+              }}
+            >
+              ✕
+            </button>
+
+            {/* Prev */}
+            {lightboxIndex > 0 && (
+              <button
+                onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex - 1); }}
+                style={{
+                  position: 'absolute',
+                  left: 20,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'rgba(255,255,255,0.1)',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                  borderRadius: 8,
+                  color: '#fff',
+                  fontSize: '1.4rem',
+                  width: 48,
+                  height: 48,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 10,
+                }}
+              >
+                ‹
+              </button>
+            )}
+
+            {/* Next */}
+            {lightboxIndex < product.images.length - 1 && (
+              <button
+                onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex + 1); }}
+                style={{
+                  position: 'absolute',
+                  right: 20,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'rgba(255,255,255,0.1)',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                  borderRadius: 8,
+                  color: '#fff',
+                  fontSize: '1.4rem',
+                  width: 48,
+                  height: 48,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 10,
+                }}
+              >
+                ›
+              </button>
+            )}
+
+            {/* Image */}
+            <motion.img
+              key={lightboxIndex}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+              src={product.images[lightboxIndex]}
+              alt={product.name}
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                maxWidth: '90vw',
+                maxHeight: '85vh',
+                objectFit: 'contain',
+                borderRadius: 12,
+                cursor: 'default',
+                boxShadow: '0 20px 80px rgba(0,0,0,0.6)',
+              }}
+            />
+
+            {/* Counter */}
+            <div style={{
+              position: 'absolute',
+              bottom: 24,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              color: '#888',
+              fontSize: '0.8rem',
+              fontFamily: 'var(--font-body)',
+            }}>
+              {lightboxIndex + 1} / {product.images.length}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
