@@ -22,8 +22,7 @@ export interface Product {
 export const categories: { id: ProductCategory; label: string; emoji: string; color: string; description: string }[] = [
   { id: "templates", label: "Templates", emoji: "🧩", color: "#8B5CF6", description: "Production-ready dashboards, apps, and tools." },
   { id: "trading", label: "Trading", emoji: "📈", color: "#10B981", description: "Indicators, agents, and systems for real-money execution." },
-  { id: "wallpapers", label: "Wallpapers", emoji: "🎨", color: "#EC4899", description: "AI-generated wallpapers and digital art." },
-  { id: "animations", label: "Animations", emoji: "🎬", color: "#EF4444", description: "Claymation, 3D renders, and animated content." },
+
 ];
 
 export const products: Product[] = [
@@ -532,80 +531,6 @@ This isn't just another indicator. The Macro & On-Chain Sentiment Agent reads th
     ],
   },
 
-  // === WALLPAPERS ===
-  {
-    id: "cyber-wave-pack",
-    stripePriceId: "price_1T7AnmLLyk0oaesNju8f36zt",
-    name: "Cyber Wave Collection",
-    description: "20 ultra-high-res AI wallpapers. Cyberpunk meets synthwave — neon grids, chrome structures, digital horizons.",
-    price: 12,
-    category: "wallpapers",
-    emoji: "🌆",
-    features: ["20 wallpapers", "4K + 8K", "Desktop + mobile", "Cyberpunk aesthetic", "Commercial license"],
-    image: "/images/products/cyber-wave-pack.jpg",
-    downloadUrl: "downloads/cyber-wave-pack-v1.0.0.zip",
-  },
-  {
-    id: "abstract-flow-pack",
-    stripePriceId: "price_1T7AnmLLyk0oaesN2Nsd1Ati",
-    name: "Abstract Flow Collection",
-    description: "15 premium abstract wallpapers. Fluid gradients, geometric patterns, and organic forms in a dark palette.",
-    price: 9,
-    category: "wallpapers",
-    emoji: "🌀",
-    features: ["15 wallpapers", "4K resolution", "Desktop + mobile", "Abstract art", "Dark palette"],
-    image: "/images/products/abstract-flow-pack.jpg",
-    downloadUrl: "downloads/abstract-flow-pack-v1.0.0.zip",
-  },
-
-  // === ANIMATIONS ===
-  {
-    id: "clay-verse-pack",
-    stripePriceId: "price_1T7AnmLLyk0oaesNJeQr3uRq",
-    name: "Clay Verse Animation Pack",
-    description: "10 detailed AI video prompts + 5 style reference cards + 3 TikTok scripts. Everything you need to create stunning claymation content.",
-    longDescription: `10 detailed AI video prompts + 5 style reference cards + 3 TikTok scripts. Everything you need to create stunning claymation content.
-
-**What you get:**
-- 10 detailed claymation prompts for AI video generation (Runway Gen-3, Kling, Pika)
-- 5 style reference cards — fingerprint-clay, smooth-polymer, rough-rustic, neon-glaze, pastel-whimsy
-- 3 ready-to-film TikTok scripts (60s format) for claymation content
-- Platform settings guides for Runway, Kling, and ComfyUI
-- Commercial license included
-
-**Each prompt includes:** scene description, camera angles, lighting setup, mood, and style notes. Drop these into any AI video tool and get professional clay animation results.`,
-    price: 19,
-    category: "animations",
-    badge: "NEW",
-    emoji: "🏗️",
-    features: ["10 video prompts", "5 style guides", "3 TikTok scripts", "Runway + Kling + ComfyUI", "Commercial license"],
-    image: "/images/products/clay-verse-pack.jpg",
-    downloadUrl: "downloads/clay-verse-pack-v1.0.0.zip",
-  },
-  {
-    id: "3d-render-pack",
-    stripePriceId: "price_1T7AnnLLyk0oaesNtJf28hMp",
-    name: "3D Product Renders Pack",
-    description: "20 isometric 3D render prompts + 5 Blender scene templates + batch generation scripts. Professional product photography powered by AI.",
-    longDescription: `20 isometric 3D render prompts + 5 Blender scene templates + batch generation scripts. Professional product photography powered by AI.
-
-**What you get:**
-- 20 isometric 3D render prompts for Midjourney, DALL-E, and Flux
-- 10 product types × multiple scene setups (floating platform, studio lighting, neon accent, minimalist)
-- 5 Blender scene description templates for common product shot setups
-- 5 curated color palettes (tech-minimal, luxury-dark, vibrant-pop, earth-organic, neon-future)
-- 2 Python batch generation scripts (combine products × styles × palettes automatically)
-- Best practices guide for AI-generated product photography
-
-**Each prompt includes:** full prompt text, negative prompts, and recommended settings per platform.`,
-    price: 34,
-    category: "animations",
-    badge: "NEW",
-    emoji: "🎥",
-    features: ["20 render prompts", "5 Blender templates", "5 color palettes", "Batch scripts", "Multi-platform"],
-    image: "/images/products/3d-render-pack.jpg",
-    downloadUrl: "downloads/3d-render-pack-v1.0.0.zip",
-  },
   {
     id: "full-stack-trader-bundle",
     stripePriceId: "price_1T7p7ZLLyk0oaesN9Mt54Oaz",
@@ -672,36 +597,31 @@ Two production-ready codebases. Fork, customize, deploy.`,
     id: "everything-bundle",
     stripePriceId: "price_1T7p7aLLyk0oaesNjdZqcSEx",
     name: "GWDS Everything Bundle",
-    description: "All 14 products. Every agent, every template, every tool. One price.",
-    longDescription: `The ultimate deal — every single product in the GWDS store for over 60% off.
+    description: "Every agent, every template, every tool. The entire GWDS trading arsenal in one package.",
+    longDescription: `The ultimate deal — every single product in the GWDS store.
 
-**14 products included:**
-• **AI Trading Dashboard** ($149)
-• **Flash Loan Arbitrage** ($49)
-• **Meme Trading System** ($99)
-• **VWAP Volume Breakout Agent** ($199)
-• **Elliott Wave Pattern Agent** ($199)
-• **Darvas Box Breakout Agent** ($199)
-• **Heikin Ashi Trend Following Agent** ($199)
-• **Bollinger Band Mean Reversion Agent** ($199)
-• **Macro & On-Chain Sentiment Agent** ($199)
-• **Multi-Strategy Bundle** ($399)
-• **Second Brain** ($79)
-• **Cyber Wave Collection** ($12)
-• **Abstract Flow Collection** ($9)
-• **Clay Verse Animation Pack** ($19)
-• **3D Product Renders Pack** ($34)
+**10 products included:**
+• **AI Trading Dashboard** ($149) — Full autonomous trading platform
+• **Flash Loan Arbitrage** ($49) — Cross-DEX arbitrage with Aave V3
+• **Meme Trading System** ($99) — Meme token scanner & trader
+• **Darvas Box Breakout Agent** ($199) — Volume-confirmed breakout detection
+• **Elliott Wave Pattern Agent** ($199) — AI-powered wave counting
+• **VWAP Volume Breakout Agent** ($199) — Volume-weighted momentum
+• **Heikin Ashi Trend Following Agent** ($199) — Noise-filtered trend riding
+• **Bollinger Band Mean Reversion Agent** ($199) — Statistical mean reversion
+• **Macro & On-Chain Sentiment Agent** ($199) — Macro + on-chain signals
+• **Second Brain** ($79) — PARA knowledge management system
 
-**Total value: $2,043 — You pay $799.**
+**Total value: $1,769 — You pay $699.**
 
 👉 **Try the live demo** to see all 6 trading agents working together in real-time.
 
 Lifetime access. All future updates included.`,
-    price: 799,
+    price: 699,
     category: "templates" as ProductCategory,
     badge: "60% OFF",
     emoji: "💎",
-    features: ["All 14 products", "6 trading agents", "Every template & tool", "All wallpapers & design assets", "Lifetime updates", "$1,225 savings"],
+    features: ["All 10 products", "6 trading agents", "Dashboard + Flash Loans + Meme Trading", "Second Brain template", "Lifetime updates", "$1,070 savings"],
     isFeatured: true,
     downloadUrl: "downloads/everything-bundle-v1.0.0.zip",
     image: "/images/products/dashboard-overview-new.jpg",
