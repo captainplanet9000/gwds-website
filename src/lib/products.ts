@@ -42,7 +42,7 @@ export const products: Product[] = [
 **Deploy in 3 steps:**
 1. Set up a free Supabase project and run the included SQL migration
 2. Get your Hyperliquid API wallet key (trading only — can't withdraw your funds)
-3. Click "Deploy with Vercel" — paste your keys, and you're live
+3. Run \`npm run dev\` locally or deploy to Vercel — paste your keys, and you're live
 
 **What you get:**
 - Autonomous trading agents with configurable strategies (VWAP, Darvas, Elliott Wave, Heikin Ashi, Renko, Williams Alligator, and more)

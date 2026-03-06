@@ -28,6 +28,9 @@ export default function CheckoutPage() {
     setError('');
 
     try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 15000);
+
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -36,7 +39,17 @@ export default function CheckoutPage() {
           email,
           name,
         }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeout);
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        setError(errData.error || `Server error (${res.status}) — please try again`);
+        setLoading(false);
+        return;
+      }
 
       const data = await res.json();
 
@@ -48,10 +61,14 @@ export default function CheckoutPage() {
         dispatch({ type: 'CLEAR_CART' });
         router.push(`/checkout/success?orderId=${data.orderId}`);
       } else {
-        setError(data.error || 'Checkout failed');
+        setError(data.error || 'Checkout failed — please try again');
       }
-    } catch (err) {
-      setError('Network error — please try again');
+    } catch (err: any) {
+      if (err.name === 'AbortError') {
+        setError('Request timed out — please try again');
+      } else {
+        setError('Network error — please try again');
+      }
     } finally {
       setLoading(false);
     }
