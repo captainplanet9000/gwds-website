@@ -276,8 +276,8 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
   {
     id: "darvas-indicator",
     stripePriceId: "price_1T7p7nLLyk0oaesNxPiaIpCt",
-    name: "Darvas Box Indicator",
-    description: "Nicolas Darvas turned $36,000 into $2.25 million using box breakouts. This plugin automates his method with modern AI. Multi-timeframe analysis, confidence scoring, and auto-execution.",
+    name: "Darvas Box Breakout Agent",
+    description: "Automated box breakout detection based on the Nicolas Darvas method. Identifies consolidation boxes, confirms breakouts with volume, and executes entries with trailing stops. Multi-timeframe analysis across 15m/1H/4H.",
     longDescription: `Nicolas Darvas turned $36,000 into $2.25 million using box breakouts. This plugin automates his method with modern AI. Multi-timeframe analysis, confidence scoring, and auto-execution.
 
 **🔌 Plugin for the AI Trading Dashboard** — drop into your dashboard's \`plugins/\` folder and restart. Instant Darvas Box strategy.
@@ -311,8 +311,8 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
   {
     id: "elliott-wave-agent",
     stripePriceId: "price_1T7p7nLLyk0oaesNV4c2euvc",
-    name: "Elliott Wave Agent",
-    description: "The most sophisticated wave analysis you can deploy yourself. AI-powered wave counting, Fibonacci validation, autonomous trade execution. This is the same agent running live in our $184K portfolio.",
+    name: "Elliott Wave Pattern Agent",
+    description: "AI-powered Elliott Wave counting with automatic Fibonacci extension targets. Detects impulse waves (1-5) and corrective patterns (A-B-C), validates with Fibonacci ratios, and executes entries at high-probability wave positions.",
     longDescription: `The most sophisticated wave analysis you can deploy yourself. AI-powered wave counting, Fibonacci validation, autonomous trade execution. This is the same agent running live in our $184K portfolio.
 
 **🔌 Plugin for the AI Trading Dashboard** — install into \`plugins/\` and the agent starts analyzing waves immediately.
@@ -350,8 +350,8 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
   {
     id: "vwap-momentum-agent",
     stripePriceId: "price_1T7p7YLLyk0oaesNw7u3HRTQ",
-    name: "VWAP Momentum Alpha",
-    description: "Volume-weighted average price momentum trading with RSI divergence detection. 892 trades, 64% win rate, +$7,100 P&L in the live demo. High-frequency entries with precise volume analysis.",
+    name: "VWAP Volume Breakout Agent",
+    description: "Trades breakouts from the Volume Weighted Average Price with RSI divergence confirmation. Tracks accumulation/distribution zones, detects volume spikes, and enters when price breaks VWAP with momentum. 6-hour average hold time.",
     longDescription: `🔌 **Plugin for AI Trading Dashboard** — The same VWAP agent running live in our $184K portfolio.
 
 Combines VWAP (Volume Weighted Average Price) with volume divergence analysis and RSI momentum signals. Identifies accumulation zones, volume spikes, and momentum shifts to enter high-probability trades.
@@ -392,8 +392,8 @@ Combines VWAP (Volume Weighted Average Price) with volume divergence analysis an
   {
     id: "heikin-ashi-agent",
     stripePriceId: "price_1T7p7YLLyk0oaesNONGoRtht",
-    name: "Heikin Ashi Trend Rider",
-    description: "Smoothed candlestick trend-following agent. Catches extended moves by filtering noise. 412 trades, 61% win rate, +$3,750 P&L. Rides trends for 22+ hours average hold time.",
+    name: "Heikin Ashi Trend Following Agent",
+    description: "Trend-following agent using Heikin Ashi smoothed candles to filter market noise. Enters on consecutive bullish/bearish candle sequences, confirms with ADX trend strength, and rides moves with trailing stops. 22-hour average hold time.",
     longDescription: `🔌 **Plugin for AI Trading Dashboard** — Trend-following agent using Heikin Ashi smoothed candles.
 
 Heikin Ashi candles filter market noise to reveal the true trend. This agent identifies consecutive bullish/bearish sequences, confirms with ADX trend strength, and rides momentum with trailing stops.
@@ -434,8 +434,8 @@ Heikin Ashi candles filter market noise to reveal the true trend. This agent ide
   {
     id: "mean-reversion-agent",
     stripePriceId: "price_1T7p7ZLLyk0oaesN282vNmVt",
-    name: "Mean Reversion Scout",
-    description: "Statistical mean reversion agent using RSI, Bollinger Bands, and Z-score analysis. Buys oversold, sells overbought. 381 trades, 59% win rate, +$1,980 P&L. Consistent, conservative returns.",
+    name: "Bollinger Band Mean Reversion Agent",
+    description: "Buys oversold assets and sells overbought using RSI extremes, Bollinger Band touches, and Z-score deviation. Enters with scaled 1/3 position sizing at each level. Conservative, statistical approach to catching bounces.",
     longDescription: `🔌 **Plugin for AI Trading Dashboard** — Finds oversold assets and trades the bounce.
 
 When assets deviate significantly from their statistical mean, they tend to revert. This agent detects extreme deviations using RSI, Bollinger Bands, and Z-score calculations, then enters positions with scaled entries.
@@ -475,11 +475,11 @@ When assets deviate significantly from their statistical mean, they tend to reve
   {
     id: "macro-sentiment-agent",
     stripePriceId: "price_1T7p7ZLLyk0oaesNd1A6FRmL",
-    name: "Macro Sentiment Analyzer",
-    description: "Reads the macro environment — Fed speeches, on-chain flows, social sentiment, exchange data. 251 trades, 71% win rate, +$6,370 P&L. The brain that tells other agents when to be aggressive.",
+    name: "Macro & On-Chain Sentiment Agent",
+    description: "Analyzes Fed policy, on-chain whale flows, social media sentiment scores, and exchange inflow/outflow data. Broadcasts risk-on/risk-off signals to all other agents. The coordination layer that decides when the farm goes aggressive or defensive.",
     longDescription: `🔌 **Plugin for AI Trading Dashboard** — The intelligence layer that coordinates your trading farm.
 
-This isn't just another indicator. The Macro Sentiment Analyzer reads the entire market environment — Fed policy, on-chain whale movements, social media sentiment, exchange flows — and broadcasts risk assessments to all other agents.
+This isn't just another indicator. The Macro & On-Chain Sentiment Agent reads the entire market environment — Fed policy, on-chain whale movements, social media sentiment, exchange flows — and broadcasts risk assessments to all other agents.
 
 **What you get:**
 - News sentiment analysis (Fed speeches, macro events, crypto news)
@@ -691,24 +691,24 @@ This isn't just another indicator. The Macro Sentiment Analyzer reads the entire
     stripePriceId: "price_1T7p7ZLLyk0oaesN9Mt54Oaz",
     name: "The Full Stack Trader",
     description: "Dashboard + Darvas Box + Elliott Wave + Analysis Prompts. Everything you need to run AI-powered trading.",
-    longDescription: `Save $137 — get the complete trading toolkit in one purchase.
+    longDescription: `Save $289 — get the core trading toolkit in one purchase.
 
 **4 products included:**
 • **AI Trading Dashboard** ($149) — Full autonomous trading platform with 10+ strategies
-• **Darvas Box Indicator** ($49) — Classic breakout detection adapted for crypto
-• **Elliott Wave Agent** ($199) — AI-powered wave pattern recognition and trade execution
+• **Darvas Box Breakout Agent** ($200) — Volume-confirmed box breakout detection
+• **Elliott Wave Pattern Agent** ($200) — AI-powered wave counting with Fibonacci targets
 • **Trading Analysis Prompts** ($39) — 50+ prompts for technical and fundamental analysis
 
-**Total value: $436 — You pay $299.**
+**Total value: $588 — You pay $299.**
 
 👉 **Try the live demo** to see all these systems working together in one unified dashboard.
 
 All four products delivered instantly. Same source code, same updates, same support.`,
     price: 299,
     category: "trading" as ProductCategory,
-    badge: "SAVE $137",
+    badge: "SAVE $289",
     emoji: "🎯",
-    features: ["AI Trading Dashboard", "Darvas Box Indicator", "Elliott Wave Agent", "Trading Analysis Prompts", "All future updates", "$137 savings"],
+    features: ["AI Trading Dashboard", "Darvas Box Breakout Agent", "Elliott Wave Pattern Agent", "Trading Analysis Prompts", "All future updates", "$289 savings"],
     isFeatured: true,
     stripePriceId: "",
     image: "/images/products/dashboard-overview-new.jpg",
@@ -781,12 +781,12 @@ Three production-ready codebases. Fork, customize, deploy.`,
 • **AI Trading Dashboard** ($149)
 • **Flash Loan Arbitrage** ($49)
 • **Meme Trading System** ($99)
-• **VWAP Momentum Alpha** ($200)
-• **Elliott Wave Agent** ($200)
-• **Darvas Box Indicator** ($200)
-• **Heikin Ashi Trend Rider** ($200)
-• **Mean Reversion Scout** ($200)
-• **Macro Sentiment Analyzer** ($200)
+• **VWAP Volume Breakout Agent** ($200)
+• **Elliott Wave Pattern Agent** ($200)
+• **Darvas Box Breakout Agent** ($200)
+• **Heikin Ashi Trend Following Agent** ($200)
+• **Bollinger Band Mean Reversion Agent** ($200)
+• **Macro & On-Chain Sentiment Agent** ($200)
 • **Multi-Strategy Bundle** ($399)
 • **Second Brain** ($79)
 • **AI SaaS Starter Kit** ($99)

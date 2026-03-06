@@ -600,12 +600,12 @@ export default function ProductDetailClient({ product, related, category }: { pr
               </p>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16 }}>
                 {[
-                  { name: 'VWAP Momentum Alpha', price: '$200', emoji: '📊', desc: 'Volume-weighted momentum trading with RSI divergence. 892 trades, 64% win rate.', href: '/store/vwap-momentum-agent' },
-                  { name: 'Elliott Wave Agent', price: '$200', emoji: '📐', desc: 'AI-powered wave pattern detection with Fibonacci validation and auto-execution.', href: '/store/elliott-wave-agent' },
-                  { name: 'Darvas Box Breakout', price: '$200', emoji: '📦', desc: 'Classic breakout detection with multi-timeframe confirmation. 67% win rate.', href: '/store/darvas-indicator' },
-                  { name: 'Heikin Ashi Trend Rider', price: '$200', emoji: '🕯️', desc: 'Smoothed candle trend-following. Catches multi-day moves with ADX confirmation.', href: '/store/heikin-ashi-agent' },
-                  { name: 'Mean Reversion Scout', price: '$200', emoji: '📉', desc: 'Statistical mean reversion using RSI, Bollinger Bands, and Z-score analysis.', href: '/store/mean-reversion-agent' },
-                  { name: 'Macro Sentiment Analyzer', price: '$200', emoji: '🧠', desc: 'Reads Fed policy, on-chain flows, social sentiment. Coordinates the entire farm.', href: '/store/macro-sentiment-agent' },
+                  { name: 'VWAP Volume Breakout Agent', price: '$200', emoji: '📊', desc: 'Trades VWAP breakouts with volume spike confirmation and RSI divergence.', href: '/store/vwap-momentum-agent' },
+                  { name: 'Elliott Wave Pattern Agent', price: '$200', emoji: '📐', desc: 'AI wave counting with Fibonacci targets. Enters at high-probability wave positions.', href: '/store/elliott-wave-agent' },
+                  { name: 'Darvas Box Breakout Agent', price: '$200', emoji: '📦', desc: 'Detects consolidation boxes and executes on volume-confirmed breakouts.', href: '/store/darvas-indicator' },
+                  { name: 'Heikin Ashi Trend Following Agent', price: '$200', emoji: '🕯️', desc: 'Rides trends using smoothed candles with ADX strength confirmation.', href: '/store/heikin-ashi-agent' },
+                  { name: 'Bollinger Band Mean Reversion Agent', price: '$200', emoji: '📉', desc: 'Buys oversold (RSI + Bollinger + Z-score), sells overbought. Scaled entries.', href: '/store/mean-reversion-agent' },
+                  { name: 'Macro & On-Chain Sentiment Agent', price: '$200', emoji: '🧠', desc: 'Analyzes Fed policy, whale flows, social sentiment. Coordinates the farm.', href: '/store/macro-sentiment-agent' },
                   { name: 'Meme Trading System', price: '$99', emoji: '🐸', desc: 'Automated meme coin discovery, sentiment analysis, and sniper execution.', href: '/store/meme-trading-template' },
                   { name: 'Flash Loan Arbitrage', price: '$49', emoji: '⚡', desc: 'Cross-DEX arbitrage using Aave V3 flash loans on Arbitrum. Zero collateral.', href: '/store/flash-loan-arbitrage' },
                   { name: 'Multi-Strategy Bundle', price: '$399', emoji: '🎯', desc: 'All strategies in one package — the complete trading arsenal.', href: '/store/multi-strat-bundle' },
