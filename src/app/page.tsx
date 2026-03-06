@@ -29,7 +29,7 @@ function FeaturedSection() {
     init().catch(console.error);
   }, []);
 
-  const colors = ['#8B5CF6', '#10B981', '#F59E0B'];
+  const colors = ['#8B5CF6', '#10B981', '#F59E0B', '#EC4899'];
 
   return (
     <section style={{ padding: '80px 24px', maxWidth: 1400, margin: '0 auto' }}>
@@ -55,7 +55,7 @@ function FeaturedSection() {
           <Link key={product.id} href={`/store/${product.id}`} style={{ textDecoration: 'none' }} className="featured-card">
             <div style={{
               background: '#0a0a0a',
-              border: `1px solid ${colors[i]}15`,
+              border: `1px solid ${colors[i % colors.length]}15`,
               borderRadius: 16,
               overflow: 'hidden',
               transition: 'all 0.4s cubic-bezier(0.25,0.46,0.45,0.94)',
@@ -63,18 +63,22 @@ function FeaturedSection() {
             }}
             onMouseEnter={e => {
               (e.currentTarget as HTMLElement).style.transform = 'translateY(-8px)';
-              (e.currentTarget as HTMLElement).style.boxShadow = `0 24px 64px ${colors[i]}15`;
-              (e.currentTarget as HTMLElement).style.borderColor = `${colors[i]}30`;
+              (e.currentTarget as HTMLElement).style.boxShadow = `0 24px 64px ${colors[i % colors.length]}15`;
+              (e.currentTarget as HTMLElement).style.borderColor = `${colors[i % colors.length]}30`;
             }}
             onMouseLeave={e => {
               (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
               (e.currentTarget as HTMLElement).style.boxShadow = 'none';
-              (e.currentTarget as HTMLElement).style.borderColor = `${colors[i]}15`;
+              (e.currentTarget as HTMLElement).style.borderColor = `${colors[i % colors.length]}15`;
             }}
             >
-              {/* 3D Orb */}
-              <div style={{ height: 240, position: 'relative' }}>
-                <ProductOrb3D color={colors[i]} height={240} />
+              {/* Product Image or 3D Orb fallback */}
+              <div style={{ height: 240, position: 'relative', overflow: 'hidden' }}>
+                {product.image ? (
+                  <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
+                ) : (
+                  <ProductOrb3D color={colors[i % colors.length]} height={240} />
+                )}
                 {product.badge && (
                   <div style={{
                     position: 'absolute', top: 16, right: 16,
@@ -130,12 +134,45 @@ function FeaturedSection() {
   );
 }
 
+function DemoSection() {
+  return (
+    <section style={{ padding: '80px 24px', maxWidth: 1200, margin: '0 auto', textAlign: 'center' }}>
+      <p style={{ fontSize: '0.7rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#8B5CF6', marginBottom: 12 }}>
+        See It Running
+      </p>
+      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 800, color: '#E8E8E8', letterSpacing: '-0.03em', marginBottom: 16 }}>
+        Don't take our word for it.
+      </h2>
+      <p style={{ fontSize: '0.95rem', color: '#666', marginBottom: 40, maxWidth: 600, margin: '0 auto 40px' }}>
+        Click through the full dashboard. 6 agents, 7 farms, real-time analytics. No signup required.
+      </p>
+      <a href="https://ai-trading-dashboard-demo.vercel.app" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+        <div style={{ maxWidth: 1000, margin: '0 auto', borderRadius: 16, overflow: 'hidden', border: '1px solid #8B5CF620', cursor: 'pointer', transition: 'all 0.3s' }}>
+          <img src="/images/products/dashboard-overview-new.jpg" alt="AI Trading Dashboard Demo" style={{ width: '100%', display: 'block' }} />
+        </div>
+      </a>
+      <div style={{ marginTop: 32, display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
+        <a href="https://ai-trading-dashboard-demo.vercel.app" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+          <button style={{ padding: '16px 40px', borderRadius: 8, border: 'none', background: '#8B5CF6', color: '#fff', fontSize: '0.88rem', fontWeight: 700, fontFamily: 'var(--font-display)', letterSpacing: '0.05em', textTransform: 'uppercase', cursor: 'pointer' }}>
+            Try Live Demo →
+          </button>
+        </a>
+        <a href="/store/trading-dashboard-template" style={{ textDecoration: 'none' }}>
+          <button style={{ padding: '16px 40px', borderRadius: 8, border: '1px solid #333', background: 'transparent', color: '#E8E8E8', fontSize: '0.88rem', fontWeight: 600, fontFamily: 'var(--font-display)', letterSpacing: '0.05em', textTransform: 'uppercase', cursor: 'pointer' }}>
+            Get Full Source — $149
+          </button>
+        </a>
+      </div>
+    </section>
+  );
+}
+
 function StatsSection() {
   const stats = [
-    { value: '14+', label: 'Digital Products', color: '#8B5CF6' },
-    { value: '6', label: 'Product Categories', color: '#10B981' },
-    { value: '∞', label: 'Downloads Available', color: '#F59E0B' },
-    { value: '24/7', label: 'Instant Delivery', color: '#EC4899' },
+    { value: '$184K', label: 'Demo Portfolio Value', color: '#10B981' },
+    { value: '6', label: 'Autonomous AI Agents', color: '#8B5CF6' },
+    { value: '2,847', label: 'Trades Executed', color: '#F59E0B' },
+    { value: '68%', label: 'Win Rate', color: '#EC4899' },
   ];
 
   return (
@@ -261,9 +298,9 @@ function CTASection() {
           marginBottom: 20,
         }}
       >
-        Ready to build
+        Your trading system
         <br />
-        <span style={{ color: '#8B5CF6' }}>something different?</span>
+        <span style={{ color: '#8B5CF6' }}>is one deploy away.</span>
       </motion.h2>
       <motion.p
         initial={{ opacity: 0 }}
@@ -275,7 +312,7 @@ function CTASection() {
           fontFamily: 'var(--font-body)', marginBottom: 40,
         }}
       >
-        Every template is extracted from a production system. No lorem ipsum.
+        Every template ships with full source code, documentation, and setup wizard.
       </motion.p>
       <Link href="/store" style={{ textDecoration: 'none' }}>
         <motion.button
@@ -304,6 +341,7 @@ export default function Home() {
       <main style={{ background: '#000' }}>
         <Hero />
         <FeaturedSection />
+        <DemoSection />
         <StatsSection />
         <CategoriesSection />
         <CTASection />

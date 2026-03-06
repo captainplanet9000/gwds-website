@@ -113,6 +113,26 @@ export default function Hero() {
           </span>
         </motion.div>
 
+        {/* Main Headline */}
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
+            fontWeight: 800,
+            color: '#E8E8E8',
+            lineHeight: 1.1,
+            marginBottom: 16,
+            letterSpacing: '-0.03em',
+          }}
+        >
+          AI Trading Systems.
+          <br />
+          <span style={{ color: '#8B5CF6' }}>Deployed in Minutes.</span>
+        </motion.h1>
+
         {/* Subtitle */}
         <motion.h2
           ref={headlineRef}
@@ -121,7 +141,7 @@ export default function Hero() {
           transition={{ delay: 0.3 }}
           style={{
             fontFamily: 'var(--font-display)',
-            fontSize: 'clamp(1.1rem, 2.5vw, 1.5rem)',
+            fontSize: 'clamp(1rem, 2vw, 1.25rem)',
             fontWeight: 400,
             color: '#888',
             lineHeight: 1.6,
@@ -129,8 +149,8 @@ export default function Hero() {
             letterSpacing: '-0.01em',
           }}
         >
-          AI templates, trading tools, and creative assets
-          <br />built by makers who ship.
+          The same dashboard running a $184K portfolio — packaged as a template.
+          <br />Full source code, 44 themes, 6 autonomous agents.
         </motion.h2>
 
         {/* CTAs */}
@@ -140,7 +160,7 @@ export default function Hero() {
           transition={{ delay: 1.5, duration: 0.6 }}
           style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}
         >
-          <Link href="/store" style={{ textDecoration: 'none' }}>
+          <a href="https://ai-trading-dashboard-demo.vercel.app" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
             <motion.button
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.97 }}
@@ -158,10 +178,10 @@ export default function Hero() {
                 cursor: 'pointer',
               }}
             >
-              Browse Store
+              View Live Demo →
             </motion.button>
-          </Link>
-          <Link href="/about" style={{ textDecoration: 'none' }}>
+          </a>
+          <Link href="/store" style={{ textDecoration: 'none' }}>
             <motion.button
               whileHover={{ scale: 1.04, borderColor: '#8B5CF6' }}
               whileTap={{ scale: 0.97 }}
@@ -180,7 +200,7 @@ export default function Hero() {
                 transition: 'border-color 0.3s',
               }}
             >
-              About Us
+              Browse Store
             </motion.button>
           </Link>
         </motion.div>
