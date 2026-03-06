@@ -119,13 +119,49 @@ function SuccessContent() {
         </Link>
       </motion.div>
 
+      {/* Account CTA */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.7 }}
+        style={{
+          marginTop: 32, padding: 24, borderRadius: 12,
+          background: 'rgba(139, 92, 246, 0.08)', border: '1px solid rgba(139, 92, 246, 0.2)',
+          textAlign: 'center',
+        }}
+      >
+        <h2 style={{
+          fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 700,
+          color: '#E8E8E8', marginBottom: 8,
+        }}>
+          Access your downloads anytime
+        </h2>
+        <p style={{
+          fontFamily: 'var(--font-body)', fontSize: '0.82rem', color: '#888',
+          lineHeight: 1.6, marginBottom: 16,
+        }}>
+          Create a free account to view purchase history and regenerate download links.
+        </p>
+        <Link href={`/account/register`} style={{ textDecoration: 'none' }}>
+          <button style={{
+            padding: '12px 24px', borderRadius: 8,
+            border: '1px solid #8B5CF6', background: 'transparent',
+            color: '#8B5CF6', fontFamily: 'var(--font-display)',
+            fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.05em',
+            textTransform: 'uppercase', cursor: 'pointer',
+          }}>
+            Create Account
+          </button>
+        </Link>
+      </motion.div>
+
       {/* Next Steps */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.8 }}
         style={{
-          marginTop: 48, padding: 32, borderRadius: 12,
+          marginTop: 16, padding: 32, borderRadius: 12,
           background: '#0a0a0a', border: '1px solid #1a1a1a',
           textAlign: 'left',
         }}

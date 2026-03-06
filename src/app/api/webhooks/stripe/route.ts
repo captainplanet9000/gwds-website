@@ -48,6 +48,16 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "No customer email" }, { status: 400 });
       }
 
+      // Check if a Supabase auth user exists with this email
+      let authUserId: string | null = null;
+      try {
+        const { data: userList } = await supabase.auth.admin.listUsers();
+        const matchedUser = userList?.users?.find(
+          (u) => u.email?.toLowerCase() === customerEmail.toLowerCase()
+        );
+        if (matchedUser) authUserId = matchedUser.id;
+      } catch { /* auth lookup is best-effort */ }
+
       // Try to find existing pending order (created during checkout)
       let order: any = null;
       const { data: existingOrder } = await supabase
@@ -58,24 +68,28 @@ export async function POST(req: NextRequest) {
 
       if (existingOrder) {
         // Update existing order to completed
+        const updateData: any = { status: "completed", total_cents: session.amount_total || 0 };
+        if (authUserId) updateData.user_id = authUserId;
         const { data: updated } = await supabase
           .from("orders")
-          .update({ status: "completed", total_cents: session.amount_total || 0 })
+          .update(updateData)
           .eq("id", existingOrder.id)
           .select()
           .single();
         order = updated || existingOrder;
       } else {
         // No existing order — create one
+        const insertData: any = {
+          stripe_session_id: session.id,
+          customer_email: customerEmail,
+          customer_name: customerName,
+          total_cents: session.amount_total || 0,
+          status: "completed",
+        };
+        if (authUserId) insertData.user_id = authUserId;
         const { data: newOrder, error: orderError } = await supabase
           .from("orders")
-          .insert({
-            stripe_session_id: session.id,
-            customer_email: customerEmail,
-            customer_name: customerName,
-            total_cents: session.amount_total || 0,
-            status: "completed",
-          })
+          .insert(insertData)
           .select()
           .single();
 

@@ -3,11 +3,14 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/contexts/CartContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { totalItems, toggleCart } = useCart();
+  const { user, loading: authLoading, signOut } = useAuth();
+  const [showAccountMenu, setShowAccountMenu] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -123,6 +126,107 @@ export default function Navbar() {
           >
             Cart ({totalItems})
           </button>
+
+          {/* Account */}
+          {!authLoading && (
+            user ? (
+              <div style={{ position: 'relative' }}>
+                <button
+                  onClick={() => setShowAccountMenu(!showAccountMenu)}
+                  style={{
+                    background: 'transparent',
+                    border: '1px solid rgba(139, 92, 246, 0.3)',
+                    color: '#8B5CF6',
+                    padding: '8px 16px',
+                    fontFamily: 'DM Sans, sans-serif',
+                    fontSize: '0.875rem',
+                    fontWeight: 500,
+                    cursor: 'pointer',
+                    borderRadius: '2px',
+                    transition: 'all 0.2s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(139, 92, 246, 0.1)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                  }}
+                >
+                  {user.email?.split('@')[0] || 'Account'}
+                </button>
+                {showAccountMenu && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: '100%',
+                      right: 0,
+                      marginTop: 8,
+                      background: '#0a0a0a',
+                      border: '1px solid #1a1a1a',
+                      borderRadius: 8,
+                      padding: 8,
+                      minWidth: 160,
+                      zIndex: 1001,
+                    }}
+                  >
+                    <Link
+                      href="/account"
+                      onClick={() => setShowAccountMenu(false)}
+                      style={{
+                        display: 'block',
+                        padding: '10px 14px',
+                        color: '#E8E8E8',
+                        textDecoration: 'none',
+                        fontFamily: 'DM Sans, sans-serif',
+                        fontSize: '0.85rem',
+                        borderRadius: 4,
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = '#1a1a1a'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+                    >
+                      My Account
+                    </Link>
+                    <button
+                      onClick={() => { signOut(); setShowAccountMenu(false); }}
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        padding: '10px 14px',
+                        background: 'transparent',
+                        border: 'none',
+                        color: '#888',
+                        textAlign: 'left',
+                        fontFamily: 'DM Sans, sans-serif',
+                        fontSize: '0.85rem',
+                        cursor: 'pointer',
+                        borderRadius: 4,
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = '#1a1a1a'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link
+                href="/account/login"
+                style={{
+                  fontFamily: 'DM Sans, sans-serif',
+                  fontSize: '0.875rem',
+                  fontWeight: 500,
+                  color: '#A8A8A8',
+                  textDecoration: 'none',
+                  transition: 'color 0.2s ease',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = '#E8E8E8'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = '#A8A8A8'; }}
+              >
+                Sign In
+              </Link>
+            )
+          )}
         </div>
 
         {/* Mobile Hamburger */}
@@ -197,6 +301,75 @@ export default function Navbar() {
           >
             Cart ({totalItems})
           </button>
+          {!authLoading && (
+            user ? (
+              <>
+                <Link
+                  href="/account"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  style={{
+                    display: 'block',
+                    marginTop: '8px',
+                    width: '100%',
+                    textAlign: 'center',
+                    background: 'transparent',
+                    border: '1px solid rgba(139, 92, 246, 0.3)',
+                    color: '#8B5CF6',
+                    padding: '14px',
+                    fontFamily: 'DM Sans, sans-serif',
+                    fontSize: '1rem',
+                    fontWeight: 500,
+                    textDecoration: 'none',
+                    borderRadius: '4px',
+                    boxSizing: 'border-box',
+                  }}
+                >
+                  My Account
+                </Link>
+                <button
+                  onClick={() => { signOut(); setIsMobileMenuOpen(false); }}
+                  style={{
+                    marginTop: '8px',
+                    width: '100%',
+                    background: 'transparent',
+                    border: '1px solid #1a1a1a',
+                    color: '#888',
+                    padding: '14px',
+                    fontFamily: 'DM Sans, sans-serif',
+                    fontSize: '1rem',
+                    fontWeight: 500,
+                    cursor: 'pointer',
+                    borderRadius: '4px',
+                  }}
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/account/login"
+                onClick={() => setIsMobileMenuOpen(false)}
+                style={{
+                  display: 'block',
+                  marginTop: '8px',
+                  width: '100%',
+                  textAlign: 'center',
+                  background: 'transparent',
+                  border: '1px solid rgba(139, 92, 246, 0.3)',
+                  color: '#8B5CF6',
+                  padding: '14px',
+                  fontFamily: 'DM Sans, sans-serif',
+                  fontSize: '1rem',
+                  fontWeight: 500,
+                  textDecoration: 'none',
+                  borderRadius: '4px',
+                  boxSizing: 'border-box',
+                }}
+              >
+                Sign In
+              </Link>
+            )
+          )}
         </div>
       )}
 
