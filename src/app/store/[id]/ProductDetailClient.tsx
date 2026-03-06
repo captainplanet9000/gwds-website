@@ -439,7 +439,7 @@ export default function ProductDetailClient({ product, related, category }: { pr
                 gap: 16,
               }}>
                 {product.images.map((img: string, i: number) => {
-                  const label = img.split('/').pop()?.replace('dashboard-', '').replace('.jpg', '').replace('.png', '').replace(/-/g, ' ').replace(' new', '') || '';
+                  const label = img.split('/').pop()?.replace('dashboard-', '').replace('.jpg', '').replace('.png', '').replace(/-/g, ' ').replace(' new', '').replace('focused/', '') || '';
                   return (
                     <motion.div
                       key={img}

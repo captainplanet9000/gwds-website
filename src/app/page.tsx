@@ -148,7 +148,7 @@ function DemoSection() {
       </p>
       <a href="https://ai-trading-dashboard-demo.vercel.app" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
         <div style={{ maxWidth: 1000, margin: '0 auto', borderRadius: 16, overflow: 'hidden', border: '1px solid #8B5CF620', cursor: 'pointer', transition: 'all 0.3s' }}>
-          <img src="/images/products/dashboard-overview-new.jpg" alt="AI Trading Dashboard Demo" style={{ width: '100%', display: 'block' }} />
+          <img src="/images/products/focused/dashboard-hero-overview.jpg" alt="AI Trading Dashboard Demo" style={{ width: '100%', display: 'block' }} />
         </div>
       </a>
       <div style={{ marginTop: 32, display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
