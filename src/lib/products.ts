@@ -102,7 +102,7 @@ Start with the base dashboard and add capabilities as you need them. Each add-on
   },
   {
     id: "meme-trading-suite",
-    stripePriceId: "price_1T7AnhLLyk0oaesNWVz1hMTi",
+    stripePriceId: "price_1T83k3LLyk0oaesNL7bGZ12J",
     name: "Meme Trading Suite",
     description: "The complete meme coin trading system — 9-tab dashboard with DexScreener scanner, autonomous agents, smart money tracking, Solana execution, and signal engine. 28 source files, fully integrated.",
     longDescription: `🚀 **Premium Plugin for AI Trading Dashboard** — The most comprehensive meme trading system you can deploy.
@@ -174,8 +174,8 @@ This isn't a basic scanner. It's a full autonomous trading operation for meme co
   },
   {
     id: "flash-loan-arbitrage",
-    stripePriceId: "price_1T7p7YLLyk0oaesNdr4UMLMS",
-    name: "Flash Loan Arbitrage",
+    stripePriceId: "price_1T83kgLLyk0oaesNpjgeKsdR",
+    name: "Flash Loan Arbitrage Engine",
     description: "Automated cross-DEX arbitrage using Aave V3 flash loans on Arbitrum. Zero collateral, atomic execution, MEV protection. The same system scanning 15+ DEXes for profit opportunities 24/7.",
     longDescription: `🔌 **Plugin for AI Trading Dashboard** — Drop into your dashboard's \`plugins/\` folder and start finding arbitrage opportunities automatically.
 
@@ -203,18 +203,20 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
 **Risk profile:** Very low. Flash loans are atomic — either you profit or the transaction reverts. The only cost of a failed attempt is gas (~$2-3 on Arbitrum).
 
 **Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
-    price: 49,
+    price: 99,
     category: "trading",
-    badge: "NEW",
+    badge: "UPGRADED",
     emoji: "⚡",
     features: [
       "Dashboard plugin",
       "15+ DEX monitoring",
       "Aave V3 flash loans",
-      "Auto arbitrage execution",
+      "Auto-executor engine",
+      "Multi-DEX scanning",
       "MEV protection",
       "Gas optimization",
       "Multi-hop pathfinding",
+      "Configurable profit threshold",
       "Plug-and-play install"
     ],
     techStack: ["Solidity", "TypeScript", "Aave V3", "Arbitrum", "Next.js 15"],
@@ -224,7 +226,7 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
       "/images/products/dashboard-plugins-new.jpg",
       "/images/products/dashboard-overview-new.jpg",
     ],
-    downloadUrl: "downloads/flash-loan-arbitrage-v1.0.0.zip",
+    downloadUrl: "downloads/flash-loan-arbitrage-v1.1.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/flash-loans",
   },
   // === TRADING TOOLS ===
@@ -553,7 +555,7 @@ All three products delivered instantly. Same source code, same updates, same sup
   },
   {
     id: "everything-bundle",
-    stripePriceId: "price_1T7tb4LLyk0oaesN76sJI7HL",
+    stripePriceId: "price_1T83kkLLyk0oaesN9kxVyD0v",
     name: "GWDS Everything Bundle",
     description: "Every agent, every template, every tool. The entire GWDS trading arsenal in one package.",
     longDescription: `The ultimate deal — every single product in the GWDS store.
@@ -561,7 +563,7 @@ All three products delivered instantly. Same source code, same updates, same sup
 **9 products included:**
 • **AI Trading Dashboard** ($149) — Full autonomous trading platform
 • **Meme Trading Suite** ($499) — DexScreener scanner, meme agents, smart money tracking, 9-tab trading system
-• **Flash Loan Arbitrage** ($49) — Cross-DEX arbitrage with Aave V3
+• **Flash Loan Arbitrage Engine** ($99) — Cross-DEX arbitrage with Aave V3 + auto-executor
 • **Darvas Box Breakout Agent** ($199) — Volume-confirmed breakout detection
 • **Elliott Wave Pattern Agent** ($199) — AI-powered wave counting
 • **VWAP Volume Breakout Agent** ($199) — Volume-weighted momentum
@@ -569,16 +571,16 @@ All three products delivered instantly. Same source code, same updates, same sup
 • **Bollinger Band Mean Reversion Agent** ($199) — Statistical mean reversion
 • **Macro & On-Chain Sentiment Agent** ($199) — Macro + on-chain signals
 
-**Total value: $1,891 — You pay $899.**
+**Total value: $1,941 — You pay $899.**
 
 👉 **Try the live demo** to see all these systems working together in real-time.
 
 Lifetime access. All future updates included.`,
     price: 899,
     category: "trading" as ProductCategory,
-    badge: "52% OFF",
+    badge: "54% OFF",
     emoji: "💎",
-    features: ["All 9 products", "6 trading agents", "Dashboard + Meme Trading Suite + Flash Loans", "Lifetime updates", "$992 savings"],
+    features: ["All 9 products", "6 trading agents", "Dashboard + Meme Trading Suite + Flash Loans", "Lifetime updates", "$1,042 savings"],
     isFeatured: true,
     downloadUrl: "downloads/everything-bundle-v1.0.0.zip",
     image: "/images/products/dashboard-overview-new.jpg",
