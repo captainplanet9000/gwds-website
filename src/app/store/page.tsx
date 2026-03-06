@@ -90,7 +90,7 @@ export default function StorePage() {
               marginBottom: 32,
             }}
           >
-            Digital Products
+            Store
           </motion.h1>
 
           {/* Search + Sort row */}
