@@ -154,6 +154,61 @@ The same system that finds trending meme coins before they 10x. Plugs into your 
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/meme-coins",
   },
   {
+    id: "flash-loan-arbitrage",
+    stripePriceId: "",
+    name: "Flash Loan Arbitrage",
+    description: "Automated cross-DEX arbitrage using Aave V3 flash loans on Arbitrum. Zero collateral, atomic execution, MEV protection. The same system scanning 15+ DEXes for profit opportunities 24/7.",
+    longDescription: `🔌 **Plugin for AI Trading Dashboard** — Drop into your dashboard's \`plugins/\` folder and start finding arbitrage opportunities automatically.
+
+Borrow millions with zero collateral. Buy low on one DEX, sell high on another. Repay in the same transaction. Keep the profit — or the whole thing reverts and you lose nothing but gas.
+
+**What you get:**
+- Real-time price scanner across 15+ DEXes (Uniswap V3, Camelot, PancakeSwap, SushiSwap, etc.)
+- Aave V3 flash loan integration (0.05% fee, zero collateral)
+- Multi-hop arbitrage pathfinding (up to 4 swaps per route)
+- Gas optimization and profitability calculator
+- MEV protection with private transaction submission
+- Execution history with P&L tracking
+- Auto-execute mode with configurable min profit threshold
+- Smart contract (Solidity) + TypeScript execution engine
+- manifest.json for plug-and-play installation
+
+👉 **Try the live demo** to see the scanner finding real-time opportunities across DEXes.
+
+**How it works:**
+1. Scanner monitors price differences across 15+ DEXes every 12 seconds
+2. When spread exceeds gas + fees, it triggers a flash loan from Aave V3
+3. Atomic transaction: borrow → buy low → sell high → repay → profit
+4. If the trade isn't profitable, the entire transaction reverts (you lose nothing)
+
+**Risk profile:** Very low. Flash loans are atomic — either you profit or the transaction reverts. The only cost of a failed attempt is gas (~$2-3 on Arbitrum).
+
+**Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
+    price: 49,
+    category: "trading",
+    badge: "NEW",
+    emoji: "⚡",
+    features: [
+      "Dashboard plugin",
+      "15+ DEX monitoring",
+      "Aave V3 flash loans",
+      "Auto arbitrage execution",
+      "MEV protection",
+      "Gas optimization",
+      "Multi-hop pathfinding",
+      "Plug-and-play install"
+    ],
+    techStack: ["Solidity", "TypeScript", "Aave V3", "Arbitrum", "Next.js 15"],
+    image: "/images/products/dashboard-flash-loans-new.jpg",
+    images: [
+      "/images/products/dashboard-flash-loans-new.jpg",
+      "/images/products/dashboard-plugins-new.jpg",
+      "/images/products/dashboard-overview-new.jpg",
+    ],
+    downloadUrl: "downloads/flash-loan-arbitrage-v1.0.0.zip",
+    demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/flash-loans",
+  },
+  {
     id: "second-brain-template",
     stripePriceId: "price_1T7AniLLyk0oaesN0hgWMRRO",
     name: "Second Brain",
