@@ -1,4 +1,4 @@
-export type ProductCategory = "templates" | "trading" | "prompts" | "wallpapers" | "nfts" | "animations";
+export type ProductCategory = "trading";
 
 export interface Product {
   id: string;
@@ -20,7 +20,6 @@ export interface Product {
 }
 
 export const categories: { id: ProductCategory; label: string; emoji: string; color: string; description: string }[] = [
-  { id: "templates", label: "Templates", emoji: "🧩", color: "#8B5CF6", description: "Production-ready dashboards, apps, and tools." },
   { id: "trading", label: "Trading", emoji: "📈", color: "#10B981", description: "Indicators, agents, and systems for real-money execution." },
 
 ];
@@ -62,7 +61,7 @@ Start with the base dashboard and add capabilities as you need them. Each add-on
 
 **Not included:** Live API keys or exchange accounts (you bring your own).`,
     price: 149,
-    category: "templates",
+    category: "trading",
     badge: "FLAGSHIP",
     emoji: "📊",
     isFeatured: true,
@@ -204,44 +203,6 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
     ],
     downloadUrl: "downloads/flash-loan-arbitrage-v1.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/flash-loans",
-  },
-  {
-    id: "second-brain-template",
-    stripePriceId: "price_1T7AniLLyk0oaesN0hgWMRRO",
-    name: "Second Brain",
-    description: "Your entire life, organized. Tasks, docs, scripts, AI chat, weekly digests — all in one place. PARA methodology. Deploy to Vercel in 2 minutes.",
-    longDescription: `Your entire life, organized. Tasks, docs, scripts, AI chat, weekly digests — all in one place. PARA methodology. Deploy to Vercel in 2 minutes.
-
-**What you get:**
-- Kanban task management with priorities
-- Document CRUD with rich text editing
-- Full-text search across all content
-- AI chat integration (bring your own API key)
-- Weekly digest auto-generation
-- Calendar view with event tracking
-- Script library with text-to-speech
-- Timeline activity feed
-- Dark mode with multiple themes
-
-**Deploy to Vercel in 2 minutes** with the included setup script.`,
-    price: 79,
-    category: "templates",
-    badge: "POPULAR",
-    emoji: "🧠",
-    isFeatured: true,
-    features: [
-      "PARA methodology",
-      "Kanban task board",
-      "Full-text search",
-      "AI chat integration",
-      "Weekly digest generation",
-      "Script library + TTS",
-      "Calendar view",
-      "Vercel deploy button"
-    ],
-    techStack: ["Next.js 15", "TypeScript", "Supabase", "Inworld TTS"],
-    image: "/images/products/second-brain-store.jpg",
-    downloadUrl: "downloads/second-brain-template-v1.0.0.zip",
   },
   // === TRADING TOOLS ===
   {
@@ -567,40 +528,13 @@ All three products delivered instantly. Same source code, same updates, same sup
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard",
   },
   {
-    id: "ai-builder-bundle",
-    stripePriceId: "price_1T7p7aLLyk0oaesNR2K45OWk",
-    name: "AI Builder Pack",
-    description: "Dashboard + Second Brain. Two production-ready Next.js templates in one package.",
-    longDescription: `Save $29 — two production-ready codebases in one download.
-
-**2 products included:**
-• **AI Trading Dashboard** ($149) — Production-ready Next.js trading platform with 10+ strategies
-• **Second Brain** ($79) — PARA-organized knowledge management system
-
-**Total value: $228 — You pay $199.**
-
-Two production-ready codebases. Fork, customize, deploy.`,
-    price: 199,
-    category: "templates" as ProductCategory,
-    badge: "SAVE $29",
-    emoji: "🏗️",
-    features: ["AI Trading Dashboard", "Second Brain Template", "All source code", "Vercel-ready", "$29 savings"],
-    downloadUrl: "downloads/ai-builder-bundle-v1.0.0.zip",
-    image: "/images/products/dashboard-overview-new.jpg",
-    images: [
-      "/images/products/dashboard-overview-new.jpg",
-      "/images/products/dashboard-agents-new.jpg",
-      "/images/products/dashboard-system-status-new.jpg",
-    ],
-  },
-  {
     id: "everything-bundle",
     stripePriceId: "price_1T7p7aLLyk0oaesNjdZqcSEx",
     name: "GWDS Everything Bundle",
     description: "Every agent, every template, every tool. The entire GWDS trading arsenal in one package.",
     longDescription: `The ultimate deal — every single product in the GWDS store.
 
-**10 products included:**
+**9 products included:**
 • **AI Trading Dashboard** ($149) — Full autonomous trading platform
 • **Flash Loan Arbitrage** ($49) — Cross-DEX arbitrage with Aave V3
 • **Meme Trading System** ($99) — Meme token scanner & trader
@@ -610,18 +544,17 @@ Two production-ready codebases. Fork, customize, deploy.`,
 • **Heikin Ashi Trend Following Agent** ($199) — Noise-filtered trend riding
 • **Bollinger Band Mean Reversion Agent** ($199) — Statistical mean reversion
 • **Macro & On-Chain Sentiment Agent** ($199) — Macro + on-chain signals
-• **Second Brain** ($79) — PARA knowledge management system
 
-**Total value: $1,769 — You pay $699.**
+**Total value: $1,690 — You pay $699.**
 
 👉 **Try the live demo** to see all 6 trading agents working together in real-time.
 
 Lifetime access. All future updates included.`,
     price: 699,
-    category: "templates" as ProductCategory,
+    category: "trading" as ProductCategory,
     badge: "60% OFF",
     emoji: "💎",
-    features: ["All 10 products", "6 trading agents", "Dashboard + Flash Loans + Meme Trading", "Second Brain template", "Lifetime updates", "$1,070 savings"],
+    features: ["All 9 products", "6 trading agents", "Dashboard + Flash Loans + Meme Trading", "Lifetime updates", "$991 savings"],
     isFeatured: true,
     downloadUrl: "downloads/everything-bundle-v1.0.0.zip",
     image: "/images/products/dashboard-overview-new.jpg",
