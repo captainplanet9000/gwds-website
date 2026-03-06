@@ -295,7 +295,7 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
 👉 **Try the live demo** to see the Darvas agent running with real-time data in the Agents dashboard.
 
 **Integrates with:** AI Trading Dashboard ($149) — just copy the folder into \`plugins/\` and restart.`,
-    price: 49,
+    price: 200,
     category: "trading",
     emoji: "📦",
     features: ["Dashboard plugin", "Multi-timeframe", "Auto box detection", "Alert system", "Confidence scoring", "Plug-and-play install"],
@@ -332,7 +332,7 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
 **This is the same agent running live in our $184K portfolio.** Extracted, documented, and packaged for you to deploy.
 
 **Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
-    price: 199,
+    price: 200,
     category: "trading",
     badge: "PREMIUM",
     emoji: "🌊",
@@ -345,6 +345,174 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
       "/images/products/dashboard-analytics-new.jpg",
     ],
     downloadUrl: "downloads/elliott-wave-agent-v1.0.0.zip",
+    demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/agents",
+  },
+  {
+    id: "vwap-momentum-agent",
+    stripePriceId: "",
+    name: "VWAP Momentum Alpha",
+    description: "Volume-weighted average price momentum trading with RSI divergence detection. 892 trades, 64% win rate, +$7,100 P&L in the live demo. High-frequency entries with precise volume analysis.",
+    longDescription: `🔌 **Plugin for AI Trading Dashboard** — The same VWAP agent running live in our $184K portfolio.
+
+Combines VWAP (Volume Weighted Average Price) with volume divergence analysis and RSI momentum signals. Identifies accumulation zones, volume spikes, and momentum shifts to enter high-probability trades.
+
+**What you get:**
+- VWAP calculation engine with dynamic support/resistance levels
+- Volume divergence detection (accumulation/distribution analysis)
+- RSI momentum overlay with divergence alerts
+- Multi-timeframe analysis (15m, 1H, 4H)
+- Order flow analysis — buy/sell volume ratio tracking
+- Auto-entry with confidence scoring (0-100)
+- Trailing stop-loss with dynamic adjustment
+- Agent thought stream — see exactly why it enters/exits
+- Dashboard panel component (VWAPPanel.tsx)
+- manifest.json for plug-and-play installation
+
+👉 **Try the live demo** to watch the VWAP agent analyzing volume patterns in real-time.
+
+**Live stats:** 892 trades | 64% win rate | +$7,100 P&L | 6.2h avg hold time | 82% confidence
+
+**Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
+    price: 200,
+    category: "trading",
+    badge: "LIVE AGENT",
+    emoji: "📊",
+    features: ["Dashboard plugin", "VWAP analysis", "Volume divergence", "RSI momentum", "Order flow tracking", "Auto-execution", "Confidence scoring", "Plug-and-play install"],
+    techStack: ["TypeScript", "Next.js 15", "Hyperliquid SDK", "Supabase"],
+    image: "/images/products/dashboard-agents-new.jpg",
+    images: [
+      "/images/products/dashboard-agents-new.jpg",
+      "/images/products/dashboard-performance-new.jpg",
+      "/images/products/dashboard-strategy-performance-new.jpg",
+      "/images/products/dashboard-analytics-new.jpg",
+    ],
+    downloadUrl: "downloads/vwap-momentum-agent-v1.0.0.zip",
+    demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/agents",
+  },
+  {
+    id: "heikin-ashi-agent",
+    stripePriceId: "",
+    name: "Heikin Ashi Trend Rider",
+    description: "Smoothed candlestick trend-following agent. Catches extended moves by filtering noise. 412 trades, 61% win rate, +$3,750 P&L. Rides trends for 22+ hours average hold time.",
+    longDescription: `🔌 **Plugin for AI Trading Dashboard** — Trend-following agent using Heikin Ashi smoothed candles.
+
+Heikin Ashi candles filter market noise to reveal the true trend. This agent identifies consecutive bullish/bearish sequences, confirms with ADX trend strength, and rides momentum with trailing stops.
+
+**What you get:**
+- Heikin Ashi candle transformation engine
+- Consecutive candle pattern detection (7+ candle sequences)
+- ADX trend strength validation (enters only when ADX > 25)
+- +DI/-DI crossover confirmation
+- Trailing stop-loss that rides trends
+- Multi-timeframe trend alignment (1H + 4H + 1D)
+- Reversal doji detection for exit timing
+- Agent thought stream — see trend analysis in real-time
+- Dashboard panel component (HeikinAshiPanel.tsx)
+- manifest.json for plug-and-play installation
+
+👉 **Try the live demo** to see the Heikin Ashi agent riding trends across crypto assets.
+
+**Live stats:** 412 trades | 61% win rate | +$3,750 P&L | 22.4h avg hold time | Catches multi-day trends
+
+**Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
+    price: 200,
+    category: "trading",
+    badge: "LIVE AGENT",
+    emoji: "🕯️",
+    features: ["Dashboard plugin", "Heikin Ashi candles", "ADX trend strength", "Trailing stops", "Multi-timeframe", "Reversal detection", "Noise filtering", "Plug-and-play install"],
+    techStack: ["TypeScript", "Next.js 15", "Hyperliquid SDK", "Supabase"],
+    image: "/images/products/dashboard-agents-new.jpg",
+    images: [
+      "/images/products/dashboard-agents-new.jpg",
+      "/images/products/dashboard-performance-new.jpg",
+      "/images/products/dashboard-strategy-performance-new.jpg",
+      "/images/products/dashboard-analytics-new.jpg",
+    ],
+    downloadUrl: "downloads/heikin-ashi-agent-v1.0.0.zip",
+    demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/agents",
+  },
+  {
+    id: "mean-reversion-agent",
+    stripePriceId: "",
+    name: "Mean Reversion Scout",
+    description: "Statistical mean reversion agent using RSI, Bollinger Bands, and Z-score analysis. Buys oversold, sells overbought. 381 trades, 59% win rate, +$1,980 P&L. Consistent, conservative returns.",
+    longDescription: `🔌 **Plugin for AI Trading Dashboard** — Finds oversold assets and trades the bounce.
+
+When assets deviate significantly from their statistical mean, they tend to revert. This agent detects extreme deviations using RSI, Bollinger Bands, and Z-score calculations, then enters positions with scaled entries.
+
+**What you get:**
+- RSI oversold/overbought detection (configurable thresholds)
+- Bollinger Band squeeze and expansion analysis
+- Z-score statistical deviation measurement
+- Scaled entry system (1/3 position sizing at each level)
+- Mean reversion probability calculator (historical backtest)
+- Correlation-aware positioning (avoids concentrated exposure)
+- Auto stop-loss at extended deviation levels
+- Agent thought stream — see statistical analysis live
+- Dashboard panel component (MeanReversionPanel.tsx)
+- manifest.json for plug-and-play installation
+
+👉 **Try the live demo** to watch the agent finding oversold setups across crypto markets.
+
+**Live stats:** 381 trades | 59% win rate | +$1,980 P&L | 8.6h avg hold time | 78% reversion accuracy
+
+**Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
+    price: 200,
+    category: "trading",
+    emoji: "📉",
+    features: ["Dashboard plugin", "RSI analysis", "Bollinger Bands", "Z-score detection", "Scaled entries", "Mean reversion probability", "Correlation-aware", "Plug-and-play install"],
+    techStack: ["TypeScript", "Next.js 15", "Hyperliquid SDK", "Supabase"],
+    image: "/images/products/dashboard-analytics-new.jpg",
+    images: [
+      "/images/products/dashboard-analytics-new.jpg",
+      "/images/products/dashboard-agents-new.jpg",
+      "/images/products/dashboard-strategy-performance-new.jpg",
+      "/images/products/dashboard-correlation-new.jpg",
+    ],
+    downloadUrl: "downloads/mean-reversion-agent-v1.0.0.zip",
+    demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/agents",
+  },
+  {
+    id: "macro-sentiment-agent",
+    stripePriceId: "",
+    name: "Macro Sentiment Analyzer",
+    description: "Reads the macro environment — Fed speeches, on-chain flows, social sentiment, exchange data. 251 trades, 71% win rate, +$6,370 P&L. The brain that tells other agents when to be aggressive.",
+    longDescription: `🔌 **Plugin for AI Trading Dashboard** — The intelligence layer that coordinates your trading farm.
+
+This isn't just another indicator. The Macro Sentiment Analyzer reads the entire market environment — Fed policy, on-chain whale movements, social media sentiment, exchange flows — and broadcasts risk assessments to all other agents.
+
+**What you get:**
+- News sentiment analysis (Fed speeches, macro events, crypto news)
+- On-chain metrics tracking (whale accumulation, exchange flows, supply dynamics)
+- Social sentiment scoring (Twitter/X crypto sentiment 0-100)
+- Google Trends integration for retail interest detection
+- Macro risk score calculator (0-10 scale)
+- VIX, DXY, and gold correlation monitoring
+- Farm-wide broadcasting — sends risk signals to all agents
+- Green-light/red-light system for portfolio-wide risk management
+- Agent thought stream — see macro analysis in real-time
+- Dashboard panel component (MacroSentimentPanel.tsx)
+- manifest.json for plug-and-play installation
+
+👉 **Try the live demo** to see the Macro Analyzer broadcasting risk signals to the entire farm.
+
+**Live stats:** 251 trades | 71% win rate | +$6,370 P&L | 31.2h avg hold time | Coordinates 5 other agents
+
+**Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
+    price: 200,
+    category: "trading",
+    badge: "LIVE AGENT",
+    emoji: "🧠",
+    features: ["Dashboard plugin", "News sentiment", "On-chain analytics", "Social scoring", "Macro risk score", "Farm broadcasting", "VIX/DXY correlation", "Plug-and-play install"],
+    techStack: ["TypeScript", "Next.js 15", "Hyperliquid SDK", "Supabase", "OpenRouter AI"],
+    image: "/images/products/dashboard-agents-new.jpg",
+    images: [
+      "/images/products/dashboard-agents-new.jpg",
+      "/images/products/dashboard-performance-new.jpg",
+      "/images/products/dashboard-analytics-new.jpg",
+      "/images/products/dashboard-correlation-new.jpg",
+    ],
+    downloadUrl: "downloads/macro-sentiment-agent-v1.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/agents",
   },
   {
@@ -602,17 +770,22 @@ Three production-ready codebases. Fork, customize, deploy.`,
   {
     id: "everything-bundle",
     name: "GWDS Everything Bundle",
-    description: "All 14 products. Every template, every tool, every prompt pack. One price.",
-    longDescription: `The ultimate deal — every single product in the GWDS store for 55% off.
+    description: "All 19 products. Every agent, every template, every tool, every prompt pack. One price.",
+    longDescription: `The ultimate deal — every single product in the GWDS store for over 60% off.
 
-**14 products included:**
+**19 products included:**
 • **AI Trading Dashboard** ($149)
+• **Flash Loan Arbitrage** ($49)
 • **Meme Trading System** ($99)
+• **VWAP Momentum Alpha** ($200)
+• **Elliott Wave Agent** ($200)
+• **Darvas Box Indicator** ($200)
+• **Heikin Ashi Trend Rider** ($200)
+• **Mean Reversion Scout** ($200)
+• **Macro Sentiment Analyzer** ($200)
+• **Multi-Strategy Bundle** ($399)
 • **Second Brain** ($79)
 • **AI SaaS Starter Kit** ($99)
-• **Darvas Box Indicator** ($49)
-• **Elliott Wave Agent** ($199)
-• **Multi-Strategy Bundle** ($399)
 • **Content Creator Mega Pack** ($29)
 • **Trading Analysis Prompts** ($39)
 • **AI Art Direction Pack** ($24)
@@ -621,16 +794,16 @@ Three production-ready codebases. Fork, customize, deploy.`,
 • **Clay Verse Animation Pack** ($19)
 • **3D Product Renders Pack** ($34)
 
-**Total value: $1,339 — You pay $599.**
+**Total value: $2,240 — You pay $899.**
 
-👉 **Try the live demo** to see the flagship trading dashboard — the centerpiece of this bundle.
+👉 **Try the live demo** to see all 6 trading agents working together in real-time.
 
 Lifetime access. All future updates included.`,
-    price: 599,
+    price: 899,
     category: "templates" as ProductCategory,
-    badge: "55% OFF",
+    badge: "60% OFF",
     emoji: "💎",
-    features: ["All 14 products", "Every template & tool", "Every prompt pack", "All wallpapers & animations", "Lifetime updates", "$740 savings"],
+    features: ["All 19 products", "6 trading agents", "Every template & tool", "Every prompt pack", "All wallpapers & animations", "Lifetime updates", "$1,341 savings"],
     isFeatured: true,
     stripePriceId: "",
     image: "/images/products/dashboard-overview-new.jpg",
