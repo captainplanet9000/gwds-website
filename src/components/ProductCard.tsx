@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Product } from "@/lib/products";
@@ -19,6 +19,7 @@ export default function ProductCard({ product, view = "grid", onQuickView }: Pro
   const { addItem, openCart } = useCart();
   const [imgLoaded, setImgLoaded] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -120,8 +121,8 @@ export default function ProductCard({ product, view = "grid", onQuickView }: Pro
           variant="glass" 
           hoverable
           padding="none"
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
+          onMouseEnter={() => { setHovered(true); if (product.videoUrl && videoRef.current) { videoRef.current.currentTime = 0; videoRef.current.play().catch(() => {}); } }}
+          onMouseLeave={() => { setHovered(false); if (videoRef.current) { videoRef.current.pause(); videoRef.current.currentTime = 0; } }}
           style={{ 
             height: "100%", 
             position: "relative",
@@ -129,7 +130,7 @@ export default function ProductCard({ product, view = "grid", onQuickView }: Pro
             cursor: "pointer"
           }}
         >
-          {/* Product image */}
+          {/* Product image / video preview */}
           <div style={{ height: 200, position: "relative", overflow: "hidden", background: "#0A0A0F" }}>
             {!imgLoaded && <Skeleton width="100%" height="100%" borderRadius={0} />}
             <motion.img
@@ -143,10 +144,33 @@ export default function ProductCard({ product, view = "grid", onQuickView }: Pro
                 width: "100%",
                 height: "100%",
                 objectFit: "cover",
-                opacity: imgLoaded ? 1 : 0,
+                opacity: imgLoaded && !(hovered && product.videoUrl) ? 1 : 0,
                 transition: "opacity 0.3s",
               }}
             />
+            {/* Video preview on hover */}
+            {product.videoUrl && (
+              <video
+                ref={videoRef}
+                src={product.videoUrl}
+                muted
+                loop
+                playsInline
+                preload="none"
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  opacity: hovered ? 1 : 0,
+                  transition: "opacity 0.3s",
+                }}
+                onMouseEnter={() => videoRef.current?.play()}
+                onMouseLeave={() => { videoRef.current?.pause(); if (videoRef.current) videoRef.current.currentTime = 0; }}
+              />
+            )}
             {product.badge && (
               <motion.div
                 initial={{ opacity: 0, x: 10 }}

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import ProductVideo from '@/components/ProductVideo';
 import { useCart } from '@/contexts/CartContext';
 
 const categoryColors: Record<string, string> = {
@@ -376,6 +377,29 @@ export default function ProductDetailClient({ product, related, category }: { pr
             </div>
           </motion.div>
         </section>
+
+        {/* Product Video */}
+        {product.videoUrl && (
+          <section style={{ padding: '0 40px 48px', maxWidth: 1200, margin: '0 auto' }}>
+            <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '40px' }}>
+              <h2 style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: '1.5rem',
+                fontWeight: 700,
+                color: '#E8E8E8',
+                marginBottom: 24,
+                letterSpacing: '-0.02em',
+              }}>
+                🎬 Product Demo
+              </h2>
+              <ProductVideo
+                videoUrl={product.videoUrl}
+                productName={product.name}
+                accent={accent}
+              />
+            </div>
+          </section>
+        )}
 
         {/* Screenshot Gallery */}
         {product.images && product.images.length > 1 && (

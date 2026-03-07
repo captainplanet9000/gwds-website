@@ -99,6 +99,7 @@ Start with the base dashboard and add capabilities as you need them. Each add-on
     ],
     downloadUrl: "downloads/ai-trading-dashboard-v1.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app",
+    videoUrl: "/videos/products/cival-promo.mp4",
   },
   {
     id: "meme-trading-suite",
@@ -172,6 +173,7 @@ Start with the base dashboard and add capabilities as you need them. Each add-on
     ],
     downloadUrl: "downloads/meme-trading-suite-v1.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/meme-coins",
+    videoUrl: "/videos/products/meme-trading.mp4",
   },
   {
     id: "flash-loan-arbitrage",
@@ -235,6 +237,7 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
     ],
     downloadUrl: "downloads/flash-loan-arbitrage-v1.1.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/flash-loans",
+    videoUrl: "/videos/products/flash-loan.mp4",
   },
   // === TRADING TOOLS ===
   {
@@ -275,6 +278,7 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
     ],
     downloadUrl: "downloads/darvas-indicator-v1.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/agents",
+    videoUrl: "/videos/products/darvas-agent.mp4",
   },
   {
     id: "elliott-wave-agent",
@@ -315,6 +319,7 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
     ],
     downloadUrl: "downloads/elliott-wave-agent-v1.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/agents",
+    videoUrl: "/videos/products/elliott-wave.mp4",
   },
   {
     id: "vwap-momentum-agent",
@@ -358,6 +363,7 @@ Combines VWAP (Volume Weighted Average Price) with volume divergence analysis an
     ],
     downloadUrl: "downloads/vwap-momentum-agent-v1.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/agents",
+    videoUrl: "/videos/products/vwap-agent.mp4",
   },
   {
     id: "heikin-ashi-agent",
@@ -401,6 +407,7 @@ Heikin Ashi candles filter market noise to reveal the underlying trend. This age
     ],
     downloadUrl: "downloads/heikin-ashi-agent-v1.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/agents",
+    videoUrl: "/videos/products/heikin-ashi.mp4",
   },
   {
     id: "mean-reversion-agent",
@@ -444,6 +451,7 @@ Statistical approach to identifying overbought/oversold conditions. This agent f
     ],
     downloadUrl: "downloads/mean-reversion-agent-v1.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/agents",
+    videoUrl: "/videos/products/mean-reversion.mp4",
   },
   {
     id: "macro-sentiment-agent",
@@ -489,6 +497,7 @@ An architecture for reading the broader market environment — news sentiment, o
     ],
     downloadUrl: "downloads/macro-sentiment-agent-v1.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/agents",
+    videoUrl: "/videos/products/macro-sentiment.mp4",
   },
 
   {
@@ -535,6 +544,7 @@ An architecture for reading the broader market environment — news sentiment, o
       "/images/products/shot-perf-chart.png",
       "/images/products/shot-perf-leaderboard.png",
     ],
+    videoUrl: "/videos/products/multi-strat-bundle.mp4",
   },
 
   {
@@ -572,6 +582,7 @@ All three products delivered as source code. Same architecture, same engineering
     ],
     downloadUrl: "downloads/full-stack-trader-bundle-v1.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard",
+    videoUrl: "/videos/products/full-stack-trader.mp4",
   },
   {
     id: "everything-bundle",
@@ -616,6 +627,7 @@ All products delivered as source code. You get the architecture, the UI, and the
       "/images/products/shot-correlation-matrix.jpg",
     ],
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard",
+    videoUrl: "/videos/products/everything-bundle.mp4",
   },
 ];
 
