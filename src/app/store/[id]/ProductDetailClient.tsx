@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ProductVideo from '@/components/ProductVideo';
+import RequiresDashboardBanner from '@/components/RequiresDashboardBanner';
 import { useCart } from '@/contexts/CartContext';
 
 const categoryColors: Record<string, string> = {
@@ -238,6 +239,31 @@ export default function ProductDetailClient({ product, related, category }: { pr
             }}>
               {product.description}
             </p>
+
+            {/* Requires Dashboard banner */}
+            {product.requiresDashboard && <RequiresDashboardBanner />}
+
+            {/* Dashboard Included badge for bundles */}
+            {product.isBundle && (
+              <div
+                style={{
+                  backgroundColor: "rgba(16, 185, 129, 0.08)",
+                  border: "2px solid #10B981",
+                  borderRadius: "8px",
+                  padding: "12px 16px",
+                  marginBottom: "24px",
+                  fontFamily: "var(--font-body)",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                }}
+              >
+                <span style={{ fontSize: "18px" }}>✅</span>
+                <span style={{ color: "#10B981", fontSize: "15px", fontWeight: 600 }}>
+                  Dashboard Included — No additional purchase needed
+                </span>
+              </div>
+            )}
 
             {/* Add to cart */}
             {product.price > 0 && (

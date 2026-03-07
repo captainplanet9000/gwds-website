@@ -8,9 +8,9 @@ import type { Provider } from '@supabase/supabase-js';
 // Add/remove providers here as you enable them in the Supabase dashboard
 const ENABLED_PROVIDERS: Provider[] = [
   'google',
-  'github',
-  'discord',
-  // 'apple',   // Uncomment when Apple Developer account is set up
+  // 'github',   // Uncomment when GitHub OAuth app is configured in Supabase
+  // 'discord',  // Uncomment when Discord OAuth app is configured in Supabase
+  // 'apple',    // Uncomment when Apple Developer account is set up
 ];
 
 const providerConfig: Record<string, { label: string; icon: React.ReactNode; bg: string; bgHover: string; color: string; border?: string }> = {

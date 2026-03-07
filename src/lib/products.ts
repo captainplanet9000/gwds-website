@@ -17,6 +17,8 @@ export interface Product {
   demoUrl?: string;
   stripePriceId?: string;
   isFeatured?: boolean;
+  requiresDashboard?: boolean;
+  isBundle?: boolean;
 }
 
 export const categories: { id: ProductCategory; label: string; emoji: string; color: string; description: string }[] = [
@@ -104,6 +106,7 @@ Start with the base dashboard and add capabilities as you need them. Each add-on
   {
     id: "meme-trading-suite",
     stripePriceId: "price_1T83k3LLyk0oaesNL7bGZ12J",
+    requiresDashboard: true,
     name: "Meme Trading Suite",
     description: "The complete meme coin trading system — 9-tab dashboard with DexScreener scanner, autonomous agents, smart money tracking, Solana execution, and signal engine. 28 source files, fully integrated.",
     longDescription: `🚀 **Premium Plugin for AI Trading Dashboard** — A comprehensive meme coin trading UI and engine architecture. 28 source files of production TypeScript.
@@ -178,6 +181,7 @@ Start with the base dashboard and add capabilities as you need them. Each add-on
   {
     id: "flash-loan-arbitrage",
     stripePriceId: "price_1T83kgLLyk0oaesNpjgeKsdR",
+    requiresDashboard: true,
     name: "Flash Loan Arbitrage Engine",
     description: "Automated cross-DEX arbitrage with multi-DEX scanning (Uniswap V3, PancakeSwap V3, Camelot V3, Ramses V2), server-side auto-executor, and real-time opportunity detection. Zero collateral via Aave V3 flash loans on Arbitrum.",
     longDescription: `🔌 **Plugin for AI Trading Dashboard** — Drop into your dashboard's \`plugins/\` folder and start finding arbitrage opportunities automatically.
@@ -243,6 +247,7 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
   {
     id: "darvas-indicator",
     stripePriceId: "price_1T7pe5LLyk0oaesNNXwg2VwU",
+    requiresDashboard: true,
     name: "Darvas Box Breakout Agent",
     description: "Automated box breakout detection based on the Nicolas Darvas method. Identifies consolidation boxes, confirms breakouts with volume, and executes entries with trailing stops. Multi-timeframe analysis across 15m/1H/4H.",
     longDescription: `Darvas Box breakout detection framework — inspired by the Nicolas Darvas method. Multi-timeframe analysis, confidence scoring, and signal generation architecture. Full TypeScript source code.
@@ -283,6 +288,7 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
   {
     id: "elliott-wave-agent",
     stripePriceId: "price_1T7pe6LLyk0oaesNN61g0lrl",
+    requiresDashboard: true,
     name: "Elliott Wave Pattern Agent",
     description: "AI-powered Elliott Wave counting with automatic Fibonacci extension targets. Detects impulse waves (1-5) and corrective patterns (A-B-C), validates with Fibonacci ratios, and executes entries at high-probability wave positions.",
     longDescription: `AI-powered Elliott Wave analysis architecture — wave counting, Fibonacci validation, and trade signal generation. Full TypeScript source code.
@@ -324,6 +330,7 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
   {
     id: "vwap-momentum-agent",
     stripePriceId: "price_1T7pe7LLyk0oaesN9l7hI7Zd",
+    requiresDashboard: true,
     name: "VWAP Volume Breakout Agent",
     description: "Trades breakouts from the Volume Weighted Average Price with RSI divergence confirmation. Tracks accumulation/distribution zones, detects volume spikes, and enters when price breaks VWAP with momentum. 6-hour average hold time.",
     longDescription: `🔌 **Plugin for AI Trading Dashboard** — VWAP-based volume analysis and trade signal framework.
@@ -368,6 +375,7 @@ Combines VWAP (Volume Weighted Average Price) with volume divergence analysis an
   {
     id: "heikin-ashi-agent",
     stripePriceId: "price_1T7pe7LLyk0oaesNiRtA8Q70",
+    requiresDashboard: true,
     name: "Heikin Ashi Trend Following Agent",
     description: "Trend-following agent using Heikin Ashi smoothed candles to filter market noise. Enters on consecutive bullish/bearish candle sequences, confirms with ADX trend strength, and rides moves with trailing stops. 22-hour average hold time.",
     longDescription: `🔌 **Plugin for AI Trading Dashboard** — Trend-following agent framework using Heikin Ashi smoothed candles.
@@ -412,6 +420,7 @@ Heikin Ashi candles filter market noise to reveal the underlying trend. This age
   {
     id: "mean-reversion-agent",
     stripePriceId: "price_1T7pe8LLyk0oaesNtleC9nah",
+    requiresDashboard: true,
     name: "Bollinger Band Mean Reversion Agent",
     description: "Buys oversold assets and sells overbought using RSI extremes, Bollinger Band touches, and Z-score deviation. Enters with scaled 1/3 position sizing at each level. Conservative, statistical approach to catching bounces.",
     longDescription: `🔌 **Plugin for AI Trading Dashboard** — Mean reversion strategy framework using Bollinger Bands, RSI, and Z-score analysis.
@@ -456,6 +465,7 @@ Statistical approach to identifying overbought/oversold conditions. This agent f
   {
     id: "macro-sentiment-agent",
     stripePriceId: "price_1T7pe8LLyk0oaesNKFWCuZHo",
+    requiresDashboard: true,
     name: "Macro & On-Chain Sentiment Agent",
     description: "Analyzes Fed policy, on-chain whale flows, social media sentiment scores, and exchange inflow/outflow data. Broadcasts risk-on/risk-off signals to all other agents. The coordination layer that decides when the farm goes aggressive or defensive.",
     longDescription: `🔌 **Plugin for AI Trading Dashboard** — Macro and on-chain analysis framework that coordinates your trading farm.
@@ -503,9 +513,10 @@ An architecture for reading the broader market environment — news sentiment, o
   {
     id: "multi-strat-bundle",
     stripePriceId: "price_1T7AnkLLyk0oaesNv8HuW24O",
+    isBundle: true,
     name: "Multi-Strategy Bundle",
-    description: "Six strategy frameworks in one package. Darvas Box, Elliott Wave, VWAP Breakout, Heikin Ashi, Mean Reversion, and Macro Sentiment. Run them as a coordinated farm with shared risk management.",
-    longDescription: `Six strategy architectures in one package — Darvas Box, Elliott Wave, VWAP Breakout, Heikin Ashi, Bollinger Band Mean Reversion, and Macro Sentiment. Run them as a coordinated farm with shared risk management.
+    description: "✅ Includes the AI Trading Dashboard — Six strategy frameworks in one package. Darvas Box, Elliott Wave, VWAP Breakout, Heikin Ashi, Mean Reversion, and Macro Sentiment. Run them as a coordinated farm with shared risk management.",
+    longDescription: `✅ **Includes the AI Trading Dashboard** — Six strategy architectures in one package: Darvas Box, Elliott Wave, VWAP Breakout, Heikin Ashi, Bollinger Band Mean Reversion, and Macro Sentiment. Run them as a coordinated farm with shared risk management.
 
 **🔌 Plugin for the AI Trading Dashboard** — drop all six strategies into \`plugins/\` and use the farm orchestrator to coordinate them.
 
@@ -550,9 +561,10 @@ An architecture for reading the broader market environment — news sentiment, o
   {
     id: "full-stack-trader-bundle",
     stripePriceId: "price_1T7p7ZLLyk0oaesN9Mt54Oaz",
+    isBundle: true,
     name: "The Full Stack Trader",
-    description: "Dashboard + Darvas Box + Elliott Wave. The core AI trading toolkit in one purchase.",
-    longDescription: `Save $248 — get the core trading toolkit in one purchase.
+    description: "✅ Includes the AI Trading Dashboard — Dashboard + Darvas Box + Elliott Wave. The core AI trading toolkit in one purchase.",
+    longDescription: `✅ **Includes the AI Trading Dashboard** — Save $248 and get the core trading toolkit in one purchase.
 
 **3 products included:**
 • **AI Trading Dashboard** ($149) — Full autonomous trading platform with 10+ strategies
@@ -587,9 +599,10 @@ All three products delivered as source code. Same architecture, same engineering
   {
     id: "everything-bundle",
     stripePriceId: "price_1T83kkLLyk0oaesN9kxVyD0v",
+    isBundle: true,
     name: "GWDS Everything Bundle",
-    description: "Every agent, every template, every tool. The entire GWDS trading arsenal in one package.",
-    longDescription: `The ultimate deal — every single product in the GWDS store.
+    description: "✅ Includes the AI Trading Dashboard — Every agent, every template, every tool. The entire GWDS trading arsenal in one package.",
+    longDescription: `✅ **Includes the AI Trading Dashboard** — The ultimate deal: every single product in the GWDS store.
 
 **9 products included:**
 • **AI Trading Dashboard** ($149) — Full autonomous trading platform

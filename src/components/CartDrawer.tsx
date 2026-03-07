@@ -2,10 +2,24 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useCart } from '@/contexts/CartContext';
+import { products, getProduct } from '@/lib/products';
 
 export default function CartDrawer() {
   const { state, dispatch, totalPrice, totalItems } = useCart();
   const { items, isOpen } = state;
+
+  // Check if cart has plugins that require dashboard
+  const hasPluginRequiringDashboard = items.some(item => item.product.requiresDashboard);
+  const hasDashboard = items.some(item => item.product.id === 'trading-dashboard-template');
+  const showDashboardWarning = hasPluginRequiringDashboard && !hasDashboard;
+  
+  const dashboardProduct = getProduct('trading-dashboard-template');
+
+  const handleAddDashboard = () => {
+    if (dashboardProduct && !hasDashboard) {
+      dispatch({ type: 'ADD_ITEM', product: dashboardProduct });
+    }
+  };
 
   if (!isOpen) return null;
 

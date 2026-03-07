@@ -265,6 +265,26 @@ export default function ProductCard({ product, view = "grid", onQuickView }: Pro
               ))}
             </div>
 
+            {/* Requires Dashboard badge */}
+            {product.requiresDashboard && (
+              <div style={{ marginBottom: "var(--space-3)" }}>
+                <span 
+                  style={{ 
+                    display: "inline-block",
+                    fontSize: "var(--text-xs)", 
+                    fontWeight: 500,
+                    color: "#F59E0B", 
+                    background: "rgba(245, 158, 11, 0.08)", 
+                    border: "1px solid rgba(245, 158, 11, 0.2)", 
+                    padding: "var(--space-1) var(--space-2_5)", 
+                    borderRadius: "var(--radius-md)" 
+                  }}
+                >
+                  Requires Dashboard
+                </span>
+              </div>
+            )}
+
             {/* Price row */}
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--space-2)" }}>
               <span style={{ 
