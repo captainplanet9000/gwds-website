@@ -6,7 +6,6 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   const footerLinks = [
-    { href: '/work', label: 'Work' },
     { href: '/store', label: 'Store' },
     { href: '/about', label: 'About' },
     { href: '/contact', label: 'Contact' },
