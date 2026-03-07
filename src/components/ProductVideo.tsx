@@ -14,7 +14,8 @@ export default function ProductVideo({ videoUrl, productName, accent = '#8B5CF6'
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [showControls, setShowControls] = useState(true);
+  const [showControls, setShowControls] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -24,25 +25,39 @@ export default function ProductVideo({ videoUrl, productName, accent = '#8B5CF6'
   const scheduleHide = useCallback(() => {
     if (hideTimer.current) clearTimeout(hideTimer.current);
     setShowControls(true);
-    if (isPlaying) {
-      hideTimer.current = setTimeout(() => setShowControls(false), 3000);
-    }
-  }, [isPlaying]);
-
-  useEffect(() => {
-    if (!isPlaying) setShowControls(true);
-    else scheduleHide();
-    return () => { if (hideTimer.current) clearTimeout(hideTimer.current); };
-  }, [isPlaying, scheduleHide]);
-
-  useEffect(() => {
-    const onFs = () => setIsFullscreen(!!document.fullscreenElement);
-    document.addEventListener('fullscreenchange', onFs);
-    return () => document.removeEventListener('fullscreenchange', onFs);
+    hideTimer.current = setTimeout(() => setShowControls(false), 3000);
   }, []);
+
+  // Only show controls after first interaction, auto-hide when playing
+  useEffect(() => {
+    if (!isPlaying && hasInteracted) {
+      setShowControls(true);
+      if (hideTimer.current) clearTimeout(hideTimer.current);
+    }
+    return () => { if (hideTimer.current) clearTimeout(hideTimer.current); };
+  }, [isPlaying, hasInteracted]);
+
+  useEffect(() => {
+    const onFs = () => {
+      const fs = !!(document.fullscreenElement || (document as any).webkitFullscreenElement);
+      setIsFullscreen(fs);
+    };
+    document.addEventListener('fullscreenchange', onFs);
+    document.addEventListener('webkitfullscreenchange', onFs);
+    return () => {
+      document.removeEventListener('fullscreenchange', onFs);
+      document.removeEventListener('webkitfullscreenchange', onFs);
+    };
+  }, []);
+
+  const handleInteraction = () => {
+    setHasInteracted(true);
+    scheduleHide();
+  };
 
   const togglePlay = () => {
     if (!videoRef.current) return;
+    handleInteraction();
     if (isPlaying) videoRef.current.pause();
     else videoRef.current.play();
   };
@@ -56,9 +71,27 @@ export default function ProductVideo({ videoUrl, productName, accent = '#8B5CF6'
 
   const toggleFullscreen = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!containerRef.current) return;
-    if (document.fullscreenElement) document.exitFullscreen();
-    else containerRef.current.requestFullscreen?.();
+    const video = videoRef.current;
+    const container = containerRef.current;
+    if (!video || !container) return;
+
+    if (document.fullscreenElement || (document as any).webkitFullscreenElement) {
+      // Exit fullscreen
+      if (document.exitFullscreen) document.exitFullscreen();
+      else if ((document as any).webkitExitFullscreen) (document as any).webkitExitFullscreen();
+    } else {
+      // Enter fullscreen — try container first, fall back to video element for iOS
+      if (container.requestFullscreen) {
+        container.requestFullscreen();
+      } else if ((container as any).webkitRequestFullscreen) {
+        (container as any).webkitRequestFullscreen();
+      } else if ((video as any).webkitEnterFullscreen) {
+        // iOS Safari — only supports fullscreen on the video element itself
+        (video as any).webkitEnterFullscreen();
+      } else if ((video as any).requestFullscreen) {
+        video.requestFullscreen();
+      }
+    }
   };
 
   const handleProgressClick = (e: React.MouseEvent) => {
@@ -76,17 +109,20 @@ export default function ProductVideo({ videoUrl, productName, accent = '#8B5CF6'
     setProgress(v.duration ? (v.currentTime / v.duration) * 100 : 0);
   };
 
+  const controlsVisible = showControls || (!isPlaying && hasInteracted);
+
   const controlBtnStyle: React.CSSProperties = {
     background: 'none',
     border: 'none',
     color: '#fff',
     cursor: 'pointer',
-    padding: 6,
+    padding: 8,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     opacity: 0.9,
     transition: 'opacity 0.2s',
+    WebkitTapHighlightColor: 'transparent',
   };
 
   return (
@@ -95,8 +131,8 @@ export default function ProductVideo({ videoUrl, productName, accent = '#8B5CF6'
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      onMouseMove={scheduleHide}
-      onTouchStart={scheduleHide}
+      onMouseMove={() => { if (hasInteracted) scheduleHide(); }}
+      onTouchStart={handleInteraction}
       style={{
         position: 'relative',
         borderRadius: isFullscreen ? 0 : 16,
@@ -110,20 +146,31 @@ export default function ProductVideo({ videoUrl, productName, accent = '#8B5CF6'
       <video
         ref={videoRef}
         src={videoUrl}
-        style={{ width: '100%', display: 'block', aspectRatio: isFullscreen ? undefined : '16/9', objectFit: 'cover', height: isFullscreen ? '100%' : undefined }}
+        style={{
+          width: '100%',
+          display: 'block',
+          aspectRatio: isFullscreen ? undefined : '16/9',
+          objectFit: isFullscreen ? 'contain' : 'cover',
+          height: isFullscreen ? '100%' : undefined,
+          background: '#000',
+        }}
         loop
         muted={isMuted}
         playsInline
         preload="metadata"
-        onPlay={() => setIsPlaying(true)}
+        onPlay={() => { setIsPlaying(true); setHasInteracted(true); scheduleHide(); }}
         onPause={() => setIsPlaying(false)}
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={() => { if (videoRef.current) setDuration(videoRef.current.duration); }}
       />
 
-      {/* Big play button — only when paused */}
+      {/* Big play button — only when paused and no controls showing, or before first interaction */}
       {!isPlaying && (
-        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.35)', pointerEvents: 'none' }}>
+        <div style={{
+          position: 'absolute', inset: 0,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: 'rgba(0,0,0,0.35)', pointerEvents: 'none',
+        }}>
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -134,12 +181,14 @@ export default function ProductVideo({ videoUrl, productName, accent = '#8B5CF6'
               boxShadow: `0 8px 32px ${accent}40`,
             }}
           >
-            <svg width="28" height="32" viewBox="0 0 28 32" fill="none"><path d="M28 16L0 32V0L28 16Z" fill="white" /></svg>
+            <svg width="28" height="32" viewBox="0 0 28 32" fill="none">
+              <path d="M28 16L0 32V0L28 16Z" fill="white" />
+            </svg>
           </motion.div>
         </div>
       )}
 
-      {/* Controls bar */}
+      {/* Controls bar — hidden by default, appears on interaction */}
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
@@ -147,12 +196,12 @@ export default function ProductVideo({ videoUrl, productName, accent = '#8B5CF6'
           bottom: 0,
           left: 0,
           right: 0,
-          background: 'linear-gradient(transparent, rgba(0,0,0,0.85))',
-          padding: '24px 16px 12px',
-          opacity: showControls ? 1 : 0,
-          transform: showControls ? 'translateY(0)' : 'translateY(8px)',
+          background: 'linear-gradient(transparent, rgba(0,0,0,0.9))',
+          padding: '28px 16px 12px',
+          opacity: controlsVisible ? 1 : 0,
+          transform: controlsVisible ? 'translateY(0)' : 'translateY(100%)',
           transition: 'opacity 0.3s, transform 0.3s',
-          pointerEvents: showControls ? 'auto' : 'none',
+          pointerEvents: controlsVisible ? 'auto' : 'none',
         }}
       >
         {/* Progress bar */}
@@ -161,9 +210,9 @@ export default function ProductVideo({ videoUrl, productName, accent = '#8B5CF6'
           onClick={handleProgressClick}
           style={{
             width: '100%',
-            height: 4,
+            height: 6,
             background: 'rgba(255,255,255,0.2)',
-            borderRadius: 2,
+            borderRadius: 3,
             cursor: 'pointer',
             marginBottom: 10,
             position: 'relative',
@@ -173,38 +222,35 @@ export default function ProductVideo({ videoUrl, productName, accent = '#8B5CF6'
             width: `${progress}%`,
             height: '100%',
             background: accent,
-            borderRadius: 2,
+            borderRadius: 3,
             transition: 'width 0.1s linear',
           }} />
-          {/* Scrub handle */}
           <div style={{
             position: 'absolute',
             left: `${progress}%`,
             top: '50%',
             transform: 'translate(-50%, -50%)',
-            width: 12,
-            height: 12,
+            width: 14,
+            height: 14,
             borderRadius: '50%',
             background: '#fff',
-            boxShadow: '0 1px 4px rgba(0,0,0,0.4)',
-            opacity: showControls ? 1 : 0,
-            transition: 'opacity 0.2s',
+            boxShadow: '0 1px 4px rgba(0,0,0,0.5)',
           }} />
         </div>
 
         {/* Buttons row */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           {/* Play/Pause */}
           <button onClick={(e) => { e.stopPropagation(); togglePlay(); }} style={controlBtnStyle} aria-label={isPlaying ? 'Pause' : 'Play'}>
             {isPlaying ? (
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="white"><rect x="3" y="2" width="4" height="14" rx="1" /><rect x="11" y="2" width="4" height="14" rx="1" /></svg>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="white"><rect x="4" y="3" width="4" height="14" rx="1" /><rect x="12" y="3" width="4" height="14" rx="1" /></svg>
             ) : (
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="white"><path d="M4 2L16 9L4 16V2Z" /></svg>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="white"><path d="M5 3L17 10L5 17V3Z" /></svg>
             )}
           </button>
 
           {/* Time */}
-          <span style={{ fontSize: 12, color: '#ccc', fontFamily: 'var(--font-mono, monospace)', minWidth: 80, userSelect: 'none' }}>
+          <span style={{ fontSize: 12, color: '#aaa', fontFamily: 'var(--font-mono, monospace)', minWidth: 75, userSelect: 'none' }}>
             {formatTime(currentTime)} / {formatTime(duration)}
           </span>
 
@@ -228,11 +274,11 @@ export default function ProductVideo({ videoUrl, productName, accent = '#8B5CF6'
           {/* Fullscreen */}
           <button onClick={toggleFullscreen} style={controlBtnStyle} aria-label="Fullscreen">
             {isFullscreen ? (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M8 3v3a2 2 0 01-2 2H3m18 0h-3a2 2 0 01-2-2V3m0 18v-3a2 2 0 012-2h3M3 16h3a2 2 0 012 2v3" />
               </svg>
             ) : (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3" />
               </svg>
             )}
