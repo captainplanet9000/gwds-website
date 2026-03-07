@@ -4,13 +4,22 @@ import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import type { Provider } from '@supabase/supabase-js';
 
-const providers: { id: Provider; label: string; icon: React.ReactNode; bg: string; bgHover: string; color: string }[] = [
-  {
-    id: 'google',
+// Only show providers that are enabled in Supabase
+// Add/remove providers here as you enable them in the Supabase dashboard
+const ENABLED_PROVIDERS: Provider[] = [
+  'google',
+  'github',
+  'discord',
+  // 'apple',   // Uncomment when Apple Developer account is set up
+];
+
+const providerConfig: Record<string, { label: string; icon: React.ReactNode; bg: string; bgHover: string; color: string; border?: string }> = {
+  google: {
     label: 'Continue with Google',
     bg: '#ffffff',
     bgHover: '#f1f1f1',
     color: '#1f1f1f',
+    border: '1px solid #dadce0',
     icon: (
       <svg width="18" height="18" viewBox="0 0 18 18">
         <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4" />
@@ -20,8 +29,7 @@ const providers: { id: Provider; label: string; icon: React.ReactNode; bg: strin
       </svg>
     ),
   },
-  {
-    id: 'github',
+  github: {
     label: 'Continue with GitHub',
     bg: '#24292f',
     bgHover: '#32383f',
@@ -32,8 +40,7 @@ const providers: { id: Provider; label: string; icon: React.ReactNode; bg: strin
       </svg>
     ),
   },
-  {
-    id: 'discord',
+  discord: {
     label: 'Continue with Discord',
     bg: '#5865F2',
     bgHover: '#4752c4',
@@ -44,8 +51,7 @@ const providers: { id: Provider; label: string; icon: React.ReactNode; bg: strin
       </svg>
     ),
   },
-  {
-    id: 'apple',
+  apple: {
     label: 'Continue with Apple',
     bg: '#000000',
     bgHover: '#1a1a1a',
@@ -56,7 +62,7 @@ const providers: { id: Provider; label: string; icon: React.ReactNode; bg: strin
       </svg>
     ),
   },
-];
+};
 
 export default function SocialAuthButtons() {
   const { signInWithProvider } = useAuth();
@@ -76,36 +82,41 @@ export default function SocialAuthButtons() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-      {providers.map((p) => (
-        <button
-          key={p.id}
-          onClick={() => handleProvider(p.id)}
-          disabled={!!loadingProvider}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 10,
-            width: '100%',
-            padding: '12px 16px',
-            borderRadius: 8,
-            border: p.id === 'google' ? '1px solid #dadce0' : '1px solid transparent',
-            background: loadingProvider === p.id ? p.bgHover : p.bg,
-            color: p.color,
-            fontFamily: 'var(--font-body)',
-            fontSize: '0.88rem',
-            fontWeight: 600,
-            cursor: loadingProvider ? 'not-allowed' : 'pointer',
-            transition: 'all 0.2s',
-            opacity: loadingProvider && loadingProvider !== p.id ? 0.5 : 1,
-          }}
-          onMouseEnter={(e) => { if (!loadingProvider) e.currentTarget.style.background = p.bgHover; }}
-          onMouseLeave={(e) => { if (!loadingProvider) e.currentTarget.style.background = p.bg; }}
-        >
-          {p.icon}
-          <span>{loadingProvider === p.id ? 'Redirecting...' : p.label}</span>
-        </button>
-      ))}
+      {ENABLED_PROVIDERS.map((id) => {
+        const p = providerConfig[id];
+        if (!p) return null;
+        return (
+          <button
+            key={id}
+            onClick={() => handleProvider(id)}
+            disabled={!!loadingProvider}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 10,
+              width: '100%',
+              padding: '12px 16px',
+              borderRadius: 8,
+              border: p.border || '1px solid transparent',
+              background: loadingProvider === id ? p.bgHover : p.bg,
+              color: p.color,
+              fontFamily: 'var(--font-body)',
+              fontSize: '0.88rem',
+              fontWeight: 600,
+              cursor: loadingProvider ? 'not-allowed' : 'pointer',
+              transition: 'all 0.2s',
+              opacity: loadingProvider && loadingProvider !== id ? 0.5 : 1,
+              WebkitTapHighlightColor: 'transparent',
+            }}
+            onMouseEnter={(e) => { if (!loadingProvider) e.currentTarget.style.background = p.bgHover; }}
+            onMouseLeave={(e) => { if (!loadingProvider) e.currentTarget.style.background = p.bg; }}
+          >
+            {p.icon}
+            <span>{loadingProvider === id ? 'Redirecting...' : p.label}</span>
+          </button>
+        );
+      })}
       {error && (
         <div style={{
           padding: '10px 14px',
