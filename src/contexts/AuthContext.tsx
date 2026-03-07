@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from 'react';
 import { createBrowserClient } from '@/lib/supabase';
-import type { User, Session } from '@supabase/supabase-js';
+import type { User, Session, Provider } from '@supabase/supabase-js';
 
 interface AuthContextType {
   user: User | null;
@@ -11,6 +11,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<{ needsVerification: boolean }>;
   signInWithMagicLink: (email: string) => Promise<void>;
+  signInWithProvider: (provider: Provider) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -67,6 +68,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) throw error;
   }, []);
 
+  const handleSignInWithProvider = useCallback(async (provider: Provider) => {
+    const supabase = createBrowserClient();
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${window.location.origin}/account`,
+      },
+    });
+    if (error) throw error;
+  }, []);
+
   const handleSignOut = useCallback(async () => {
     const supabase = createBrowserClient();
     const { error } = await supabase.auth.signOut();
@@ -82,6 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signIn: handleSignIn,
         signUp: handleSignUp,
         signInWithMagicLink: handleMagicLink,
+        signInWithProvider: handleSignInWithProvider,
         signOut: handleSignOut,
       }}
     >

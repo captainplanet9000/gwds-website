@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import SocialAuthButtons from '@/components/SocialAuthButtons';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function RegisterPage() {
@@ -146,6 +147,16 @@ export default function RegisterPage() {
             </div>
           ) : (
             <>
+              {/* Social login */}
+              <SocialAuthButtons />
+
+              {/* Divider */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16, margin: '24px 0' }}>
+                <div style={{ flex: 1, height: 1, background: '#1a1a1a' }} />
+                <span style={{ fontSize: '0.75rem', color: '#555', fontFamily: 'var(--font-body)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>or create with email</span>
+                <div style={{ flex: 1, height: 1, background: '#1a1a1a' }} />
+              </div>
+
               <form onSubmit={handleSubmit}>
                 <label
                   style={{
