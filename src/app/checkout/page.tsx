@@ -14,6 +14,12 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [agreedToPluginDisclaimer, setAgreedToPluginDisclaimer] = useState(false);
+
+  // Check if cart has plugins that require dashboard
+  const hasPluginRequiringDashboard = state.items.some(item => item.product.requiresDashboard);
+  const hasDashboard = state.items.some(item => item.product.id === 'trading-dashboard-template');
+  const showPluginWarning = hasPluginRequiringDashboard && !hasDashboard;
 
   const handleCheckout = async () => {
     if (!email || !name) {
@@ -22,6 +28,10 @@ export default function CheckoutPage() {
     }
     if (!agreedToTerms) {
       setError('You must agree to the Terms of Service and Trading Disclaimer to proceed');
+      return;
+    }
+    if (hasPluginRequiringDashboard && !agreedToPluginDisclaimer) {
+      setError('You must acknowledge that plugin products require the AI Trading Dashboard');
       return;
     }
     if (state.items.length === 0) {
@@ -92,7 +102,7 @@ export default function CheckoutPage() {
     transition: 'border-color 0.2s',
   };
 
-  const canCheckout = agreedToTerms && !loading;
+  const canCheckout = agreedToTerms && (!hasPluginRequiringDashboard || agreedToPluginDisclaimer) && !loading;
 
   return (
     <>
@@ -109,6 +119,40 @@ export default function CheckoutPage() {
           }}>
             Checkout
           </h1>
+
+          {/* Plugin warning banner */}
+          {showPluginWarning && (
+            <div
+              style={{
+                backgroundColor: "#1a0a00",
+                border: "2px solid #F59E0B",
+                borderRadius: "8px",
+                padding: "16px 20px",
+                marginBottom: "32px",
+                fontFamily: "var(--font-body)",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "flex-start", gap: "12px" }}>
+                <div style={{ fontSize: "24px", lineHeight: "1", flexShrink: 0 }}>⚠️</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ color: "#fff", fontSize: "15px", lineHeight: "1.6", marginBottom: "8px" }}>
+                    Your cart contains plugin products that require the AI Trading Dashboard. They cannot function independently.
+                  </div>
+                  <a
+                    href="/store/trading-dashboard-template"
+                    style={{
+                      color: "#F59E0B",
+                      textDecoration: "underline",
+                      fontSize: "14px",
+                      fontWeight: 500,
+                    }}
+                  >
+                    View AI Trading Dashboard →
+                  </a>
+                </div>
+              </div>
+            </div>
+          )}
 
           {state.items.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '60px 0', color: '#555' }}>
@@ -214,6 +258,54 @@ export default function CheckoutPage() {
                     </span>
                   </label>
                 </div>
+
+                {/* Plugin Dependency Checkbox — only show if cart has requiresDashboard items */}
+                {hasPluginRequiringDashboard && (
+                  <div
+                    style={{
+                      marginTop: 16,
+                      padding: '16px 20px',
+                      border: '2px solid #F59E0B',
+                      borderRadius: 10,
+                      background: 'rgba(245, 158, 11, 0.05)',
+                    }}
+                  >
+                    <label
+                      style={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: 12,
+                        cursor: 'pointer',
+                        userSelect: 'none',
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={agreedToPluginDisclaimer}
+                        onChange={e => setAgreedToPluginDisclaimer(e.target.checked)}
+                        style={{
+                          width: 18,
+                          height: 18,
+                          marginTop: 2,
+                          accentColor: '#F59E0B',
+                          cursor: 'pointer',
+                          flexShrink: 0,
+                        }}
+                      />
+                      <span
+                        style={{
+                          fontSize: '0.82rem',
+                          color: '#F59E0B',
+                          lineHeight: 1.6,
+                          fontFamily: 'var(--font-body)',
+                          fontWeight: 600,
+                        }}
+                      >
+                        I understand that plugin products require the AI Trading Dashboard and cannot function independently.
+                      </span>
+                    </label>
+                  </div>
+                )}
 
                 {error && (
                   <div style={{

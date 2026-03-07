@@ -109,8 +109,50 @@ export default function CartDrawer() {
                   </Link>
                 </div>
               ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                  {items.map(item => (
+                <>
+                  {/* Dashboard warning */}
+                  {showDashboardWarning && (
+                    <div
+                      style={{
+                        backgroundColor: "#1a0a00",
+                        border: "2px solid #F59E0B",
+                        borderRadius: "8px",
+                        padding: "14px 16px",
+                        marginBottom: "16px",
+                        fontFamily: "var(--font-body)",
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "flex-start", gap: "10px", marginBottom: "10px" }}>
+                        <span style={{ fontSize: "18px", flexShrink: 0 }}>⚠️</span>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ color: "#fff", fontSize: "14px", lineHeight: "1.5", marginBottom: "8px" }}>
+                            Some items require the AI Trading Dashboard. Make sure you own it or add it to your cart.
+                          </div>
+                          {dashboardProduct && (
+                            <button
+                              onClick={handleAddDashboard}
+                              style={{
+                                padding: "6px 12px",
+                                borderRadius: "6px",
+                                border: "none",
+                                background: "#F59E0B",
+                                color: "#000",
+                                fontSize: "13px",
+                                fontWeight: 600,
+                                cursor: "pointer",
+                                fontFamily: "var(--font-display)",
+                              }}
+                            >
+                              Add Dashboard (${dashboardProduct.price})
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                    {items.map(item => (
                     <div
                       key={item.product.id}
                       style={{
@@ -178,7 +220,8 @@ export default function CartDrawer() {
                       </div>
                     </div>
                   ))}
-                </div>
+                  </div>
+                </>
               )}
             </div>
 
