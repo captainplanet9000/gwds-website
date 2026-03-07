@@ -146,7 +146,7 @@ Need help? Reply to this email or contact gammawavesdesign@gmail.com
 
   try {
     const { data, error } = await resend.emails.send({
-      from: "GWDS Store <onboarding@resend.dev>",
+      from: process.env.RESEND_FROM_EMAIL || "GWDS Store <onboarding@resend.dev>",
       to: email,
       subject: `Order Confirmation - ${order.id}`,
       html,

@@ -2,7 +2,7 @@ import { MetadataRoute } from "next";
 import { products } from "@/lib/products";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gwds-website.vercel.app";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gwds.app";
 
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [

@@ -5,8 +5,10 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import CartDrawer from "@/components/CartDrawer";
 import ScrollProgress from "@/components/ScrollProgress";
 import { LenisProvider } from "@/lib/lenis";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gwds-website.vercel.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gwds.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -155,6 +157,8 @@ export default function RootLayout({
             </CartProvider>
           </AuthProvider>
         </LenisProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
