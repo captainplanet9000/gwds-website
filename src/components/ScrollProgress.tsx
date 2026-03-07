@@ -27,7 +27,7 @@ export default function ScrollProgress() {
         left: 0,
         right: 0,
         height: 2,
-        zIndex: 9999,
+        zIndex: 999,
         background: 'oklch(0.08 0 0 / 0.3)',
         pointerEvents: 'none',
       }}
