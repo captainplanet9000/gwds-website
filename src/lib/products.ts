@@ -94,7 +94,7 @@ Start with the base dashboard and add capabilities as you need them. Each add-on
     ],
     downloadUrl: "downloads/ai-trading-dashboard-v1.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app",
-    videoUrl: "/videos/products/cival-promo.mp4",
+    videoUrl: "/videos/products/cival-promo-v3.mp4",
   },
   {
     id: "meme-trading-suite",
