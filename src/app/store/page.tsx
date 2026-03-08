@@ -323,7 +323,7 @@ function FlagshipCard({ product }: { product: any }) {
               {product.description.substring(0, 200)}...
             </p>
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 20 }}>
-              {['6 AI Agents', '44 Themes', '2,400+ Files', 'Hyperliquid'].map(tag => (
+              {['1 Agent Included', '44 Themes', '2,400+ Files', 'Hyperliquid Ready'].map(tag => (
                 <span key={tag} style={{
                   padding: '4px 10px', borderRadius: 4,
                   background: '#8B5CF610', border: '1px solid #8B5CF620',

@@ -32,19 +32,23 @@ export const products: Product[] = [
     id: "trading-dashboard-template",
     stripePriceId: "price_1T7AnhLLyk0oaesNcsOUw8UU",
     name: "AI Trading Dashboard",
-    description: "Full-featured AI trading dashboard with autonomous agents, goal-based execution, multi-exchange support, 44 built-in themes, and a modular plugin system. Built with Next.js 15, TypeScript, and Supabase.",
-    longDescription: `A production-grade trading dashboard architecture — 2,400+ files of TypeScript source code you can deploy, customize, and build on top of.
+    description: "Complete AI trading dashboard with one fully functional VWAP + RSI agent included, goal-based execution, Hyperliquid integration, 44 themes, and a plugin system for adding more agents and features. Deploy in minutes.",
+    longDescription: `A production-grade trading dashboard with a fully functional trading agent included — deploy it, connect your Hyperliquid wallet, and start trading. 2,400+ files of TypeScript source code.
 
-**What you're buying:** The UI, the architecture, and the engineering. This is the same codebase the developer uses personally. You get the full source code — every component, every agent framework, every strategy template — as a starting point for building your own trading system.
+**🤖 Includes 1 Fully Functional Agent: VWAP + RSI Strategy**
+The dashboard ships with a working VWAP Volume Breakout agent that combines Volume-Weighted Average Price analysis with RSI divergence detection. It trades autonomously on Hyperliquid — no additional purchases required to start trading.
+
+Want more strategies? Add premium agents (Darvas Box, Elliott Wave, Heikin Ashi, Mean Reversion, Macro Sentiment) from our store. Each one plugs directly into the dashboard.
 
 **Deploy in 3 steps:**
 1. Set up a free Supabase project and run the included SQL migration
 2. Get your Hyperliquid API wallet key (trading only — can't withdraw your funds)
 3. Run \`npm run dev\` locally or deploy to Vercel — paste your keys, and you're live
 
-**What you get:**
-- Agent framework with configurable strategy templates (VWAP, Darvas, Elliott Wave, Heikin Ashi, and more)
-- Multi-strategy farm system — run multiple agents coordinated under one portfolio with shared scratchpad
+**What's included:**
+- VWAP + RSI trading agent — fully functional, ready to trade out of the box
+- Agent framework — add more agents as you need them
+- Multi-strategy farm system — run multiple agents coordinated under one portfolio
 - Goal-based trading engine — set targets and let agents execute
 - Real-time trade tracking, P&L, positions, and order management
 - Risk analytics with drawdown monitoring, correlation checks, and position sizing
@@ -54,12 +58,15 @@ export const products: Product[] = [
 - One-click deploy to Vercel — no local setup required
 
 **🎨 44 Built-In Themes**
-Choose from 44 professionally designed themes — from Cyberpunk and Cosmic Night to Clean Slate and Mocha Mousse. Switch instantly or build your own. Need a branded look for your fund? We offer custom theme design as a service.
+Choose from 44 professionally designed themes — from Cyberpunk and Cosmic Night to Clean Slate and Mocha Mousse. Switch instantly or build your own.
 
 **Themes include:** Default, Amber Minimal, Amethyst Haze, Bold Tech, Bubblegum, Caffeine, Candyland, Catppuccin, Claude, Claymorphism, Clean Slate, Cosmic Night, Cyberpunk, Darkmatter, Doom 64, Elegant Luxury, Graphite, Kodama Grove, Midnight Bloom, Mocha Mousse, Modern Minimal, Mono, Nature, Neo Brutalism, Northern Lights, Notebook, Ocean Breeze, Pastel Dreams, Perpetuity, Quantum Rose, Retro Arcade, Sage Garden, Soft Pop, Solar Dusk, Starry Night, Sunset Horizon, Supabase, T3 Chat, Tangerine, Twitter, Vercel, Vintage Paper, Violet Bloom, and more.
 
-**🧩 Modular Plugin System**
-Start with the base dashboard and add capabilities as you need them. Each add-on plugs directly into the dashboard. Available add-ons include Meme Trading System, Flash Loans, Command Center, and strategy-specific agents.
+**🧩 Expand With Add-Ons**
+The dashboard is fully functional on its own. When you're ready for more, add:
+- **Trading Agents** ($199 each) — Darvas Box, Elliott Wave, Heikin Ashi, Mean Reversion, Macro Sentiment
+- **Extensions** ($99 each) — Meme Trading Suite, Flash Loan Arbitrage Engine
+- **Bundles** — Save up to $842 when you buy multiple products together
 
 **Not included:** Live API keys, exchange accounts, funded accounts, or trading signals. You bring your own keys, your own capital, and your own risk management. This is a software tool — not financial advice. See our [Trading Disclaimer](/disclaimer).
 
@@ -71,18 +78,18 @@ Start with the base dashboard and add capabilities as you need them. Each add-on
     isFeatured: true,
     productType: "flagship",
     features: [
-      "Autonomous AI trading agents",
+      "1 fully functional VWAP + RSI agent included",
+      "Trades autonomously on Hyperliquid",
       "Goal-based execution engine",
       "44 built-in themes",
-      "Modular plugin system",
-      "Hyperliquid + Bybit integration",
-      "Real-time P&L tracking",
-      "Risk analytics suite",
-      "Agent health monitoring",
+      "Plugin system for adding more agents",
+      "Real-time P&L & position tracking",
+      "Risk analytics & drawdown monitoring",
+      "Agent health monitoring & scoring",
       "Farm orchestration & scratchpad",
-      "Full TypeScript source code",
-      "Vercel deploy ready",
-      "Custom theme service available"
+      "Full TypeScript source code (2,400+ files)",
+      "One-click Vercel deploy",
+      "Add more agents & extensions from store"
     ],
     techStack: ["Next.js 15", "TypeScript", "Supabase", "Hyperliquid SDK", "TailwindCSS"],
     image: "/images/products/store/dashboard-command-center.png",
@@ -323,8 +330,8 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
     id: "vwap-momentum-agent",
     stripePriceId: "price_1T7pe7LLyk0oaesN9l7hI7Zd",
     requiresDashboard: true,
-    name: "VWAP Volume Breakout Agent",
-    description: "Trades breakouts from the Volume Weighted Average Price with RSI divergence confirmation. Tracks accumulation/distribution zones, detects volume spikes, and enters when price breaks VWAP with momentum. 6-hour average hold time.",
+    name: "VWAP Pro Agent",
+    description: "Advanced VWAP agent with multi-timeframe analysis, order flow tracking, accumulation/distribution zone detection, and dynamic confidence scoring. Upgrades the basic VWAP+RSI agent included with the dashboard. 6-hour average hold time.",
     longDescription: `🔌 **Plugin for AI Trading Dashboard** — VWAP-based volume analysis and trade signal framework.
 
 Combines VWAP (Volume Weighted Average Price) with volume divergence analysis and RSI momentum signals. Architecture for identifying accumulation zones, volume spikes, and momentum shifts.
