@@ -8,7 +8,7 @@ function formatTime(seconds: number) {
   return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
-export default function ProductVideo({ videoUrl, productName, accent = '#8B5CF6' }: { videoUrl: string; productName: string; accent?: string }) {
+export default function ProductVideo({ videoUrl, productName, accent = '#8B5CF6', poster }: { videoUrl: string; productName: string; accent?: string; poster?: string }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [progress, setProgress] = useState(0);
@@ -17,6 +17,8 @@ export default function ProductVideo({ videoUrl, productName, accent = '#8B5CF6'
   const [showControls, setShowControls] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasError, setHasError] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
@@ -28,7 +30,6 @@ export default function ProductVideo({ videoUrl, productName, accent = '#8B5CF6'
     hideTimer.current = setTimeout(() => setShowControls(false), 3000);
   }, []);
 
-  // Only show controls after first interaction, auto-hide when playing
   useEffect(() => {
     if (!isPlaying && hasInteracted) {
       setShowControls(true);
@@ -58,8 +59,24 @@ export default function ProductVideo({ videoUrl, productName, accent = '#8B5CF6'
   const togglePlay = () => {
     if (!videoRef.current) return;
     handleInteraction();
-    if (isPlaying) videoRef.current.pause();
-    else videoRef.current.play();
+    setHasError(false);
+    if (isPlaying) {
+      videoRef.current.pause();
+    } else {
+      setIsLoading(true);
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setIsLoading(false);
+          })
+          .catch((err) => {
+            console.error('Video play failed:', err);
+            setIsLoading(false);
+            setHasError(true);
+          });
+      }
+    }
   };
 
   const toggleMute = (e: React.MouseEvent) => {
@@ -76,17 +93,14 @@ export default function ProductVideo({ videoUrl, productName, accent = '#8B5CF6'
     if (!video || !container) return;
 
     if (document.fullscreenElement || (document as any).webkitFullscreenElement) {
-      // Exit fullscreen
       if (document.exitFullscreen) document.exitFullscreen();
       else if ((document as any).webkitExitFullscreen) (document as any).webkitExitFullscreen();
     } else {
-      // Enter fullscreen — try container first, fall back to video element for iOS
       if (container.requestFullscreen) {
         container.requestFullscreen();
       } else if ((container as any).webkitRequestFullscreen) {
         (container as any).webkitRequestFullscreen();
       } else if ((video as any).webkitEnterFullscreen) {
-        // iOS Safari — only supports fullscreen on the video element itself
         (video as any).webkitEnterFullscreen();
       } else if ((video as any).requestFullscreen) {
         video.requestFullscreen();
@@ -107,6 +121,17 @@ export default function ProductVideo({ videoUrl, productName, accent = '#8B5CF6'
     const v = videoRef.current;
     setCurrentTime(v.currentTime);
     setProgress(v.duration ? (v.currentTime / v.duration) * 100 : 0);
+  };
+
+  const handleRetry = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!videoRef.current) return;
+    setHasError(false);
+    setIsLoading(true);
+    videoRef.current.load();
+    videoRef.current.play()
+      .then(() => setIsLoading(false))
+      .catch(() => { setIsLoading(false); setHasError(true); });
   };
 
   const controlsVisible = showControls || (!isPlaying && hasInteracted);
@@ -146,6 +171,7 @@ export default function ProductVideo({ videoUrl, productName, accent = '#8B5CF6'
       <video
         ref={videoRef}
         src={videoUrl}
+        poster={poster}
         style={{
           width: '100%',
           display: 'block',
@@ -157,15 +183,73 @@ export default function ProductVideo({ videoUrl, productName, accent = '#8B5CF6'
         loop
         muted={isMuted}
         playsInline
-        preload="metadata"
-        onPlay={() => { setIsPlaying(true); setHasInteracted(true); scheduleHide(); }}
+        preload="auto"
+        onPlay={() => { setIsPlaying(true); setIsLoading(false); setHasInteracted(true); scheduleHide(); }}
         onPause={() => setIsPlaying(false)}
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={() => { if (videoRef.current) setDuration(videoRef.current.duration); }}
+        onWaiting={() => setIsLoading(true)}
+        onCanPlay={() => setIsLoading(false)}
+        onError={() => { setIsLoading(false); setHasError(true); }}
       />
 
-      {/* Big play button — only when paused and no controls showing, or before first interaction */}
-      {!isPlaying && (
+      {/* Loading spinner */}
+      {isLoading && !hasError && (
+        <div style={{
+          position: 'absolute', inset: 0,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: 'rgba(0,0,0,0.5)', pointerEvents: 'none',
+          zIndex: 2,
+        }}>
+          <div style={{
+            width: 48, height: 48,
+            border: '3px solid rgba(255,255,255,0.2)',
+            borderTopColor: accent,
+            borderRadius: '50%',
+            animation: 'productVideoSpin 0.8s linear infinite',
+          }} />
+          <style>{`@keyframes productVideoSpin { to { transform: rotate(360deg); } }`}</style>
+        </div>
+      )}
+
+      {/* Error state */}
+      {hasError && (
+        <div
+          onClick={handleRetry}
+          style={{
+            position: 'absolute', inset: 0,
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+            background: 'rgba(0,0,0,0.7)',
+            gap: 12,
+            zIndex: 2,
+          }}
+        >
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <span style={{ color: '#ccc', fontSize: 14, fontFamily: 'var(--font-body)' }}>Video failed to load</span>
+          <button
+            onClick={handleRetry}
+            style={{
+              padding: '8px 20px',
+              borderRadius: 6,
+              border: `1px solid ${accent}60`,
+              background: `${accent}20`,
+              color: '#fff',
+              fontSize: 13,
+              cursor: 'pointer',
+              fontFamily: 'var(--font-body)',
+            }}
+          >
+            Tap to retry
+          </button>
+        </div>
+      )}
+
+      {/* Big play button — only when paused and not loading/error */}
+      {!isPlaying && !isLoading && !hasError && (
         <div style={{
           position: 'absolute', inset: 0,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -188,7 +272,7 @@ export default function ProductVideo({ videoUrl, productName, accent = '#8B5CF6'
         </div>
       )}
 
-      {/* Controls bar — hidden by default, appears on interaction */}
+      {/* Controls bar */}
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
@@ -240,7 +324,6 @@ export default function ProductVideo({ videoUrl, productName, accent = '#8B5CF6'
 
         {/* Buttons row */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          {/* Play/Pause */}
           <button onClick={(e) => { e.stopPropagation(); togglePlay(); }} style={controlBtnStyle} aria-label={isPlaying ? 'Pause' : 'Play'}>
             {isPlaying ? (
               <svg width="20" height="20" viewBox="0 0 20 20" fill="white"><rect x="4" y="3" width="4" height="14" rx="1" /><rect x="12" y="3" width="4" height="14" rx="1" /></svg>
@@ -249,14 +332,12 @@ export default function ProductVideo({ videoUrl, productName, accent = '#8B5CF6'
             )}
           </button>
 
-          {/* Time */}
           <span style={{ fontSize: 12, color: '#aaa', fontFamily: 'var(--font-mono, monospace)', minWidth: 75, userSelect: 'none' }}>
             {formatTime(currentTime)} / {formatTime(duration)}
           </span>
 
           <div style={{ flex: 1 }} />
 
-          {/* Mute/Unmute */}
           <button onClick={toggleMute} style={controlBtnStyle} aria-label={isMuted ? 'Unmute' : 'Mute'}>
             {isMuted ? (
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -271,7 +352,6 @@ export default function ProductVideo({ videoUrl, productName, accent = '#8B5CF6'
             )}
           </button>
 
-          {/* Fullscreen */}
           <button onClick={toggleFullscreen} style={controlBtnStyle} aria-label="Fullscreen">
             {isFullscreen ? (
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

@@ -422,6 +422,7 @@ export default function ProductDetailClient({ product, related, category }: { pr
                 videoUrl={product.videoUrl}
                 productName={product.name}
                 accent={accent}
+                poster={product.images?.[0] || product.image || undefined}
               />
             </div>
           </section>
