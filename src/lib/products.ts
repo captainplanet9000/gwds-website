@@ -84,7 +84,7 @@ Start with the base dashboard and add capabilities as you need them. Each add-on
       "Custom theme service available"
     ],
     techStack: ["Next.js 15", "TypeScript", "Supabase", "Hyperliquid SDK", "TailwindCSS"],
-    image: "/images/products/shot-dashboard-stats.jpg",
+    image: "/images/products/store/dashboard-command-center.png",
     images: [
       "/images/products/shot-dashboard-stats.jpg",
       "/images/products/shot-dashboard-positions.jpg",
@@ -168,7 +168,7 @@ Start with the base dashboard and add capabilities as you need them. Each add-on
       "Plug-and-play install"
     ],
     techStack: ["Next.js 15", "TypeScript", "@solana/web3.js", "Supabase", "DexScreener API"],
-    image: "/images/products/shot-plugin-marketplace.png",
+    image: "/images/products/store/meme-token-scanner.png",
     images: [
       "/images/products/shot-plugin-marketplace.png",
       "/images/products/shot-agent-cards.jpg",
@@ -233,7 +233,7 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
       "Plug-and-play install"
     ],
     techStack: ["Solidity", "TypeScript", "Aave V3", "Arbitrum", "Next.js 15"],
-    image: "/images/products/shot-flash-opportunities.png",
+    image: "/images/products/store/flash-loan-flow.png",
     images: [
       "/images/products/shot-flash-opportunities.png",
       "/images/products/shot-flash-stats.png",
@@ -275,7 +275,7 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
     category: "trading",
     emoji: "📦",
     features: ["Dashboard plugin", "Multi-timeframe", "Auto box detection", "Alert system", "Confidence scoring", "Plug-and-play install"],
-    image: "/images/products/shot-strat-darvas.jpg",
+    image: "/images/products/store/darvas-agent-signals.png",
     images: [
       "/images/products/shot-strat-darvas.jpg",
       "/images/products/shot-agent-cards.jpg",
@@ -317,7 +317,7 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
     badge: "PREMIUM",
     emoji: "🌊",
     features: ["Dashboard plugin", "AI wave detection", "Auto entry/exit", "Fibonacci validation", "Risk management", "Plug-and-play"],
-    image: "/images/products/shot-strat-elliott.jpg",
+    image: "/images/products/store/elliott-wave-signals.png",
     images: [
       "/images/products/shot-strat-elliott.jpg",
       "/images/products/shot-agent-cards.jpg",
@@ -362,7 +362,7 @@ Combines VWAP (Volume Weighted Average Price) with volume divergence analysis an
     emoji: "📊",
     features: ["Dashboard plugin", "VWAP analysis", "Volume divergence", "RSI momentum", "Order flow tracking", "Auto-execution", "Confidence scoring", "Plug-and-play install"],
     techStack: ["TypeScript", "Next.js 15", "Hyperliquid SDK", "Supabase"],
-    image: "/images/products/shot-strat-vwap.jpg",
+    image: "/images/products/store/vwap-agent-signals.png",
     images: [
       "/images/products/shot-strat-vwap.jpg",
       "/images/products/shot-agent-cards.jpg",
@@ -407,7 +407,7 @@ Heikin Ashi candles filter market noise to reveal the underlying trend. This age
     emoji: "🕯️",
     features: ["Dashboard plugin", "Heikin Ashi candles", "ADX trend strength", "Trailing stops", "Multi-timeframe", "Reversal detection", "Noise filtering", "Plug-and-play install"],
     techStack: ["TypeScript", "Next.js 15", "Hyperliquid SDK", "Supabase"],
-    image: "/images/products/shot-strat-heikin.jpg",
+    image: "/images/products/store/heikin-ashi-signals.png",
     images: [
       "/images/products/shot-strat-heikin.jpg",
       "/images/products/shot-agent-cards.jpg",
@@ -451,7 +451,7 @@ Statistical approach to identifying overbought/oversold conditions. This agent f
     emoji: "📉",
     features: ["Dashboard plugin", "RSI analysis", "Bollinger Bands", "Z-score detection", "Scaled entries", "Mean reversion probability", "Correlation-aware", "Plug-and-play install"],
     techStack: ["TypeScript", "Next.js 15", "Hyperliquid SDK", "Supabase"],
-    image: "/images/products/shot-strat-mean-rev.jpg",
+    image: "/images/products/store/mean-reversion-signals.png",
     images: [
       "/images/products/shot-strat-mean-rev.jpg",
       "/images/products/shot-agent-cards.jpg",
@@ -498,7 +498,7 @@ An architecture for reading the broader market environment — news sentiment, o
     emoji: "🧠",
     features: ["Dashboard plugin", "News sentiment", "On-chain analytics", "Social scoring", "Macro risk score", "Farm broadcasting", "VIX/DXY correlation", "Plug-and-play install"],
     techStack: ["TypeScript", "Next.js 15", "Hyperliquid SDK", "Supabase", "OpenRouter AI"],
-    image: "/images/products/shot-strat-macro.jpg",
+    image: "/images/products/store/macro-sentiment-signals.png",
     images: [
       "/images/products/shot-strat-macro.jpg",
       "/images/products/shot-agent-cards.jpg",
@@ -545,7 +545,7 @@ An architecture for reading the broader market environment — news sentiment, o
     badge: "BEST VALUE",
     emoji: "🏭",
     features: ["6 strategies included", "Farm orchestration", "Position management", "Margin-aware", "Telegram alerts", "Full source code"],
-    image: "/images/products/shot-farms-overview.jpg",
+    image: "/images/products/store/multi-strat-value.png",
     downloadUrl: "downloads/multi-strat-bundle-v1.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/farms",
     images: [
@@ -584,7 +584,7 @@ All three products delivered as source code. Same architecture, same engineering
     emoji: "🎯",
     features: ["AI Trading Dashboard", "Darvas Box Breakout Agent", "Elliott Wave Pattern Agent", "All future updates", "$248 savings"],
     isFeatured: true,
-    image: "/images/products/shot-dashboard-stats.jpg",
+    image: "/images/products/store/dashboard-command-center.png",
     images: [
       "/images/products/shot-dashboard-stats.jpg",
       "/images/products/shot-strat-darvas.jpg",
@@ -629,7 +629,7 @@ All products delivered as source code. You get the architecture, the UI, and the
     features: ["All 9 products", "6 trading agents", "Dashboard + Meme Trading Suite + Flash Loans", "Lifetime updates", "$1,042 savings"],
     isFeatured: true,
     downloadUrl: "downloads/everything-bundle-v1.0.0.zip",
-    image: "/images/products/shot-dashboard-stats.jpg",
+    image: "/images/products/store/dashboard-command-center.png",
     images: [
       "/images/products/shot-dashboard-stats.jpg",
       "/images/products/shot-agent-cards.jpg",
