@@ -1,41 +1,54 @@
 import { NextResponse } from 'next/server';
 import { products } from '@/lib/products';
+import { createServerClient } from '@/lib/supabase';
 
 export async function GET() {
+  const sb = createServerClient();
   let totalRevenue = 0;
   let totalOrders = 0;
   let totalCustomers = 0;
-  const orderList: any[] = [];
+  let totalSubscribers = 0;
+  let newMessages = 0;
+  let recentOrders: any[] = [];
+  let activeCoupons = 0;
 
-  // Try Supabase
   try {
-    const { supabase } = await import('@/lib/supabase');
-    const { data: orders } = await supabase.from('gwds_orders').select('*').order('created_at', { ascending: false });
+    // Orders + Revenue
+    const { data: orders } = await sb.from('orders')
+      .select('*')
+      .order('created_at', { ascending: false });
     if (orders) {
-      totalOrders = orders.length;
-      totalRevenue = orders.reduce((s: number, o: any) => s + (parseFloat(o.total) || 0), 0);
-      const emails = new Set(orders.map((o: any) => o.email));
-      totalCustomers = emails.size;
+      const completed = orders.filter(o => o.status === 'completed');
+      totalOrders = completed.length;
+      totalRevenue = completed.reduce((s: number, o: any) => s + ((o.total_cents || 0) / 100), 0);
+      recentOrders = orders.slice(0, 10);
     }
-  } catch (e) {}
 
-  // Fallback: check file-based orders
-  if (totalOrders === 0) {
-    try {
-      const fs = await import('fs/promises');
-      const path = await import('path');
-      const dir = path.join(process.cwd(), 'data', 'orders');
-      const files = await fs.readdir(dir);
-      for (const f of files) {
-        if (!f.endsWith('.json')) continue;
-        const order = JSON.parse(await fs.readFile(path.join(dir, f), 'utf-8'));
-        orderList.push(order);
-        totalOrders++;
-        totalRevenue += order.total || 0;
-      }
-      const emails = new Set(orderList.map(o => o.email));
-      totalCustomers = emails.size;
-    } catch (e) {}
+    // Customers
+    const { count: custCount } = await sb.from('customers')
+      .select('*', { count: 'exact', head: true });
+    totalCustomers = custCount || 0;
+
+    // Subscribers
+    const { count: subCount } = await sb.from('newsletter_subscribers')
+      .select('*', { count: 'exact', head: true })
+      .eq('is_active', true);
+    totalSubscribers = subCount || 0;
+
+    // New messages
+    const { count: msgCount } = await sb.from('contact_submissions')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'new');
+    newMessages = msgCount || 0;
+
+    // Active coupons
+    const { count: couponCount } = await sb.from('gwds_coupons')
+      .select('*', { count: 'exact', head: true })
+      .eq('is_active', true);
+    activeCoupons = couponCount || 0;
+
+  } catch (e: any) {
+    console.error('Stats error:', e.message);
   }
 
   return NextResponse.json({
@@ -43,5 +56,9 @@ export async function GET() {
     totalOrders,
     totalProducts: products.length,
     totalCustomers,
+    totalSubscribers,
+    newMessages,
+    activeCoupons,
+    recentOrders,
   });
 }
