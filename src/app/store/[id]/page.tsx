@@ -47,7 +47,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     .slice(0, 3);
 
   const category = categories.find(c => c.id === product.category);
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gwds.app";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gwds-website.vercel.app";
 
   const jsonLd = {
     "@context": "https://schema.org",

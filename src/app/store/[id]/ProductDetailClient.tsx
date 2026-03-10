@@ -21,8 +21,15 @@ export default function ProductDetailClient({ product, related, category }: { pr
   const { dispatch } = useCart();
   const [added, setAdded] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [purchaseCount, setPurchaseCount] = useState<number>(0);
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const accent = categoryColors[product.category] || '#8B5CF6';
+
+  useEffect(() => {
+    fetch('/api/products/stats').then(r => r.json()).then(d => {
+      setPurchaseCount(d.purchaseCounts?.[product.id] || 0);
+    }).catch(() => {});
+  }, [product.id]);
 
   const addToCart = () => {
     dispatch({ type: 'ADD_ITEM', product });
@@ -313,6 +320,13 @@ export default function ProductDetailClient({ product, related, category }: { pr
                   Buy Now
                 </button>
               </Link>
+            )}
+
+            {/* Social proof */}
+            {purchaseCount > 0 && (
+              <p style={{ fontSize: '0.78rem', color: '#555', textAlign: 'center', marginTop: 8, marginBottom: 8 }}>
+                🔥 {purchaseCount} {purchaseCount === 1 ? 'developer has' : 'developers have'} purchased this
+              </p>
             )}
 
             {/* Disclaimer notice */}
