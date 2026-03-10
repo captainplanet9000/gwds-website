@@ -192,6 +192,64 @@ export async function POST(req: NextRequest) {
         console.error("Failed to send confirmation email:", emailError);
       }
 
+      // Update customer record
+      try {
+        const { data: existingCustomer } = await supabase
+          .from("customers")
+          .select("*")
+          .eq("email", customerEmail.toLowerCase())
+          .single();
+
+        if (existingCustomer) {
+          await supabase.from("customers").update({
+            total_spent: (existingCustomer.total_spent || 0) + (session.amount_total || 0) / 100,
+            order_count: (existingCustomer.order_count || 0) + 1,
+            last_order_at: new Date().toISOString(),
+            name: customerName || existingCustomer.name,
+          }).eq("email", customerEmail.toLowerCase());
+        } else {
+          await supabase.from("customers").insert({
+            email: customerEmail.toLowerCase(),
+            name: customerName || "",
+            total_spent: (session.amount_total || 0) / 100,
+            order_count: 1,
+            first_order_at: new Date().toISOString(),
+            last_order_at: new Date().toISOString(),
+          });
+        }
+      } catch (custErr) {
+        console.error("Customer update error:", custErr);
+      }
+
+      // Auto-subscribe buyer to newsletter
+      try {
+        await supabase.from("newsletter_subscribers").upsert(
+          { email: customerEmail.toLowerCase(), source: "purchase", is_active: true },
+          { onConflict: "email" }
+        );
+      } catch { /* best effort */ }
+
+      // Telegram sale notification to owner
+      try {
+        const botToken = process.env.TELEGRAM_BOT_TOKEN;
+        const chatId = process.env.TELEGRAM_CHAT_ID;
+        if (botToken && chatId) {
+          const amount = ((session.amount_total || 0) / 100).toFixed(2);
+          const products = productIds.join(", ") || "Unknown";
+          const coupon = session.metadata?.couponCode ? ` (coupon: ${session.metadata.couponCode})` : "";
+          await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              chat_id: chatId,
+              text: `💰 <b>NEW SALE!</b>\n\n💵 $${amount}${coupon}\n📧 ${customerEmail}\n📦 ${products}\n\n<a href="https://dashboard.stripe.com/payments">View in Stripe →</a>`,
+              parse_mode: "HTML",
+              disable_web_page_preview: true,
+            }),
+          });
+        }
+      } catch { /* Telegram is best-effort */ }
+
       return NextResponse.json({ received: true });
     }
 

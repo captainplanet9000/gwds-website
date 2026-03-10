@@ -28,13 +28,20 @@ export default function ContactPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('loading');
-
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      if (!res.ok) throw new Error('Failed to send');
       setStatus('success');
       setFormData({ name: '', email: '', subject: 'Product Question', message: '' });
+      setTimeout(() => setStatus('idle'), 5000);
+    } catch {
+      setStatus('error');
       setTimeout(() => setStatus('idle'), 3000);
-    }, 1000);
+    }
   };
 
   return (

@@ -116,6 +116,47 @@ export async function POST(req: NextRequest) {
         console.error('Free order download token error:', e);
       }
 
+      // Telegram notification for free order
+      try {
+        const botToken = process.env.TELEGRAM_BOT_TOKEN;
+        const chatId = process.env.TELEGRAM_CHAT_ID;
+        if (botToken && chatId) {
+          const products = orderItems.map((i: any) => i.productName).join(', ');
+          await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              chat_id: chatId,
+              text: `🎁 <b>FREE ORDER</b> (coupon: ${validatedCoupon})\n\n📧 ${email}\n📦 ${products}`,
+              parse_mode: 'HTML',
+            }),
+          });
+        }
+      } catch { /* best effort */ }
+
+      // Update customer record
+      try {
+        const { createServerClient: sc } = await import('@/lib/supabase');
+        const sbc = sc();
+        const { data: cust } = await sbc.from('customers').select('*').eq('email', email.toLowerCase()).single();
+        if (cust) {
+          await sbc.from('customers').update({
+            order_count: (cust.order_count || 0) + 1,
+            last_order_at: new Date().toISOString(),
+          }).eq('email', email.toLowerCase());
+        } else {
+          await sbc.from('customers').insert({
+            email: email.toLowerCase(), name: name || '', total_spent: 0,
+            order_count: 1, first_order_at: new Date().toISOString(), last_order_at: new Date().toISOString(),
+          });
+        }
+        // Auto-subscribe to newsletter
+        await sbc.from('newsletter_subscribers').upsert(
+          { email: email.toLowerCase(), source: 'purchase', is_active: true },
+          { onConflict: 'email' }
+        );
+      } catch { /* best effort */ }
+
       return NextResponse.json({ orderId, total: 0, free: true });
     }
 
