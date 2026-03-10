@@ -2,7 +2,7 @@ import { Resend } from "resend";
 import { getProduct } from "@/lib/products";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://gwds.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://gwds-website.vercel.app";
 
 interface Order {
   id: string;
@@ -176,7 +176,7 @@ function renderQuickStart(productIds: string[]): string {
       "Download the ZIP file above",
       "Extract to your project directory",
       "Read the included <code style='background:#1A1A2E;padding:2px 6px;border-radius:4px;font-family:\"JetBrains Mono\",monospace;font-size:12px;color:#A78BFA;'>README.md</code> for setup instructions",
-      "Check the docs at <a href='${SITE_URL}/docs' style='color:#8B5CF6;text-decoration:none;'>gwds.app/docs</a>",
+      "Check the docs at <a href='${SITE_URL}/docs' style='color:#8B5CF6;text-decoration:none;'>gwds-website.vercel.app/docs</a>",
     ];
   }
 
@@ -427,7 +427,7 @@ export async function sendOrderConfirmation(
                       </tr>
                     </table>
                     <p style="margin: 16px 0 0; font-size: 11px; color: #334155;">
-                      You're receiving this because you made a purchase at gwds.app
+                      You're receiving this because you made a purchase at gwds-website.vercel.app
                     </p>
                   </td>
                 </tr>
@@ -476,7 +476,7 @@ Need help? Reply to this email or contact gammawavesdesign@gmail.com
 
 ---
 © ${new Date().getFullYear()} Gamma Waves Design Studio
-gwds.app
+gwds-website.vercel.app
   `.trim();
 
   try {
@@ -499,3 +499,4 @@ gwds.app
     throw error;
   }
 }
+
