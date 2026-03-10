@@ -259,14 +259,18 @@ export async function consumeDownload(token: string): Promise<boolean> {
 export interface Coupon {
   id: string;
   code: string;
+  description: string;
   discount_type: 'percentage' | 'fixed';
   discount_value: number;
-  max_uses?: number;
+  max_uses?: number | null;
   used_count: number;
   min_order: number;
-  expires_at?: string;
+  applies_to?: string[] | null;
+  excludes?: string[] | null;
+  expires_at?: string | null;
   is_active: boolean;
   created_at: string;
+  updated_at: string;
 }
 
 export async function validateCoupon(code: string, orderTotal: number): Promise<{ valid: boolean; coupon?: Coupon; discount?: number; error?: string }> {
@@ -290,6 +294,87 @@ export async function validateCoupon(code: string, orderTotal: number): Promise<
     : Math.min(coupon.discount_value, orderTotal);
 
   return { valid: true, coupon, discount };
+}
+
+export async function getAllCoupons(): Promise<Coupon[]> {
+  if (await useSupabase()) {
+    const sb = getSupabase()!;
+    const { data } = await sb.from('gwds_coupons').select('*').order('created_at', { ascending: false });
+    return data || [];
+  }
+  return readJson<Coupon[]>('coupons.json', []);
+}
+
+export async function getCoupon(id: string): Promise<Coupon | null> {
+  if (await useSupabase()) {
+    const sb = getSupabase()!;
+    const { data } = await sb.from('gwds_coupons').select('*').eq('id', id).single();
+    return data;
+  }
+  const all = await readJson<Coupon[]>('coupons.json', []);
+  return all.find(c => c.id === id) || null;
+}
+
+export async function createCoupon(coupon: Omit<Coupon, 'id' | 'used_count' | 'created_at' | 'updated_at'>): Promise<Coupon> {
+  const row = { ...coupon, code: coupon.code.toUpperCase(), used_count: 0 };
+  if (await useSupabase()) {
+    const sb = getSupabase()!;
+    const { data, error } = await sb.from('gwds_coupons').insert(row).select().single();
+    if (error) throw new Error(error.message);
+    return data!;
+  }
+  const all = await readJson<Coupon[]>('coupons.json', []);
+  const full: Coupon = { ...row, id: crypto.randomUUID(), created_at: new Date().toISOString(), updated_at: new Date().toISOString() } as Coupon;
+  all.push(full);
+  await writeJson('coupons.json', all);
+  return full;
+}
+
+export async function updateCoupon(id: string, update: Partial<Coupon>): Promise<Coupon | null> {
+  if (update.code) update.code = update.code.toUpperCase();
+  const patch = { ...update, updated_at: new Date().toISOString() };
+  if (await useSupabase()) {
+    const sb = getSupabase()!;
+    const { data, error } = await sb.from('gwds_coupons').update(patch).eq('id', id).select().single();
+    if (error) throw new Error(error.message);
+    return data;
+  }
+  const all = await readJson<Coupon[]>('coupons.json', []);
+  const idx = all.findIndex(c => c.id === id);
+  if (idx < 0) return null;
+  all[idx] = { ...all[idx], ...patch };
+  await writeJson('coupons.json', all);
+  return all[idx];
+}
+
+export async function deleteCoupon(id: string): Promise<boolean> {
+  if (await useSupabase()) {
+    const sb = getSupabase()!;
+    const { error } = await sb.from('gwds_coupons').delete().eq('id', id);
+    return !error;
+  }
+  const all = await readJson<Coupon[]>('coupons.json', []);
+  const filtered = all.filter(c => c.id !== id);
+  if (filtered.length === all.length) return false;
+  await writeJson('coupons.json', filtered);
+  return true;
+}
+
+export async function incrementCouponUsage(code: string): Promise<void> {
+  if (await useSupabase()) {
+    const sb = getSupabase()!;
+    const { data: coupon } = await sb.from('gwds_coupons').select('used_count').eq('code', code.toUpperCase()).single();
+    if (coupon) {
+      await sb.from('gwds_coupons').update({ used_count: (coupon.used_count || 0) + 1 }).eq('code', code.toUpperCase());
+    }
+    return;
+  }
+  const all = await readJson<Coupon[]>('coupons.json', []);
+  const idx = all.findIndex(c => c.code === code.toUpperCase());
+  if (idx >= 0) {
+    all[idx].used_count += 1;
+    await writeJson('coupons.json', all);
+  }
 }
 
 // ─── Admin Stats ───

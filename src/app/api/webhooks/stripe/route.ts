@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createServerClient } from "@/lib/supabase";
 import { sendOrderConfirmation } from "@/lib/email";
+import { incrementCouponUsage } from "@/lib/store-db";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2024-12-18.acacia",
@@ -172,6 +173,15 @@ export async function POST(req: NextRequest) {
             productName: item?.description || productId,
             downloadUrl,
           });
+        }
+      }
+
+      // Increment coupon usage if one was applied
+      if (session.metadata?.couponCode) {
+        try {
+          await incrementCouponUsage(session.metadata.couponCode);
+        } catch (couponErr) {
+          console.error("Failed to increment coupon usage:", couponErr);
         }
       }
 
