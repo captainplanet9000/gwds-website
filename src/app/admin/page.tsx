@@ -98,7 +98,7 @@ export default function AdminDashboard() {
           <span style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 800 }}>
             GWDS Admin
           </span>
-          {['Dashboard', 'Products', 'Orders', 'Customers', 'Coupons'].map(item => (
+          {['Dashboard', 'Products', 'Orders', 'Customers', 'Coupons', 'Subscribers', 'Messages'].map(item => (
             <Link
               key={item}
               href={item === 'Dashboard' ? '/admin' : `/admin/${item.toLowerCase()}`}
@@ -205,4 +205,5 @@ export default function AdminDashboard() {
     </div>
   );
 }
+
 

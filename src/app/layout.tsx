@@ -7,6 +7,7 @@ import ScrollProgress from "@/components/ScrollProgress";
 import { LenisProvider } from "@/lib/lenis";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { OrganizationJsonLd } from "@/components/JsonLd";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gwds.app";
 
@@ -158,6 +159,7 @@ export default function RootLayout({
           </AuthProvider>
         </LenisProvider>
         <Analytics />
+          <OrganizationJsonLd />
         <SpeedInsights />
       </body>
     </html>

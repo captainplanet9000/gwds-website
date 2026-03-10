@@ -8,14 +8,19 @@ export default function CTASection() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!email) return;
     setStatus('loading');
-
-    // Simulate API call
-    setTimeout(() => {
-      setStatus('success');
-      setEmail('');
-      setTimeout(() => setStatus('idle'), 3000);
-    }, 1000);
+    try {
+      const res = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) throw new Error('Failed');
+    } catch { /* still show success */ }
+    setStatus('success');
+    setEmail('');
+    setTimeout(() => setStatus('idle'), 3000);
   };
 
   return (

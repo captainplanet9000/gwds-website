@@ -23,7 +23,7 @@ export default function AdminOrders() {
       }}>
         <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
           <Link href="/admin" style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 800, textDecoration: 'none', color: '#E8E8E8' }}>GWDS Admin</Link>
-          {['Dashboard', 'Products', 'Orders', 'Customers', 'Coupons'].map(item => (
+          {['Dashboard', 'Products', 'Orders', 'Customers', 'Coupons', 'Subscribers', 'Messages'].map(item => (
             <Link key={item} href={item === 'Dashboard' ? '/admin' : `/admin/${item.toLowerCase()}`}
               style={{ fontSize: '0.78rem', color: item === 'Orders' ? '#E8E8E8' : '#888', textDecoration: 'none', fontFamily: 'var(--font-body)', fontWeight: item === 'Orders' ? 700 : 500 }}>
               {item}
@@ -88,4 +88,5 @@ export default function AdminOrders() {
     </div>
   );
 }
+
 
