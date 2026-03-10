@@ -196,6 +196,7 @@ export default function Footer() {
               { label: 'Privacy', href: '/privacy' },
               { label: 'Terms', href: '/terms' },
               { label: 'Refunds', href: '/refunds' },
+              { label: 'Request Refund', href: '/refund-request' },
               { label: 'Disclaimer', href: '/disclaimer' },
             ].map(({ label, href }) => (
               <Link

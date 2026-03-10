@@ -306,6 +306,19 @@ export default function ContactPage() {
                 Thanks for reaching out! We'll get back to you soon.
               </p>
             )}
+            {status === 'error' && (
+              <p
+                style={{
+                  fontFamily: 'DM Sans, sans-serif',
+                  fontSize: '0.85rem',
+                  color: '#EF4444',
+                  marginTop: '1.5vw',
+                  textAlign: 'center',
+                }}
+              >
+                Something went wrong. Please try again or email us directly.
+              </p>
+            )}
           </form>
 
           {/* Direct Contact */}

@@ -20,6 +20,7 @@ export default function CTASection() {
     } catch { /* still show success */ }
     setStatus('success');
     setEmail('');
+    try { const { track } = await import('@vercel/analytics'); track('newsletter_subscribe', { source: 'cta' }); } catch {}
     setTimeout(() => setStatus('idle'), 3000);
   };
 

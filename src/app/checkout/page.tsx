@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useCart } from '@/contexts/CartContext';
+import { track } from '@vercel/analytics';
 
 export default function CheckoutPage() {
   const { state, dispatch, totalPrice, totalItems } = useCart();
@@ -39,6 +40,7 @@ export default function CheckoutPage() {
       });
       const data = await res.json();
       if (data.valid) {
+        track('coupon_applied', { code: data.coupon.code, discount_type: data.coupon.discount_type, discount_value: data.coupon.discount_value });
         setAppliedCoupon({
           code: data.coupon.code,
           discount: data.discount,
@@ -112,13 +114,16 @@ export default function CheckoutPage() {
 
       if (data.free) {
         // Free order (100% coupon) — go straight to success
+        track('purchase', { value: 0, coupon: couponCode || undefined, items: state.items.length });
         dispatch({ type: 'CLEAR_CART' });
         router.push(`/checkout/success?orderId=${data.orderId}`);
       } else if (data.stripeUrl) {
         // Redirect to Stripe Checkout
+        track('checkout_start', { value: finalTotal / 100, items: state.items.length, coupon: couponCode || undefined });
         window.location.href = data.stripeUrl;
       } else if (data.orderId) {
         // Direct completion
+        track('purchase', { value: finalTotal / 100, items: state.items.length });
         dispatch({ type: 'CLEAR_CART' });
         router.push(`/checkout/success?orderId=${data.orderId}`);
       } else {
