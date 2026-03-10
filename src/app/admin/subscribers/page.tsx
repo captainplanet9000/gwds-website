@@ -30,6 +30,24 @@ export default function SubscribersAdmin() {
     </div>
   );
 
+  const [showBroadcast, setShowBroadcast] = useState(false);
+  const [bcSubject, setBcSubject] = useState('');
+  const [bcContent, setBcContent] = useState('');
+  const [bcStatus, setBcStatus] = useState<'idle' | 'sending' | 'done'>('idle');
+  const [bcResult, setBcResult] = useState<any>(null);
+
+  const sendBroadcast = async (test: boolean) => {
+    if (!bcSubject || !bcContent) return;
+    setBcStatus('sending');
+    const res = await fetch('/api/admin/broadcast', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ subject: bcSubject, html: bcContent, test }),
+    });
+    const data = await res.json();
+    setBcResult(data);
+    setBcStatus('done');
+  };
+
   const active = subscribers.filter(s => s.is_active);
   const inactive = subscribers.filter(s => !s.is_active);
 
@@ -60,6 +78,45 @@ export default function SubscribersAdmin() {
             </div>
           </div>
         </div>
+
+        {/* Broadcast */}
+        <div style={{ marginBottom: 24, display: 'flex', gap: 12 }}>
+          <button onClick={() => setShowBroadcast(!showBroadcast)}
+            style={{ padding: '10px 20px', borderRadius: 8, border: 'none', background: '#8B5CF6', color: '#fff', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer' }}>
+            {showBroadcast ? 'Hide' : '📧 Send Broadcast'}
+          </button>
+        </div>
+        {showBroadcast && (
+          <div style={{ marginBottom: 24, padding: 24, borderRadius: 12, background: '#0a0a0a', border: '1px solid #1a1a1a' }}>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 700, marginBottom: 16 }}>Email Broadcast</h2>
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ display: 'block', fontSize: '0.7rem', color: '#666', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Subject</label>
+              <input value={bcSubject} onChange={e => setBcSubject(e.target.value)} placeholder="New product launch!"
+                style={{ width: '100%', padding: '12px 14px', background: '#111', border: '1px solid #222', borderRadius: 8, color: '#E8E8E8', fontSize: '0.85rem', outline: 'none' }} />
+            </div>
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ display: 'block', fontSize: '0.7rem', color: '#666', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Content (HTML)</label>
+              <textarea value={bcContent} onChange={e => setBcContent(e.target.value)} rows={8}
+                placeholder='<h1 style="color:#8B5CF6;">Big News!</h1><p>We just launched something amazing...</p>'
+                style={{ width: '100%', padding: '12px 14px', background: '#111', border: '1px solid #222', borderRadius: 8, color: '#E8E8E8', fontSize: '0.85rem', outline: 'none', resize: 'vertical', fontFamily: 'var(--font-mono, monospace)' }} />
+            </div>
+            {bcResult && (
+              <div style={{ marginBottom: 16, padding: '10px 14px', borderRadius: 8, background: bcResult.error ? '#1a0a0a' : '#10B98110', border: `1px solid ${bcResult.error ? '#EF444440' : '#10B98130'}`, fontSize: '0.82rem', color: bcResult.error ? '#EF4444' : '#10B981' }}>
+                {bcResult.error || `Sent ${bcResult.sent}/${bcResult.total} emails (${bcResult.failed} failed)`}
+              </div>
+            )}
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button onClick={() => sendBroadcast(true)} disabled={bcStatus === 'sending' || !bcSubject || !bcContent}
+                style={{ padding: '10px 20px', borderRadius: 8, border: '1px solid #333', background: 'transparent', color: '#ccc', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer' }}>
+                {bcStatus === 'sending' ? 'Sending...' : '🧪 Send Test (to you)'}
+              </button>
+              <button onClick={() => { if (confirm(`Send to ALL ${active.length} subscribers?`)) sendBroadcast(false); }} disabled={bcStatus === 'sending' || !bcSubject || !bcContent}
+                style={{ padding: '10px 20px', borderRadius: 8, border: 'none', background: '#10B981', color: '#fff', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer' }}>
+                📨 Send to All ({active.length})
+              </button>
+            </div>
+          </div>
+        )}
 
         <div style={{ padding: 24, borderRadius: 12, background: '#0a0a0a', border: '1px solid #1a1a1a' }}>
           {loading ? <p style={{ color: '#555' }}>Loading...</p> : subscribers.length === 0 ? <p style={{ color: '#555' }}>No subscribers yet</p> : (
