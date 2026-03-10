@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getProduct } from '@/lib/products';
+import { validateCoupon, incrementCouponUsage } from '@/lib/store-db';
 
 // Stripe import — works if STRIPE_SECRET_KEY is set
 let stripe: any = null;
@@ -33,24 +34,119 @@ export async function POST(req: NextRequest) {
       };
     });
 
-    const total = orderItems.reduce(
+    const subtotal = orderItems.reduce(
       (sum: number, i: { price: number; quantity: number }) => sum + i.price * i.quantity,
       0
     );
 
+    // Validate coupon if provided
+    let discount = 0;
+    let validatedCoupon: string | undefined;
+    if (couponCode) {
+      const couponResult = await validateCoupon(couponCode, subtotal);
+      if (!couponResult.valid) {
+        return NextResponse.json({ error: couponResult.error || 'Invalid coupon' }, { status: 400 });
+      }
+      discount = couponResult.discount || 0;
+      validatedCoupon = couponResult.coupon?.code;
+    }
+
+    const total = Math.max(0, Math.round((subtotal - discount) * 100) / 100);
     const orderId = `GWDS-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
 
-    // Try Stripe Checkout
+    // If total is $0 (100% coupon or free items), complete order immediately
+    if (total === 0) {
+      await saveOrder({
+        orderId,
+        email,
+        name,
+        items: orderItems,
+        total: 0,
+        subtotal,
+        discount,
+        couponCode: validatedCoupon,
+        status: 'completed',
+        createdAt: new Date().toISOString(),
+      });
+
+      // Increment coupon usage
+      if (validatedCoupon) await incrementCouponUsage(validatedCoupon);
+
+      // Create download tokens for free orders
+      try {
+        const { createServerClient } = await import('@/lib/supabase');
+        const sb = createServerClient();
+        
+        // Find the order we just created
+        const { data: order } = await sb.from('orders')
+          .select('id')
+          .eq('customer_email', email)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single();
+
+        if (order) {
+          const productIds = orderItems.map((i: any) => i.productId);
+          for (const productId of productIds) {
+            await sb.from('downloads').insert({
+              order_id: order.id,
+              product_id: productId,
+              download_token: crypto.randomUUID(),
+              max_downloads: 999999,
+              downloaded_count: 0,
+              expires_at: null,
+            });
+          }
+
+          // Send confirmation email
+          try {
+            const { sendOrderConfirmation } = await import('@/lib/email');
+            const { data: downloads } = await sb.from('downloads').select('*').eq('order_id', order.id);
+            const downloadLinks = (downloads || []).map((dl: any) => ({
+              productId: dl.product_id,
+              productName: orderItems.find((i: any) => i.productId === dl.product_id)?.productName || dl.product_id,
+              downloadUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/api/downloads/${order.id}/${dl.product_id}?token=${dl.download_token}`,
+            }));
+            await sendOrderConfirmation(email, { ...order, customer_name: name || null, total_cents: 0, created_at: new Date().toISOString() }, downloadLinks);
+          } catch (emailErr) {
+            console.error('Failed to send free order email:', emailErr);
+          }
+        }
+      } catch (e) {
+        console.error('Free order download token error:', e);
+      }
+
+      return NextResponse.json({ orderId, total: 0, free: true });
+    }
+
+    // Try Stripe Checkout for paid orders
     const stripeClient = await getStripe();
-    if (stripeClient && total > 0) {
+    if (stripeClient) {
+      // When coupon applies partial discount, use price_data with adjusted prices
+      const discountRatio = discount > 0 ? (subtotal - discount) / subtotal : 1;
+
       const lineItems = orderItems
         .filter((i: any) => i.price > 0)
         .map((i: any) => {
-          // Use Stripe price ID if available (pre-created in Stripe dashboard)
+          const adjustedPrice = Math.round(i.price * discountRatio * 100);
+          // If coupon applied, use price_data with adjusted amount (can't mix with pre-created prices)
+          if (discount > 0) {
+            return {
+              price_data: {
+                currency: 'usd',
+                product_data: {
+                  name: `${i.emoji} ${i.productName}`,
+                  description: validatedCoupon ? `Coupon ${validatedCoupon} applied` : 'GWDS Digital Product',
+                },
+                unit_amount: adjustedPrice,
+              },
+              quantity: i.quantity,
+            };
+          }
+          // No discount — use Stripe price ID if available
           if (i.stripePriceId) {
             return { price: i.stripePriceId, quantity: i.quantity };
           }
-          // Fallback: create price on the fly
           return {
             price_data: {
               currency: 'usd',
@@ -73,6 +169,9 @@ export async function POST(req: NextRequest) {
           customerName: name || '',
           items: JSON.stringify(items),
           product_ids: items.map((i: any) => i.productId).join(','),
+          couponCode: validatedCoupon || '',
+          discount: discount.toString(),
+          subtotal: subtotal.toString(),
         },
         success_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3457'}/checkout/success?orderId=${orderId}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3457'}/checkout`,
@@ -85,6 +184,9 @@ export async function POST(req: NextRequest) {
         name,
         items: orderItems,
         total,
+        subtotal,
+        discount,
+        couponCode: validatedCoupon,
         status: 'pending',
         stripeSessionId: session.id,
         createdAt: new Date().toISOString(),
@@ -93,14 +195,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ stripeUrl: session.url, orderId });
     }
 
-    // No Stripe — save order directly (free items or test mode)
+    // No Stripe and not free
     await saveOrder({
       orderId,
       email,
       name,
       items: orderItems,
       total,
-      status: total === 0 ? 'completed' : 'pending_payment',
+      subtotal,
+      discount,
+      couponCode: validatedCoupon,
+      status: 'pending_payment',
       createdAt: new Date().toISOString(),
     });
 

@@ -31,7 +31,7 @@ export default function AdminProducts() {
           <Link href="/admin" style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 800, textDecoration: 'none', color: '#E8E8E8' }}>
             GWDS Admin
           </Link>
-          {['Dashboard', 'Products', 'Orders', 'Customers'].map(item => (
+          {['Dashboard', 'Products', 'Orders', 'Customers', 'Coupons'].map(item => (
             <Link
               key={item}
               href={item === 'Dashboard' ? '/admin' : `/admin/${item.toLowerCase()}`}
@@ -176,3 +176,4 @@ export default function AdminProducts() {
     </div>
   );
 }
+
