@@ -18,3 +18,8 @@ CREATE TABLE IF NOT EXISTS gwds_coupons (
 
 CREATE INDEX IF NOT EXISTS idx_gwds_coupons_code ON gwds_coupons(code);
 CREATE INDEX IF NOT EXISTS idx_gwds_coupons_active ON gwds_coupons(is_active);
+
+-- Add coupon tracking columns to orders table
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS coupon_code TEXT DEFAULT NULL;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS discount_cents INTEGER DEFAULT 0;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS subtotal_cents INTEGER DEFAULT 0;

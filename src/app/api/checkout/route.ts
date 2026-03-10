@@ -223,13 +223,20 @@ async function saveOrder(order: any) {
     const sb = createServerClient();
 
     // Insert order into our schema
-    const { data: orderRow, error } = await sb.from('orders').insert({
+    const insertData: any = {
       stripe_session_id: order.stripeSessionId || `local-${order.orderId}`,
       customer_email: order.email,
       customer_name: order.name,
       total_cents: Math.round(order.total * 100),
       status: order.status,
-    }).select().single();
+    };
+
+    // Add coupon tracking if present
+    if (order.couponCode) insertData.coupon_code = order.couponCode;
+    if (order.discount) insertData.discount_cents = Math.round(order.discount * 100);
+    if (order.subtotal) insertData.subtotal_cents = Math.round(order.subtotal * 100);
+
+    const { data: orderRow, error } = await sb.from('orders').insert(insertData).select().single();
 
     if (error) {
       console.error('Supabase order insert error:', error.message);
@@ -244,9 +251,11 @@ async function saveOrder(order: any) {
         quantity: item.quantity || 1,
         price_cents: Math.round((item.price || 0) * 100),
       }));
-      await sb.from('order_items').insert(items).catch((e: any) => 
-        console.error('Order items insert error:', e.message)
-      );
+      try {
+        await sb.from('order_items').insert(items);
+      } catch (e: any) {
+        console.error('Order items insert error:', e.message);
+      }
     }
   } catch (e: any) {
     console.error('Save order error:', e.message);
