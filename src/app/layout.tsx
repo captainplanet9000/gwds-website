@@ -8,6 +8,7 @@ import { LenisProvider } from "@/lib/lenis";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { OrganizationJsonLd } from "@/components/JsonLd";
+import TrackingPixels from "@/components/TrackingPixels";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gwds-website.vercel.app";
 
@@ -158,6 +159,7 @@ export default function RootLayout({
             </CartProvider>
           </AuthProvider>
         </LenisProvider>
+        <TrackingPixels />
         <Analytics />
           <OrganizationJsonLd />
         <SpeedInsights />
