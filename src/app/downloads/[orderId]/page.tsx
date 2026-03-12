@@ -62,7 +62,8 @@ export default function DownloadsPage({ params }: { params: Promise<{ orderId: s
                     <button
                       onClick={() => {
                         const tokenParam = item.downloadToken ? `?token=${item.downloadToken}` : '';
-                        window.open(`/api/downloads/${orderId}/${item.productId}${tokenParam}`, '_blank');
+                        // Use the database UUID (order.id), not the URL param (GWDS-* string)
+                        window.open(`/api/downloads/${order.id}/${item.productId}${tokenParam}`, '_blank');
                       }}
                       style={{
                         padding: '10px 20px', borderRadius: 6, border: 'none',
