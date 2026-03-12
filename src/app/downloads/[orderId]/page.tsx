@@ -96,10 +96,9 @@ export default function DownloadsPage({ params }: { params: Promise<{ orderId: s
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                   {[
                     { step: '1', title: 'Extract the zip', desc: 'Unzip the downloaded file to a folder on your computer.' },
-                    { step: '2', title: 'Install dependencies', desc: 'Open a terminal in the folder and run: npm install' },
-                    { step: '3', title: 'Configure your API keys', desc: 'Copy .env.example to .env.local and fill in your Hyperliquid, Supabase, and OpenRouter keys.' },
-                    { step: '4', title: 'Set up the database', desc: 'Create a free Supabase project and run the SQL migration from supabase/migrations/001_initial.sql in the SQL Editor.' },
-                    { step: '5', title: 'Start the dashboard', desc: 'Run: npm run dev — then open localhost:3000. The Setup Wizard will guide you through the rest.' },
+                    { step: '2', title: 'Run the setup script', desc: 'Double-click QUICK-START.bat (Windows) or QUICK-START.command (Mac). It handles everything automatically.' },
+                    { step: '3', title: 'Configure API keys', desc: 'The Setup Wizard opens in your browser and walks you through connecting Hyperliquid, Supabase, and your AI provider.' },
+                    { step: '4', title: 'Start trading', desc: 'Your dashboard is ready. Create agents, set goals, and let them trade.' },
                   ].map((item) => (
                     <div key={item.step} style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
                       <span style={{
@@ -121,6 +120,46 @@ export default function DownloadsPage({ params }: { params: Promise<{ orderId: s
                     </div>
                   ))}
                 </div>
+
+                {/* Plugin Installation */}
+                <div style={{ marginTop: 28, paddingTop: 20, borderTop: '1px solid #1a1a1a' }}>
+                  <h3 style={{ fontSize: '0.92rem', fontWeight: 700, color: '#E8E8E8', fontFamily: 'var(--font-display)', marginBottom: 12 }}>
+                    Installing a Plugin
+                  </h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {[
+                      'Extract the plugin zip',
+                      'Copy the extracted folder into your dashboard\'s plugins/ directory',
+                      'Restart the dashboard — the plugin loads automatically',
+                    ].map((text, i) => (
+                      <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                        <span style={{ fontSize: '0.75rem', color: '#8B5CF6', fontWeight: 700, minWidth: 16 }}>{i + 1}.</span>
+                        <span style={{ fontSize: '0.78rem', color: '#777', fontFamily: 'var(--font-body)' }}>{text}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Extension Installation */}
+                <div style={{ marginTop: 20, paddingTop: 20, borderTop: '1px solid #1a1a1a' }}>
+                  <h3 style={{ fontSize: '0.92rem', fontWeight: 700, color: '#E8E8E8', fontFamily: 'var(--font-display)', marginBottom: 12 }}>
+                    Installing an Extension
+                  </h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {[
+                      'Extract the extension zip',
+                      'Run install.bat (Windows) or bash install.command (Mac)',
+                      'Point it to your dashboard folder when prompted',
+                      'Restart the dashboard — new features appear in the sidebar',
+                    ].map((text, i) => (
+                      <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                        <span style={{ fontSize: '0.75rem', color: '#8B5CF6', fontWeight: 700, minWidth: 16 }}>{i + 1}.</span>
+                        <span style={{ fontSize: '0.78rem', color: '#777', fontFamily: 'var(--font-body)' }}>{text}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
                 <p style={{
                   marginTop: 20, fontSize: '0.75rem', color: '#555',
                   fontFamily: 'var(--font-body)', lineHeight: 1.5,

@@ -30,7 +30,7 @@ export default function SetupGuidePage() {
             Setup Guide
           </h1>
           <p style={{ fontSize: '0.95rem', color: '#777', fontFamily: 'var(--font-body)', lineHeight: 1.7, marginBottom: 48 }}>
-            Everything you need to get your GWDS product running. Most templates are ready in under 10 minutes.
+            Everything you need to get your GWDS product running. Most products are ready in under 5 minutes with the QUICK-START script.
           </p>
 
           {/* Prerequisites */}
@@ -69,41 +69,29 @@ export default function SetupGuidePage() {
               {[
                 {
                   step: '1',
-                  title: 'Extract and install',
-                  code: 'cd ai-trading-dashboard\nnpm install',
-                  note: 'Dependencies install automatically. Warnings about peer deps are safe to ignore.',
+                  title: 'Extract and run',
+                  code: 'Double-click QUICK-START.bat (Windows) or QUICK-START.command (Mac)',
+                  note: 'The script checks for Node.js, installs dependencies, creates your config file, and opens the dashboard automatically. If you prefer manual setup, run: npm install && npm run dev',
                 },
                 {
                   step: '2',
-                  title: 'Create your environment file',
-                  code: 'cp .env.example .env.local',
-                  note: 'Open .env.local in your editor. Each variable has a comment explaining what it does.',
-                },
-                {
-                  step: '3',
-                  title: 'Get your API keys',
-                  note: null,
+                  title: 'Configure your API keys',
+                  note: 'The Setup Wizard opens at localhost:3000 and walks you through each key. You\'ll need:',
                   list: [
-                    { name: 'Hyperliquid', url: 'https://app.hyperliquid.xyz/API', desc: 'Create an API wallet (trade-only, no withdrawal access)' },
+                    { name: 'Hyperliquid', url: 'https://app.hyperliquid.xyz/API', desc: 'Create an API wallet (trade-only, can\'t withdraw)' },
                     { name: 'Supabase', url: 'https://supabase.com', desc: 'Create a free project → Settings → API → get URL + keys' },
                     { name: 'OpenRouter', url: 'https://openrouter.ai', desc: 'Sign up → get API key (powers AI agent decisions)' },
                   ],
                 },
                 {
-                  step: '4',
+                  step: '3',
                   title: 'Set up the database',
-                  note: 'Go to your Supabase project → SQL Editor → paste the contents of supabase/migrations/001_initial.sql → click Run. This creates all the tables your dashboard needs.',
+                  note: 'Go to your Supabase project → SQL Editor → paste the contents of supabase/migrations/001_initial.sql → click Run.',
                 },
                 {
-                  step: '5',
-                  title: 'Start the dashboard',
-                  code: 'npm run dev',
-                  note: 'Open http://localhost:3000 — the Setup Wizard will verify your configuration and walk you through final steps.',
-                },
-                {
-                  step: '6',
-                  title: 'Deploy to Vercel (optional)',
-                  note: 'Push to GitHub and connect to Vercel, or use the Deploy button in the README. Add your environment variables in the Vercel dashboard.',
+                  step: '4',
+                  title: 'Start trading',
+                  note: 'Your dashboard is running. Create agents, configure strategies, set risk limits, and let them trade.',
                 },
               ].map((item) => (
                 <div key={item.step}>
@@ -179,6 +167,53 @@ export default function SetupGuidePage() {
             </ol>
           </section>
 
+          {/* Plugin Installation */}
+          <section style={{ marginBottom: 48, padding: 32, borderRadius: 12, background: '#0a0a0a', border: '1px solid #1a1a1a' }}>
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 24 }}>
+              <span style={{ fontSize: '1.5rem' }}>🧩</span>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', fontWeight: 700, color: '#E8E8E8' }}>
+                Installing Plugins
+              </h2>
+            </div>
+
+            <div style={{ marginBottom: 28 }}>
+              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 600, color: '#E8E8E8', marginBottom: 12 }}>
+                Strategy Plugins
+              </h3>
+              <ol style={{ paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {[
+                  'Download the plugin zip from the GWDS Store',
+                  'Extract it into your dashboard\'s plugins/ folder',
+                  'Restart the dashboard',
+                  'The new strategy appears in Settings → Plugins and is available when creating agents',
+                ].map((text, i) => (
+                  <li key={i} style={{ fontSize: '0.82rem', color: '#999', fontFamily: 'var(--font-body)', lineHeight: 1.6 }}>
+                    {text}
+                  </li>
+                ))}
+              </ol>
+            </div>
+
+            <div>
+              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 600, color: '#E8E8E8', marginBottom: 12 }}>
+                Extensions (Flash Loans, Meme Trading)
+              </h3>
+              <ol style={{ paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {[
+                  'Download the extension zip from the GWDS Store',
+                  'Extract it anywhere on your computer',
+                  'Run the included install script: install.bat (Windows) or bash install.command (Mac)',
+                  'Point it to your dashboard folder when prompted',
+                  'Restart the dashboard — new pages appear in the sidebar',
+                ].map((text, i) => (
+                  <li key={i} style={{ fontSize: '0.82rem', color: '#999', fontFamily: 'var(--font-body)', lineHeight: 1.6 }}>
+                    {text}
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </section>
+
           {/* FAQ */}
           <section style={{ marginBottom: 48 }}>
             <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem', fontWeight: 700, color: '#E8E8E8', marginBottom: 24 }}>
@@ -186,8 +221,8 @@ export default function SetupGuidePage() {
             </h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {[
-                { q: 'Do I need coding experience?', a: 'For templates (Trading Dashboard, SaaS Starter, etc.), basic familiarity with the command line helps. The setup wizard handles most configuration. For prompt packs and wallpapers, no technical skills needed.' },
-                { q: 'What if npm install fails?', a: 'The .npmrc file included in the project handles most dependency issues automatically. If you still have trouble, make sure you have Node.js 18 or later installed.' },
+                { q: 'Do I need coding experience?', a: 'No. Double-click the QUICK-START script and follow the Setup Wizard. For plugins, just unzip and drop into the plugins folder.' },
+                { q: 'What if npm install fails?', a: 'The QUICK-START script handles installation automatically. If it fails, make sure you have Node.js 18+ installed from nodejs.org.' },
                 { q: 'Is Supabase free?', a: 'Yes. The free tier includes 500MB of database storage and 1GB of file storage — more than enough to run the dashboard.' },
                 { q: 'Can I deploy this publicly?', a: 'Yes. The dashboard is designed to deploy to Vercel (free tier works). You can also self-host on any Node.js-compatible platform.' },
                 { q: 'Do I get updates?', a: 'Yes — all purchases include 1 year of free updates. You\'ll receive an email when new versions are available.' },
