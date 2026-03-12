@@ -53,7 +53,11 @@ export default function AdminDashboard() {
               style={{ fontSize: '0.78rem', color: item === 'Dashboard' ? '#8B5CF6' : '#888', textDecoration: 'none', fontFamily: 'var(--font-body)', fontWeight: item === 'Dashboard' ? 700 : 500 }}>{item}</Link>
           ))}
         </div>
-        <Link href="/" style={{ fontSize: '0.72rem', color: '#555', textDecoration: 'none' }}>← Back to site</Link>
+        <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+          <Link href="/" style={{ fontSize: '0.72rem', color: '#555', textDecoration: 'none' }}>← Back to site</Link>
+          <button onClick={() => { sessionStorage.removeItem('gwds-admin'); document.cookie = 'gwds-admin-session=; Max-Age=0; Path=/'; setAuthed(false); }}
+            style={{ padding: '6px 14px', borderRadius: 6, border: '1px solid #333', background: 'transparent', color: '#888', fontSize: '0.72rem', fontWeight: 600, cursor: 'pointer' }}>Logout</button>
+        </div>
       </nav>
 
       <div style={{ padding: '32px', maxWidth: 1200, margin: '0 auto' }}>
@@ -135,19 +139,33 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Links */}
-        <div style={{ marginTop: 32, display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
+        <div style={{ marginTop: 32, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
           <a href="https://dashboard.stripe.com" target="_blank" rel="noopener" style={{ ...cardStyle, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer' }}>
             <span style={{ fontSize: '1.4rem' }}>💳</span>
             <div>
-              <p style={{ fontSize: '0.85rem', fontWeight: 700, color: '#E8E8E8' }}>Stripe Dashboard</p>
-              <p style={{ fontSize: '0.72rem', color: '#555' }}>Payments, refunds, disputes</p>
+              <p style={{ fontSize: '0.85rem', fontWeight: 700, color: '#E8E8E8' }}>Stripe</p>
+              <p style={{ fontSize: '0.72rem', color: '#555' }}>Payments & refunds</p>
             </div>
           </a>
-          <a href="https://supabase.com/dashboard/project/vusjcfushwxwksfuszjv" target="_blank" rel="noopener" style={{ ...cardStyle, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer' }}>
+          <a href="https://supabase.com/dashboard/project/eglvktbuuhlyjpnoukkm" target="_blank" rel="noopener" style={{ ...cardStyle, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer' }}>
             <span style={{ fontSize: '1.4rem' }}>🗄️</span>
             <div>
-              <p style={{ fontSize: '0.85rem', fontWeight: 700, color: '#E8E8E8' }}>Supabase Dashboard</p>
-              <p style={{ fontSize: '0.72rem', color: '#555' }}>Database, auth, storage</p>
+              <p style={{ fontSize: '0.85rem', fontWeight: 700, color: '#E8E8E8' }}>Supabase</p>
+              <p style={{ fontSize: '0.72rem', color: '#555' }}>Database & storage</p>
+            </div>
+          </a>
+          <a href="https://vercel.com/civals-projects/gwds-website" target="_blank" rel="noopener" style={{ ...cardStyle, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer' }}>
+            <span style={{ fontSize: '1.4rem' }}>▲</span>
+            <div>
+              <p style={{ fontSize: '0.85rem', fontWeight: 700, color: '#E8E8E8' }}>Vercel</p>
+              <p style={{ fontSize: '0.72rem', color: '#555' }}>Deployments & logs</p>
+            </div>
+          </a>
+          <a href="https://analytics.google.com/analytics/web/#/p477789122/reports" target="_blank" rel="noopener" style={{ ...cardStyle, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer' }}>
+            <span style={{ fontSize: '1.4rem' }}>📊</span>
+            <div>
+              <p style={{ fontSize: '0.85rem', fontWeight: 700, color: '#E8E8E8' }}>Analytics</p>
+              <p style={{ fontSize: '0.72rem', color: '#555' }}>Traffic & engagement</p>
             </div>
           </a>
         </div>

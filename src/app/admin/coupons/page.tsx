@@ -163,7 +163,7 @@ export default function CouponsAdmin() {
       <nav style={{ padding: '16px 32px', borderBottom: '1px solid #1a1a1a', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
           <span style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 800 }}>GWDS Admin</span>
-          {['Dashboard', 'Products', 'Orders', 'Customers', 'Coupons', 'Subscribers', 'Messages', 'Coupons'].map(item => (
+          {['Dashboard', 'Products', 'Orders', 'Customers', 'Coupons', 'Subscribers', 'Messages'].map(item => (
             <Link key={item} href={item === 'Dashboard' ? '/admin' : `/admin/${item.toLowerCase()}`}
               style={{ fontSize: '0.78rem', color: item === 'Coupons' ? '#8B5CF6' : '#888', textDecoration: 'none', fontFamily: 'var(--font-body)', fontWeight: item === 'Coupons' ? 700 : 500 }}>
               {item}
