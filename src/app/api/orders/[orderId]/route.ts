@@ -11,28 +11,42 @@ export async function GET(
   try {
     const supabase = createServerClient();
 
-    // Get order
-    const { data: order, error: orderError } = await supabase
+    // Get order — try UUID id first, then stripe_session_id pattern (for free/coupon orders)
+    let order: any = null;
+    const { data: byId } = await supabase
       .from('orders')
       .select('*')
       .eq('id', orderId)
       .single();
 
-    if (orderError || !order) {
+    if (byId) {
+      order = byId;
+    } else {
+      // Free orders store stripe_session_id as "local-GWDS-xxx"
+      const { data: bySession } = await supabase
+        .from('orders')
+        .select('*')
+        .eq('stripe_session_id', `local-${orderId}`)
+        .single();
+      order = bySession;
+    }
+
+    if (!order) {
       return NextResponse.json({ error: 'Order not found' }, { status: 404 });
     }
 
-    // Get order items
+    // Get order items (use the actual UUID, not the URL param)
+    const dbId = order.id;
     const { data: items } = await supabase
       .from('order_items')
       .select('*')
-      .eq('order_id', orderId);
+      .eq('order_id', dbId);
 
     // Get download tokens
     const { data: downloads } = await supabase
       .from('downloads')
       .select('*')
-      .eq('order_id', orderId);
+      .eq('order_id', dbId);
 
     // Enrich items with product details and download tokens
     const enrichedItems = (items || []).map((item: any) => {
