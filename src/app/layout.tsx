@@ -99,7 +99,7 @@ const jsonLd = {
       },
       description: "AI trading tools and autonomous agents. 12 production-ready products for crypto traders who automate.",
       sameAs: [
-        "https://twitter.com/GWDSofficial",
+        "https://x.com/GWDSofficial",
         "https://github.com/captainplanet9000",
       ],
       contactPoint: {
