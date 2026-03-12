@@ -306,8 +306,8 @@ function IDESection() {
           },
           {
             icon: '\u26A1',
-            title: 'npm install \u2192 npm run dev',
-            desc: 'Clone, install dependencies, set your API keys, run. Full trading dashboard live on localhost in under 3 minutes. Deploy to Vercel when ready.',
+            title: '1-Click Setup',
+            desc: 'Double-click QUICK-START and the dashboard is running. The script installs dependencies, creates your config, and opens the browser. Deploy to Vercel when ready.',
           },
         ].map(item => (
           <motion.div

@@ -40,10 +40,14 @@ The dashboard ships with a working VWAP Volume Breakout agent that combines Volu
 
 Want more strategies? Add premium agents (Darvas Box, Elliott Wave, Heikin Ashi, Mean Reversion, Macro Sentiment) from our store. Each one plugs directly into the dashboard.
 
-**Deploy in 3 steps:**
-1. Set up a free Supabase project and run the included SQL migration
-2. Get your Hyperliquid API wallet key (trading only — can't withdraw your funds)
-3. Run \`npm run dev\` locally or deploy to Vercel — paste your keys, and you're live
+**Get running in 1 click:**
+1. Extract the zip and double-click \`QUICK-START.bat\` (Windows) or \`QUICK-START.command\` (Mac)
+
+That's it. The script installs dependencies, creates your config file, and opens the dashboard in your browser. A Setup Wizard walks you through connecting your API keys.
+
+**Or deploy to Vercel** — push to GitHub and connect to Vercel for a hosted dashboard. Add your environment variables in the Vercel dashboard.
+
+**Want to try it first?** Demo mode is enabled by default — explore the full dashboard with sample data before connecting any API keys.
 
 **What's included:**
 - VWAP + RSI trading agent — fully functional, ready to trade out of the box
@@ -55,7 +59,7 @@ Want more strategies? Add premium agents (Darvas Box, Elliott Wave, Heikin Ashi,
 - Agent health monitoring, performance scoring, and benchmarking
 - Plugin system — extend with add-on modules (Meme Trading, Flash Loans, and more)
 - Full source code (Next.js 15, TypeScript, Supabase, 2,400+ files)
-- One-click deploy to Vercel — no local setup required
+- One-click setup — double-click QUICK-START and you're running
 
 **🎨 44 Built-In Themes**
 Choose from 44 professionally designed themes — from Cyberpunk and Cosmic Night to Clean Slate and Mocha Mousse. Switch instantly or build your own.
@@ -88,7 +92,7 @@ The dashboard is fully functional on its own. When you're ready for more, add:
       "Agent health monitoring & scoring",
       "Farm orchestration & scratchpad",
       "Full TypeScript source code (2,400+ files)",
-      "One-click Vercel deploy",
+      "One-click setup (QUICK-START script included)",
       "Add more agents & extensions from store"
     ],
     techStack: ["Next.js 15", "TypeScript", "Supabase", "Hyperliquid SDK", "TailwindCSS"],
@@ -152,6 +156,8 @@ The dashboard is fully functional on its own. When you're ready for more, add:
 
 ⚠️ **Risk Warning:** Meme coin trading is extremely high-risk. Most meme coins lose most or all of their value. This software provides tools for trading — it does not guarantee profits or reduce the inherent risk of meme coin markets. You could lose your entire investment. See our [Trading Disclaimer](/disclaimer).
 
+**Installation:** Run the included \`install.bat\` (Windows) or \`bash install.command\` (Mac) — it copies everything to the right place. Restart your dashboard and the Meme Trading tabs appear in the sidebar.
+
 **Requires:** AI Trading Dashboard ($149) + Supabase + Solana RPC endpoint
 **You provide:** Your own exchange keys, wallets, capital, and risk management.`,
     price: 99,
@@ -192,7 +198,7 @@ The dashboard is fully functional on its own. When you're ready for more, add:
     requiresDashboard: true,
     name: "Flash Loan Arbitrage Engine",
     description: "Automated cross-DEX arbitrage with multi-DEX scanning (Uniswap V3, PancakeSwap V3, Camelot V3, Ramses V2), server-side auto-executor, and real-time opportunity detection. Zero collateral via Aave V3 flash loans on Arbitrum.",
-    longDescription: `🔌 **Plugin for AI Trading Dashboard** — Drop into your dashboard's \`plugins/\` folder and start finding arbitrage opportunities automatically.
+    longDescription: `🔌 **Extension for AI Trading Dashboard** — Run the install script and start finding arbitrage opportunities automatically.
 
 Borrow millions with zero collateral. Buy low on one DEX, sell high on another. Repay in the same transaction. Keep the profit — or the whole thing reverts and you lose nothing but gas.
 
@@ -222,7 +228,7 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
 
 ⚠️ **Risk Warning:** While flash loans are atomic (failed trades revert), this does NOT mean risk-free. Smart contract bugs, gas estimation errors, MEV attacks, and market manipulation can result in losses. DeFi protocols carry inherent smart contract risk. You are responsible for auditing, testing, and deploying any smart contracts. See our [Trading Disclaimer](/disclaimer).
 
-**Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.
+**Integrates with:** AI Trading Dashboard ($149) — run the included \`install.bat\` (Windows) or \`bash install.command\` (Mac) — it copies everything to the right place. Restart dashboard.
 **You provide:** Your own wallet, private keys, ETH for gas, and risk management.`,
     price: 99,
     category: "trading",
@@ -259,7 +265,7 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
     description: "Automated box breakout detection based on the Nicolas Darvas method. Identifies consolidation boxes, confirms breakouts with volume, and executes entries with trailing stops. Multi-timeframe analysis across 15m/1H/4H.",
     longDescription: `Darvas Box breakout detection framework — inspired by the Nicolas Darvas method. Multi-timeframe analysis, confidence scoring, and signal generation architecture. Full TypeScript source code.
 
-**🔌 Plugin for the AI Trading Dashboard** — drop into your dashboard's \`plugins/\` folder and restart.
+**🔌 Plugin for the AI Trading Dashboard** — unzip into your dashboard's \`plugins/\` folder and restart.
 
 **What you get:**
 - Darvas Box breakout detection algorithm (TypeScript)
@@ -277,7 +283,7 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
 
 ⚠️ *Trading involves substantial risk. Historical strategy performance does not guarantee future results. See [disclaimer](/disclaimer).*
 
-**Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
+**Integrates with:** AI Trading Dashboard ($149) — unzip into \`plugins/\` folder, restart dashboard — done.`,
     price: 199,
     category: "trading",
     emoji: "📦",
@@ -300,7 +306,7 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
     description: "AI-powered Elliott Wave counting with automatic Fibonacci extension targets. Detects impulse waves (1-5) and corrective patterns (A-B-C), validates with Fibonacci ratios, and executes entries at high-probability wave positions.",
     longDescription: `AI-powered Elliott Wave analysis architecture — wave counting, Fibonacci validation, and trade signal generation. Full TypeScript source code.
 
-**🔌 Plugin for the AI Trading Dashboard** — install into \`plugins/\` and the agent starts analyzing wave patterns.
+**🔌 Plugin for the AI Trading Dashboard** — unzip into your dashboard's \`plugins/\` folder, restart, and the agent starts analyzing wave patterns.
 
 **What you get:**
 - AI wave pattern detection framework using DeepSeek/GPT-4 analysis
@@ -318,7 +324,7 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
 
 ⚠️ *Trading involves substantial risk. No strategy guarantees profits. See [disclaimer](/disclaimer).*
 
-**Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
+**Integrates with:** AI Trading Dashboard ($149) — unzip into \`plugins/\` folder, restart dashboard — done.`,
     price: 199,
     category: "trading",
     badge: "PREMIUM",
@@ -362,7 +368,7 @@ Combines VWAP (Volume Weighted Average Price) with volume divergence analysis an
 
 ⚠️ *Trading involves substantial risk. No strategy guarantees profits. See [disclaimer](/disclaimer).*
 
-**Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
+**Integrates with:** AI Trading Dashboard ($149) — unzip into \`plugins/\` folder, restart dashboard — done.`,
     price: 199,
     category: "trading",
     badge: "PLUGIN",
@@ -407,7 +413,7 @@ Heikin Ashi candles filter market noise to reveal the underlying trend. This age
 
 ⚠️ *Trading involves substantial risk. No strategy guarantees profits. See [disclaimer](/disclaimer).*
 
-**Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
+**Integrates with:** AI Trading Dashboard ($149) — unzip into \`plugins/\` folder, restart dashboard — done.`,
     price: 199,
     category: "trading",
     badge: "PLUGIN",
@@ -452,7 +458,7 @@ Statistical approach to identifying overbought/oversold conditions. This agent f
 
 ⚠️ *Trading involves substantial risk. No strategy guarantees profits. See [disclaimer](/disclaimer).*
 
-**Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
+**Integrates with:** AI Trading Dashboard ($149) — unzip into \`plugins/\` folder, restart dashboard — done.`,
     price: 199,
     category: "trading",
     emoji: "📉",
@@ -497,7 +503,7 @@ An architecture for reading the broader market environment — news sentiment, o
 
 ⚠️ *Trading involves substantial risk. No strategy guarantees profits. See [disclaimer](/disclaimer).*
 
-**Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
+**Integrates with:** AI Trading Dashboard ($149) — unzip into \`plugins/\` folder, restart dashboard — done.`,
     price: 199,
     category: "trading",
     badge: "PLUGIN",
@@ -523,7 +529,7 @@ An architecture for reading the broader market environment — news sentiment, o
     description: "✅ Includes the AI Trading Dashboard — Six strategy frameworks in one package. Darvas Box, Elliott Wave, VWAP Breakout, Heikin Ashi, Mean Reversion, and Macro Sentiment. Run them as a coordinated farm with shared risk management.",
     longDescription: `✅ **Includes the AI Trading Dashboard** — Six strategy architectures in one package: Darvas Box, Elliott Wave, VWAP Breakout, Heikin Ashi, Bollinger Band Mean Reversion, and Macro Sentiment. Run them as a coordinated farm with shared risk management.
 
-**🔌 Plugin for the AI Trading Dashboard** — drop all six strategies into \`plugins/\` and use the farm orchestrator to coordinate them.
+**🔌 Plugin for the AI Trading Dashboard** — unzip all 6 strategy folders into your dashboard's \`plugins/\` directory, restart, and use the farm orchestrator to coordinate them.
 
 **Strategy frameworks included:**
 1. **Darvas Box** — Breakout detection with consolidation zones
@@ -544,7 +550,7 @@ An architecture for reading the broader market environment — news sentiment, o
 
 ⚠️ *Trading involves substantial risk. No strategy guarantees profits. See [disclaimer](/disclaimer).*
 
-**Integrates with:** AI Trading Dashboard ($149) — copy to \`plugins/\`, restart, done.`,
+**Integrates with:** AI Trading Dashboard ($149) — unzip all 6 agent folders into \`plugins/\`, restart dashboard — done.`,
     price: 399,
     category: "trading",
     badge: "SAVE $795",
@@ -580,7 +586,7 @@ An architecture for reading the broader market environment — news sentiment, o
 
 👉 **Try the live demo** to see all these systems working together in one unified dashboard.
 
-All three products delivered as source code. Same architecture, same engineering — a complete starting point.
+All three products delivered as source code. Double-click \`QUICK-START.bat\` to set up the dashboard, then drop the agent folders into \`plugins/\`. Same architecture, same engineering — a complete starting point.
 
 ⚠️ *Software tools, not financial advice. Trading involves substantial risk. See [disclaimer](/disclaimer).*`,
     price: 299,
@@ -624,7 +630,7 @@ All three products delivered as source code. Same architecture, same engineering
 
 👉 **Try the live demo** to see the full dashboard interface with sample data.
 
-All products delivered as source code. You get the architecture, the UI, and the engineering — a complete starting point for building your own trading system.
+All products delivered as source code. Run the included \`INSTALL-ALL.bat\` (Windows) or \`bash INSTALL-ALL.command\` (Mac) to install every plugin and extension at once. You get the architecture, the UI, and the engineering — a complete starting point for building your own trading system.
 
 ⚠️ *These are software tools — not financial advice. Trading involves substantial risk of loss. See [disclaimer](/disclaimer).*`,
     price: 699,

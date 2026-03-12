@@ -176,8 +176,8 @@ function SuccessContent() {
           {[
             { num: '1', text: 'Click "Download Files" above to get your zip file' },
             { num: '2', text: 'Extract it to a folder on your computer' },
-            { num: '3', text: 'Open the README.md for setup instructions' },
-            { num: '4', text: 'For templates: run npm install, configure .env.local, then npm run dev' },
+            { num: '3', text: 'Double-click QUICK-START.bat (Windows) or QUICK-START.command (Mac)' },
+            { num: '4', text: 'The Setup Wizard will guide you through connecting your API keys' },
           ].map((item) => (
             <div key={item.num} style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
               <span style={{
@@ -194,6 +194,14 @@ function SuccessContent() {
             </div>
           ))}
         </div>
+        <p style={{
+          marginTop: 16, fontSize: '0.78rem', color: '#777',
+          fontFamily: 'var(--font-body)', lineHeight: 1.6,
+          padding: '12px 16px', borderRadius: 8,
+          background: 'rgba(139, 92, 246, 0.06)', border: '1px solid rgba(139, 92, 246, 0.15)',
+        }}>
+          For plugins and extensions, see the included README for install instructions.
+        </p>
         <p style={{
           marginTop: 16, fontSize: '0.75rem', color: '#555',
           fontFamily: 'var(--font-body)', lineHeight: 1.5,
