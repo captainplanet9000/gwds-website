@@ -8,7 +8,7 @@ export function OrganizationJsonLd() {
     description: 'AI-powered trading tools, dashboard templates, and algorithmic trading agents.',
     email: 'gammawavesdesign@gmail.com',
     sameAs: [
-      'https://twitter.com/gwds_studio',
+      'https://x.com/GWDSofficial',
       'https://github.com/captainplanet9000',
     ],
   };
