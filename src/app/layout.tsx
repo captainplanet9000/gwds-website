@@ -7,6 +7,7 @@ import ScrollProgress from "@/components/ScrollProgress";
 import { LenisProvider } from "@/lib/lenis";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { OrganizationJsonLd } from "@/components/JsonLd";
 import TrackingPixels from "@/components/TrackingPixels";
 
@@ -78,9 +79,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    // Add your verification tokens when available
-    // google: "your-google-verification-token",
-    // yandex: "your-yandex-verification-token",
+    google: "Q1fT2kRSqfGdA6iKoESkeknzmNt9Vi8ckNvCuHnJ_zg",
   },
 };
 
@@ -163,6 +162,7 @@ export default function RootLayout({
         <Analytics />
           <OrganizationJsonLd />
         <SpeedInsights />
+        <GoogleAnalytics gaId="G-L49QGMVWDK" />
       </body>
     </html>
   );
