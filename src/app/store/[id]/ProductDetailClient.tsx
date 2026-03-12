@@ -719,10 +719,9 @@ export default function ProductDetailClient({ product, related, category }: { pr
               <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                 {[
                   { step: '1', title: 'Download & extract', desc: 'After purchase, download the zip file and extract it to a folder on your machine.' },
-                  { step: '2', title: 'Install dependencies', desc: 'Open a terminal in the project folder and run npm install. Everything resolves automatically.' },
-                  { step: '3', title: 'Add your API keys', desc: 'Copy .env.example to .env.local and fill in your keys. Each variable is documented inline.' },
-                  { step: '4', title: 'Set up the database', desc: 'Create a free Supabase project and run the included SQL migration in the SQL Editor.' },
-                  { step: '5', title: 'Launch', desc: 'Run npm run dev and open localhost:3000. A setup wizard walks you through final configuration.' },
+                  { step: '2', title: 'Run the setup script', desc: 'Double-click QUICK-START.bat (Windows) or QUICK-START.command (Mac). It installs dependencies, creates your config, and opens the dashboard automatically.' },
+                  { step: '3', title: 'Configure API keys', desc: 'The Setup Wizard opens in your browser and walks you through connecting Hyperliquid, Supabase, and your AI provider.' },
+                  { step: '4', title: 'Start trading', desc: 'Your dashboard is ready. Create agents, configure strategies, set risk limits, and let them trade.' },
                 ].map((item) => (
                   <div key={item.step} style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
                     <span style={{
@@ -750,9 +749,8 @@ export default function ProductDetailClient({ product, related, category }: { pr
                 background: `${accent}08`, border: `1px solid ${accent}20`,
               }}>
                 <p style={{ fontSize: '0.78rem', color: '#999', fontFamily: 'var(--font-body)', lineHeight: 1.6 }}>
-                  <strong style={{ color: '#E8E8E8' }}>What you need:</strong> Node.js 18+, a free{' '}
-                  <a href="https://supabase.com" target="_blank" rel="noopener" style={{ color: accent, textDecoration: 'none' }}>Supabase</a> account, and API keys for your exchange and AI provider. Detailed setup guide included in{' '}
-                  <code style={{ color: accent, fontSize: '0.72rem' }}>docs/SETUP.md</code>.
+                  <strong style={{ color: '#E8E8E8' }}>What you need:</strong> Node.js 18+ and a free{' '}
+                  <a href="https://supabase.com" target="_blank" rel="noopener" style={{ color: accent, textDecoration: 'none' }}>Supabase</a> account. The QUICK-START script handles installation automatically. Demo mode works out of the box — no API keys needed to preview.
                 </p>
               </div>
             </div>
