@@ -43,6 +43,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         .admin-sidebar-header { 
           padding: 24px 20px; 
           border-bottom: 1px solid #1a1a1a;
+          flex-shrink: 0;
         }
         .admin-brand { 
           font-family: var(--font-display); 
@@ -67,6 +68,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         
         .admin-nav { 
           flex: 1; 
+          min-height: 0;
           padding: 16px 12px;
           overflow-y: auto;
         }
@@ -105,6 +107,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         .admin-sidebar-footer {
           padding: 16px;
           border-top: 1px solid #1a1a1a;
+          flex-shrink: 0;
         }
         .admin-user-pill {
           display: flex;
@@ -244,6 +247,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           }
           .admin-sidebar.mobile-open {
             transform: translateX(0);
+            box-shadow: 4px 0 24px rgba(0,0,0,0.5);
+          }
+          .admin-mobile-overlay {
+            display: block;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 99;
           }
           .admin-main {
             margin-left: 0;
@@ -264,6 +275,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       `}</style>
       
       <div className="admin-layout">
+        {/* Mobile overlay */}
+        {menuOpen && <div className="admin-mobile-overlay" onClick={() => setMenuOpen(false)} />}
         {/* Sidebar */}
         <aside className={`admin-sidebar ${menuOpen ? 'mobile-open' : ''}`}>
           <div className="admin-sidebar-header">
