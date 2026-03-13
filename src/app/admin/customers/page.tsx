@@ -1,6 +1,5 @@
 'use client';
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 
 export default function AdminCustomers() {
   const [authed, setAuthed] = useState(false);
@@ -20,11 +19,11 @@ export default function AdminCustomers() {
   }, [authed]);
 
   if (!authed) return (
-    <div style={{ minHeight: '100vh', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
       <div style={{ maxWidth: 360, width: '100%', padding: 24 }}>
         <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 800, color: '#E8E8E8', marginBottom: 24, textAlign: 'center' }}>GWDS Admin</h1>
         <input type="password" value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === 'Enter' && login()} placeholder="Password"
-          style={{ width: '100%', padding: '14px 16px', background: '#111', border: '1px solid #222', borderRadius: 8, color: '#E8E8E8', fontSize: '0.88rem', outline: 'none', marginBottom: 12 }} />
+          style={{ width: '100%', padding: '14px 16px', background: '#111', border: '1px solid #222', borderRadius: 8, color: '#E8E8E8', fontSize: '0.88rem', outline: 'none', marginBottom: 12, boxSizing: 'border-box' }} />
         <button onClick={login} style={{ width: '100%', padding: '14px', borderRadius: 8, border: 'none', background: '#8B5CF6', color: '#fff', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer', textTransform: 'uppercase' }}>Login</button>
       </div>
     </div>
@@ -34,57 +33,46 @@ export default function AdminCustomers() {
   const totalOrders = customers.reduce((s, c) => s + (c.order_count || 0), 0);
 
   return (
-    <div style={{ minHeight: '100vh', background: '#000', color: '#E8E8E8' }}>
-      <nav style={{ padding: '16px 32px', borderBottom: '1px solid #1a1a1a', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
-          <span style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 800 }}>GWDS Admin</span>
-          {['Dashboard', 'Products', 'Orders', 'Customers', 'Coupons', 'Subscribers', 'Messages'].map(item => (
-            <Link key={item} href={item === 'Dashboard' ? '/admin' : `/admin/${item.toLowerCase()}`}
-              style={{ fontSize: '0.78rem', color: item === 'Customers' ? '#8B5CF6' : '#888', textDecoration: 'none', fontWeight: item === 'Customers' ? 700 : 500 }}>{item}</Link>
-          ))}
-        </div>
-        <Link href="/" style={{ fontSize: '0.72rem', color: '#555', textDecoration: 'none' }}>← Back to site</Link>
-      </nav>
+    <>
+      <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 800, marginBottom: 32 }}>Customers</h1>
 
-      <div style={{ padding: '32px', maxWidth: 1200, margin: '0 auto' }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 800, marginBottom: 32 }}>Customers</h1>
+      <div className="admin-stat-grid-3" style={{ marginBottom: 32 }}>
+        {[
+          { label: 'Total Customers', value: customers.length, color: '#EC4899' },
+          { label: 'Total LTV', value: `$${totalLTV.toFixed(0)}`, color: '#10B981' },
+          { label: 'Total Orders', value: totalOrders, color: '#8B5CF6' },
+        ].map(s => (
+          <div key={s.label} className="admin-card" style={{ padding: 20, borderRadius: 12, background: '#0a0a0a', border: '1px solid #1a1a1a' }}>
+            <p style={{ fontSize: '0.68rem', color: '#555', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 6 }}>{s.label}</p>
+            <p className="stat-value" style={{ fontFamily: 'var(--font-display)', fontSize: '1.6rem', fontWeight: 800, color: s.color }}>{s.value}</p>
+          </div>
+        ))}
+      </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 32 }}>
-          {[
-            { label: 'Total Customers', value: customers.length, color: '#EC4899' },
-            { label: 'Total LTV', value: `$${totalLTV.toFixed(0)}`, color: '#10B981' },
-            { label: 'Total Orders', value: totalOrders, color: '#8B5CF6' },
-          ].map(s => (
-            <div key={s.label} style={{ padding: 20, borderRadius: 12, background: '#0a0a0a', border: '1px solid #1a1a1a' }}>
-              <p style={{ fontSize: '0.68rem', color: '#555', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 6 }}>{s.label}</p>
-              <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.6rem', fontWeight: 800, color: s.color }}>{s.value}</p>
-            </div>
-          ))}
-        </div>
-
-        <div style={{ padding: 24, borderRadius: 12, background: '#0a0a0a', border: '1px solid #1a1a1a' }}>
-          {loading ? <p style={{ color: '#555' }}>Loading...</p> : customers.length === 0 ? <p style={{ color: '#555' }}>No customers yet</p> : (
+      <div className="admin-card" style={{ padding: 24, borderRadius: 12, background: '#0a0a0a', border: '1px solid #1a1a1a' }}>
+        {loading ? <p style={{ color: '#555' }}>Loading...</p> : customers.length === 0 ? <p style={{ color: '#555' }}>No customers yet</p> : (
+          <div className="admin-table-wrap">
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead><tr style={{ borderBottom: '1px solid #1a1a1a' }}>
                 {['Email', 'Name', 'Orders', 'Total Spent', 'Last Order'].map(h => (
-                  <th key={h} style={{ padding: '8px 12px', textAlign: 'left', fontSize: '0.68rem', color: '#555', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{h}</th>
+                  <th key={h} style={{ padding: '8px 12px', textAlign: 'left', fontSize: '0.68rem', color: '#555', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{h}</th>
                 ))}
               </tr></thead>
               <tbody>
                 {customers.map((c: any) => (
                   <tr key={c.id} style={{ borderBottom: '1px solid #111' }}>
-                    <td style={{ padding: '12px', fontSize: '0.85rem', color: '#E8E8E8' }}>{c.email}</td>
-                    <td style={{ padding: '12px', fontSize: '0.82rem', color: '#888' }}>{c.name || '—'}</td>
+                    <td style={{ padding: '12px', fontSize: '0.85rem', color: '#E8E8E8', whiteSpace: 'nowrap' }}>{c.email}</td>
+                    <td style={{ padding: '12px', fontSize: '0.82rem', color: '#888', whiteSpace: 'nowrap' }}>{c.name || '—'}</td>
                     <td style={{ padding: '12px', fontSize: '0.85rem', fontWeight: 700, color: '#8B5CF6' }}>{c.order_count}</td>
-                    <td style={{ padding: '12px', fontSize: '0.85rem', fontWeight: 700, color: '#10B981' }}>${Number(c.total_spent || 0).toFixed(0)}</td>
-                    <td style={{ padding: '12px', fontSize: '0.75rem', color: '#666' }}>{c.last_order_at ? new Date(c.last_order_at).toLocaleDateString() : '—'}</td>
+                    <td style={{ padding: '12px', fontSize: '0.85rem', fontWeight: 700, color: '#10B981', whiteSpace: 'nowrap' }}>${Number(c.total_spent || 0).toFixed(0)}</td>
+                    <td style={{ padding: '12px', fontSize: '0.75rem', color: '#666', whiteSpace: 'nowrap' }}>{c.last_order_at ? new Date(c.last_order_at).toLocaleDateString() : '—'}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          )}
-        </div>
+          </div>
+        )}
       </div>
-    </div>
+    </>
   );
 }

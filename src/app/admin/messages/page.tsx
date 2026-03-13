@@ -1,6 +1,5 @@
 'use client';
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 
 export default function MessagesAdmin() {
   const [authed, setAuthed] = useState(false);
@@ -14,9 +13,7 @@ export default function MessagesAdmin() {
       .then(r => r.json()).then(d => { if (d.ok) { setAuthed(true); sessionStorage.setItem('gwds-admin', 'true'); } else alert('Invalid password'); });
   };
 
-  const fetchContacts = () => {
-    fetch('/api/admin/contacts').then(r => r.json()).then(d => { setContacts(d.contacts || []); setLoading(false); });
-  };
+  const fetchContacts = () => { fetch('/api/admin/contacts').then(r => r.json()).then(d => { setContacts(d.contacts || []); setLoading(false); }); };
   useEffect(() => { if (authed) fetchContacts(); }, [authed]);
 
   const updateStatus = async (id: string, status: string) => {
@@ -25,69 +22,50 @@ export default function MessagesAdmin() {
   };
 
   if (!authed) return (
-    <div style={{ minHeight: '100vh', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
       <div style={{ maxWidth: 360, width: '100%', padding: 24 }}>
         <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 800, color: '#E8E8E8', marginBottom: 24, textAlign: 'center' }}>GWDS Admin</h1>
         <input type="password" value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === 'Enter' && login()} placeholder="Password"
-          style={{ width: '100%', padding: '14px 16px', background: '#111', border: '1px solid #222', borderRadius: 8, color: '#E8E8E8', fontSize: '0.88rem', outline: 'none', marginBottom: 12 }} />
+          style={{ width: '100%', padding: '14px 16px', background: '#111', border: '1px solid #222', borderRadius: 8, color: '#E8E8E8', fontSize: '0.88rem', outline: 'none', marginBottom: 12, boxSizing: 'border-box' }} />
         <button onClick={login} style={{ width: '100%', padding: '14px', borderRadius: 8, border: 'none', background: '#8B5CF6', color: '#fff', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer', textTransform: 'uppercase' }}>Login</button>
       </div>
     </div>
   );
 
   const statusColors: Record<string, { bg: string; text: string }> = {
-    new: { bg: '#8B5CF620', text: '#8B5CF6' },
-    read: { bg: '#F59E0B20', text: '#F59E0B' },
-    replied: { bg: '#10B98120', text: '#10B981' },
-    archived: { bg: '#55555520', text: '#555' },
+    new: { bg: '#8B5CF620', text: '#8B5CF6' }, read: { bg: '#F59E0B20', text: '#F59E0B' },
+    replied: { bg: '#10B98120', text: '#10B981' }, archived: { bg: '#55555520', text: '#555' },
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#000', color: '#E8E8E8' }}>
-      <nav style={{ padding: '16px 32px', borderBottom: '1px solid #1a1a1a', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
-          <span style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 800 }}>GWDS Admin</span>
-          {['Dashboard', 'Products', 'Orders', 'Customers', 'Coupons', 'Subscribers', 'Messages'].map(item => (
-            <Link key={item} href={item === 'Dashboard' ? '/admin' : `/admin/${item.toLowerCase()}`}
-              style={{ fontSize: '0.78rem', color: item === 'Messages' ? '#8B5CF6' : '#888', textDecoration: 'none', fontWeight: item === 'Messages' ? 700 : 500 }}>{item}</Link>
-          ))}
-        </div>
-        <Link href="/" style={{ fontSize: '0.72rem', color: '#555', textDecoration: 'none' }}>← Back to site</Link>
-      </nav>
+    <>
+      <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 800, marginBottom: 32 }}>Contact Messages</h1>
 
-      <div style={{ padding: '32px', maxWidth: 1200, margin: '0 auto' }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 800, marginBottom: 32 }}>Contact Messages</h1>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          {loading ? <p style={{ color: '#555' }}>Loading...</p> : contacts.length === 0 ? <p style={{ color: '#555' }}>No messages yet</p> :
-            contacts.map((c: any) => (
-              <div key={c.id} style={{ padding: 20, borderRadius: 12, background: '#0a0a0a', border: `1px solid ${c.status === 'new' ? '#8B5CF640' : '#1a1a1a'}` }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
-                  <div>
-                    <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#E8E8E8' }}>{c.name}</span>
-                    <span style={{ fontSize: '0.78rem', color: '#888', marginLeft: 12 }}>{c.email}</span>
-                    <span style={{ fontSize: '0.72rem', color: '#555', marginLeft: 12 }}>{new Date(c.created_at).toLocaleString()}</span>
-                  </div>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <span style={{ padding: '3px 10px', borderRadius: 4, fontSize: '0.65rem', fontWeight: 600, background: (statusColors[c.status] || statusColors.new).bg, color: (statusColors[c.status] || statusColors.new).text, textTransform: 'uppercase' }}>{c.status}</span>
-                  </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        {loading ? <p style={{ color: '#555' }}>Loading...</p> : contacts.length === 0 ? <p style={{ color: '#555' }}>No messages yet</p> :
+          contacts.map((c: any) => (
+            <div key={c.id} className="admin-card" style={{ padding: 20, borderRadius: 12, background: '#0a0a0a', border: `1px solid ${c.status === 'new' ? '#8B5CF640' : '#1a1a1a'}` }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#E8E8E8' }}>{c.name}</span>
+                  <span style={{ fontSize: '0.78rem', color: '#888' }}>{c.email}</span>
+                  <span style={{ fontSize: '0.72rem', color: '#555' }}>{new Date(c.created_at).toLocaleString()}</span>
                 </div>
-                <div style={{ fontSize: '0.78rem', color: '#F59E0B', marginBottom: 8 }}>{c.subject}</div>
-                <div style={{ fontSize: '0.85rem', color: '#ccc', lineHeight: 1.6, whiteSpace: 'pre-wrap', marginBottom: 12 }}>{c.message}</div>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  {['read', 'replied', 'archived'].map(s => (
-                    <button key={s} onClick={() => updateStatus(c.id, s)} disabled={c.status === s}
-                      style={{ padding: '4px 12px', borderRadius: 6, border: '1px solid #333', background: c.status === s ? '#222' : 'transparent', color: c.status === s ? '#555' : '#888', fontSize: '0.7rem', cursor: c.status === s ? 'default' : 'pointer', textTransform: 'capitalize' }}>
-                      {s}
-                    </button>
-                  ))}
-                  <a href={`mailto:${c.email}?subject=Re: ${c.subject}`} style={{ padding: '4px 12px', borderRadius: 6, border: '1px solid #8B5CF640', color: '#8B5CF6', fontSize: '0.7rem', textDecoration: 'none' }}>Reply ↗</a>
-                </div>
+                <span style={{ padding: '3px 10px', borderRadius: 4, fontSize: '0.65rem', fontWeight: 600, background: (statusColors[c.status] || statusColors.new).bg, color: (statusColors[c.status] || statusColors.new).text, textTransform: 'uppercase' }}>{c.status}</span>
               </div>
-            ))
-          }
-        </div>
+              <div style={{ fontSize: '0.78rem', color: '#F59E0B', marginBottom: 8 }}>{c.subject}</div>
+              <div style={{ fontSize: '0.85rem', color: '#ccc', lineHeight: 1.6, whiteSpace: 'pre-wrap', marginBottom: 12 }}>{c.message}</div>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                {['read', 'replied', 'archived'].map(s => (
+                  <button key={s} onClick={() => updateStatus(c.id, s)} disabled={c.status === s}
+                    style={{ padding: '4px 12px', borderRadius: 6, border: '1px solid #333', background: c.status === s ? '#222' : 'transparent', color: c.status === s ? '#555' : '#888', fontSize: '0.7rem', cursor: c.status === s ? 'default' : 'pointer', textTransform: 'capitalize' }}>{s}</button>
+                ))}
+                <a href={`mailto:${c.email}?subject=Re: ${c.subject}`} style={{ padding: '4px 12px', borderRadius: 6, border: '1px solid #8B5CF640', color: '#8B5CF6', fontSize: '0.7rem', textDecoration: 'none' }}>Reply ↗</a>
+              </div>
+            </div>
+          ))
+        }
       </div>
-    </div>
+    </>
   );
 }
