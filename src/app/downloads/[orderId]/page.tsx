@@ -169,6 +169,34 @@ export default function DownloadsPage({ params }: { params: Promise<{ orderId: s
                 </p>
               </div>
 
+              {/* Discord CTA */}
+              <div style={{
+                marginTop: 24, padding: '20px 24px',
+                background: 'linear-gradient(135deg, rgba(88,101,242,0.08), rgba(139,92,246,0.08))',
+                border: '1px solid rgba(88,101,242,0.2)',
+                borderRadius: 12,
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                gap: 16, flexWrap: 'wrap',
+              }}>
+                <div>
+                  <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#E8E8E8', fontFamily: 'var(--font-display)', marginBottom: 4 }}>
+                    💬 Need help? Join the community
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: '#888', fontFamily: 'var(--font-body)' }}>
+                    Setup support, plugin sharing, strategy discussion, and more.
+                  </div>
+                </div>
+                <a href="https://discord.gg/EZk6gTx57k" target="_blank" rel="noopener noreferrer" style={{
+                  padding: '10px 24px', borderRadius: 8,
+                  background: '#5865F2', color: '#fff',
+                  fontSize: '0.8rem', fontWeight: 700,
+                  textDecoration: 'none', fontFamily: 'var(--font-display)',
+                  whiteSpace: 'nowrap',
+                }}>
+                  Join Discord
+                </a>
+              </div>
+
               <div style={{ marginTop: 24, textAlign: 'center' }}>
                 <Link href="/store" style={{ fontSize: '0.82rem', color: '#8B5CF6', textDecoration: 'none' }}>
                   ← Back to Store

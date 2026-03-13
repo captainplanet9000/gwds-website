@@ -777,6 +777,37 @@ export default function ProductDetailClient({ product, related, category }: { pr
           </section>
         )}
 
+        {/* Discord Community Banner */}
+        <section style={{ padding: '0 40px 48px', maxWidth: 800, margin: '0 auto' }}>
+          <div style={{
+            padding: '24px 28px',
+            background: 'linear-gradient(135deg, rgba(88,101,242,0.06), rgba(139,92,246,0.06))',
+            border: '1px solid rgba(88,101,242,0.15)',
+            borderRadius: 12,
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            gap: 20, flexWrap: 'wrap',
+          }}>
+            <div style={{ flex: 1, minWidth: 200 }}>
+              <div style={{ fontSize: '0.92rem', fontWeight: 700, color: '#E8E8E8', fontFamily: 'var(--font-display)', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <svg width="20" height="15" viewBox="0 0 71 55" fill="none" style={{ flexShrink: 0 }}><path d="M60.1 4.9A58.5 58.5 0 0045.4.2a.2.2 0 00-.2.1 40.7 40.7 0 00-1.8 3.7 54 54 0 00-16.2 0A26.4 26.4 0 0025.4.3a.2.2 0 00-.2-.1 58.4 58.4 0 00-14.7 4.6.2.2 0 00-.1.1C1.5 18.7-.9 32 .3 45.2v.1a58.7 58.7 0 0017.9 9.1.2.2 0 00.3-.1 42 42 0 003.6-5.9.2.2 0 00-.1-.3 38.7 38.7 0 01-5.5-2.6.2.2 0 01.1-.4 31 31 0 001.1-.8.2.2 0 01.2 0c11.6 5.3 24.1 5.3 35.5 0a.2.2 0 01.2 0 28 28 0 001.1.9.2.2 0 01.1.3 36.3 36.3 0 01-5.5 2.6.2.2 0 00-.1.4 47.2 47.2 0 003.6 5.8.2.2 0 00.3.1A58.5 58.5 0 0070 45.3v-.1C71.6 30 67.6 16.8 60.1 5a.2.2 0 00-.1 0zM23.7 37.1c-3.5 0-6.4-3.2-6.4-7.1s2.8-7.1 6.4-7.1 6.5 3.2 6.4 7.1c0 3.9-2.8 7.1-6.4 7.1zm23.6 0c-3.5 0-6.4-3.2-6.4-7.1s2.8-7.1 6.4-7.1 6.5 3.2 6.4 7.1c0 3.9-2.8 7.1-6.4 7.1z" fill="#5865F2"/></svg>
+                Join the GWDS community
+              </div>
+              <div style={{ fontSize: '0.78rem', color: '#777', fontFamily: 'var(--font-body)', lineHeight: 1.5 }}>
+                Get help with setup, share strategies, discuss mods, and connect with other builders.
+              </div>
+            </div>
+            <a href="https://discord.gg/EZk6gTx57k" target="_blank" rel="noopener noreferrer" style={{
+              padding: '10px 24px', borderRadius: 8,
+              background: '#5865F2', color: '#fff',
+              fontSize: '0.8rem', fontWeight: 700,
+              textDecoration: 'none', fontFamily: 'var(--font-display)',
+              whiteSpace: 'nowrap', transition: 'opacity 0.2s',
+            }}>
+              Join Discord →
+            </a>
+          </div>
+        </section>
+
         {/* Related products */}
         {related.length > 0 && (
           <section style={{ padding: '0 40px 64px', maxWidth: 1200, margin: '0 auto' }}>

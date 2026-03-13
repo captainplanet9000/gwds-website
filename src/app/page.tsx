@@ -342,6 +342,97 @@ function IDESection() {
   );
 }
 
+function DiscordSection() {
+  return (
+    <section style={{
+      padding: '80px 24px',
+      maxWidth: 900,
+      margin: '0 auto',
+      textAlign: 'center',
+    }}>
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        style={{
+          background: 'linear-gradient(135deg, rgba(88,101,242,0.08), rgba(139,92,246,0.08))',
+          border: '1px solid rgba(88,101,242,0.2)',
+          borderRadius: 16,
+          padding: '48px 40px',
+        }}
+      >
+        <div style={{ fontSize: '2.5rem', marginBottom: 16 }}>💬</div>
+        <h2 style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: 'clamp(1.5rem, 4vw, 2.2rem)',
+          fontWeight: 800, color: '#E8E8E8',
+          letterSpacing: '-0.03em', lineHeight: 1.1,
+          marginBottom: 12,
+        }}>
+          Join the Community
+        </h2>
+        <p style={{
+          fontSize: '0.95rem', color: '#888', lineHeight: 1.7,
+          fontFamily: 'var(--font-body)', marginBottom: 32,
+          maxWidth: 500, margin: '0 auto 32px',
+        }}>
+          Get help with setup, share your custom strategies, discuss plugins, and connect with other traders building autonomous systems.
+        </p>
+        <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <a href="https://discord.gg/EZk6gTx57k" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.97 }}
+              style={{
+                padding: '14px 36px', borderRadius: 8,
+                border: 'none', background: '#5865F2',
+                color: '#fff', fontFamily: 'var(--font-display)',
+                fontSize: '0.85rem', fontWeight: 700,
+                letterSpacing: '0.04em',
+                cursor: 'pointer',
+                display: 'flex', alignItems: 'center', gap: 8,
+              }}
+            >
+              <svg width="20" height="15" viewBox="0 0 71 55" fill="none"><path d="M60.1 4.9A58.5 58.5 0 0045.4.2a.2.2 0 00-.2.1 40.7 40.7 0 00-1.8 3.7 54 54 0 00-16.2 0A26.4 26.4 0 0025.4.3a.2.2 0 00-.2-.1 58.4 58.4 0 00-14.7 4.6.2.2 0 00-.1.1C1.5 18.7-.9 32 .3 45.2v.1a58.7 58.7 0 0017.9 9.1.2.2 0 00.3-.1 42 42 0 003.6-5.9.2.2 0 00-.1-.3 38.7 38.7 0 01-5.5-2.6.2.2 0 01.1-.4 31 31 0 001.1-.8.2.2 0 01.2 0c11.6 5.3 24.1 5.3 35.5 0a.2.2 0 01.2 0 28 28 0 001.1.9.2.2 0 01.1.3 36.3 36.3 0 01-5.5 2.6.2.2 0 00-.1.4 47.2 47.2 0 003.6 5.8.2.2 0 00.3.1A58.5 58.5 0 0070 45.3v-.1C71.6 30 67.6 16.8 60.1 5a.2.2 0 00-.1 0zM23.7 37.1c-3.5 0-6.4-3.2-6.4-7.1s2.8-7.1 6.4-7.1 6.5 3.2 6.4 7.1c0 3.9-2.8 7.1-6.4 7.1zm23.6 0c-3.5 0-6.4-3.2-6.4-7.1s2.8-7.1 6.4-7.1 6.5 3.2 6.4 7.1c0 3.9-2.8 7.1-6.4 7.1z" fill="currentColor"/></svg>
+              Join Discord
+            </motion.button>
+          </a>
+          <a href="https://x.com/Serra_AI" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.97 }}
+              style={{
+                padding: '14px 36px', borderRadius: 8,
+                border: '1px solid #333', background: 'transparent',
+                color: '#E8E8E8', fontFamily: 'var(--font-display)',
+                fontSize: '0.85rem', fontWeight: 700,
+                letterSpacing: '0.04em',
+                cursor: 'pointer',
+                display: 'flex', alignItems: 'center', gap: 8,
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              Follow @Serra_AI
+            </motion.button>
+          </a>
+        </div>
+        <div style={{ display: 'flex', gap: 32, justifyContent: 'center', marginTop: 28, flexWrap: 'wrap' }}>
+          {[
+            { label: '42 channels', icon: '#' },
+            { label: 'Setup support', icon: '🛠️' },
+            { label: 'Plugin sharing', icon: '🔌' },
+            { label: 'Strategy talk', icon: '📊' },
+          ].map(item => (
+            <span key={item.label} style={{ fontSize: '0.78rem', color: '#666', fontFamily: 'var(--font-body)' }}>
+              {item.icon} {item.label}
+            </span>
+          ))}
+        </div>
+      </motion.div>
+    </section>
+  );
+}
+
 function CTASection() {
   return (
     <section style={{
@@ -408,6 +499,7 @@ export default function Home() {
         <DemoSection />
         <StatsSection />
         <IDESection />
+        <DiscordSection />
         <CTASection />
       </main>
       <Footer />

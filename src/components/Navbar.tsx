@@ -25,6 +25,7 @@ export default function Navbar() {
     { href: '/store', label: 'Store' },
     { href: '/about', label: 'About' },
     { href: '/contact', label: 'Contact' },
+    { href: 'https://discord.gg/EZk6gTx57k', label: 'Discord', external: true },
   ];
 
   return (
@@ -79,11 +80,12 @@ export default function Navbar() {
             <Link
               key={link.href}
               href={link.href}
+              {...((link as any).external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
               style={{
                 fontFamily: 'DM Sans, sans-serif',
                 fontSize: '0.875rem',
                 fontWeight: 500,
-                color: '#A8A8A8',
+                color: (link as any).external ? '#7C3AED' : '#A8A8A8',
                 textDecoration: 'none',
                 transition: 'color 0.2s ease',
               }}
