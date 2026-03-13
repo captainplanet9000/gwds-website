@@ -203,7 +203,7 @@ export default function AdminDashboard() {
           marginBottom: 8
         }}>{value}</p>
         
-        {change && (
+        {change !== undefined && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
             <span style={{ 
               fontSize: '0.75rem', 
@@ -224,8 +224,8 @@ export default function AdminDashboard() {
     
     const max = Math.max(...data.map(d => d.value));
     const width = 600;
-    const height = 200;
-    const padding = 40;
+    const height = 220;
+    const padding = 50;
     const chartWidth = width - padding * 2;
     const chartHeight = height - padding * 2;
     
@@ -250,30 +250,40 @@ export default function AdminDashboard() {
           </linearGradient>
         </defs>
         
-        {/* Grid lines */}
+        {/* Grid lines with Y-axis labels */}
         {[0, 0.25, 0.5, 0.75, 1].map(ratio => (
-          <line
-            key={ratio}
-            x1={padding}
-            y1={padding + chartHeight * (1 - ratio)}
-            x2={width - padding}
-            y2={padding + chartHeight * (1 - ratio)}
-            stroke="#1a1a1a"
-            strokeWidth="1"
-          />
+          <g key={ratio}>
+            <line
+              x1={padding}
+              y1={padding + chartHeight * (1 - ratio)}
+              x2={width - padding}
+              y2={padding + chartHeight * (1 - ratio)}
+              stroke="#1a1a1a"
+              strokeWidth="1"
+            />
+            <text
+              x={padding - 10}
+              y={padding + chartHeight * (1 - ratio) + 4}
+              textAnchor="end"
+              fontSize="10"
+              fill="#666"
+            >
+              ${Math.round(max * ratio)}
+            </text>
+          </g>
         ))}
         
         {/* Area */}
         <path d={areaD} fill="url(#revenueGradient)" />
         
         {/* Line */}
-        <path d={pathD} fill="none" stroke="#8B5CF6" strokeWidth="2.5" />
+        <path d={pathD} fill="none" stroke="#8B5CF6" strokeWidth="3" />
         
-        {/* Points */}
+        {/* Points - larger */}
         {points.map((p, i) => (
           <g key={i}>
-            <circle cx={p.x} cy={p.y} r="4" fill="#8B5CF6" />
-            <circle cx={p.x} cy={p.y} r="8" fill="#8B5CF6" fillOpacity="0.2" />
+            <circle cx={p.x} cy={p.y} r="6" fill="#8B5CF6" />
+            <circle cx={p.x} cy={p.y} r="12" fill="#8B5CF6" fillOpacity="0.2" />
           </g>
         ))}
         
@@ -301,6 +311,26 @@ export default function AdminDashboard() {
     label: `${i + 1}`,
     value: Math.random() * 500 + 100
   }));
+
+  // Top products (mock data - would come from stats.top_products)
+  const topProducts = stats?.top_products || [
+    { name: 'ClawdBot Pro', revenue: 1250, count: 8 },
+    { name: 'Agent Toolkit', revenue: 980, count: 12 },
+    { name: 'AI Bundle', revenue: 750, count: 5 },
+    { name: 'Voice Pack', revenue: 580, count: 15 },
+    { name: 'Pro Extension', revenue: 420, count: 7 }
+  ];
+
+  const maxProductRevenue = Math.max(...topProducts.map(p => p.revenue));
+
+  // Recent activity (mock data - would come from stats.recent_activity)
+  const recentActivity = stats?.recent_activity || [
+    { type: 'order', message: 'New order from John Doe', time: '2 mins ago', icon: '🛒' },
+    { type: 'subscriber', message: 'New subscriber: jane@example.com', time: '15 mins ago', icon: '📧' },
+    { type: 'message', message: 'Message from Sarah Smith', time: '1 hour ago', icon: '💬' },
+    { type: 'order', message: 'New order from Mike Johnson', time: '2 hours ago', icon: '🛒' },
+    { type: 'subscriber', message: 'New subscriber: bob@example.com', time: '3 hours ago', icon: '📧' }
+  ];
 
   return (
     <>
@@ -382,6 +412,110 @@ export default function AdminDashboard() {
           </div>
         </div>
         <RevenueChart data={revenueData} />
+      </div>
+
+      {/* Top Products & Recent Activity */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: 24, marginBottom: 24 }}>
+        {/* Top Products */}
+        <div style={{
+          background: '#0a0a0a',
+          border: '1px solid #1a1a1a',
+          borderRadius: 12,
+          padding: 24
+        }}>
+          <h2 style={{ 
+            fontFamily: 'var(--font-display)', 
+            fontSize: '1.1rem', 
+            fontWeight: 700,
+            color: '#E8E8E8',
+            marginBottom: 16
+          }}>Top Products</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            {topProducts.map((product, i) => (
+              <div key={i} style={{ 
+                padding: '12px 0',
+                borderBottom: i < topProducts.length - 1 ? '1px solid #111' : 'none'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '0.85rem', color: '#E8E8E8', fontWeight: 600, marginBottom: 2 }}>
+                      {product.name}
+                    </div>
+                    <div style={{ fontSize: '0.72rem', color: '#666' }}>
+                      {product.count} sold
+                    </div>
+                  </div>
+                  <div style={{ 
+                    fontSize: '0.95rem', 
+                    fontWeight: 800, 
+                    color: '#10B981',
+                    fontFamily: 'var(--font-display)'
+                  }}>
+                    ${product.revenue.toLocaleString()}
+                  </div>
+                </div>
+                {/* Revenue bar */}
+                <div style={{ 
+                  width: '100%', 
+                  height: 6, 
+                  background: '#1a1a1a', 
+                  borderRadius: 3,
+                  overflow: 'hidden'
+                }}>
+                  <div style={{ 
+                    width: `${(product.revenue / maxProductRevenue) * 100}%`, 
+                    height: '100%', 
+                    background: 'linear-gradient(90deg, #8B5CF6, #10B981)',
+                    transition: 'width 0.3s ease'
+                  }}></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Recent Activity */}
+        <div style={{
+          background: '#0a0a0a',
+          border: '1px solid #1a1a1a',
+          borderRadius: 12,
+          padding: 24
+        }}>
+          <h2 style={{ 
+            fontFamily: 'var(--font-display)', 
+            fontSize: '1.1rem', 
+            fontWeight: 700,
+            color: '#E8E8E8',
+            marginBottom: 16
+          }}>Recent Activity</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {recentActivity.map((activity, i) => (
+              <div key={i} style={{ 
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+                padding: '10px 12px',
+                background: '#111',
+                borderRadius: 8,
+                borderLeft: `3px solid ${
+                  activity.type === 'order' ? '#10B981' :
+                  activity.type === 'subscriber' ? '#3B82F6' :
+                  '#F59E0B'
+                }`
+              }}>
+                <span style={{ fontSize: '1.3rem', flexShrink: 0 }}>{activity.icon}</span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: '0.82rem', color: '#E8E8E8', fontWeight: 500, marginBottom: 2 }}>
+                    {activity.message}
+                  </div>
+                  <div style={{ fontSize: '0.7rem', color: '#666' }}>
+                    {activity.time}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Secondary Stats */}
