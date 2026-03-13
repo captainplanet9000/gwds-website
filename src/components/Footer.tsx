@@ -14,7 +14,7 @@ export default function Footer() {
 
   const socialLinks = [
     { href: 'https://discord.gg/EZk6gTx57k', label: 'Discord' },
-    { href: 'https://x.com/Serra_AI', label: 'X (Twitter)' },
+    { href: 'https://x.com/GWDSofficial', label: 'X (Twitter)' },
     { href: 'https://github.com/captainplanet9000', label: 'GitHub' },
     { href: '/content', label: 'Content' },
   ];
