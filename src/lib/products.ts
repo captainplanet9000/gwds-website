@@ -32,8 +32,8 @@ export const products: Product[] = [
     id: "trading-dashboard-template",
     stripePriceId: "price_1T7AnhLLyk0oaesNcsOUw8UU",
     name: "AI Trading Dashboard",
-    description: "Complete AI trading dashboard with one fully functional VWAP + RSI agent included, goal-based execution, Hyperliquid integration, 44 themes, and a plugin system for adding more agents and features. Deploy in minutes.",
-    longDescription: `A production-grade trading dashboard with a fully functional trading agent included — deploy it, connect your Hyperliquid wallet, and start trading. 2,400+ files of TypeScript source code.
+    description: "Complete AI trading dashboard v2 — VWAP + RSI agent, prop firm futures trading, flash loan arbitrage, meme coin sniping, market regime detection, strategy optimizer, trade learning, and a plugin system. 80+ dashboard pages. Deploy on Vercel or self-host.",
+    longDescription: `A production-grade trading dashboard v2 with autonomous agents, prop firm futures trading, flash loan arbitrage, meme coin sniping, and 80+ dashboard pages. Deploy on Vercel (serverless) or self-host. 2,100+ files of TypeScript source code.
 
 **🤖 Includes 1 Fully Functional Agent: VWAP + RSI Strategy**
 The dashboard ships with a working VWAP Volume Breakout agent that combines Volume-Weighted Average Price analysis with RSI divergence detection. It trades autonomously on Hyperliquid — no additional purchases required to start trading.
@@ -58,8 +58,14 @@ That's it. The script installs dependencies, creates your config file, and opens
 - Risk analytics with drawdown monitoring, correlation checks, and position sizing
 - Agent health monitoring, performance scoring, and benchmarking
 - Plugin system — extend with add-on modules (Meme Trading, Flash Loans, and more)
-- Full source code (Next.js 15, TypeScript, Supabase, 2,400+ files)
+- **NEW** Prop Firm Trading Agent — automated futures trading via Tradovate (Apex, etc.)
+- **NEW** Market Regime Detection — agents adapt to trending/ranging/transitional markets
+- **NEW** Strategy Optimizer — backtest and optimize your strategies
+- **NEW** Trade Learning — post-trade analysis feeds back into agent decisions
+- **NEW** Vercel-ready — deploys to Vercel free tier for hosted dashboard
+- Full source code (Next.js 15, TypeScript, Supabase, 2,100+ files)
 - One-click setup — double-click QUICK-START and you're running
+- Deploy to Vercel for a hosted dashboard (free tier works)
 
 **🎨 44 Built-In Themes**
 Choose from 44 professionally designed themes — from Cyberpunk and Cosmic Night to Clean Slate and Mocha Mousse. Switch instantly or build your own.
@@ -84,16 +90,18 @@ The dashboard is fully functional on its own. When you're ready for more, add:
     features: [
       "1 fully functional VWAP + RSI agent included",
       "Trades autonomously on Hyperliquid",
+      "NEW: Prop Firm Futures Trading (Tradovate)",
+      "NEW: Market Regime Detection",
+      "NEW: Strategy Optimizer & Trade Learning",
+      "80+ dashboard pages",
       "Goal-based execution engine",
       "44 built-in themes",
       "Plugin system for adding more agents",
       "Real-time P&L & position tracking",
       "Risk analytics & drawdown monitoring",
-      "Agent health monitoring & scoring",
-      "Farm orchestration & scratchpad",
-      "Full TypeScript source code (2,400+ files)",
-      "One-click setup (QUICK-START script included)",
-      "Add more agents & extensions from store"
+      "Vercel-ready deployment",
+      "Full TypeScript source code (2,100+ files)",
+      "One-click setup (QUICK-START script included)"
     ],
     techStack: ["Next.js 15", "TypeScript", "Supabase", "Hyperliquid SDK", "TailwindCSS"],
     image: "/images/products/store/dashboard-command-center.png",
@@ -111,7 +119,7 @@ The dashboard is fully functional on its own. When you're ready for more, add:
       "/images/products/gallery/dashboard-goals.jpg",
       "/images/products/gallery/dashboard-settings-themes.jpg",
     ],
-    downloadUrl: "downloads/ai-trading-dashboard-v1.0.0.zip",
+    downloadUrl: "downloads/ai-trading-dashboard-v2.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app",
     videoUrl: "/videos/products/cival-promo-v3.mp4",
   },
@@ -188,7 +196,7 @@ The dashboard is fully functional on its own. When you're ready for more, add:
       "/images/products/store/meme-token-scanner.png",
       "/images/products/store/dashboard-command-center.png",
     ],
-    downloadUrl: "downloads/meme-trading-suite-v1.0.0.zip",
+    downloadUrl: "downloads/meme-trading-suite-v2.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/meme-coins",
     videoUrl: "/videos/products/meme-trading.mp4",
   },
@@ -252,7 +260,7 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
     images: [
       "/images/products/store/flash-loan-flow.png",
     ],
-    downloadUrl: "downloads/flash-loan-arbitrage-v1.1.0.zip",
+    downloadUrl: "downloads/flash-loan-arbitrage-v2.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/flash-loans",
     videoUrl: "/videos/products/flash-loan.mp4",
   },
@@ -294,7 +302,7 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
       "/images/products/store/darvas-agent-signals.png",
       "/images/products/store/dashboard-command-center.png",
     ],
-    downloadUrl: "downloads/darvas-indicator-v1.0.0.zip",
+    downloadUrl: "downloads/darvas-indicator-v2.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/agents",
     videoUrl: "/videos/products/darvas-agent.mp4",
   },
@@ -336,7 +344,7 @@ Borrow millions with zero collateral. Buy low on one DEX, sell high on another. 
       "/images/products/store/elliott-wave-signals.png",
       "/images/products/store/dashboard-command-center.png",
     ],
-    downloadUrl: "downloads/elliott-wave-agent-v1.0.0.zip",
+    downloadUrl: "downloads/elliott-wave-agent-v2.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/agents",
     videoUrl: "/videos/products/elliott-wave.mp4",
   },
@@ -381,7 +389,7 @@ Combines VWAP (Volume Weighted Average Price) with volume divergence analysis an
       "/images/products/store/vwap-agent-signals.png",
       "/images/products/store/dashboard-command-center.png",
     ],
-    downloadUrl: "downloads/vwap-momentum-agent-v1.0.0.zip",
+    downloadUrl: "downloads/vwap-momentum-agent-v2.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/agents",
     videoUrl: "/videos/products/vwap-agent.mp4",
   },
@@ -426,7 +434,7 @@ Heikin Ashi candles filter market noise to reveal the underlying trend. This age
       "/images/products/store/heikin-ashi-signals.png",
       "/images/products/store/dashboard-command-center.png",
     ],
-    downloadUrl: "downloads/heikin-ashi-agent-v1.0.0.zip",
+    downloadUrl: "downloads/heikin-ashi-agent-v2.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/agents",
     videoUrl: "/videos/products/heikin-ashi.mp4",
   },
@@ -470,7 +478,7 @@ Statistical approach to identifying overbought/oversold conditions. This agent f
       "/images/products/store/mean-reversion-signals.png",
       "/images/products/store/dashboard-command-center.png",
     ],
-    downloadUrl: "downloads/mean-reversion-agent-v1.0.0.zip",
+    downloadUrl: "downloads/mean-reversion-agent-v2.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/agents",
     videoUrl: "/videos/products/mean-reversion.mp4",
   },
@@ -516,20 +524,84 @@ An architecture for reading the broader market environment — news sentiment, o
       "/images/products/store/macro-sentiment-signals.png",
       "/images/products/store/dashboard-command-center.png",
     ],
-    downloadUrl: "downloads/macro-sentiment-agent-v1.0.0.zip",
+    downloadUrl: "downloads/macro-sentiment-agent-v2.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/agents",
     videoUrl: "/videos/products/macro-sentiment.mp4",
   },
 
+  // === PROP FIRM ===
+  {
+    id: "prop-firm-agent",
+    stripePriceId: "", // TODO: create Stripe price
+    requiresDashboard: true,
+    name: "Prop Firm Futures Agent",
+    description: "Automated futures trading agent for prop firm evaluations. Trades micro futures (MES, MNQ) on Tradovate with AI-driven decisions, dynamic R:R, circuit breakers, and strict risk management. Designed for Apex Trader Funding.",
+    longDescription: `🏗️ **NEW — Plugin for AI Trading Dashboard** — Automated futures trading agent built for prop firm evaluations.
+
+Trade micro futures on Tradovate with AI-powered decisions and built-in risk management that respects prop firm drawdown rules. Designed for Apex Trader Funding and similar prop firms.
+
+**What you get:**
+- AI-driven trade decisions via OpenRouter (Claude, GPT-4, etc.)
+- Direct Tradovate API integration (no TradersPost needed)
+- Dynamic R:R based on market regime (trending/ranging/transitional)
+- Break-even at 1R, trailing stop at 1.5R
+- Circuit breaker: 3 consecutive losses → halt
+- Max $250 risk per trade, $1,400 daily loss limit
+- Flattens all positions 10 min before market close
+- Only trades NY RTH (9:30 AM - 3:50 PM ET)
+- Full position management with OCO orders
+- Agent thought stream — watch the AI reason through trades
+- Dashboard page with live positions, P&L, and account health
+
+**Supported instruments:** MES, MNQ, MYM, M2K, ES, NQ
+
+**How it works:**
+1. Agent scans markets every 10 min during NY RTH
+2. AI analyzes price action, volume, and regime
+3. When confidence > 65% and R:R > 2.0, it enters
+4. Break-even stop moves to entry at 1R profit
+5. Trailing stop activates at 1.5R profit
+6. Circuit breaker halts after 3 consecutive losses
+7. All positions flattened 10 min before close
+
+⚠️ **Risk Warning:** Futures trading involves substantial risk of loss. Prop firm evaluations have strict drawdown rules — one bad trade can fail your evaluation. This agent is a tool, not a guarantee. You are responsible for your own trading decisions. See our [disclaimer](/disclaimer).
+
+**Requires:** AI Trading Dashboard ($149) + Tradovate account + OpenRouter API key
+**You provide:** Your Tradovate credentials, your prop firm account, your risk management.`,
+    price: 199,
+    category: "trading",
+    badge: "NEW",
+    emoji: "🏦",
+    productType: "agent",
+    features: [
+      "Dashboard plugin",
+      "Tradovate API integration",
+      "AI trade decisions",
+      "Dynamic R:R by regime",
+      "Circuit breakers",
+      "Break-even + trailing stops",
+      "Prop firm drawdown tracking",
+      "Auto-flatten before close",
+      "OCO order management",
+      "Plug-and-play install"
+    ],
+    techStack: ["TypeScript", "Next.js 15", "Tradovate API", "OpenRouter", "Supabase"],
+    image: "/images/products/store/dashboard-command-center.png",
+    images: [
+      "/images/products/store/dashboard-command-center.png",
+    ],
+    downloadUrl: "downloads/prop-firm-agent-v1.0.0.zip",
+    demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/prop-firms",
+  },
   {
     id: "multi-strat-bundle",
     stripePriceId: "price_1T7AnkLLyk0oaesNv8HuW24O",
     isBundle: true,
     name: "Multi-Strategy Bundle",
-    description: "✅ Includes the AI Trading Dashboard — Six strategy frameworks in one package. Darvas Box, Elliott Wave, VWAP Breakout, Heikin Ashi, Mean Reversion, and Macro Sentiment. Run them as a coordinated farm with shared risk management.",
-    longDescription: `✅ **Includes the AI Trading Dashboard** — Six strategy architectures in one package: Darvas Box, Elliott Wave, VWAP Breakout, Heikin Ashi, Bollinger Band Mean Reversion, and Macro Sentiment. Run them as a coordinated farm with shared risk management.
+    description: "✅ Includes the AI Trading Dashboard — Seven strategies in one package. Darvas Box, Elliott Wave, VWAP, Heikin Ashi, Mean Reversion, Macro Sentiment, and Prop Firm Futures. Run them as a coordinated farm.",
+    longDescription: `✅ **Includes the AI Trading Dashboard** — Seven strategy architectures in one package: Darvas Box, Elliott Wave, VWAP Breakout, Heikin Ashi, Bollinger Band Mean Reversion, Macro Sentiment, and Prop Firm Futures. Run them as a coordinated farm with shared risk management.
 
-**🔌 Plugin for the AI Trading Dashboard** — unzip all 6 strategy folders into your dashboard's \`plugins/\` directory, restart, and use the farm orchestrator to coordinate them.
+**🔌 Plugin for the AI Trading Dashboard** — unzip all 7 strategy folders into your dashboard's \`plugins/\` directory, restart, and use the farm orchestrator to coordinate them.
 
 **Strategy frameworks included:**
 1. **Darvas Box** — Breakout detection with consolidation zones
@@ -538,6 +610,7 @@ An architecture for reading the broader market environment — news sentiment, o
 4. **Heikin Ashi** — Smoothed candle trend detection
 5. **Bollinger Band Mean Reversion** — Statistical mean reversion
 6. **Macro Sentiment** — Market regime detection and farm coordination
+7. **Prop Firm Futures** — Automated Tradovate micro futures trading
 
 **Plus:**
 - Farm orchestration system — run all 6 strategies simultaneously
@@ -553,12 +626,12 @@ An architecture for reading the broader market environment — news sentiment, o
 **Integrates with:** AI Trading Dashboard ($149) — unzip all 6 agent folders into \`plugins/\`, restart dashboard — done.`,
     price: 399,
     category: "trading",
-    badge: "SAVE $795",
+    badge: "SAVE $1,093",
     emoji: "🏭",
     productType: "bundle",
-    features: ["6 strategies included", "Farm orchestration", "Position management", "Margin-aware", "Telegram alerts", "Full source code"],
+    features: ["7 strategies included", "Prop Firm Futures agent included", "Farm orchestration", "Position management", "Margin-aware", "Telegram alerts", "Full source code"],
     image: "/images/products/store/multi-strat-value.png",
-    downloadUrl: "downloads/multi-strat-bundle-v1.0.0.zip",
+    downloadUrl: "downloads/multi-strat-bundle-v2.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard/farms",
     images: [
       "/images/products/store/multi-strat-value.png",
@@ -582,7 +655,7 @@ An architecture for reading the broader market environment — news sentiment, o
 • **Darvas Box Breakout Agent** ($199) — Volume-confirmed box breakout detection
 • **Elliott Wave Pattern Agent** ($199) — AI-powered wave counting with Fibonacci targets
 
-**Total value: $547 — You pay $299.**
+**Total value: $547 — You pay $299. Save $248.**
 
 👉 **Try the live demo** to see all these systems working together in one unified dashboard.
 
@@ -603,7 +676,7 @@ All three products delivered as source code. Double-click \`QUICK-START.bat\` to
       "/images/products/store/darvas-agent-signals.png",
       "/images/products/store/elliott-wave-signals.png",
     ],
-    downloadUrl: "downloads/full-stack-trader-bundle-v1.0.0.zip",
+    downloadUrl: "downloads/full-stack-trader-bundle-v2.0.0.zip",
     demoUrl: "https://ai-trading-dashboard-demo.vercel.app/dashboard",
     videoUrl: "/videos/products/full-stack-trader.mp4",
   },
@@ -612,21 +685,22 @@ All three products delivered as source code. Double-click \`QUICK-START.bat\` to
     stripePriceId: "price_1T83kkLLyk0oaesN9kxVyD0v",
     isBundle: true,
     name: "GWDS Everything Bundle",
-    description: "✅ Includes the AI Trading Dashboard — Every agent, every template, every tool. The entire GWDS trading arsenal in one package.",
+    description: "✅ Includes the AI Trading Dashboard — Every agent, every extension, every tool. 10 products in one package.",
     longDescription: `✅ **Includes the AI Trading Dashboard** — The ultimate deal: every single product in the GWDS store.
 
-**9 products included:**
-• **AI Trading Dashboard** ($149) — Full autonomous trading platform
-• **Meme Trading Suite** ($499) — DexScreener scanner, meme agents, smart money tracking, 9-tab trading system
+**10 products included:**
+• **AI Trading Dashboard v2** ($149) — Full autonomous trading platform with 80+ pages
+• **Meme Trading Suite** ($99) — DexScreener scanner, meme agents, smart money tracking
 • **Flash Loan Arbitrage Engine** ($99) — Cross-DEX arbitrage with Aave V3 + auto-executor
+• **Prop Firm Futures Agent** ($199) — Automated Tradovate futures trading
 • **Darvas Box Breakout Agent** ($199) — Volume-confirmed breakout detection
 • **Elliott Wave Pattern Agent** ($199) — AI-powered wave counting
-• **VWAP Volume Breakout Agent** ($199) — Volume-weighted momentum
+• **VWAP Pro Agent** ($199) — Volume-weighted momentum
 • **Heikin Ashi Trend Following Agent** ($199) — Noise-filtered trend riding
 • **Bollinger Band Mean Reversion Agent** ($199) — Statistical mean reversion
 • **Macro & On-Chain Sentiment Agent** ($199) — Macro + on-chain signals
 
-**Total value: $1,941 — You pay $899.**
+**Total value: $1,840 — You pay $899. Save $941.**
 
 👉 **Try the live demo** to see the full dashboard interface with sample data.
 
@@ -635,12 +709,9 @@ All products delivered as source code. Run the included \`INSTALL-ALL.bat\` (Win
 ⚠️ *These are software tools — not financial advice. Trading involves substantial risk of loss. See [disclaimer](/disclaimer).*`,
     price: 699,
     category: "trading" as ProductCategory,
-    badge: "SAVE $842",
-    emoji: "💎",
-    productType: "bundle",
-    features: ["All 9 products", "6 trading agents", "Dashboard + Meme Trading Suite + Flash Loans", "Lifetime updates", "$1,042 savings"],
+    badge: "SAVE $941",
     isFeatured: true,
-    downloadUrl: "downloads/everything-bundle-v1.0.0.zip",
+    downloadUrl: "downloads/everything-bundle-v2.0.0.zip",
     image: "/images/products/store/dashboard-command-center.png",
     images: [
       "/images/products/store/everything-value.png",
