@@ -28,7 +28,7 @@ const values = [
   {
     emoji: '⚡',
     title: 'One Founder, Full Stack',
-    desc: 'GWDS is one person with AI leverage — no layers, no handoffs, no waiting. Trading systems, 3D production, web apps, content pipelines. Same hands touching every line of code and every frame of video.',
+    desc: 'Cival Systems is one person with AI leverage — no layers, no handoffs, no waiting. Trading systems, 3D production, web apps, content pipelines. Same hands touching every line of code and every frame of video.',
   },
 ];
 
@@ -57,7 +57,7 @@ const projects = [
     tags: ['Next.js', 'TypeScript', 'Supabase', 'Hyperliquid'],
   },
   {
-    name: 'GWDS Content Engine',
+    name: 'Cival Content Engine',
     role: 'AI-Powered Production Pipeline',
     desc: 'End-to-end content generation across 6 TikTok channels — from script generation to voice synthesis to video rendering. Automated pipelines that turn ideas into published content with minimal manual intervention.',
     tags: ['Remotion', 'ElevenLabs', 'ComfyUI', 'Higgsfield'],
@@ -69,6 +69,20 @@ const projects = [
     tags: ['Solidity', 'React', 'IPFS', 'Ethereum'],
   },
 ];
+
+const legend = [
+  { color: 'var(--color-neutral-600)', label: 'Web' },
+  { color: 'var(--color-neutral-800)', label: '3D / Video' },
+  { color: 'var(--color-accent)', label: 'AI' },
+  { color: 'var(--color-accent-2)', label: 'Trading' },
+];
+
+function toolDotColor(category: string) {
+  if (category === 'trading') return 'var(--color-accent-2)';
+  if (category === 'ai') return 'var(--color-accent)';
+  if (category === '3d') return 'var(--color-neutral-800)';
+  return 'var(--color-neutral-500)';
+}
 
 export default function AboutPage() {
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
@@ -96,61 +110,64 @@ export default function AboutPage() {
   }, []);
 
   return (
-    <>
+    <div className="cival">
       <Navbar />
-      <main
-        style={{
-          paddingTop: '15vh',
-          minHeight: '100vh',
-          background: '#000',
-        }}
-      >
+      <main className="cival-fade" style={{ minHeight: '100vh' }}>
         {/* Hero */}
         <section
           ref={(el) => {
             sectionRefs.current[0] = el;
           }}
           style={{
-            padding: '80px 24px 120px',
+            padding: '150px 24px 100px',
             textAlign: 'center',
           }}
         >
           <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+            <div
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: 11.5,
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                color: 'var(--color-accent)',
+                marginBottom: 18,
+              }}
+            >
+              About Cival Systems
+            </div>
             <h1
               style={{
-                fontFamily: 'Syne, sans-serif',
-                fontSize: '8vw',
-                fontWeight: 800,
-                lineHeight: 1.1,
-                color: '#E8E8E8',
-                marginBottom: '3vw',
+                fontSize: 'clamp(40px, 7vw, 84px)',
+                letterSpacing: '-0.02em',
+                lineHeight: 1.05,
+                margin: '0 0 24px',
               }}
             >
               Built Solo.
               <br />
-              <span style={{ color: 'oklch(0.65 0.29 295)' }}>Shipped Real.</span>
+              <span style={{ color: 'var(--color-accent)' }}>Shipped Real.</span>
             </h1>
             <p
               style={{
-                fontFamily: 'DM Sans, sans-serif',
-                fontSize: '1.4vw',
+                fontSize: 'clamp(16px, 1.4vw, 19px)',
                 lineHeight: 1.7,
-                color: '#A8A8A8',
+                color: 'var(--color-neutral-800)',
                 maxWidth: '700px',
-                margin: '0 auto 2vw',
+                margin: '0 auto 20px',
               }}
             >
-              Gamma Waves Design Studio is a one-person operation building at the intersection
+              Cival Systems is a one-person operation building at the intersection
               of trading systems, AI automation, and 3D production. Everything in the store
               started as an internal tool — built to solve a real problem, tested with real
               capital, then packaged as source code for other developers and traders.
             </p>
             <p
               style={{
-                fontFamily: 'DM Sans, sans-serif',
-                fontSize: '1.1vw',
-                lineHeight: 1.7,
-                color: '#666',
+                fontFamily: 'var(--font-mono)',
+                fontSize: 12.5,
+                letterSpacing: '0.05em',
+                color: 'var(--color-neutral-600)',
               }}
             >
               Founded by Anthony Lee&nbsp;&nbsp;·&nbsp;&nbsp;Los Angeles, CA&nbsp;&nbsp;·&nbsp;&nbsp;Est. 2024
@@ -165,38 +182,43 @@ export default function AboutPage() {
           }}
           style={{
             padding: '80px 24px',
-            borderTop: '1px solid rgba(232, 232, 232, 0.1)',
+            borderTop: '1px solid var(--color-divider)',
           }}
         >
-          <div style={{ maxWidth: '1600px', margin: '0 auto' }}>
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <div
+              className="values-grid"
               style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(2, 1fr)',
-                gap: '32px',
+                gap: '28px',
               }}
-              className="values-grid"
             >
               {values.map((v) => (
-                <div key={v.title}>
-                  <div style={{ fontSize: '4vw', marginBottom: '2vw' }}>{v.emoji}</div>
+                <div
+                  key={v.title}
+                  style={{
+                    padding: '32px',
+                    borderRadius: 'calc(var(--radius-lg) * 1.15)',
+                    background: 'var(--color-surface)',
+                  }}
+                >
+                  <div style={{ fontSize: '34px', marginBottom: '18px' }}>{v.emoji}</div>
                   <h3
                     style={{
-                      fontFamily: 'Syne, sans-serif',
-                      fontSize: '2vw',
-                      fontWeight: 600,
-                      color: '#E8E8E8',
-                      marginBottom: '1.5vw',
+                      fontSize: '21px',
+                      letterSpacing: '-0.01em',
+                      margin: '0 0 12px',
                     }}
                   >
                     {v.title}
                   </h3>
                   <p
                     style={{
-                      fontFamily: 'DM Sans, sans-serif',
-                      fontSize: '1.1vw',
+                      fontSize: '14.5px',
                       lineHeight: 1.7,
-                      color: '#A8A8A8',
+                      color: 'var(--color-neutral-800)',
+                      margin: 0,
                     }}
                   >
                     {v.desc}
@@ -214,17 +236,15 @@ export default function AboutPage() {
           }}
           style={{
             padding: '80px 24px',
-            borderTop: '1px solid rgba(232, 232, 232, 0.1)',
+            borderTop: '1px solid var(--color-divider)',
           }}
         >
-          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <div style={{ maxWidth: '900px', margin: '0 auto' }}>
             <h2
               style={{
-                fontFamily: 'Syne, sans-serif',
-                fontSize: '4vw',
-                fontWeight: 700,
-                color: '#E8E8E8',
-                marginBottom: '2vw',
+                fontSize: 'clamp(32px, 4vw, 48px)',
+                letterSpacing: '-0.018em',
+                marginBottom: '14px',
                 textAlign: 'center',
               }}
             >
@@ -232,75 +252,52 @@ export default function AboutPage() {
             </h2>
             <p
               style={{
-                fontFamily: 'DM Sans, sans-serif',
-                fontSize: '1.2vw',
-                lineHeight: 1.7,
-                color: '#666',
+                fontSize: '15.5px',
+                lineHeight: 1.6,
+                color: 'var(--color-neutral-700)',
                 textAlign: 'center',
-                marginBottom: '5vh',
-                maxWidth: '600px',
-                margin: '0 auto 5vh',
+                marginBottom: '48px',
+                maxWidth: '560px',
+                marginLeft: 'auto',
+                marginRight: 'auto',
               }}
             >
               Active systems that drive the studio — and the source of everything in the store.
             </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }} className="projects-list">
+            <div className="projects-list" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               {projects.map((project) => (
                 <div
                   key={project.name}
                   style={{
-                    padding: '40px',
-                    border: '1px solid rgba(232, 232, 232, 0.08)',
-                    background: '#080808',
+                    padding: '36px',
+                    borderRadius: 'calc(var(--radius-lg) * 1.15)',
+                    background: 'var(--color-surface)',
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
                     <h3
                       style={{
-                        fontFamily: 'Syne, sans-serif',
-                        fontSize: '1.8vw',
-                        fontWeight: 700,
-                        color: '#E8E8E8',
+                        fontSize: '22px',
+                        margin: 0,
                       }}
                     >
                       {project.name}
                     </h3>
-                    <span
-                      style={{
-                        fontFamily: 'DM Sans, sans-serif',
-                        fontSize: '0.85vw',
-                        color: 'oklch(0.65 0.29 295)',
-                        border: '1px solid oklch(0.65 0.29 295 / 0.3)',
-                        padding: '4px 12px',
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      {project.role}
-                    </span>
+                    <span className="tag tag-accent">{project.role}</span>
                   </div>
                   <p
                     style={{
-                      fontFamily: 'DM Sans, sans-serif',
-                      fontSize: '1.05vw',
+                      fontSize: '14.5px',
                       lineHeight: 1.7,
-                      color: '#A8A8A8',
-                      marginBottom: '20px',
+                      color: 'var(--color-neutral-800)',
+                      marginBottom: '18px',
                     }}
                   >
                     {project.desc}
                   </p>
                   <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                     {project.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        style={{
-                          fontFamily: 'DM Sans, sans-serif',
-                          fontSize: '0.75vw',
-                          color: '#666',
-                          border: '1px solid rgba(232, 232, 232, 0.1)',
-                          padding: '3px 10px',
-                        }}
-                      >
+                      <span key={tag} className="tag tag-neutral">
                         {tag}
                       </span>
                     ))}
@@ -318,17 +315,15 @@ export default function AboutPage() {
           }}
           style={{
             padding: '80px 24px',
-            borderTop: '1px solid rgba(232, 232, 232, 0.1)',
+            borderTop: '1px solid var(--color-divider)',
           }}
         >
-          <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
+          <div style={{ maxWidth: '900px', margin: '0 auto', textAlign: 'center' }}>
             <h2
               style={{
-                fontFamily: 'Syne, sans-serif',
-                fontSize: '4vw',
-                fontWeight: 700,
-                color: '#E8E8E8',
-                marginBottom: '5vh',
+                fontSize: 'clamp(32px, 4vw, 48px)',
+                letterSpacing: '-0.018em',
+                marginBottom: '40px',
               }}
             >
               The Stack
@@ -337,7 +332,7 @@ export default function AboutPage() {
               style={{
                 display: 'flex',
                 flexWrap: 'wrap',
-                gap: '12px',
+                gap: '10px',
                 justifyContent: 'center',
               }}
             >
@@ -345,31 +340,38 @@ export default function AboutPage() {
                 <div
                   key={tool.name}
                   style={{
-                    padding: '10px 20px',
-                    border: '1px solid rgba(232, 232, 232, 0.15)',
-                    background: tool.category === 'trading' ? 'rgba(139, 92, 246, 0.06)' :
-                               tool.category === 'ai' ? 'rgba(6, 182, 212, 0.06)' :
-                               tool.category === '3d' ? 'rgba(245, 158, 11, 0.06)' : '#050505',
-                    fontFamily: 'DM Sans, sans-serif',
-                    fontSize: '0.95vw',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '10px 18px',
+                    borderRadius: '999px',
+                    border: '1px solid var(--color-divider)',
+                    background: 'var(--color-surface)',
+                    fontSize: '13.5px',
                     fontWeight: 500,
-                    color: '#E8E8E8',
+                    color: 'var(--color-text)',
                   }}
                 >
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: toolDotColor(tool.category) }} />
                   {tool.name}
                 </div>
               ))}
             </div>
-            <div style={{ marginTop: '3vh', display: 'flex', gap: '24px', justifyContent: 'center', flexWrap: 'wrap' }}>
-              {[
-                { color: 'rgba(232, 232, 232, 0.5)', label: 'Web' },
-                { color: 'rgba(245, 158, 11, 0.7)', label: '3D / Video' },
-                { color: 'rgba(6, 182, 212, 0.7)', label: 'AI' },
-                { color: 'rgba(139, 92, 246, 0.7)', label: 'Trading' },
-              ].map((legend) => (
-                <div key={legend.label} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: legend.color }} />
-                  <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.8vw', color: '#666' }}>{legend.label}</span>
+            <div style={{ marginTop: '28px', display: 'flex', gap: '24px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              {legend.map((item) => (
+                <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: item.color }} />
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '11px',
+                      letterSpacing: '0.06em',
+                      textTransform: 'uppercase',
+                      color: 'var(--color-neutral-600)',
+                    }}
+                  >
+                    {item.label}
+                  </span>
                 </div>
               ))}
             </div>
@@ -382,27 +384,15 @@ export default function AboutPage() {
 
       <style jsx>{`
         @media (max-width: 768px) {
-          h1 {
-            font-size: 12vw !important;
-          }
-          h2 {
-            font-size: 8vw !important;
-          }
-          h3 {
-            font-size: 5.5vw !important;
-          }
-          p {
-            font-size: 3.8vw !important;
-          }
           .values-grid {
             grid-template-columns: 1fr !important;
-            gap: 8vh !important;
+            gap: 20px !important;
           }
           .projects-list > div {
             padding: 24px !important;
           }
         }
       `}</style>
-    </>
+    </div>
   );
 }

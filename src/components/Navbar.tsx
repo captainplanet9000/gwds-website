@@ -5,6 +5,14 @@ import Link from 'next/link';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 
+const navLinks = [
+  { href: '/store', label: 'Store' },
+  { href: '/store?cat=edition', label: 'Pricing' },
+  { href: '/docs/setup', label: 'Docs' },
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
+];
+
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -13,361 +21,98 @@ export default function Navbar() {
   const [showAccountMenu, setShowAccountMenu] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks = [
-    { href: '/store', label: 'Store' },
-    { href: '/about', label: 'About' },
-    { href: '/contact', label: 'Contact' },
-    { href: 'https://discord.gg/EZk6gTx57k', label: 'Discord', external: true },
-  ];
-
   return (
     <nav
+      className="cival"
       style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 1000,
-        padding: '16px 40px',
-        background: '#000000',
-        backdropFilter: 'blur(20px)',
-        borderBottom: isScrolled ? '1px solid rgba(232, 232, 232, 0.1)' : '1px solid rgba(232, 232, 232, 0.05)',
-        transition: 'all 0.3s ease',
+        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000,
+        backdropFilter: 'blur(14px)',
+        background: 'color-mix(in srgb, var(--color-bg) 84%, transparent)',
+        borderBottom: isScrolled ? '1px solid var(--color-divider)' : '1px solid transparent',
+        transition: 'border-color 0.3s ease',
       }}
     >
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          maxWidth: '1200px',
-          margin: '0 auto',
-        }}
-      >
-        {/* Logo */}
-        <Link href="/" style={{ textDecoration: 'none' }}>
-          <span
-            style={{
-              fontFamily: 'Syne, sans-serif',
-              fontSize: '1.25rem',
-              fontWeight: 700,
-              color: '#E8E8E8',
-              letterSpacing: '-0.02em',
-            }}
-          >
-            GWDS
+      <div style={{
+        maxWidth: 1200, margin: '0 auto', padding: '0 28px', height: 66,
+        display: 'flex', alignItems: 'center', gap: 30,
+      }}>
+        <Link href="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'var(--color-text)', marginRight: 'auto' }} aria-label="Cival Systems — home">
+          <span style={{ display: 'inline-flex', alignItems: 'stretch', borderRadius: 999, overflow: 'hidden', border: '1.5px solid var(--color-text)' }}>
+            <span style={{ fontFamily: 'var(--font-heading)', fontSize: 16, padding: '5px 13px', lineHeight: 1.25 }}>Cival</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, fontWeight: 500, letterSpacing: '0.16em', textTransform: 'uppercase', padding: '0 13px', background: 'var(--color-text)', color: 'var(--color-bg)', display: 'flex', alignItems: 'center' }}>Systems</span>
           </span>
         </Link>
 
-        {/* Desktop Nav */}
-        <div
-          style={{
-            display: 'flex',
-            gap: '32px',
-            alignItems: 'center',
-          }}
-          className="desktop-nav"
-        >
+        <div className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: 26, fontSize: 14 }}>
           {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              {...((link as any).external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-              style={{
-                fontFamily: 'DM Sans, sans-serif',
-                fontSize: '0.875rem',
-                fontWeight: 500,
-                color: (link as any).external ? '#7C3AED' : '#A8A8A8',
-                textDecoration: 'none',
-                transition: 'color 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = '#E8E8E8';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = '#A8A8A8';
-              }}
-            >
+            <Link key={link.href} href={link.href} style={{ textDecoration: 'none', color: 'var(--color-text)' }}>
               {link.label}
             </Link>
           ))}
 
-          {/* Cart Button */}
-          <button
-            onClick={toggleCart}
-            style={{
-              background: 'transparent',
-              border: '1px solid rgba(232, 232, 232, 0.2)',
-              color: '#E8E8E8',
-              padding: '8px 16px',
-              fontFamily: 'DM Sans, sans-serif',
-              fontSize: '0.875rem',
-              fontWeight: 500,
-              cursor: 'pointer',
-              borderRadius: '2px',
-              transition: 'all 0.2s ease',
-              position: 'relative',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#E8E8E8';
-              e.currentTarget.style.color = '#000';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'transparent';
-              e.currentTarget.style.color = '#E8E8E8';
-            }}
-          >
-            Cart ({totalItems})
+          <button onClick={toggleCart} className="btn btn-secondary" style={{ gap: 8, fontSize: 13, height: 40, padding: '0 18px' }}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round"><path d="M8 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" /><path d="M19 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" /><path d="M2 3h2l2.6 12.2a2 2 0 0 0 2 1.6h9.2a2 2 0 0 0 2-1.6L21 7H5" /></svg>
+            Cart <span style={{ fontFamily: 'var(--font-mono)' }}>{totalItems}</span>
           </button>
 
-          {/* Account */}
           {!authLoading && (
             user ? (
               <div style={{ position: 'relative' }}>
-                <button
-                  onClick={() => setShowAccountMenu(!showAccountMenu)}
-                  style={{
-                    background: 'transparent',
-                    border: '1px solid rgba(139, 92, 246, 0.3)',
-                    color: '#8B5CF6',
-                    padding: '8px 16px',
-                    fontFamily: 'DM Sans, sans-serif',
-                    fontSize: '0.875rem',
-                    fontWeight: 500,
-                    cursor: 'pointer',
-                    borderRadius: '2px',
-                    transition: 'all 0.2s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(139, 92, 246, 0.1)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'transparent';
-                  }}
-                >
+                <button onClick={() => setShowAccountMenu(!showAccountMenu)} style={{ background: 'none', border: 'none', color: 'var(--color-accent)', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'var(--font-body)' }}>
                   {user.email?.split('@')[0] || 'Account'}
                 </button>
                 {showAccountMenu && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '100%',
-                      right: 0,
-                      marginTop: 8,
-                      background: '#0a0a0a',
-                      border: '1px solid #1a1a1a',
-                      borderRadius: 8,
-                      padding: 8,
-                      minWidth: 160,
-                      zIndex: 1001,
-                    }}
-                  >
-                    <Link
-                      href="/account"
-                      onClick={() => setShowAccountMenu(false)}
-                      style={{
-                        display: 'block',
-                        padding: '10px 14px',
-                        color: '#E8E8E8',
-                        textDecoration: 'none',
-                        fontFamily: 'DM Sans, sans-serif',
-                        fontSize: '0.85rem',
-                        borderRadius: 4,
-                      }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = '#1a1a1a'; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
-                    >
+                  <div style={{ position: 'absolute', top: '100%', right: 0, marginTop: 10, background: 'var(--color-bg)', border: '1px solid var(--color-divider)', borderRadius: 12, padding: 8, minWidth: 160, boxShadow: 'var(--shadow-md)', zIndex: 1001 }}>
+                    <Link href="/account" onClick={() => setShowAccountMenu(false)} style={{ display: 'block', padding: '10px 14px', color: 'var(--color-text)', textDecoration: 'none', fontSize: '0.85rem', borderRadius: 8 }}>
                       My Account
                     </Link>
-                    <button
-                      onClick={() => { signOut(); setShowAccountMenu(false); }}
-                      style={{
-                        display: 'block',
-                        width: '100%',
-                        padding: '10px 14px',
-                        background: 'transparent',
-                        border: 'none',
-                        color: '#888',
-                        textAlign: 'left',
-                        fontFamily: 'DM Sans, sans-serif',
-                        fontSize: '0.85rem',
-                        cursor: 'pointer',
-                        borderRadius: 4,
-                      }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = '#1a1a1a'; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
-                    >
+                    <button onClick={() => { signOut(); setShowAccountMenu(false); }} style={{ display: 'block', width: '100%', padding: '10px 14px', background: 'none', border: 'none', color: 'var(--color-neutral-600)', textAlign: 'left', fontSize: '0.85rem', cursor: 'pointer', borderRadius: 8, fontFamily: 'var(--font-body)' }}>
                       Sign Out
                     </button>
                   </div>
                 )}
               </div>
             ) : (
-              <Link
-                href="/account/login"
-                style={{
-                  fontFamily: 'DM Sans, sans-serif',
-                  fontSize: '0.875rem',
-                  fontWeight: 500,
-                  color: '#A8A8A8',
-                  textDecoration: 'none',
-                  transition: 'color 0.2s ease',
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.color = '#E8E8E8'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.color = '#A8A8A8'; }}
-              >
-                Sign In
+              <Link href="/account/login" style={{ textDecoration: 'none', color: 'var(--color-text)', fontWeight: 600 }}>
+                Sign in
               </Link>
             )
           )}
         </div>
 
-        {/* Mobile Hamburger */}
-        <button
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          style={{
-            display: 'none',
-            background: 'transparent',
-            border: 'none',
-            color: '#E8E8E8',
-            fontSize: '1.5rem',
-            cursor: 'pointer',
-            padding: 0,
-          }}
-          className="mobile-menu-btn"
-        >
+        <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="mobile-menu-btn" style={{ display: 'none', background: 'none', border: 'none', color: 'var(--color-text)', fontSize: '1.5rem', cursor: 'pointer', padding: 0 }}>
           {isMobileMenuOpen ? '✕' : '☰'}
         </button>
       </div>
 
-      {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '100%',
-            left: 0,
-            right: 0,
-            background: '#000',
-            borderBottom: '1px solid rgba(232, 232, 232, 0.1)',
-            padding: '20px',
-          }}
-          className="mobile-menu"
-        >
+        <div className="mobile-menu" style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'var(--color-bg)', borderBottom: '1px solid var(--color-divider)', padding: 20 }}>
           {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setIsMobileMenuOpen(false)}
-              style={{
-                display: 'block',
-                fontFamily: 'DM Sans, sans-serif',
-                fontSize: '1.1rem',
-                fontWeight: 500,
-                color: '#A8A8A8',
-                textDecoration: 'none',
-                padding: '12px 0',
-                borderBottom: '1px solid rgba(232, 232, 232, 0.05)',
-              }}
-            >
+            <Link key={link.href} href={link.href} onClick={() => setIsMobileMenuOpen(false)} style={{ display: 'block', fontSize: '1.05rem', fontWeight: 500, color: 'var(--color-text)', textDecoration: 'none', padding: '12px 0', borderBottom: '1px solid var(--color-divider)' }}>
               {link.label}
             </Link>
           ))}
-          <button
-            onClick={() => {
-              toggleCart();
-              setIsMobileMenuOpen(false);
-            }}
-            style={{
-              marginTop: '16px',
-              width: '100%',
-              background: 'transparent',
-              border: '1px solid rgba(232, 232, 232, 0.2)',
-              color: '#E8E8E8',
-              padding: '14px',
-              fontFamily: 'DM Sans, sans-serif',
-              fontSize: '1rem',
-              fontWeight: 500,
-              cursor: 'pointer',
-              borderRadius: '4px',
-            }}
-          >
+          <button onClick={() => { toggleCart(); setIsMobileMenuOpen(false); }} className="btn btn-secondary btn-block" style={{ marginTop: 16 }}>
             Cart ({totalItems})
           </button>
           {!authLoading && (
             user ? (
               <>
-                <Link
-                  href="/account"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  style={{
-                    display: 'block',
-                    marginTop: '8px',
-                    width: '100%',
-                    textAlign: 'center',
-                    background: 'transparent',
-                    border: '1px solid rgba(139, 92, 246, 0.3)',
-                    color: '#8B5CF6',
-                    padding: '14px',
-                    fontFamily: 'DM Sans, sans-serif',
-                    fontSize: '1rem',
-                    fontWeight: 500,
-                    textDecoration: 'none',
-                    borderRadius: '4px',
-                    boxSizing: 'border-box',
-                  }}
-                >
+                <Link href="/account" onClick={() => setIsMobileMenuOpen(false)} className="btn btn-ghost btn-block" style={{ marginTop: 8, textAlign: 'center' }}>
                   My Account
                 </Link>
-                <button
-                  onClick={() => { signOut(); setIsMobileMenuOpen(false); }}
-                  style={{
-                    marginTop: '8px',
-                    width: '100%',
-                    background: 'transparent',
-                    border: '1px solid #1a1a1a',
-                    color: '#888',
-                    padding: '14px',
-                    fontFamily: 'DM Sans, sans-serif',
-                    fontSize: '1rem',
-                    fontWeight: 500,
-                    cursor: 'pointer',
-                    borderRadius: '4px',
-                  }}
-                >
+                <button onClick={() => { signOut(); setIsMobileMenuOpen(false); }} className="btn btn-ghost btn-block" style={{ marginTop: 8 }}>
                   Sign Out
                 </button>
               </>
             ) : (
-              <Link
-                href="/account/login"
-                onClick={() => setIsMobileMenuOpen(false)}
-                style={{
-                  display: 'block',
-                  marginTop: '8px',
-                  width: '100%',
-                  textAlign: 'center',
-                  background: 'transparent',
-                  border: '1px solid rgba(139, 92, 246, 0.3)',
-                  color: '#8B5CF6',
-                  padding: '14px',
-                  fontFamily: 'DM Sans, sans-serif',
-                  fontSize: '1rem',
-                  fontWeight: 500,
-                  textDecoration: 'none',
-                  borderRadius: '4px',
-                  boxSizing: 'border-box',
-                }}
-              >
-                Sign In
+              <Link href="/account/login" onClick={() => setIsMobileMenuOpen(false)} className="btn btn-primary btn-block" style={{ marginTop: 8, textAlign: 'center' }}>
+                Sign in
               </Link>
             )
           )}
@@ -376,12 +121,8 @@ export default function Navbar() {
 
       <style jsx>{`
         @media (max-width: 768px) {
-          .desktop-nav {
-            display: none !important;
-          }
-          .mobile-menu-btn {
-            display: block !important;
-          }
+          .desktop-nav { display: none !important; }
+          .mobile-menu-btn { display: block !important; }
         }
       `}</style>
     </nav>

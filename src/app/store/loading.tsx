@@ -1,6 +1,6 @@
 export default function StoreLoading() {
   return (
-    <div style={{ minHeight: "100vh", background: "#0A0A0F", paddingTop: 72 }}>
+    <div style={{ minHeight: "100vh", background: "#f3f2ef", paddingTop: 72 }}>
       <section style={{ padding: "64px 24px", maxWidth: 1280, margin: "0 auto" }}>
         {/* Header skeleton */}
         <div style={{ textAlign: "center", marginBottom: 48 }}>

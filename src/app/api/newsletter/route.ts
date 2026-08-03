@@ -24,9 +24,9 @@ export async function POST(req: NextRequest) {
       const { Resend } = await import('resend');
       const resend = new Resend(process.env.RESEND_API_KEY);
       await resend.emails.send({
-        from: 'GWDS <onboarding@resend.dev>',
+        from: 'Cival Systems <onboarding@resend.dev>',
         to: email,
-        subject: 'Welcome to the GWDS Signal 📡',
+        subject: 'Welcome to the Cival Systems Signal 📡',
         html: `
           <div style="background:#000;color:#E8E8E8;padding:40px;font-family:system-ui,sans-serif;max-width:600px;margin:0 auto;">
             <h1 style="color:#8B5CF6;font-size:24px;margin-bottom:16px;">You're on the frequency.</h1>
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
               New products, early access drops, and AI trading insights — transmitted directly to your inbox.
             </p>
             <p style="color:#666;font-size:13px;margin-top:32px;">
-              — Gamma Waves Design Studio<br>
+              — Cival Systems<br>
               <a href="https://gwds-website.vercel.app" style="color:#8B5CF6;">gwds-website.vercel.app</a>
             </p>
           </div>

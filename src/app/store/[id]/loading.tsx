@@ -1,6 +1,6 @@
 export default function ProductLoading() {
   return (
-    <div style={{ minHeight: "100vh", background: "#0A0A0F", paddingTop: 72 }}>
+    <div style={{ minHeight: "100vh", background: "#f3f2ef", paddingTop: 72 }}>
       <section style={{ maxWidth: 1080, margin: "0 auto", padding: "48px 24px" }}>
         {/* Breadcrumb skeleton */}
         <div style={{ display: "flex", gap: 8, marginBottom: 40 }}>

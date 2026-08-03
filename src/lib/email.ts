@@ -30,7 +30,7 @@ const productTaglines: Record<string, string> = {
   "macro-sentiment-agent": "Fed policy, whale flows, social sentiment. The macro edge.",
   "multi-strategy-bundle": "6 strategies running in parallel. One unified system.",
   "full-stack-trader-bundle": "Dashboard + 2 agents. Everything you need to start.",
-  "everything-bundle": "The entire GWDS catalog. Every tool, every agent, every update.",
+  "everything-bundle": "The entire Cival Systems catalog. Every tool, every agent, every update.",
 };
 
 function getProductEmoji(productId: string): string {
@@ -233,7 +233,7 @@ export async function sendOrderConfirmation(
       <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Order Confirmation - GWDS</title>
+        <title>Order Confirmation - Cival Systems</title>
         <!--[if mso]>
         <style type="text/css">
           body, table, td {font-family: Arial, sans-serif !important;}
@@ -366,7 +366,7 @@ export async function sendOrderConfirmation(
                                   <tr>
                                     <td>
                                       <p style="margin: 0 0 4px; font-size: 15px; font-weight: 700; color: #F8FAFC;">Access your downloads anytime</p>
-                                      <p style="margin: 0 0 16px; font-size: 13px; color: #94A3B8;">Log in to your GWDS account to re-download your products and manage your purchases.</p>
+                                      <p style="margin: 0 0 16px; font-size: 13px; color: #94A3B8;">Log in to your Cival Systems account to re-download your products and manage your purchases.</p>
                                       <table cellpadding="0" cellspacing="0">
                                         <tr>
                                           <td style="background-color: #1A1A2E; border: 1px solid #2D2D44; border-radius: 8px; padding: 10px 24px;">
@@ -405,7 +405,7 @@ export async function sendOrderConfirmation(
                 <tr>
                   <td style="padding: 28px 16px; text-align: center;">
                     <p style="margin: 0 0 12px; font-size: 12px; color: #475569;">
-                      © ${new Date().getFullYear()} Gamma Waves Design Studio. All rights reserved.
+                      © ${new Date().getFullYear()} Cival Systems. All rights reserved.
                     </p>
                     <table cellpadding="0" cellspacing="0" align="center">
                       <tr>
@@ -442,7 +442,7 @@ export async function sendOrderConfirmation(
 
   // Plain text version
   const text = `
-GWDS — Order Confirmation
+Cival Systems — Order Confirmation
 ${"=".repeat(40)}
 
 ${order.customer_name ? `Hey ${order.customer_name.split(" ")[0]}` : "Hey"} — you're all set.
@@ -466,7 +466,7 @@ ${"-".repeat(40)}
 4. Check the README.md for configuration
 
 ${productIds.some(id => getProduct(id)?.requiresDashboard)
-  ? "NOTE: Plugin products require the AI Trading Dashboard to function.\nThese are source code templates — not standalone applications.\n"
+  ? "NOTE: Add-on products require Core Edition to function.\nThese are source code templates — not standalone applications.\n"
   : ""}
 ACCESS YOUR ACCOUNT
 ${"-".repeat(40)}
@@ -475,13 +475,13 @@ Log in anytime to re-download: ${SITE_URL}/account
 Need help? Reply to this email or contact gammawavesdesign@gmail.com
 
 ---
-© ${new Date().getFullYear()} Gamma Waves Design Studio
+© ${new Date().getFullYear()} Cival Systems
 gwds-website.vercel.app
   `.trim();
 
   try {
     const { data, error } = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL || "GWDS Store <onboarding@resend.dev>",
+      from: process.env.RESEND_FROM_EMAIL || "Cival Systems <onboarding@resend.dev>",
       to: email,
       subject,
       html,

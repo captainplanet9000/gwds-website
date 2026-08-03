@@ -17,25 +17,24 @@ export default function GlobalError({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#0A0A0F",
-          color: "#F8FAFC",
-          fontFamily: "Inter, -apple-system, sans-serif",
+          backgroundColor: "#f3f2ef",
+          color: "#0f1219",
+          fontFamily: "'Instrument Sans', -apple-system, sans-serif",
         }}
       >
         <div style={{ textAlign: "center", padding: "40px 20px" }}>
           <h1
             style={{
+              fontFamily: "'Instrument Serif', Georgia, serif",
+              fontWeight: 400,
               fontSize: "48px",
-              fontWeight: 800,
               margin: "0 0 16px",
-              background: "linear-gradient(135deg, #8B5CF6, #06B6D4)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
+              color: "#1d4ed8",
             }}
           >
             Something broke
           </h1>
-          <p style={{ fontSize: "18px", color: "#94A3B8", margin: "0 0 32px" }}>
+          <p style={{ fontSize: "18px", color: "#605d57", margin: "0 0 32px" }}>
             We hit an unexpected error. Try again or head back to the store.
           </p>
           <div style={{ display: "flex", gap: "16px", justifyContent: "center" }}>
@@ -44,11 +43,12 @@ export default function GlobalError({
               style={{
                 padding: "12px 32px",
                 fontSize: "16px",
+                fontFamily: "'Instrument Sans', -apple-system, sans-serif",
                 fontWeight: 600,
                 color: "#fff",
-                background: "linear-gradient(135deg, #8B5CF6, #7C3AED)",
+                background: "#1d4ed8",
                 border: "none",
-                borderRadius: "8px",
+                borderRadius: "999px",
                 cursor: "pointer",
               }}
             >
@@ -59,12 +59,14 @@ export default function GlobalError({
               style={{
                 padding: "12px 32px",
                 fontSize: "16px",
+                fontFamily: "'Instrument Sans', -apple-system, sans-serif",
                 fontWeight: 600,
-                color: "#F8FAFC",
-                background: "rgba(255,255,255,0.1)",
-                border: "1px solid rgba(255,255,255,0.2)",
-                borderRadius: "8px",
+                color: "#0f1219",
+                background: "#e6e4de",
+                border: "1px solid rgba(15,18,25,0.15)",
+                borderRadius: "999px",
                 textDecoration: "none",
+                display: "inline-block",
               }}
             >
               Back to Store

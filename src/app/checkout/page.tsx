@@ -7,8 +7,12 @@ import Footer from '@/components/Footer';
 import { useCart } from '@/contexts/CartContext';
 import { track } from '@vercel/analytics';
 
+function money(n: number) {
+  return '$' + n.toFixed(2).replace(/\.00$/, '');
+}
+
 export default function CheckoutPage() {
-  const { state, dispatch, totalPrice, totalItems } = useCart();
+  const { state, dispatch, totalPrice } = useCart();
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
@@ -21,7 +25,6 @@ export default function CheckoutPage() {
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount: number; discount_type: string; discount_value: number } | null>(null);
   const [couponError, setCouponError] = useState('');
 
-  // Check if cart has plugins that require dashboard
   const hasPluginRequiringDashboard = state.items.some(item => item.product.requiresDashboard);
   const hasDashboard = state.items.some(item => item.product.id === 'trading-dashboard-template');
   const showPluginWarning = hasPluginRequiringDashboard && !hasDashboard;
@@ -41,12 +44,7 @@ export default function CheckoutPage() {
       const data = await res.json();
       if (data.valid) {
         track('coupon_applied', { code: data.coupon.code, discount_type: data.coupon.discount_type, discount_value: data.coupon.discount_value });
-        setAppliedCoupon({
-          code: data.coupon.code,
-          discount: data.discount,
-          discount_type: data.coupon.discount_type,
-          discount_value: data.coupon.discount_value,
-        });
+        setAppliedCoupon({ code: data.coupon.code, discount: data.discount, discount_type: data.coupon.discount_type, discount_value: data.coupon.discount_value });
         setCouponError('');
       } else {
         setCouponError(data.error || 'Invalid coupon');
@@ -65,22 +63,10 @@ export default function CheckoutPage() {
   };
 
   const handleCheckout = async () => {
-    if (!email || !name) {
-      setError('Please fill in all fields');
-      return;
-    }
-    if (!agreedToTerms) {
-      setError('You must agree to the Terms of Service and Trading Disclaimer to proceed');
-      return;
-    }
-    if (hasPluginRequiringDashboard && !agreedToPluginDisclaimer) {
-      setError('You must acknowledge that plugin products require the AI Trading Dashboard');
-      return;
-    }
-    if (state.items.length === 0) {
-      setError('Your cart is empty');
-      return;
-    }
+    if (!email || !name) { setError('Please fill in all fields'); return; }
+    if (!agreedToTerms) { setError('You must agree to the Terms of Service and Trading Disclaimer to proceed'); return; }
+    if (hasPluginRequiringDashboard && !agreedToPluginDisclaimer) { setError('You must acknowledge that plugin products require Core Edition'); return; }
+    if (state.items.length === 0) { setError('Your cart is empty'); return; }
 
     setLoading(true);
     setError('');
@@ -94,8 +80,7 @@ export default function CheckoutPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           items: state.items.map(i => ({ productId: i.product.id, quantity: i.quantity })),
-          email,
-          name,
+          email, name,
           couponCode: appliedCoupon?.code || undefined,
         }),
         signal: controller.signal,
@@ -113,419 +98,145 @@ export default function CheckoutPage() {
       const data = await res.json();
 
       if (data.free) {
-        // Free order (100% coupon) — go straight to success
         track('purchase', { value: 0, coupon: couponCode || undefined, items: state.items.length });
         dispatch({ type: 'CLEAR_CART' });
         router.push(`/checkout/success?orderId=${data.orderId}`);
       } else if (data.stripeUrl) {
-        // Redirect to Stripe Checkout
-        track('checkout_start', { value: finalTotal / 100, items: state.items.length, coupon: couponCode || undefined });
+        track('checkout_start', { value: discountedTotal, items: state.items.length, coupon: couponCode || undefined });
         window.location.href = data.stripeUrl;
       } else if (data.orderId) {
-        // Direct completion
-        track('purchase', { value: finalTotal / 100, items: state.items.length });
+        track('purchase', { value: discountedTotal, items: state.items.length });
         dispatch({ type: 'CLEAR_CART' });
         router.push(`/checkout/success?orderId=${data.orderId}`);
       } else {
         setError(data.error || 'Checkout failed — please try again');
       }
     } catch (err: any) {
-      if (err.name === 'AbortError') {
-        setError('Request timed out — please try again');
-      } else {
-        setError('Network error — please try again');
-      }
+      setError(err.name === 'AbortError' ? 'Request timed out — please try again' : 'Network error — please try again');
     } finally {
       setLoading(false);
     }
   };
 
-  const inputStyle = {
-    width: '100%',
-    padding: '14px 16px',
-    background: '#111',
-    border: '1px solid #222',
-    borderRadius: 8,
-    color: '#E8E8E8',
-    fontSize: '0.88rem',
-    fontFamily: 'var(--font-body)',
-    outline: 'none',
-    transition: 'border-color 0.2s',
-  };
-
   const canCheckout = agreedToTerms && (!hasPluginRequiringDashboard || agreedToPluginDisclaimer) && !loading;
 
   return (
-    <>
+    <div className="cival">
       <Navbar />
-      <main style={{ background: '#000', minHeight: '100vh', paddingTop: 120 }}>
-        <div style={{ maxWidth: 900, margin: '0 auto', padding: '0 24px 64px' }}>
-          <h1 style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: 'clamp(2rem, 4vw, 3rem)',
-            fontWeight: 800,
-            color: '#E8E8E8',
-            marginBottom: 48,
-            letterSpacing: '-0.03em',
-          }}>
-            Checkout
-          </h1>
+      <main className="cival-fade" style={{ maxWidth: 1000, margin: '0 auto', padding: '150px 28px 96px' }}>
+        <h1 style={{ fontSize: 'clamp(36px,4.4vw,54px)', letterSpacing: '-0.015em', margin: '0 0 8px' }}>Checkout</h1>
+        <p style={{ color: 'var(--color-neutral-700)', margin: '0 0 34px' }}>Files are on the download page the second this clears.</p>
 
-          {/* Plugin warning banner */}
-          {showPluginWarning && (
-            <div
-              style={{
-                backgroundColor: "#1a0a00",
-                border: "2px solid #F59E0B",
-                borderRadius: "8px",
-                padding: "16px 20px",
-                marginBottom: "32px",
-                fontFamily: "var(--font-body)",
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "flex-start", gap: "12px" }}>
-                <div style={{ fontSize: "24px", lineHeight: "1", flexShrink: 0 }}>⚠️</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ color: "#fff", fontSize: "15px", lineHeight: "1.6", marginBottom: "8px" }}>
-                    Your cart contains plugin products that require the AI Trading Dashboard. They cannot function independently.
-                  </div>
-                  <a
-                    href="/store/trading-dashboard-template"
-                    style={{
-                      color: "#F59E0B",
-                      textDecoration: "underline",
-                      fontSize: "14px",
-                      fontWeight: 500,
-                    }}
-                  >
-                    View AI Trading Dashboard →
-                  </a>
-                </div>
+        {showPluginWarning && (
+          <div style={{ background: 'var(--color-accent-2-100)', borderRadius: 'var(--radius-lg)', padding: '16px 20px', marginBottom: 32 }}>
+            <div style={{ color: 'var(--color-accent-2-900)', fontSize: 15, lineHeight: 1.6, marginBottom: 8 }}>
+              Your cart contains add-ons that require Core Edition. They cannot function independently.
+            </div>
+            <Link href="/store/trading-dashboard-template" style={{ color: 'var(--color-accent-2-700)', fontWeight: 600, fontSize: 14 }}>
+              View Core Edition →
+            </Link>
+          </div>
+        )}
+
+        {state.items.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '60px 0' }}>
+            <p style={{ fontSize: '1.1rem', marginBottom: 16 }}>Your cart is empty</p>
+            <Link href="/store" style={{ color: 'var(--color-accent)' }}>← Back to store</Link>
+          </div>
+        ) : (
+          <div data-cv-2col style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.35fr) minmax(0,0.95fr)', gap: 36, alignItems: 'start' }}>
+            <div style={{ display: 'grid', gap: 18 }}>
+              <div className="field"><label>Full name</label><input className="input" value={name} onChange={e => setName(e.target.value)} placeholder="Alex Rowan" /></div>
+              <div className="field">
+                <label>Email for delivery</label>
+                <input className="input" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@fund.xyz" />
+                <p style={{ fontSize: 12, color: 'var(--color-neutral-600)', marginTop: 6 }}>Download links will be sent to this email</p>
               </div>
-            </div>
-          )}
 
-          {state.items.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '60px 0', color: '#555' }}>
-              <p style={{ fontSize: '1.2rem', marginBottom: 16 }}>Your cart is empty</p>
-              <Link href="/store" style={{ color: '#8B5CF6', textDecoration: 'none', fontSize: '0.9rem' }}>
-                ← Back to store
-              </Link>
-            </div>
-          ) : (
-            <div className="checkout-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 48, alignItems: 'start' }}>
-              {/* Left — form */}
-              <div>
-                <h2 style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '1rem',
-                  fontWeight: 700,
-                  color: '#888',
-                  letterSpacing: '0.1em',
-                  textTransform: 'uppercase',
-                  marginBottom: 24,
-                }}>
-                  Your Information
-                </h2>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.75rem', color: '#666', marginBottom: 6, fontFamily: 'var(--font-body)' }}>
-                      Full Name
-                    </label>
-                    <input
-                      value={name}
-                      onChange={e => setName(e.target.value)}
-                      placeholder="John Doe"
-                      style={inputStyle}
-                    />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.75rem', color: '#666', marginBottom: 6, fontFamily: 'var(--font-body)' }}>
-                      Email Address
-                    </label>
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={e => setEmail(e.target.value)}
-                      placeholder="you@example.com"
-                      style={inputStyle}
-                    />
-                    <p style={{ fontSize: '0.7rem', color: '#555', marginTop: 6, fontFamily: 'var(--font-body)' }}>
-                      Download links will be sent to this email
-                    </p>
-                  </div>
-                </div>
-
-                {/* Coupon Code */}
-                <div style={{ marginTop: 24, padding: '16px 20px', border: '1px solid #1a1a1a', borderRadius: 10, background: '#0a0a0a' }}>
-                  <label style={{ display: 'block', fontSize: '0.75rem', color: '#666', marginBottom: 10, fontFamily: 'var(--font-body)', letterSpacing: '0.05em', textTransform: 'uppercase' as const, fontWeight: 600 }}>
-                    Coupon Code
-                  </label>
-                  {appliedCoupon ? (
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', background: '#10B98110', border: '1px solid #10B98130', borderRadius: 8 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <span style={{ fontSize: '1rem' }}>🎉</span>
-                        <div>
-                          <span style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: '0.85rem', color: '#10B981', fontWeight: 700, letterSpacing: '0.05em' }}>
-                            {appliedCoupon.code}
-                          </span>
-                          <span style={{ fontSize: '0.78rem', color: '#10B981', marginLeft: 8 }}>
-                            {appliedCoupon.discount_type === 'percentage' ? `${appliedCoupon.discount_value}% off` : `$${appliedCoupon.discount_value} off`}
-                          </span>
-                        </div>
-                      </div>
-                      <button onClick={removeCoupon}
-                        style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', fontSize: '0.78rem', padding: '4px 8px' }}>
-                        Remove
-                      </button>
-                    </div>
-                  ) : (
-                    <div style={{ display: 'flex', gap: 8 }}>
-                      <input
-                        value={couponCode}
-                        onChange={e => { setCouponCode(e.target.value.toUpperCase()); setCouponError(''); }}
-                        onKeyDown={e => e.key === 'Enter' && applyCoupon()}
-                        placeholder="Enter code"
-                        style={{ ...inputStyle, flex: 1, textTransform: 'uppercase', fontFamily: 'var(--font-mono, monospace)', letterSpacing: '0.08em' }}
-                      />
-                      <button onClick={applyCoupon} disabled={couponLoading || !couponCode.trim()}
-                        style={{
-                          padding: '12px 20px', borderRadius: 8, border: '1px solid #333',
-                          background: couponCode.trim() ? '#1a1a1a' : 'transparent',
-                          color: couponCode.trim() ? '#E8E8E8' : '#555',
-                          fontSize: '0.82rem', fontWeight: 600, fontFamily: 'var(--font-body)',
-                          cursor: couponCode.trim() ? 'pointer' : 'not-allowed',
-                          transition: 'all 0.2s', whiteSpace: 'nowrap',
-                        }}>
-                        {couponLoading ? '...' : 'Apply'}
-                      </button>
-                    </div>
-                  )}
-                  {couponError && (
-                    <p style={{ fontSize: '0.75rem', color: '#EF4444', marginTop: 8, fontFamily: 'var(--font-body)' }}>
-                      {couponError}
-                    </p>
-                  )}
-                </div>
-
-                {/* TOS Agreement Checkbox */}
-                <div
-                  style={{
-                    marginTop: 24,
-                    padding: '16px 20px',
-                    border: '1px solid #1a1a1a',
-                    borderRadius: 10,
-                    background: '#0a0a0a',
-                  }}
-                >
-                  <label
-                    style={{
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: 12,
-                      cursor: 'pointer',
-                      userSelect: 'none',
-                    }}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={agreedToTerms}
-                      onChange={e => setAgreedToTerms(e.target.checked)}
-                      style={{
-                        width: 18,
-                        height: 18,
-                        marginTop: 2,
-                        accentColor: '#8B5CF6',
-                        cursor: 'pointer',
-                        flexShrink: 0,
-                      }}
-                    />
-                    <span
-                      style={{
-                        fontSize: '0.82rem',
-                        color: '#94A3B8',
-                        lineHeight: 1.6,
-                        fontFamily: 'var(--font-body)',
-                      }}
-                    >
-                      I agree to the{' '}
-                      <Link href="/terms" style={{ color: '#8B5CF6', textDecoration: 'none' }}>
-                        Terms of Service
-                      </Link>{' '}
-                      and acknowledge the{' '}
-                      <Link href="/disclaimer" style={{ color: '#8B5CF6', textDecoration: 'none' }}>
-                        Trading Disclaimer
-                      </Link>
-                      . I understand I am purchasing software source code and architecture, not financial advice or guaranteed returns.
-                    </span>
-                  </label>
-                </div>
-
-                {/* Plugin Dependency Checkbox — only show if cart has requiresDashboard items */}
-                {hasPluginRequiringDashboard && (
-                  <div
-                    style={{
-                      marginTop: 16,
-                      padding: '16px 20px',
-                      border: '2px solid #F59E0B',
-                      borderRadius: 10,
-                      background: 'rgba(245, 158, 11, 0.05)',
-                    }}
-                  >
-                    <label
-                      style={{
-                        display: 'flex',
-                        alignItems: 'flex-start',
-                        gap: 12,
-                        cursor: 'pointer',
-                        userSelect: 'none',
-                      }}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={agreedToPluginDisclaimer}
-                        onChange={e => setAgreedToPluginDisclaimer(e.target.checked)}
-                        style={{
-                          width: 18,
-                          height: 18,
-                          marginTop: 2,
-                          accentColor: '#F59E0B',
-                          cursor: 'pointer',
-                          flexShrink: 0,
-                        }}
-                      />
-                      <span
-                        style={{
-                          fontSize: '0.82rem',
-                          color: '#F59E0B',
-                          lineHeight: 1.6,
-                          fontFamily: 'var(--font-body)',
-                          fontWeight: 600,
-                        }}
-                      >
-                        I understand that plugin products require the AI Trading Dashboard and cannot function independently.
+              <div style={{ padding: '16px 20px', border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-lg)', background: 'var(--color-surface)' }}>
+                <label style={{ display: 'block', fontSize: 12, marginBottom: 10, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: 'var(--color-neutral-700)' }}>Coupon code</label>
+                {appliedCoupon ? (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', background: 'var(--color-accent-2-100)', borderRadius: 'var(--radius-md)' }}>
+                    <div>
+                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 13, color: 'var(--color-accent-2-800)', fontWeight: 700, letterSpacing: '0.05em' }}>{appliedCoupon.code}</span>
+                      <span style={{ fontSize: 12.5, color: 'var(--color-accent-2-800)', marginLeft: 8 }}>
+                        {appliedCoupon.discount_type === 'percentage' ? `${appliedCoupon.discount_value}% off` : `$${appliedCoupon.discount_value} off`}
                       </span>
-                    </label>
+                    </div>
+                    <button onClick={removeCoupon} className="btn btn-ghost" style={{ height: 30, padding: '0 10px', fontSize: 12.5 }}>Remove</button>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <input className="input" value={couponCode} onChange={e => { setCouponCode(e.target.value.toUpperCase()); setCouponError(''); }}
+                      onKeyDown={e => e.key === 'Enter' && applyCoupon()} placeholder="Enter code" style={{ flex: 1, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.08em' }} />
+                    <button onClick={applyCoupon} disabled={couponLoading || !couponCode.trim()} className="btn btn-secondary" style={{ whiteSpace: 'nowrap' }}>
+                      {couponLoading ? '…' : 'Apply'}
+                    </button>
                   </div>
                 )}
+                {couponError && <p style={{ fontSize: 12.5, color: 'var(--color-accent-2-700)', marginTop: 8 }}>{couponError}</p>}
+              </div>
 
-                {error && (
-                  <div style={{
-                    marginTop: 16,
-                    padding: '12px 16px',
-                    borderRadius: 8,
-                    background: '#1a0a0a',
-                    border: '1px solid #EF444440',
-                    color: '#EF4444',
-                    fontSize: '0.82rem',
-                    fontFamily: 'var(--font-body)',
-                  }}>
-                    {error}
+              <label className="radio" style={{ alignItems: 'flex-start', gap: 11, padding: '16px 20px', border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-lg)', background: 'var(--color-surface)' }}>
+                <input type="checkbox" checked={agreedToTerms} onChange={e => setAgreedToTerms(e.target.checked)} style={{ marginTop: 3, width: 16, height: 16, accentColor: 'var(--color-accent)' }} />
+                <span style={{ fontSize: 13.5, lineHeight: 1.5, color: 'var(--color-neutral-800)' }}>
+                  I agree to the <Link href="/terms">Terms of Service</Link> and acknowledge the <Link href="/disclaimer">Trading Disclaimer</Link>.
+                  I understand I am purchasing software source code and architecture, not financial advice or guaranteed returns.
+                </span>
+              </label>
+
+              {hasPluginRequiringDashboard && (
+                <label className="radio" style={{ alignItems: 'flex-start', gap: 11, padding: '16px 20px', border: '1.5px solid var(--color-accent-2-500)', borderRadius: 'var(--radius-lg)', background: 'var(--color-accent-2-100)' }}>
+                  <input type="checkbox" checked={agreedToPluginDisclaimer} onChange={e => setAgreedToPluginDisclaimer(e.target.checked)} style={{ marginTop: 3, width: 16, height: 16, accentColor: 'var(--color-accent-2)' }} />
+                  <span style={{ fontSize: 13.5, lineHeight: 1.5, color: 'var(--color-accent-2-900)', fontWeight: 600 }}>
+                    I understand that add-on products require Core Edition and cannot function independently.
+                  </span>
+                </label>
+              )}
+
+              {error && <div style={{ padding: '12px 16px', borderRadius: 'var(--radius-md)', background: 'var(--color-accent-2-100)', color: 'var(--color-accent-2-800)', fontSize: 13.5 }}>{error}</div>}
+
+              <button onClick={handleCheckout} disabled={!canCheckout} className="btn btn-primary btn-block" style={{ height: 52, fontSize: 15 }}>
+                {loading ? 'Processing…' : discountedTotal === 0 ? 'Complete order (free)' : `Pay ${money(discountedTotal)}`}
+              </button>
+              <p style={{ fontSize: 12, color: 'var(--color-neutral-600)', textAlign: 'center' }}>
+                Secure payment via Stripe. Your card details never touch our servers.
+              </p>
+            </div>
+
+            <aside data-cv-sticky style={{ padding: '30px 28px', borderRadius: 'calc(var(--radius-lg) * 1.15)', background: 'var(--color-surface)', position: 'sticky', top: 100 }}>
+              <h3 style={{ fontSize: 20, margin: '0 0 18px' }}>Order</h3>
+              {state.items.map(item => (
+                <div key={item.product.id} style={{ display: 'flex', justifyContent: 'space-between', gap: 14, fontSize: 14, padding: '9px 0', borderBottom: '1px solid var(--color-divider)' }}>
+                  <span>{item.product.name}</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', whiteSpace: 'nowrap' }}>{money(item.product.price)}</span>
+                </div>
+              ))}
+              <div style={{ marginTop: 20 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14.5, marginBottom: 9 }}>
+                  <span>Subtotal</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', textDecoration: appliedCoupon ? 'line-through' : 'none', opacity: appliedCoupon ? 0.6 : 1 }}>{money(totalPrice)}</span>
+                </div>
+                {appliedCoupon && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, color: 'var(--color-accent-2-700)', marginBottom: 9 }}>
+                    <span>Discount ({appliedCoupon.code})</span>
+                    <span style={{ fontFamily: 'var(--font-mono)' }}>−{money(appliedCoupon.discount)}</span>
                   </div>
                 )}
-
-                <button
-                  onClick={handleCheckout}
-                  disabled={!canCheckout}
-                  style={{
-                    marginTop: 32,
-                    width: '100%',
-                    padding: '18px 32px',
-                    borderRadius: 8,
-                    border: 'none',
-                    background: !canCheckout ? '#333' : '#8B5CF6',
-                    color: '#fff',
-                    fontSize: '0.9rem',
-                    fontWeight: 700,
-                    fontFamily: 'var(--font-display)',
-                    letterSpacing: '0.05em',
-                    textTransform: 'uppercase',
-                    cursor: !canCheckout ? 'not-allowed' : 'pointer',
-                    transition: 'all 0.3s',
-                    opacity: !canCheckout ? 0.5 : 1,
-                  }}
-                >
-                  {loading ? 'Processing...' : discountedTotal === 0 ? 'Complete Order (Free)' : `Pay $${discountedTotal.toFixed(2)}`}
-                </button>
-
-                <p style={{ fontSize: '0.7rem', color: '#444', marginTop: 12, textAlign: 'center', fontFamily: 'var(--font-body)' }}>
-                  Secure payment via Stripe. Your card details never touch our servers.
-                </p>
-              </div>
-
-              {/* Right — order summary */}
-              <div style={{
-                padding: 24,
-                borderRadius: 12,
-                background: '#0a0a0a',
-                border: '1px solid #1a1a1a',
-                position: 'sticky',
-                top: 120,
-              }}>
-                <h3 style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '0.85rem',
-                  fontWeight: 700,
-                  color: '#888',
-                  letterSpacing: '0.1em',
-                  textTransform: 'uppercase',
-                  marginBottom: 20,
-                }}>
-                  Order Summary
-                </h3>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                  {state.items.map(item => (
-                    <div key={item.product.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                        <span style={{ fontSize: '1.2rem' }}>{item.product.emoji}</span>
-                        <span style={{ fontSize: '0.82rem', color: '#ccc', fontFamily: 'var(--font-body)' }}>
-                          {item.product.name}
-                        </span>
-                      </div>
-                      <span style={{ fontSize: '0.85rem', color: '#E8E8E8', fontWeight: 600, fontFamily: 'var(--font-display)' }}>
-                        ${item.product.price}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                <div style={{ borderTop: '1px solid #1a1a1a', marginTop: 20, paddingTop: 16 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '0.85rem', color: '#888', fontFamily: 'var(--font-body)' }}>Subtotal</span>
-                    <span style={{ fontFamily: 'var(--font-display)', fontSize: '0.95rem', fontWeight: 600, color: appliedCoupon ? '#666' : '#E8E8E8', textDecoration: appliedCoupon ? 'line-through' : 'none' }}>
-                      ${totalPrice.toFixed(2)}
-                    </span>
-                  </div>
-                  {appliedCoupon && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
-                      <span style={{ fontSize: '0.82rem', color: '#10B981', fontFamily: 'var(--font-body)' }}>
-                        Discount ({appliedCoupon.code})
-                      </span>
-                      <span style={{ fontFamily: 'var(--font-display)', fontSize: '0.95rem', fontWeight: 700, color: '#10B981' }}>
-                        -${appliedCoupon.discount.toFixed(2)}
-                      </span>
-                    </div>
-                  )}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: appliedCoupon ? 12 : 0, paddingTop: appliedCoupon ? 12 : 0, borderTop: appliedCoupon ? '1px solid #1a1a1a' : 'none' }}>
-                    <span style={{ fontSize: '0.85rem', color: '#888', fontFamily: 'var(--font-body)' }}>Total</span>
-                    <span style={{
-                      fontFamily: 'var(--font-display)',
-                      fontSize: '1.3rem',
-                      fontWeight: 800,
-                      color: discountedTotal === 0 ? '#10B981' : '#E8E8E8',
-                    }}>
-                      {discountedTotal === 0 ? 'FREE' : `$${discountedTotal.toFixed(2)}`}
-                    </span>
-                  </div>
+                <hr className="hr" />
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                  <span style={{ fontFamily: 'var(--font-heading)', fontSize: 18 }}>Total</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 28, fontWeight: 500 }}>{discountedTotal === 0 ? 'FREE' : money(discountedTotal)}</span>
                 </div>
               </div>
-            </div>
-          )}
-        </div>
+              <p style={{ fontSize: 12, lineHeight: 1.55, color: 'var(--color-neutral-600)', marginTop: 16 }}>
+                Lifetime license, one year of updates, Discord access. Source code — refunds per our <Link href="/refunds">refund policy</Link>.
+              </p>
+            </aside>
+          </div>
+        )}
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

@@ -90,20 +90,14 @@ export default function SocialAuthButtons() {
             key={id}
             onClick={() => handleProvider(id)}
             disabled={!!loadingProvider}
+            className="btn btn-block"
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
               gap: 10,
-              width: '100%',
-              padding: '12px 16px',
-              borderRadius: 8,
+              borderRadius: 'var(--radius-lg)',
               border: p.border || '1px solid transparent',
               background: loadingProvider === id ? p.bgHover : p.bg,
               color: p.color,
-              fontFamily: 'var(--font-body)',
               fontSize: '0.88rem',
-              fontWeight: 600,
               cursor: loadingProvider ? 'not-allowed' : 'pointer',
               transition: 'all 0.2s',
               opacity: loadingProvider && loadingProvider !== id ? 0.5 : 1,
@@ -120,11 +114,9 @@ export default function SocialAuthButtons() {
       {error && (
         <div style={{
           padding: '10px 14px',
-          borderRadius: 8,
-          background: 'rgba(239, 68, 68, 0.1)',
-          border: '1px solid rgba(239, 68, 68, 0.3)',
-          color: '#ef4444',
-          fontFamily: 'var(--font-body)',
+          borderRadius: 'var(--radius-md)',
+          background: 'var(--color-accent-2-100)',
+          color: 'var(--color-accent-2-800)',
           fontSize: '0.82rem',
         }}>
           {error}

@@ -27,36 +27,33 @@ export default function CTASection() {
   return (
     <section
       style={{
-        padding: '15vh 5vw',
-        background: '#000',
-        borderTop: '1px solid rgba(232, 232, 232, 0.1)',
+        padding: 'clamp(60px, 12vh, 120px) 24px',
+        borderTop: '1px solid var(--color-divider)',
       }}
     >
       <div
         style={{
-          maxWidth: '1000px',
+          maxWidth: '640px',
           margin: '0 auto',
           textAlign: 'center',
         }}
       >
         <h2
           style={{
-            fontFamily: 'Syne, sans-serif',
-            fontSize: '6vw',
-            fontWeight: 700,
-            color: '#E8E8E8',
-            marginBottom: '2vw',
+            fontSize: 'clamp(32px, 5vw, 52px)',
+            letterSpacing: '-0.018em',
+            margin: '0 0 16px',
           }}
         >
-          Let's Build Something
+          Let&apos;s Build Something
         </h2>
 
         <p
           style={{
-            fontFamily: 'DM Sans, sans-serif',
-            fontSize: '1.3vw',
-            color: '#A8A8A8',
-            marginBottom: '4vw',
+            fontSize: '15.5px',
+            lineHeight: 1.6,
+            color: 'var(--color-neutral-700)',
+            margin: '0 0 32px',
           }}
         >
           Get notified when we launch new products, tools, and experiments.
@@ -64,13 +61,13 @@ export default function CTASection() {
 
         <form
           onSubmit={handleSubmit}
+          className="cta-form"
           style={{
             display: 'flex',
-            gap: '1vw',
-            maxWidth: '600px',
+            gap: '10px',
+            maxWidth: '460px',
             margin: '0 auto',
           }}
-          className="cta-form"
         >
           <input
             type="email"
@@ -79,75 +76,42 @@ export default function CTASection() {
             placeholder="Enter your email"
             required
             disabled={status === 'loading' || status === 'success'}
-            style={{
-              flex: 1,
-              padding: '1.2vw',
-              fontFamily: 'DM Sans, sans-serif',
-              fontSize: '1vw',
-              background: '#050505',
-              border: '1px solid rgba(232, 232, 232, 0.2)',
-              color: '#E8E8E8',
-              outline: 'none',
-              transition: 'border-color 0.2s ease',
-            }}
-            onFocus={(e) => {
-              e.currentTarget.style.borderColor = 'oklch(0.65 0.29 295)';
-            }}
-            onBlur={(e) => {
-              e.currentTarget.style.borderColor = 'rgba(232, 232, 232, 0.2)';
-            }}
+            className="input"
+            style={{ flex: 1 }}
           />
 
           <button
             type="submit"
             disabled={status === 'loading' || status === 'success'}
-            style={{
-              padding: '1.2vw 2.5vw',
-              fontFamily: 'Syne, sans-serif',
-              fontSize: '1vw',
-              fontWeight: 600,
-              background: 'oklch(0.65 0.29 295)',
-              color: '#000',
-              border: 'none',
-              cursor: status === 'loading' ? 'not-allowed' : 'pointer',
-              transition: 'all 0.3s ease',
-              opacity: status === 'loading' || status === 'success' ? 0.5 : 1,
-            }}
-            onMouseEnter={(e) => {
-              if (status === 'idle' || status === 'error') {
-                e.currentTarget.style.background = '#E8E8E8';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (status === 'idle' || status === 'error') {
-                e.currentTarget.style.background = 'oklch(0.65 0.29 295)';
-              }
-            }}
+            className="btn btn-primary"
+            style={{ whiteSpace: 'nowrap' }}
           >
-            {status === 'loading' ? 'Subscribing...' : status === 'success' ? 'Subscribed!' : 'Subscribe'}
+            {status === 'loading' ? 'Subscribing…' : status === 'success' ? 'Subscribed!' : 'Subscribe'}
           </button>
         </form>
 
         {status === 'success' && (
           <p
             style={{
-              fontFamily: 'DM Sans, sans-serif',
-              fontSize: '0.9vw',
-              color: 'oklch(0.65 0.29 295)',
-              marginTop: '2vw',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '12.5px',
+              letterSpacing: '0.03em',
+              color: 'var(--color-accent)',
+              marginTop: '18px',
             }}
           >
-            Thanks for subscribing! We'll be in touch.
+            Thanks for subscribing! We&apos;ll be in touch.
           </p>
         )}
 
         {status === 'error' && (
           <p
             style={{
-              fontFamily: 'DM Sans, sans-serif',
-              fontSize: '0.9vw',
-              color: '#ff6b6b',
-              marginTop: '2vw',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '12.5px',
+              letterSpacing: '0.03em',
+              color: 'var(--color-accent-2-700)',
+              marginTop: '18px',
             }}
           >
             Something went wrong. Please try again.
@@ -156,21 +120,9 @@ export default function CTASection() {
       </div>
 
       <style jsx>{`
-        @media (max-width: 768px) {
-          h2 {
-            font-size: 12vw !important;
-          }
-          p {
-            font-size: 4vw !important;
-          }
+        @media (max-width: 640px) {
           .cta-form {
             flex-direction: column !important;
-            gap: 3vw !important;
-          }
-          input,
-          button {
-            padding: 4vw !important;
-            font-size: 4vw !important;
           }
         }
       `}</style>

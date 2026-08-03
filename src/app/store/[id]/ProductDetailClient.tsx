@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '@/components/Navbar';
@@ -7,23 +7,17 @@ import Footer from '@/components/Footer';
 import ProductVideo from '@/components/ProductVideo';
 import RequiresDashboardBanner from '@/components/RequiresDashboardBanner';
 import { useCart } from '@/contexts/CartContext';
+import { EDITION_INCLUDES } from '@/lib/products';
 
-const categoryColors: Record<string, string> = {
-  templates: '#8B5CF6',
-  trading: '#10B981',
-  prompts: '#F59E0B',
-  wallpapers: '#EC4899',
-  nfts: '#6366F1',
-  animations: '#EF4444',
-};
+function money(n: number) {
+  return '$' + n.toLocaleString('en-US');
+}
 
-export default function ProductDetailClient({ product, related, category }: { product: any; related: any[]; category: any }) {
-  const { dispatch } = useCart();
+export default function ProductDetailClient({ product, related }: { product: any; related: any[]; category?: any }) {
+  const { items, dispatch } = useCart();
   const [added, setAdded] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [purchaseCount, setPurchaseCount] = useState<number>(0);
-  const headlineRef = useRef<HTMLHeadingElement>(null);
-  const accent = categoryColors[product.category] || '#8B5CF6';
 
   useEffect(() => {
     fetch('/api/products/stats').then(r => r.json()).then(d => {
@@ -31,16 +25,6 @@ export default function ProductDetailClient({ product, related, category }: { pr
     }).catch(() => {});
   }, [product.id]);
 
-  const addToCart = () => {
-    dispatch({ type: 'ADD_ITEM', product });
-    dispatch({ type: 'OPEN_CART' });
-    setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
-  };
-
-  const productImage = product.image || `/images/products/${product.id}.png`;
-
-  // Lightbox keyboard navigation
   useEffect(() => {
     if (lightboxIndex === null) return;
     const handler = (e: KeyboardEvent) => {
@@ -53,940 +37,241 @@ export default function ProductDetailClient({ product, related, category }: { pr
     return () => { window.removeEventListener('keydown', handler); document.body.style.overflow = ''; };
   }, [lightboxIndex, product.images]);
 
-  // GSAP SplitText on headline
-  useEffect(() => {
-    const init = async () => {
-      if (!headlineRef.current) return;
-      const { gsap } = await import('gsap');
-      const { SplitText } = await import('gsap/SplitText');
-      gsap.registerPlugin(SplitText);
-      const split = new SplitText(headlineRef.current, { type: 'chars,words' });
-      gsap.from(split.chars, {
-        opacity: 0, y: 40, stagger: 0.02, duration: 0.6, ease: 'power3.out', delay: 0.2,
-      });
-      return () => split.revert();
-    };
-    init().catch(console.error);
-  }, []);
+  const coveredBy = (() => {
+    for (const line of items) {
+      const inc = EDITION_INCLUDES[line.product.id];
+      if (inc && inc.includes(product.id)) return line.product.name;
+    }
+    return null;
+  })();
+
+  const addToCart = () => {
+    dispatch({ type: 'ADD_ITEM', product });
+    dispatch({ type: 'OPEN_CART' });
+    setAdded(true);
+    setTimeout(() => setAdded(false), 2000);
+  };
+
+  const buyNow = () => {
+    dispatch({ type: 'CLEAR_CART' });
+    dispatch({ type: 'ADD_ITEM', product });
+  };
+
+  const tagClass = product.productType === 'flagship' || product.productType === 'bundle' ? 'tag-accent' : product.productType === 'extension' ? 'tag-accent-2' : 'tag-neutral';
 
   return (
-    <>
+    <div className="cival">
       <Navbar />
-      <main style={{ background: '#000', minHeight: '100vh', paddingTop: 100 }}>
-        {/* Breadcrumb */}
-        <div style={{ padding: '0 40px', maxWidth: 1200, margin: '0 auto' }}>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            style={{ fontSize: '0.72rem', color: '#555', fontFamily: 'var(--font-body)', marginBottom: 40, display: 'flex', gap: 8, alignItems: 'center' }}
-          >
-            <Link href="/store" style={{ color: '#666', textDecoration: 'none' }}>Store</Link>
-            <span>→</span>
-            <Link href={`/store?category=${product.category}`} style={{ color: accent, textDecoration: 'none', textTransform: 'capitalize' }}>
-              {product.category}
-            </Link>
-            <span>→</span>
-            <span style={{ color: '#888' }}>{product.name}</span>
-          </motion.div>
+      <main className="cival-fade">
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '96px 28px 0', fontFamily: 'var(--font-mono)', fontSize: 11.5, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--color-neutral-600)', display: 'flex', gap: 10, alignItems: 'center' }}>
+          <Link href="/store" style={{ color: 'var(--color-accent-700)', textDecoration: 'none' }}>Store</Link>
+          <span>/</span>
+          <span style={{ color: 'var(--color-text)' }}>{product.name}</span>
         </div>
 
-        {/* Hero section — split layout */}
-        <section className="product-hero-grid" style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '40px',
-          padding: '0 40px 48px',
-          maxWidth: 1200,
-          margin: '0 auto',
-          alignItems: 'start',
-        }}>
-          {/* Left — product visual */}
-          <motion.div
-            initial={{ opacity: 0, x: -40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-          >
-            <div style={{
-              aspectRatio: '4/3',
-              borderRadius: 16,
-              background: `linear-gradient(135deg, ${accent}10 0%, #0a0a0a 50%, ${accent}08 100%)`,
-              border: `1px solid ${accent}20`,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              position: 'relative',
-              overflow: 'hidden',
-            }}>
-              {product.image ? (
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  onClick={() => product.images && product.images.length > 0 && setLightboxIndex(0)}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    cursor: product.images?.length > 0 ? 'zoom-in' : 'default',
-                  }}
-                />
-              ) : (
-                <span style={{ fontSize: '6rem' }}>{product.emoji}</span>
+        <section style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 28px 0' }}>
+          <div data-cv-2col style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.15fr) minmax(0,0.85fr)', gap: 48, alignItems: 'start' }}>
+            <div style={{ position: 'relative', borderRadius: 'calc(var(--radius-lg) * 1.15)', overflow: 'hidden', aspectRatio: '16/10', background: 'var(--color-neutral-200)', boxShadow: 'var(--shadow-md)' }}>
+              {product.image && (
+                <img src={product.image} alt={product.name} onClick={() => product.images?.length > 0 && setLightboxIndex(0)}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', cursor: product.images?.length > 0 ? 'zoom-in' : 'default' }} />
               )}
+            </div>
 
-              {/* Decorative grid */}
-              <div style={{
-                position: 'absolute',
-                inset: 0,
-                backgroundImage: `linear-gradient(${accent}06 1px, transparent 1px), linear-gradient(90deg, ${accent}06 1px, transparent 1px)`,
-                backgroundSize: '40px 40px',
-                pointerEvents: 'none',
-              }} />
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 18 }}>
+                <span className={`tag ${tagClass}`}>{product.badge || product.productType}</span>
+                {product.requiresDashboard && <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--color-neutral-600)' }}>Add-on · needs an edition</span>}
+              </div>
+              <h1 style={{ fontSize: 'clamp(31px,3.4vw,44px)', lineHeight: 1.1, letterSpacing: '-0.015em', margin: '0 0 16px' }}>{product.name}</h1>
+              <p style={{ fontSize: 16.5, lineHeight: 1.6, color: 'var(--color-neutral-800)', margin: '0 0 24px' }}>{product.description}</p>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 22 }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 38, fontWeight: 500, letterSpacing: '-0.02em' }}>{money(product.price)}</span>
+                {product.wasPrice && <span style={{ fontSize: 14, color: 'var(--color-neutral-600)', textDecoration: 'line-through', fontFamily: 'var(--font-mono)' }}>{money(product.wasPrice)}</span>}
+                <span style={{ fontSize: 13, color: 'var(--color-neutral-600)' }}>one-time · lifetime license</span>
+              </div>
 
-              {product.badge && (
-                <div style={{
-                  position: 'absolute',
-                  top: 20,
-                  left: 20,
-                  padding: '6px 14px',
-                  borderRadius: 6,
-                  background: accent,
-                  color: '#fff',
-                  fontSize: '0.65rem',
-                  fontWeight: 700,
-                  letterSpacing: '0.1em',
-                  textTransform: 'uppercase',
-                }}>
-                  {product.badge}
+              {product.requiresDashboard && <RequiresDashboardBanner />}
+              {product.isBundle && (
+                <div style={{ background: 'var(--color-accent-2-100)', borderRadius: 'var(--radius-md)', padding: '12px 16px', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span>✅</span>
+                  <span style={{ color: 'var(--color-accent-2-800)', fontSize: 14, fontWeight: 600 }}>Includes the full platform — no additional purchase needed</span>
                 </div>
               )}
-            </div>
 
-            {/* Tech stack */}
-            {product.techStack && product.techStack.length > 0 && (
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 16 }}>
-                {product.techStack.map((tech: string) => (
-                  <span key={tech} style={{
-                    padding: '4px 10px',
-                    borderRadius: 4,
-                    background: '#111',
-                    border: '1px solid #222',
-                    color: '#888',
-                    fontSize: '0.68rem',
-                    fontFamily: 'var(--font-mono, monospace)',
-                  }}>
-                    {tech}
-                  </span>
-                ))}
-              </div>
-            )}
-          </motion.div>
-
-          {/* Right — product info */}
-          <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, delay: 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
-            style={{ position: 'sticky', top: 120 }}
-          >
-            {/* Category */}
-            <div style={{
-              display: 'inline-block',
-              padding: '4px 12px',
-              borderRadius: 4,
-              background: accent + '15',
-              color: accent,
-              fontSize: '0.68rem',
-              fontWeight: 600,
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              fontFamily: 'var(--font-body)',
-              marginBottom: 16,
-            }}>
-              {category?.emoji} {product.category}
-            </div>
-
-            {/* Title */}
-            <h1
-              ref={headlineRef}
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: 'clamp(1.8rem, 3.5vw, 2.8rem)',
-                fontWeight: 800,
-                letterSpacing: '-0.03em',
-                lineHeight: 1.1,
-                color: '#E8E8E8',
-                marginBottom: 20,
-              }}
-            >
-              {product.name}
-            </h1>
-
-            {/* Price */}
-            <div style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: '2rem',
-              fontWeight: 800,
-              color: product.price === 0 ? '#666' : '#E8E8E8',
-              marginBottom: 24,
-              letterSpacing: '-0.02em',
-            }}>
-              {product.price === 0 ? 'Coming Soon' : `$${product.price}.00`}
-            </div>
-
-            {/* Description */}
-            <p style={{
-              fontSize: '0.9rem',
-              color: '#999',
-              lineHeight: 1.7,
-              marginBottom: 32,
-              fontFamily: 'var(--font-body)',
-            }}>
-              {product.description}
-            </p>
-
-            {/* Requires Dashboard banner */}
-            {product.requiresDashboard && <RequiresDashboardBanner />}
-
-            {/* Dashboard Included badge for bundles */}
-            {product.isBundle && (
-              <div
-                style={{
-                  backgroundColor: "rgba(16, 185, 129, 0.08)",
-                  border: "2px solid #10B981",
-                  borderRadius: "8px",
-                  padding: "12px 16px",
-                  marginBottom: "24px",
-                  fontFamily: "var(--font-body)",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "10px",
-                }}
-              >
-                <span style={{ fontSize: "18px" }}>✅</span>
-                <span style={{ color: "#10B981", fontSize: "15px", fontWeight: 600 }}>
-                  Dashboard Included — No additional purchase needed
-                </span>
-              </div>
-            )}
-
-            {/* Add to cart */}
-            {product.price > 0 && (
-              <button
-                onClick={addToCart}
-                style={{
-                  width: '100%',
-                  padding: '16px 32px',
-                  borderRadius: 8,
-                  border: 'none',
-                  background: added ? '#10B981' : accent,
-                  color: '#fff',
-                  fontSize: '0.85rem',
-                  fontWeight: 700,
-                  fontFamily: 'var(--font-display)',
-                  letterSpacing: '0.05em',
-                  textTransform: 'uppercase',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s',
-                  marginBottom: 12,
-                }}
-              >
-                {added ? '✓ Added to Cart' : 'Add to Cart'}
-              </button>
-            )}
-
-            {product.price > 0 && (
-              <Link href="/checkout" style={{ textDecoration: 'none' }}>
-                <button
-                  onClick={() => { dispatch({ type: 'CLEAR_CART' }); dispatch({ type: 'ADD_ITEM', product }); }}
-                  style={{
-                    width: '100%',
-                    padding: '16px 32px',
-                    borderRadius: 8,
-                    border: `1px solid ${accent}40`,
-                    background: 'transparent',
-                    color: '#E8E8E8',
-                    fontSize: '0.85rem',
-                    fontWeight: 600,
-                    fontFamily: 'var(--font-display)',
-                    letterSpacing: '0.05em',
-                    textTransform: 'uppercase',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s',
-                  }}
-                >
-                  Buy Now
-                </button>
-              </Link>
-            )}
-
-            {/* Social proof */}
-            {purchaseCount > 0 && (
-              <p style={{ fontSize: '0.78rem', color: '#555', textAlign: 'center', marginTop: 8, marginBottom: 8 }}>
-                🔥 {purchaseCount} {purchaseCount === 1 ? 'developer has' : 'developers have'} purchased this
-              </p>
-            )}
-
-            {/* Disclaimer notice */}
-            {product.category === 'trading' && (
-              <p style={{
-                fontSize: 11,
-                color: '#64748B',
-                lineHeight: 1.5,
-                marginTop: 12,
-                marginBottom: 16,
-                padding: '10px 12px',
-                background: 'rgba(139,92,246,0.05)',
-                borderRadius: 6,
-                border: '1px solid rgba(139,92,246,0.1)',
-              }}>
-                You are purchasing software source code and architecture — not financial advice or guaranteed returns. Trading involves substantial risk of loss.{' '}
-                <a href="/disclaimer" style={{ color: '#8B5CF6', textDecoration: 'none' }}>Full disclaimer →</a>
-              </p>
-            )}
-
-            {/* Live Demo */}
-            {product.demoUrl && (
-              <a
-                href={product.demoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 10,
-                  width: '100%',
-                  padding: '18px 32px',
-                  borderRadius: 8,
-                  border: `1px solid ${accent}40`,
-                  background: `linear-gradient(135deg, ${accent}20 0%, ${accent}05 100%)`,
-                  color: '#fff',
-                  fontSize: '0.9rem',
-                  fontWeight: 700,
-                  fontFamily: 'var(--font-display)',
-                  letterSpacing: '0.05em',
-                  textTransform: 'uppercase',
-                  textDecoration: 'none',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s',
-                  marginTop: 12,
-                  position: 'relative',
-                  overflow: 'hidden',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = `linear-gradient(135deg, ${accent}30 0%, ${accent}15 100%)`;
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = `linear-gradient(135deg, ${accent}20 0%, ${accent}05 100%)`;
-                  e.currentTarget.style.transform = 'translateY(0)';
-                }}
-              >
-                <span style={{ fontSize: '1.2rem' }}>▶</span>
-                <span>View Live Demo</span>
-                <span style={{ fontSize: '0.85rem', opacity: 0.8 }}>↗</span>
-              </a>
-            )}
-
-            {/* GitHub link removed — repo is private, source delivered via download */}
-
-            {/* Guarantee */}
-            <div style={{
-              marginTop: 24,
-              padding: '16px',
-              borderRadius: 8,
-              background: '#0a0a0a',
-              border: '1px solid #1a1a1a',
-            }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {[
-                  { icon: '⚡', text: 'Instant download after purchase' },
-                  { icon: '📂', text: 'Full source code included' },
-                  { icon: '🔄', text: 'Free updates for 1 year' },
-                  { icon: '💬', text: 'Discord community access' },
-                ].map(item => (
-                  <div key={item.text} style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                    <span style={{ fontSize: '0.9rem' }}>{item.icon}</span>
-                    <span style={{ fontSize: '0.78rem', color: '#888', fontFamily: 'var(--font-body)' }}>{item.text}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        </section>
-
-        {/* Product Video */}
-        {product.videoUrl && (
-          <section style={{ padding: '0 40px 48px', maxWidth: 1200, margin: '0 auto' }}>
-            <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '40px' }}>
-              <h2 style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: '1.5rem',
-                fontWeight: 700,
-                color: '#E8E8E8',
-                marginBottom: 24,
-                letterSpacing: '-0.02em',
-              }}>
-                🎬 Product Demo
-              </h2>
-              <ProductVideo
-                videoUrl={product.videoUrl}
-                productName={product.name}
-                accent={accent}
-                poster={product.images?.[0] || product.image || undefined}
-              />
-            </div>
-          </section>
-        )}
-
-        {/* Screenshot Gallery */}
-        {product.images && product.images.length > 1 && (
-          <section style={{ padding: '0 40px 48px', maxWidth: 1200, margin: '0 auto' }}>
-            <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '40px' }}>
-              <h2 style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: '1.5rem',
-                fontWeight: 700,
-                color: '#E8E8E8',
-                marginBottom: 24,
-                letterSpacing: '-0.02em',
-              }}>
-                📸 Screenshots
-              </h2>
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
-                gap: 16,
-              }}>
-                {product.images.map((img: string, i: number) => {
-                  const label = img.split('/').pop()?.replace('dashboard-', '').replace('.jpg', '').replace('.png', '').replace(/-/g, ' ').replace(' new', '').replace('focused/', '') || '';
-                  return (
-                    <motion.div
-                      key={img}
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: i * 0.08 }}
-                      onClick={() => setLightboxIndex(i)}
-                      style={{
-                        borderRadius: 12,
-                        overflow: 'hidden',
-                        border: `1px solid ${accent}20`,
-                        background: '#0a0a0a',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s',
-                      }}
-                      whileHover={{ scale: 1.02, borderColor: accent + '50' }}
-                    >
-                      <img
-                        src={img}
-                        alt={`${product.name} - ${label}`}
-                        style={{
-                          width: '100%',
-                          height: 220,
-                          objectFit: 'cover',
-                          objectPosition: 'top',
-                          display: 'block',
-                        }}
-                      />
-                      <div style={{
-                        padding: '10px 14px',
-                        fontSize: '0.72rem',
-                        color: '#888',
-                        fontFamily: 'var(--font-body)',
-                        textTransform: 'capitalize',
-                        fontWeight: 500,
-                      }}>
-                        {label}
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Features section */}
-        <section style={{ padding: '0 40px 48px', maxWidth: 1200, margin: '0 auto' }}>
-          <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '40px' }}>
-            <h2 style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: '1.5rem',
-              fontWeight: 700,
-              color: '#E8E8E8',
-              marginBottom: 32,
-              letterSpacing: '-0.02em',
-            }}>
-              What&apos;s Included
-            </h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: 12 }}>
-              {product.features.map((feature: string, i: number) => (
-                <motion.div
-                  key={feature}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.05 }}
-                  style={{
-                    display: 'flex',
-                    gap: 12,
-                    alignItems: 'center',
-                    padding: '14px 18px',
-                    borderRadius: 8,
-                    background: '#0a0a0a',
-                    border: '1px solid #1a1a1a',
-                  }}
-                >
-                  <span style={{ color: accent, fontSize: '0.85rem' }}>✓</span>
-                  <span style={{ fontSize: '0.82rem', color: '#bbb', fontFamily: 'var(--font-body)' }}>{feature}</span>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Long description */}
-        {product.longDescription && (
-          <section style={{ padding: '0 40px 48px', maxWidth: 800, margin: '0 auto' }}>
-            <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '40px' }}>
-              <h2 style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: '1.5rem',
-                fontWeight: 700,
-                color: '#E8E8E8',
-                marginBottom: 24,
-                letterSpacing: '-0.02em',
-              }}>
-                About This Product
-              </h2>
-              <div style={{
-                fontSize: '0.88rem',
-                color: '#999',
-                lineHeight: 1.8,
-                fontFamily: 'var(--font-body)',
-                whiteSpace: 'pre-wrap',
-              }}>
-                {product.longDescription.split('\n').map((line: string, i: number) => {
-                  // Helper function to parse inline markdown links [text](url)
-                  const parseLinks = (text: string) => {
-                    const parts: (string | JSX.Element)[] = [];
-                    let lastIndex = 0;
-                    const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-                    let match;
-                    
-                    while ((match = linkRegex.exec(text)) !== null) {
-                      // Add text before the link
-                      if (match.index > lastIndex) {
-                        parts.push(text.substring(lastIndex, match.index));
-                      }
-                      // Add the link
-                      parts.push(
-                        <a
-                          key={`link-${i}-${match.index}`}
-                          href={match[2]}
-                          style={{ color: accent, textDecoration: 'underline' }}
-                        >
-                          {match[1]}
-                        </a>
-                      );
-                      lastIndex = match.index + match[0].length;
-                    }
-                    
-                    // Add remaining text
-                    if (lastIndex < text.length) {
-                      parts.push(text.substring(lastIndex));
-                    }
-                    
-                    return parts.length > 0 ? parts : text;
-                  };
-
-                  if (line.startsWith('**') && line.endsWith('**')) {
-                    return <h3 key={i} style={{ color: '#E8E8E8', fontWeight: 700, fontSize: '1rem', margin: '24px 0 12px', fontFamily: 'var(--font-display)' }}>{line.replace(/\*\*/g, '')}</h3>;
-                  }
-                  if (line.startsWith('- ')) {
-                    return <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 4 }}><span style={{ color: accent }}>•</span><span>{parseLinks(line.slice(2))}</span></div>;
-                  }
-                  if (line.trim() === '') return <br key={i} />;
-                  return <p key={i} style={{ marginBottom: 8 }}>{parseLinks(line)}</p>;
-                })}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Theme Showcase — only for trading dashboard */}
-        {product.id === 'trading-dashboard-template' && (
-          <section style={{ padding: '0 40px 48px', maxWidth: 900, margin: '0 auto' }}>
-            <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '40px' }}>
-              <h2 style={{ fontSize: 28, fontWeight: 800, marginBottom: 8, letterSpacing: '-0.5px' }}>
-                🎨 44 Built-In Themes
-              </h2>
-              <p style={{ color: '#888', marginBottom: 24, fontSize: 16, lineHeight: 1.6 }}>
-                Switch themes instantly. From dark hacker aesthetics to clean minimalist designs — make the dashboard feel like yours. Need a custom branded theme for your fund? We offer theme design as a service.
-              </p>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: 10, marginBottom: 24 }}>
-                {[
-                  { name: 'Cyberpunk', colors: ['#0a0a0a', '#f0e68c', '#ff00ff', '#00ffff'] },
-                  { name: 'Cosmic Night', colors: ['#0d0d2b', '#6366f1', '#a855f7', '#818cf8'] },
-                  { name: 'Northern Lights', colors: ['#0a1628', '#22d3ee', '#34d399', '#06b6d4'] },
-                  { name: 'Midnight Bloom', colors: ['#0f0f23', '#ec4899', '#f43f5e', '#fb7185'] },
-                  { name: 'Darkmatter', colors: ['#000000', '#22c55e', '#16a34a', '#4ade80'] },
-                  { name: 'Ocean Breeze', colors: ['#0c1929', '#0ea5e9', '#38bdf8', '#7dd3fc'] },
-                  { name: 'Mocha Mousse', colors: ['#1c1210', '#d4a574', '#b8860b', '#deb887'] },
-                  { name: 'Retro Arcade', colors: ['#1a0a2e', '#ff6b35', '#f7c948', '#e84393'] },
-                  { name: 'Neo Brutalism', colors: ['#fffef0', '#000000', '#ff5733', '#ffc300'] },
-                  { name: 'Sage Garden', colors: ['#0f1a0f', '#4ade80', '#86efac', '#22c55e'] },
-                  { name: 'Sunset Horizon', colors: ['#1a0a00', '#f97316', '#fb923c', '#fbbf24'] },
-                  { name: 'Clean Slate', colors: ['#fafafa', '#18181b', '#71717a', '#a1a1aa'] },
-                  { name: 'Amethyst Haze', colors: ['#1a0a2e', '#a855f7', '#c084fc', '#e9d5ff'] },
-                  { name: 'Bold Tech', colors: ['#020617', '#3b82f6', '#60a5fa', '#93c5fd'] },
-                  { name: 'Caffeine', colors: ['#1a1209', '#92400e', '#b45309', '#d97706'] },
-                  { name: 'Violet Bloom', colors: ['#1a0033', '#8b5cf6', '#a78bfa', '#c4b5fd'] },
-                ].map((theme) => (
-                  <div key={theme.name} style={{ padding: '12px 10px', borderRadius: 8, border: '1px solid #222', background: '#0a0a0a', textAlign: 'center', cursor: 'default' }}>
-                    <div style={{ display: 'flex', gap: 3, justifyContent: 'center', marginBottom: 8 }}>
-                      {theme.colors.map((c, i) => (
-                        <div key={i} style={{ width: 16, height: 16, borderRadius: '50%', background: c, border: '1px solid #333' }} />
-                      ))}
-                    </div>
-                    <div style={{ fontSize: 11, color: '#aaa', fontWeight: 500 }}>{theme.name}</div>
-                  </div>
-                ))}
-              </div>
-              <p style={{ color: '#666', fontSize: 13, textAlign: 'center' }}>
-                + 28 more themes included — Catppuccin, Claude, Doom 64, Graphite, Kodama Grove, Notebook, Pastel Dreams, Quantum Rose, Starry Night, Supabase, T3 Chat, Tangerine, Twitter, Vercel, and more.
-              </p>
-              <div style={{ textAlign: 'center', marginTop: 20, padding: '16px 24px', background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)', borderRadius: 10, border: '1px solid #2a2a4a' }}>
-                <p style={{ color: '#a5b4fc', fontSize: 14, fontWeight: 600, margin: 0 }}>
-                  🏢 Need a custom branded theme for your fund or trading desk? <span style={{ color: '#818cf8' }}>Contact us</span> for bespoke theme design.
-                </p>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Plugin System Showcase — only for trading dashboard */}
-        {product.id === 'trading-dashboard-template' && (
-          <section style={{ padding: '0 40px 48px', maxWidth: 900, margin: '0 auto' }}>
-            <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '40px' }}>
-              <h2 style={{ fontSize: 28, fontWeight: 800, marginBottom: 8, letterSpacing: '-0.5px' }}>
-                🧩 Modular Plugin System
-              </h2>
-              <p style={{ color: '#888', marginBottom: 24, fontSize: 16, lineHeight: 1.6 }}>
-                Start with the base dashboard and add capabilities as you grow. Each add-on drops right in — no code changes needed.
-              </p>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16 }}>
-                {[
-                  { name: 'VWAP Volume Breakout Agent', price: '$199', emoji: '📊', desc: 'Trades VWAP breakouts with volume spike confirmation and RSI divergence.', href: '/store/vwap-momentum-agent' },
-                  { name: 'Elliott Wave Pattern Agent', price: '$199', emoji: '📐', desc: 'AI wave counting with Fibonacci targets. Enters at high-probability wave positions.', href: '/store/elliott-wave-agent' },
-                  { name: 'Darvas Box Breakout Agent', price: '$199', emoji: '📦', desc: 'Detects consolidation boxes and executes on volume-confirmed breakouts.', href: '/store/darvas-indicator' },
-                  { name: 'Heikin Ashi Trend Following Agent', price: '$199', emoji: '🕯️', desc: 'Rides trends using smoothed candles with ADX strength confirmation.', href: '/store/heikin-ashi-agent' },
-                  { name: 'Bollinger Band Mean Reversion Agent', price: '$199', emoji: '📉', desc: 'Buys oversold (RSI + Bollinger + Z-score), sells overbought. Scaled entries.', href: '/store/mean-reversion-agent' },
-                  { name: 'Macro & On-Chain Sentiment Agent', price: '$199', emoji: '🧠', desc: 'Analyzes Fed policy, whale flows, social sentiment. Coordinates the farm.', href: '/store/macro-sentiment-agent' },
-                  { name: 'Meme Trading System', price: '$99', emoji: '🐸', desc: 'Automated meme coin discovery, sentiment analysis, and sniper execution.', href: '/store/meme-trading-template' },
-                  { name: 'Flash Loan Arbitrage', price: '$49', emoji: '⚡', desc: 'Cross-DEX arbitrage using Aave V3 flash loans on Arbitrum. Zero collateral.', href: '/store/flash-loan-arbitrage' },
-                  { name: 'Multi-Strategy Bundle', price: '$399', emoji: '🎯', desc: 'All strategies in one package — the complete trading arsenal.', href: '/store/multi-strat-bundle' },
-                ].map((addon) => (
-                  <a key={addon.name} href={addon.href} style={{ padding: 20, borderRadius: 10, border: '1px solid #222', background: '#0a0a0a', textDecoration: 'none', color: 'inherit', transition: 'border-color 0.2s' }}>
-                    <div style={{ fontSize: 28, marginBottom: 8 }}>{addon.emoji}</div>
-                    <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4, color: '#fff' }}>{addon.name}</div>
-                    <div style={{ fontSize: 13, color: '#888', marginBottom: 8, lineHeight: 1.4 }}>{addon.desc}</div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: '#8b5cf6' }}>{addon.price}</div>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* How to Set Up — only for templates & trading products */}
-        {(product.category === 'templates' || product.category === 'trading') && product.price > 0 && (
-          <section style={{ padding: '0 40px 48px', maxWidth: 800, margin: '0 auto' }}>
-            <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '40px' }}>
-              <h2 style={{
-                fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 700,
-                color: '#E8E8E8', marginBottom: 12, letterSpacing: '-0.02em',
-              }}>
-                How to Set Up
-              </h2>
-              <p style={{ fontSize: '0.85rem', color: '#777', fontFamily: 'var(--font-body)', marginBottom: 28, lineHeight: 1.6 }}>
-                Get up and running in under 10 minutes. Full documentation included in the download.
-              </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-                {[
-                  { step: '1', title: 'Download & extract', desc: 'After purchase, download the zip file and extract it to a folder on your machine.' },
-                  { step: '2', title: 'Run the setup script', desc: 'Double-click QUICK-START.bat (Windows) or QUICK-START.command (Mac). It installs dependencies, creates your config, and opens the dashboard automatically.' },
-                  { step: '3', title: 'Configure API keys', desc: 'The Setup Wizard opens in your browser and walks you through connecting Hyperliquid, Supabase, and your AI provider.' },
-                  { step: '4', title: 'Start trading', desc: 'Your dashboard is ready. Create agents, configure strategies, set risk limits, and let them trade.' },
-                ].map((item) => (
-                  <div key={item.step} style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-                    <span style={{
-                      minWidth: 32, height: 32, borderRadius: '50%',
-                      background: accent, color: '#fff',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: '0.78rem', fontWeight: 700, fontFamily: 'var(--font-mono, monospace)',
-                      flexShrink: 0,
-                    }}>
-                      {item.step}
-                    </span>
-                    <div>
-                      <p style={{ fontSize: '0.9rem', fontWeight: 600, color: '#E8E8E8', fontFamily: 'var(--font-display)', marginBottom: 4 }}>
-                        {item.title}
-                      </p>
-                      <p style={{ fontSize: '0.82rem', color: '#777', fontFamily: 'var(--font-body)', lineHeight: 1.6 }}>
-                        {item.desc}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div style={{
-                marginTop: 28, padding: '16px 20px', borderRadius: 8,
-                background: `${accent}08`, border: `1px solid ${accent}20`,
-              }}>
-                <p style={{ fontSize: '0.78rem', color: '#999', fontFamily: 'var(--font-body)', lineHeight: 1.6 }}>
-                  <strong style={{ color: '#E8E8E8' }}>What you need:</strong> Node.js 18+ and a free{' '}
-                  <a href="https://supabase.com" target="_blank" rel="noopener" style={{ color: accent, textDecoration: 'none' }}>Supabase</a> account. The QUICK-START script handles installation automatically. Demo mode works out of the box — no API keys needed to preview.
-                </p>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* What's inside — for prompts, wallpapers, animations */}
-        {(product.category === 'prompts' || product.category === 'wallpapers' || product.category === 'animations') && product.price > 0 && (
-          <section style={{ padding: '0 40px 48px', maxWidth: 800, margin: '0 auto' }}>
-            <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '40px' }}>
-              <h2 style={{
-                fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 700,
-                color: '#E8E8E8', marginBottom: 12, letterSpacing: '-0.02em',
-              }}>
-                After Purchase
-              </h2>
-              <p style={{ fontSize: '0.85rem', color: '#777', fontFamily: 'var(--font-body)', lineHeight: 1.6 }}>
-                Download the zip file instantly after payment. Extract it and you&apos;re ready to go — all files are organized and labeled. 
-                {product.category === 'prompts' && ' Copy and paste prompts directly into ChatGPT, Claude, Midjourney, or any AI tool.'}
-                {product.category === 'wallpapers' && ' High-resolution images ready for desktop, mobile, or print.'}
-                {product.category === 'animations' && ' Includes source files, style references, and production-ready assets.'}
-              </p>
-            </div>
-          </section>
-        )}
-
-        {/* Discord Community Banner */}
-        <section style={{ padding: '0 40px 48px', maxWidth: 800, margin: '0 auto' }}>
-          <div style={{
-            padding: '24px 28px',
-            background: 'linear-gradient(135deg, rgba(88,101,242,0.06), rgba(139,92,246,0.06))',
-            border: '1px solid rgba(88,101,242,0.15)',
-            borderRadius: 12,
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            gap: 20, flexWrap: 'wrap',
-          }}>
-            <div style={{ flex: 1, minWidth: 200 }}>
-              <div style={{ fontSize: '0.92rem', fontWeight: 700, color: '#E8E8E8', fontFamily: 'var(--font-display)', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
-                <svg width="20" height="15" viewBox="0 0 71 55" fill="none" style={{ flexShrink: 0 }}><path d="M60.1 4.9A58.5 58.5 0 0045.4.2a.2.2 0 00-.2.1 40.7 40.7 0 00-1.8 3.7 54 54 0 00-16.2 0A26.4 26.4 0 0025.4.3a.2.2 0 00-.2-.1 58.4 58.4 0 00-14.7 4.6.2.2 0 00-.1.1C1.5 18.7-.9 32 .3 45.2v.1a58.7 58.7 0 0017.9 9.1.2.2 0 00.3-.1 42 42 0 003.6-5.9.2.2 0 00-.1-.3 38.7 38.7 0 01-5.5-2.6.2.2 0 01.1-.4 31 31 0 001.1-.8.2.2 0 01.2 0c11.6 5.3 24.1 5.3 35.5 0a.2.2 0 01.2 0 28 28 0 001.1.9.2.2 0 01.1.3 36.3 36.3 0 01-5.5 2.6.2.2 0 00-.1.4 47.2 47.2 0 003.6 5.8.2.2 0 00.3.1A58.5 58.5 0 0070 45.3v-.1C71.6 30 67.6 16.8 60.1 5a.2.2 0 00-.1 0zM23.7 37.1c-3.5 0-6.4-3.2-6.4-7.1s2.8-7.1 6.4-7.1 6.5 3.2 6.4 7.1c0 3.9-2.8 7.1-6.4 7.1zm23.6 0c-3.5 0-6.4-3.2-6.4-7.1s2.8-7.1 6.4-7.1 6.5 3.2 6.4 7.1c0 3.9-2.8 7.1-6.4 7.1z" fill="#5865F2"/></svg>
-                Join the GWDS community
-              </div>
-              <div style={{ fontSize: '0.78rem', color: '#777', fontFamily: 'var(--font-body)', lineHeight: 1.5 }}>
-                Get help with setup, share strategies, discuss mods, and connect with other builders.
-              </div>
-            </div>
-            <a href="https://discord.gg/EZk6gTx57k" target="_blank" rel="noopener noreferrer" style={{
-              padding: '10px 24px', borderRadius: 8,
-              background: '#5865F2', color: '#fff',
-              fontSize: '0.8rem', fontWeight: 700,
-              textDecoration: 'none', fontFamily: 'var(--font-display)',
-              whiteSpace: 'nowrap', transition: 'opacity 0.2s',
-            }}>
-              Join Discord →
-            </a>
-          </div>
-        </section>
-
-        {/* Related products */}
-        {related.length > 0 && (
-          <section style={{ padding: '0 40px 64px', maxWidth: 1200, margin: '0 auto' }}>
-            <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '40px' }}>
-              <h2 style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: '1.2rem',
-                fontWeight: 700,
-                color: '#888',
-                marginBottom: 24,
-                letterSpacing: '0.05em',
-                textTransform: 'uppercase',
-                fontSize: '0.85rem',
-              }}>
-                Similar Products
-              </h2>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 20 }}>
-                {related.map(p => (
-                  <Link key={p.id} href={`/store/${p.id}`} style={{ textDecoration: 'none' }}>
-                    <div style={{
-                      padding: 20,
-                      borderRadius: 12,
-                      background: '#0a0a0a',
-                      border: '1px solid #1a1a1a',
-                      transition: 'all 0.3s',
-                      cursor: 'pointer',
-                    }}>
-                      <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-                        <span style={{ fontSize: '2rem' }}>{p.emoji}</span>
-                        <div>
-                          <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '0.95rem', fontWeight: 700, color: '#E8E8E8', marginBottom: 4 }}>{p.name}</h3>
-                          <span style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 700, color: '#888' }}>
-                            {p.price === 0 ? 'Free' : `$${p.price}`}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
+              {coveredBy ? (
+                <div style={{ padding: '14px 18px', borderRadius: 'var(--radius-md)', background: 'var(--color-accent-2-100)', color: 'var(--color-accent-2-800)', fontSize: 14, fontWeight: 600, marginBottom: 14 }}>
+                  Already included in your {coveredBy}
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 14 }}>
+                  <button onClick={addToCart} className="btn btn-primary" style={{ height: 50, padding: '0 26px', fontSize: 15 }}>
+                    {added ? '✓ Added to cart' : 'Add to cart'}
+                  </button>
+                  <Link href="/checkout" onClick={buyNow} className="btn btn-secondary" style={{ height: 50, padding: '0 22px', fontSize: 15 }}>
+                    Buy now
                   </Link>
+                </div>
+              )}
+
+              {product.demoUrl && (
+                <a href={product.demoUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 14, fontWeight: 600, marginBottom: 26 }}>
+                  View the live demo
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h6v6" /><path d="M10 14 21 3" /><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></svg>
+                </a>
+              )}
+
+              {purchaseCount > 0 && (
+                <p style={{ fontSize: 13, color: 'var(--color-neutral-600)', marginBottom: 14 }}>
+                  🔥 {purchaseCount} {purchaseCount === 1 ? 'developer has' : 'developers have'} purchased this
+                </p>
+              )}
+
+              <div style={{ display: 'grid', gap: 2, borderRadius: 'var(--radius-lg)', overflow: 'hidden', border: '1px solid var(--color-divider)' }}>
+                {['Instant download after purchase', 'Full source code, nothing compiled', 'One year of free updates', 'Discord community access'].map((a) => (
+                  <div key={a} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 18px', background: 'var(--color-neutral-100)', fontSize: 14 }}>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-2-700)" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><path d="M20 6 9 17l-5-5" /></svg>
+                    {a}
+                  </div>
                 ))}
               </div>
+
+              {product.techStack && (
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 20 }}>
+                  {product.techStack.map((s: string) => (
+                    <span key={s} style={{ fontFamily: 'var(--font-mono)', fontSize: 11, padding: '5px 12px', borderRadius: 999, border: '1px solid var(--color-divider)', color: 'var(--color-neutral-700)' }}>{s}</span>
+                  ))}
+                </div>
+              )}
+
+              <p style={{ marginTop: 20, fontSize: 12, lineHeight: 1.55, color: 'var(--color-neutral-600)' }}>
+                You are purchasing software source code — not financial advice or guaranteed returns. Trading involves substantial risk of loss.{' '}
+                <a href="/disclaimer">Full disclaimer →</a>
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {product.videoUrl && (
+          <section style={{ maxWidth: 1200, margin: '0 auto', padding: '80px 28px 0' }}>
+            <h2 style={{ fontSize: 'clamp(26px,2.6vw,34px)', letterSpacing: '-0.02em', margin: '0 0 24px' }}>Product demo</h2>
+            <ProductVideo videoUrl={product.videoUrl} productName={product.name} accent="var(--color-accent)" poster={product.images?.[0] || product.image} />
+          </section>
+        )}
+
+        {product.images && product.images.length > 1 && (
+          <section style={{ maxWidth: 1200, margin: '0 auto', padding: '80px 28px 0' }}>
+            <h2 style={{ fontSize: 'clamp(26px,2.6vw,34px)', letterSpacing: '-0.02em', margin: '0 0 24px' }}>Screenshots</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))', gap: 16 }}>
+              {product.images.map((img: string, i: number) => {
+                const label = img.split('/').pop()?.replace('gw-shot-', '').replace('gw-card-', '').replace(/\.(png|jpg)$/, '').replace(/-/g, ' ') || '';
+                return (
+                  <figure key={img} onClick={() => setLightboxIndex(i)} style={{ margin: 0, cursor: 'pointer' }}>
+                    <div style={{ position: 'relative', aspectRatio: '16/10', borderRadius: 'var(--radius-lg)', overflow: 'hidden', background: 'var(--color-neutral-200)', boxShadow: 'var(--shadow-sm)' }}>
+                      <img src={img} alt={label} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
+                    </div>
+                    <figcaption style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.06em', textTransform: 'uppercase', marginTop: 9, textAlign: 'left' }}>{label}</figcaption>
+                  </figure>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        <section style={{ maxWidth: 1200, margin: '0 auto', padding: '80px 28px 0' }}>
+          <div data-cv-2col style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1.25fr)', gap: 56, alignItems: 'start' }}>
+            <div>
+              <h2 style={{ fontSize: 'clamp(26px,2.6vw,34px)', letterSpacing: '-0.02em', margin: '0 0 20px' }}>What&apos;s included</h2>
+              <div style={{ display: 'grid', gap: 11 }}>
+                {(product.features ?? []).map((f: string) => (
+                  <div key={f} style={{ display: 'flex', gap: 11, alignItems: 'flex-start', fontSize: 14.5, lineHeight: 1.5 }}>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 4 }}><path d="M20 6 9 17l-5-5" /></svg>
+                    <span>{f}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h2 style={{ fontSize: 'clamp(26px,2.6vw,34px)', letterSpacing: '-0.02em', margin: '0 0 20px' }}>About this product</h2>
+              {(product.longDescription || '').split('\n\n').map((p: string, i: number) => (
+                <p key={i} style={{ fontSize: 16, lineHeight: 1.65, color: 'var(--color-neutral-800)' }}>{p}</p>
+              ))}
+              <div style={{ marginTop: 24, padding: '22px 24px', borderRadius: 'var(--radius-lg)', background: 'var(--color-accent-2-100)' }}>
+                <div style={{ fontFamily: 'var(--font-heading)', fontSize: 17, marginBottom: 8, color: 'var(--color-accent-2-900)' }}>Not included</div>
+                <p style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--color-accent-2-900)', margin: 0 }}>
+                  API keys, exchange accounts, funded capital, or signals. You bring your keys, your capital, and your own risk limits. This is software, not advice.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section style={{ maxWidth: 1200, margin: '0 auto', padding: '80px 28px 0' }}>
+          <h2 style={{ fontSize: 'clamp(26px,2.6vw,34px)', letterSpacing: '-0.02em', margin: '0 0 8px' }}>Running in under ten minutes</h2>
+          <p style={{ fontSize: 15.5, color: 'var(--color-neutral-700)', margin: '0 0 28px' }}>Full documentation ships in the download.</p>
+          <div data-cv-2col style={{ display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 1, background: 'var(--color-divider)', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
+            {[
+              { n: '01', t: 'Download & extract', d: 'Grab the zip from your download page and unpack it wherever you keep projects.' },
+              { n: '02', t: 'Run QUICK-START', d: 'Double-click the script. It installs dependencies, writes your config, and opens the dashboard.' },
+              { n: '03', t: 'Add your keys', d: 'The setup wizard walks through Hyperliquid, Supabase, and your AI provider.' },
+              { n: '04', t: 'Go live', d: 'Create an agent, set risk limits, and let it trade. Or stay in demo mode as long as you like.' },
+            ].map((s) => (
+              <div key={s.n} style={{ background: 'var(--color-neutral-100)', padding: '28px 26px' }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--color-accent)', marginBottom: 14 }}>{s.n}</div>
+                <div style={{ fontFamily: 'var(--font-heading)', fontSize: 19, marginBottom: 8 }}>{s.t}</div>
+                <div style={{ fontSize: 14, lineHeight: 1.55, color: 'var(--color-neutral-800)' }}>{s.d}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section style={{ maxWidth: 800, margin: '80px auto 0', padding: '0 28px' }}>
+          <div style={{ padding: '24px 28px', background: 'var(--color-accent-100)', borderRadius: 'var(--radius-lg)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap' }}>
+            <div style={{ flex: 1, minWidth: 200 }}>
+              <div style={{ fontFamily: 'var(--font-heading)', fontSize: 18, color: 'var(--color-accent-900)', marginBottom: 4 }}>Join the Cival Systems Discord</div>
+              <div style={{ fontSize: 14, color: 'var(--color-accent-800)', lineHeight: 1.5 }}>Setup help, plugin sharing, strategy arguments at 3am.</div>
+            </div>
+            <a href="https://discord.gg/EZk6gTx57k" target="_blank" rel="noopener noreferrer" className="btn btn-primary">Join Discord →</a>
+          </div>
+        </section>
+
+        {related.length > 0 && (
+          <section style={{ maxWidth: 1200, margin: '0 auto', padding: '80px 28px 96px' }}>
+            <h2 style={{ fontSize: 'clamp(26px,2.6vw,34px)', letterSpacing: '-0.02em', margin: '0 0 24px' }}>Pairs well with</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 16 }}>
+              {related.map((p) => (
+                <Link key={p.id} href={`/store/${p.id}`} style={{ display: 'flex', alignItems: 'center', gap: 18, padding: '22px 24px', borderRadius: 'calc(var(--radius-lg) * 1.15)', background: 'var(--color-surface)', textDecoration: 'none', color: 'var(--color-text)' }}>
+                  <div style={{ width: 44, height: 44, flexShrink: 0, borderRadius: 999, background: 'var(--color-neutral-100)', display: 'grid', placeItems: 'center', fontSize: 20 }}>{p.emoji}</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontFamily: 'var(--font-heading)', fontSize: 17, lineHeight: 1.2 }}>{p.name}</div>
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, color: 'var(--color-neutral-700)', marginTop: 4 }}>{money(p.price)}</div>
+                  </div>
+                </Link>
+              ))}
             </div>
           </section>
         )}
       </main>
       <Footer />
 
-      {/* Lightbox */}
       <AnimatePresence>
         {lightboxIndex !== null && product.images && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setLightboxIndex(null)}
-            style={{
-              position: 'fixed',
-              inset: 0,
-              zIndex: 9999,
-              background: 'rgba(0,0,0,0.92)',
-              backdropFilter: 'blur(12px)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'zoom-out',
-            }}
-          >
-            {/* Close button */}
-            <button
-              onClick={() => setLightboxIndex(null)}
-              style={{
-                position: 'absolute',
-                top: 20,
-                right: 24,
-                background: 'rgba(255,255,255,0.1)',
-                border: '1px solid rgba(255,255,255,0.2)',
-                borderRadius: 8,
-                color: '#fff',
-                fontSize: '1.2rem',
-                width: 44,
-                height: 44,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                zIndex: 10,
-              }}
-            >
-              ✕
-            </button>
-
-            {/* Prev */}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setLightboxIndex(null)}
+            style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(15,18,25,0.92)', backdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'zoom-out' }}>
+            <button onClick={() => setLightboxIndex(null)} style={{ position: 'absolute', top: 20, right: 24, background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 8, color: '#fff', fontSize: '1.2rem', width: 44, height: 44, cursor: 'pointer' }}>✕</button>
             {lightboxIndex > 0 && (
-              <button
-                onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex - 1); }}
-                style={{
-                  position: 'absolute',
-                  left: 20,
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  background: 'rgba(255,255,255,0.1)',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  borderRadius: 8,
-                  color: '#fff',
-                  fontSize: '1.4rem',
-                  width: 48,
-                  height: 48,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  zIndex: 10,
-                }}
-              >
-                ‹
-              </button>
+              <button onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex - 1); }} style={{ position: 'absolute', left: 20, top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 8, color: '#fff', fontSize: '1.4rem', width: 48, height: 48, cursor: 'pointer' }}>‹</button>
             )}
-
-            {/* Next */}
             {lightboxIndex < product.images.length - 1 && (
-              <button
-                onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex + 1); }}
-                style={{
-                  position: 'absolute',
-                  right: 20,
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  background: 'rgba(255,255,255,0.1)',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  borderRadius: 8,
-                  color: '#fff',
-                  fontSize: '1.4rem',
-                  width: 48,
-                  height: 48,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  zIndex: 10,
-                }}
-              >
-                ›
-              </button>
+              <button onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex + 1); }} style={{ position: 'absolute', right: 20, top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 8, color: '#fff', fontSize: '1.4rem', width: 48, height: 48, cursor: 'pointer' }}>›</button>
             )}
-
-            {/* Image */}
-            <motion.img
-              key={lightboxIndex}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.2 }}
-              src={product.images[lightboxIndex]}
-              alt={product.name}
-              onClick={(e) => e.stopPropagation()}
-              style={{
-                maxWidth: '90vw',
-                maxHeight: '85vh',
-                objectFit: 'contain',
-                borderRadius: 12,
-                cursor: 'default',
-                boxShadow: '0 20px 80px rgba(0,0,0,0.6)',
-              }}
-            />
-
-            {/* Counter */}
-            <div style={{
-              position: 'absolute',
-              bottom: 24,
-              left: '50%',
-              transform: 'translateX(-50%)',
-              color: '#888',
-              fontSize: '0.8rem',
-              fontFamily: 'var(--font-body)',
-            }}>
-              {lightboxIndex + 1} / {product.images.length}
-            </div>
+            <motion.img key={lightboxIndex} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.2 }}
+              src={product.images[lightboxIndex]} alt={product.name} onClick={(e) => e.stopPropagation()}
+              style={{ maxWidth: '90vw', maxHeight: '85vh', objectFit: 'contain', borderRadius: 12, boxShadow: '0 20px 80px rgba(0,0,0,0.6)' }} />
+            <div style={{ position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)', color: '#ccc', fontSize: '0.8rem' }}>{lightboxIndex + 1} / {product.images.length}</div>
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </div>
   );
 }

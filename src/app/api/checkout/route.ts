@@ -177,7 +177,7 @@ export async function POST(req: NextRequest) {
                 currency: 'usd',
                 product_data: {
                   name: `${i.emoji} ${i.productName}`,
-                  description: validatedCoupon ? `Coupon ${validatedCoupon} applied` : 'GWDS Digital Product',
+                  description: validatedCoupon ? `Coupon ${validatedCoupon} applied` : 'Cival Systems Digital Product',
                 },
                 unit_amount: adjustedPrice,
               },
@@ -193,7 +193,7 @@ export async function POST(req: NextRequest) {
               currency: 'usd',
               product_data: {
                 name: `${i.emoji} ${i.productName}`,
-                description: `GWDS Digital Product`,
+                description: `Cival Systems Digital Product`,
               },
               unit_amount: Math.round(i.price * 100),
             },

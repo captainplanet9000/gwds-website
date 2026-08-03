@@ -114,22 +114,22 @@ export default function AccountPage() {
 
   if (authLoading) {
     return (
-      <>
+      <div className="cival">
         <Navbar />
-        <main style={{ background: '#000', minHeight: '100vh', paddingTop: 160, paddingBottom: 80 }}>
-          <div style={{ textAlign: 'center', color: '#555', paddingTop: 100 }}>Loading...</div>
+        <main style={{ minHeight: '100vh', paddingTop: 160, paddingBottom: 80 }}>
+          <div style={{ textAlign: 'center', color: 'var(--color-neutral-600)', paddingTop: 100 }}>Loading...</div>
         </main>
         <Footer />
-      </>
+      </div>
     );
   }
 
   if (!user) return null;
 
   return (
-    <>
+    <div className="cival">
       <Navbar />
-      <main style={{ background: '#000', minHeight: '100vh', paddingTop: 140, paddingBottom: 80 }}>
+      <main className="cival-fade" style={{ minHeight: '100vh', paddingTop: 140, paddingBottom: 80 }}>
         <div style={{ maxWidth: 800, margin: '0 auto', padding: '0 24px' }}>
           {/* Header */}
           <div
@@ -145,11 +145,8 @@ export default function AccountPage() {
             <div>
               <h1
                 style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: 'clamp(1.6rem, 3.5vw, 2rem)',
-                  fontWeight: 800,
-                  color: '#E8E8E8',
-                  letterSpacing: '-0.03em',
+                  fontSize: 'clamp(1.8rem, 3.5vw, 2.4rem)',
+                  letterSpacing: '-0.015em',
                   marginBottom: 4,
                 }}
               >
@@ -157,37 +154,15 @@ export default function AccountPage() {
               </h1>
               <p
                 style={{
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '0.9rem',
-                  color: '#666',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.85rem',
+                  color: 'var(--color-neutral-600)',
                 }}
               >
                 {user.email}
               </p>
             </div>
-            <button
-              onClick={handleSignOut}
-              style={{
-                padding: '8px 20px',
-                borderRadius: 6,
-                border: '1px solid #1a1a1a',
-                background: 'transparent',
-                color: '#888',
-                fontFamily: 'var(--font-body)',
-                fontSize: '0.82rem',
-                fontWeight: 500,
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = '#333';
-                e.currentTarget.style.color = '#E8E8E8';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = '#1a1a1a';
-                e.currentTarget.style.color = '#888';
-              }}
-            >
+            <button onClick={handleSignOut} className="btn btn-secondary" style={{ height: 40, fontSize: '0.82rem' }}>
               Sign Out
             </button>
           </div>
@@ -196,31 +171,26 @@ export default function AccountPage() {
           <section style={{ marginBottom: 48 }}>
             <h2
               style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: '1.1rem',
-                fontWeight: 700,
-                color: '#E8E8E8',
+                fontSize: '1.3rem',
                 marginBottom: 20,
                 paddingBottom: 12,
-                borderBottom: '1px solid #1a1a1a',
+                borderBottom: '1px solid var(--color-divider)',
               }}
             >
               Your Purchases
             </h2>
 
             {loadingOrders ? (
-              <div style={{ textAlign: 'center', color: '#555', padding: '40px 0' }}>
+              <div style={{ textAlign: 'center', color: 'var(--color-neutral-600)', padding: '40px 0' }}>
                 Loading your orders...
               </div>
             ) : error ? (
               <div
                 style={{
-                  padding: '16px',
-                  borderRadius: 8,
-                  background: 'rgba(239, 68, 68, 0.1)',
-                  border: '1px solid rgba(239, 68, 68, 0.3)',
-                  color: '#ef4444',
-                  fontFamily: 'var(--font-body)',
+                  padding: '16px 20px',
+                  borderRadius: 'var(--radius-md)',
+                  background: 'var(--color-accent-2-100)',
+                  color: 'var(--color-accent-2-800)',
                   fontSize: '0.85rem',
                 }}
               >
@@ -230,39 +200,22 @@ export default function AccountPage() {
               <div
                 style={{
                   padding: 40,
-                  borderRadius: 10,
-                  background: '#0a0a0a',
-                  border: '1px solid #1a1a1a',
+                  borderRadius: 'calc(var(--radius-lg) * 1.15)',
+                  background: 'var(--color-surface)',
                   textAlign: 'center',
                 }}
               >
                 <div style={{ fontSize: '2rem', marginBottom: 12 }}>🛒</div>
                 <p
                   style={{
-                    fontFamily: 'var(--font-body)',
                     fontSize: '0.9rem',
-                    color: '#666',
+                    color: 'var(--color-neutral-600)',
                     marginBottom: 20,
                   }}
                 >
                   No purchases yet
                 </p>
-                <Link
-                  href="/store"
-                  style={{
-                    display: 'inline-block',
-                    padding: '12px 24px',
-                    borderRadius: 8,
-                    background: '#8B5CF6',
-                    color: '#fff',
-                    fontFamily: 'var(--font-display)',
-                    fontSize: '0.82rem',
-                    fontWeight: 700,
-                    textDecoration: 'none',
-                    letterSpacing: '0.05em',
-                    textTransform: 'uppercase',
-                  }}
-                >
+                <Link href="/store" className="btn btn-primary">
                   Browse Store
                 </Link>
               </div>
@@ -273,9 +226,8 @@ export default function AccountPage() {
                     key={order.id}
                     style={{
                       padding: 24,
-                      borderRadius: 10,
-                      background: '#0a0a0a',
-                      border: '1px solid #1a1a1a',
+                      borderRadius: 'calc(var(--radius-lg) * 1.15)',
+                      background: 'var(--color-surface)',
                     }}
                   >
                     {/* Order header */}
@@ -292,11 +244,11 @@ export default function AccountPage() {
                       <div>
                         <span
                           style={{
-                            fontFamily: 'var(--font-body)',
-                            fontSize: '0.75rem',
-                            color: '#555',
+                            fontFamily: 'var(--font-mono)',
+                            fontSize: '0.72rem',
+                            color: 'var(--color-neutral-600)',
                             textTransform: 'uppercase',
-                            letterSpacing: '0.05em',
+                            letterSpacing: '0.08em',
                           }}
                         >
                           {formatDate(order.created_at)}
@@ -305,28 +257,15 @@ export default function AccountPage() {
                       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                         <span
                           style={{
-                            fontFamily: 'var(--font-display)',
+                            fontFamily: 'var(--font-mono)',
                             fontSize: '0.95rem',
-                            fontWeight: 700,
-                            color: '#E8E8E8',
+                            fontWeight: 600,
+                            color: 'var(--color-text)',
                           }}
                         >
                           {formatCurrency(order.total_cents)}
                         </span>
-                        <span
-                          style={{
-                            padding: '3px 10px',
-                            borderRadius: 20,
-                            background: order.status === 'completed'
-                              ? 'rgba(16, 185, 129, 0.15)'
-                              : 'rgba(245, 158, 11, 0.15)',
-                            color: order.status === 'completed' ? '#10B981' : '#F59E0B',
-                            fontFamily: 'var(--font-body)',
-                            fontSize: '0.72rem',
-                            fontWeight: 600,
-                            textTransform: 'uppercase',
-                          }}
-                        >
+                        <span className={order.status === 'completed' ? 'tag tag-accent-2' : 'tag tag-neutral'}>
                           {order.status}
                         </span>
                       </div>
@@ -352,9 +291,9 @@ export default function AccountPage() {
                               justifyContent: 'space-between',
                               alignItems: 'center',
                               padding: '12px 16px',
-                              borderRadius: 8,
-                              background: '#111',
-                              border: '1px solid #1a1a1a',
+                              borderRadius: 'var(--radius-md)',
+                              background: 'var(--color-neutral-100)',
+                              border: '1px solid var(--color-divider)',
                               flexWrap: 'wrap',
                               gap: 12,
                             }}
@@ -362,10 +301,9 @@ export default function AccountPage() {
                             <div style={{ flex: 1, minWidth: 200 }}>
                               <div
                                 style={{
-                                  fontFamily: 'var(--font-body)',
-                                  fontSize: '0.88rem',
+                                  fontSize: '0.9rem',
                                   fontWeight: 600,
-                                  color: '#E8E8E8',
+                                  color: 'var(--color-text)',
                                   marginBottom: 4,
                                 }}
                               >
@@ -374,14 +312,14 @@ export default function AccountPage() {
                               {download && (
                                 <div
                                   style={{
-                                    fontFamily: 'var(--font-body)',
-                                    fontSize: '0.75rem',
-                                    color: '#555',
+                                    fontFamily: 'var(--font-mono)',
+                                    fontSize: '0.72rem',
+                                    color: 'var(--color-neutral-600)',
                                   }}
                                 >
                                   Downloaded {download.downloaded_count}/{download.max_downloads} times
                                   {expired && (
-                                    <span style={{ color: '#F59E0B', marginLeft: 8 }}>
+                                    <span style={{ color: 'var(--color-accent-2-700)', marginLeft: 8 }}>
                                       • Link expired
                                     </span>
                                   )}
@@ -393,17 +331,8 @@ export default function AccountPage() {
                               {canDownload ? (
                                 <a
                                   href={`/api/downloads/${order.id}/${item.product_id}?token=${download.download_token}`}
-                                  style={{
-                                    padding: '8px 16px',
-                                    borderRadius: 6,
-                                    background: '#8B5CF6',
-                                    color: '#fff',
-                                    fontFamily: 'var(--font-body)',
-                                    fontSize: '0.78rem',
-                                    fontWeight: 600,
-                                    textDecoration: 'none',
-                                    whiteSpace: 'nowrap',
-                                  }}
+                                  className="btn btn-primary"
+                                  style={{ height: 38, fontSize: '0.78rem', whiteSpace: 'nowrap' }}
                                 >
                                   Download
                                 </a>
@@ -411,17 +340,12 @@ export default function AccountPage() {
                                 <button
                                   onClick={() => handleRegenerateDownload(order.id, item.product_id)}
                                   disabled={regenerating === regKey}
+                                  className="btn btn-secondary"
                                   style={{
-                                    padding: '8px 16px',
-                                    borderRadius: 6,
-                                    background: 'transparent',
-                                    border: '1px solid #8B5CF6',
-                                    color: '#8B5CF6',
-                                    fontFamily: 'var(--font-body)',
+                                    height: 38,
                                     fontSize: '0.78rem',
-                                    fontWeight: 600,
-                                    cursor: regenerating === regKey ? 'not-allowed' : 'pointer',
-                                    opacity: regenerating === regKey ? 0.5 : 1,
+                                    color: 'var(--color-accent)',
+                                    borderColor: 'var(--color-accent)',
                                     whiteSpace: 'nowrap',
                                   }}
                                 >
@@ -442,24 +366,7 @@ export default function AccountPage() {
           {/* Browse more */}
           {orders.length > 0 && (
             <div style={{ textAlign: 'center' }}>
-              <Link
-                href="/store"
-                style={{
-                  display: 'inline-block',
-                  padding: '12px 28px',
-                  borderRadius: 8,
-                  border: '1px solid #1a1a1a',
-                  background: 'transparent',
-                  color: '#E8E8E8',
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '0.82rem',
-                  fontWeight: 600,
-                  textDecoration: 'none',
-                  letterSpacing: '0.05em',
-                  textTransform: 'uppercase',
-                  transition: 'all 0.2s ease',
-                }}
-              >
+              <Link href="/store" className="btn btn-secondary">
                 Browse More Products
               </Link>
             </div>
@@ -467,6 +374,6 @@ export default function AccountPage() {
         </div>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

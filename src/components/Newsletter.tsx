@@ -29,21 +29,23 @@ export default function Newsletter() {
   return (
     <section
       ref={ref}
+      className="cival"
       style={{
         position: 'relative',
         padding: '120px 24px',
         overflow: 'hidden',
-        background: 'oklch(0.08 0 0)',
+        background: 'var(--color-neutral-900)',
       }}
     >
-      {/* Animated wave canvas background */}
+      {/* Animated wave canvas background — colors are the hex values behind the
+          Cival Systems accent tokens (canvas strokeStyle can't resolve CSS vars) */}
       <div style={{ position: 'absolute', inset: 0, opacity: 0.35 }}>
         <WaveCanvas
           style={{ width: '100%', height: '100%' }}
           waves={[
-            { freq: 0.005, amp: 80, speed: 0.012, color: 'oklch(0.65 0.29 295)', phase: 0 },
-            { freq: 0.009, amp: 50, speed: 0.018, color: 'oklch(0.75 0.15 195)', phase: 3 },
-            { freq: 0.014, amp: 30, speed: 0.025, color: 'oklch(0.70 0.25 340)', phase: 1.5 },
+            { freq: 0.005, amp: 80, speed: 0.012, color: '#7ba0f8', phase: 0 }, // accent-400
+            { freq: 0.009, amp: 50, speed: 0.018, color: '#f6907a', phase: 3 }, // accent-2-400
+            { freq: 0.014, amp: 30, speed: 0.025, color: '#4a78ea', phase: 1.5 }, // accent-500
           ]}
           centerY={0.5}
         />
@@ -53,7 +55,7 @@ export default function Newsletter() {
       <div style={{
         position: 'absolute',
         inset: 0,
-        background: 'radial-gradient(ellipse 70% 80% at 50% 50%, oklch(0.65 0.29 295 / 0.12), transparent 70%)',
+        background: 'radial-gradient(ellipse 70% 80% at 50% 50%, color-mix(in srgb, var(--color-accent) 18%, transparent), transparent 70%)',
         pointerEvents: 'none',
       }} />
 
@@ -67,7 +69,7 @@ export default function Newsletter() {
             fontFamily: 'var(--font-mono)',
             fontSize: '0.7rem',
             letterSpacing: '0.25em',
-            color: 'oklch(0.75 0.15 195)',
+            color: 'var(--color-accent-400)',
             textTransform: 'uppercase',
             marginBottom: 20,
           }}>
@@ -75,10 +77,10 @@ export default function Newsletter() {
           </p>
 
           <h2 style={{
-            fontFamily: 'var(--font-display)',
+            fontFamily: 'var(--font-heading)',
             fontSize: 'clamp(2rem, 4vw, 3rem)',
-            fontWeight: 700,
-            color: 'oklch(0.98 0 0)',
+            fontWeight: 400,
+            color: 'var(--color-neutral-100)',
             margin: '0 0 16px',
             letterSpacing: '-0.02em',
             lineHeight: 1.15,
@@ -89,7 +91,7 @@ export default function Newsletter() {
           <p style={{
             fontFamily: 'var(--font-body)',
             fontSize: '1rem',
-            color: 'oklch(0.68 0.01 250)',
+            color: 'var(--color-neutral-400)',
             margin: '0 0 40px',
             lineHeight: 1.7,
           }}>
@@ -101,11 +103,11 @@ export default function Newsletter() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               style={{
+                display: 'inline-block',
                 padding: '20px 32px',
-                background: 'oklch(0.70 0.18 145 / 0.15)',
-                border: '1px solid oklch(0.70 0.18 145 / 0.4)',
-                borderRadius: 12,
-                color: 'oklch(0.70 0.18 145)',
+                background: 'var(--color-accent-2-100)',
+                borderRadius: 999,
+                color: 'var(--color-accent-2-800)',
                 fontFamily: 'var(--font-mono)',
                 fontSize: '0.9rem',
                 letterSpacing: '0.05em',
@@ -124,21 +126,21 @@ export default function Newsletter() {
                 style={{
                   flex: 1,
                   padding: '14px 20px',
-                  background: 'oklch(0.12 0.01 270 / 0.8)',
-                  border: '1px solid oklch(0.30 0.05 270)',
-                  borderRadius: 10,
-                  color: 'oklch(0.98 0 0)',
+                  background: 'color-mix(in srgb, var(--color-neutral-900) 40%, var(--color-neutral-800))',
+                  border: '1px solid var(--color-neutral-700)',
+                  borderRadius: 999,
+                  color: 'var(--color-neutral-100)',
                   fontFamily: 'var(--font-body)',
                   fontSize: '0.95rem',
                   outline: 'none',
                   transition: 'border-color 0.2s, box-shadow 0.2s',
                 }}
                 onFocus={e => {
-                  e.currentTarget.style.borderColor = 'oklch(0.75 0.15 195)';
-                  e.currentTarget.style.boxShadow = '0 0 0 3px oklch(0.75 0.15 195 / 0.15)';
+                  e.currentTarget.style.borderColor = 'var(--color-accent-400)';
+                  e.currentTarget.style.boxShadow = '0 0 0 3px color-mix(in srgb, var(--color-accent-400) 20%, transparent)';
                 }}
                 onBlur={e => {
-                  e.currentTarget.style.borderColor = 'oklch(0.30 0.05 270)';
+                  e.currentTarget.style.borderColor = 'var(--color-neutral-700)';
                   e.currentTarget.style.boxShadow = 'none';
                 }}
               />
@@ -147,26 +149,26 @@ export default function Newsletter() {
                 disabled={status === 'sending'}
                 style={{
                   padding: '14px 28px',
-                  background: 'linear-gradient(135deg, oklch(0.65 0.29 295), oklch(0.75 0.15 195))',
+                  background: 'var(--color-accent)',
                   border: 'none',
-                  borderRadius: 10,
-                  color: 'oklch(0.98 0 0)',
+                  borderRadius: 999,
+                  color: '#fff',
                   fontFamily: 'var(--font-body)',
                   fontWeight: 600,
                   fontSize: '0.9rem',
                   cursor: status === 'sending' ? 'wait' : 'pointer',
                   opacity: status === 'sending' ? 0.7 : 1,
-                  boxShadow: '0 0 20px oklch(0.65 0.29 295 / 0.3)',
-                  transition: 'transform 0.2s, box-shadow 0.2s',
+                  boxShadow: '0 0 20px color-mix(in srgb, var(--color-accent) 30%, transparent)',
+                  transition: 'transform 0.2s, box-shadow 0.2s, background 0.2s',
                   whiteSpace: 'nowrap',
                 }}
                 onMouseEnter={e => {
                   (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)';
-                  (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 0 30px oklch(0.65 0.29 295 / 0.5)';
+                  (e.currentTarget as HTMLButtonElement).style.background = 'var(--color-accent-700)';
                 }}
                 onMouseLeave={e => {
                   (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)';
-                  (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 0 20px oklch(0.65 0.29 295 / 0.3)';
+                  (e.currentTarget as HTMLButtonElement).style.background = 'var(--color-accent)';
                 }}
               >
                 {status === 'sending' ? '...' : 'Subscribe'}

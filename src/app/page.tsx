@@ -1,131 +1,259 @@
 'use client';
-import dynamic from 'next/dynamic';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import Footer from '@/components/Footer';
-import { getFeaturedProducts } from '@/lib/products';
+import { products } from '@/lib/products';
 import { motion } from 'framer-motion';
-import { useRef, useEffect } from 'react';
 import Link from 'next/link';
 
-const ProductOrb3D = dynamic(() => import('@/components/ProductOrb3D'), { ssr: false });
+const RIBBON = ['A hedge fund starting point', 'Full TypeScript source', 'Runs on Hyperliquid', 'Skip months of build time', 'From $99', 'One-click setup', 'Agents that execute', 'Own it outright'];
+const STATS = [
+  { v: '$184K', k: 'Demo portfolio' },
+  { v: '6', k: 'Autonomous agents' },
+  { v: '2,847', k: 'Trades executed' },
+  { v: '68%', k: 'Win rate' },
+];
+const PREMISE = [
+  { n: '01', t: 'The runtime is the hard part', d: 'Order lifecycle, reconciliation, agent supervision, halts that actually halt. Weeks of work with no upside when it goes right.' },
+  { n: '02', t: 'Agents execute, not suggest', d: "These aren't alert bots. They size, enter, trail, and flatten on Hyperliquid without a human in the loop." },
+  { n: '03', t: 'You own the source', d: 'Full TypeScript. Fork it, rename it, sell your own thing on top of it. No license server, no phone-home.' },
+];
+const EDITORS = ['Cursor', 'Windsurf', 'VS Code', 'Zed', 'WebStorm', 'Neovim'];
+const SOURCE_NOTES = [
+  { t: 'AI-assisted customisation', d: 'Point Cursor or Windsurf at the repo and change strategies, add indicators, or build a new agent from an existing one.' },
+  { t: 'Full TypeScript, no obfuscation', d: 'Strategies, risk management, UI components, API routes — every line readable and editable.' },
+  { t: 'One-click setup', d: 'Double-click QUICK-START: dependencies install, config is written, the dashboard opens. Deploy to Vercel when you’re ready.' },
+];
+const COMMUNITY = [
+  { n: '42', t: 'channels, including a dedicated setup room' },
+  { n: '24h', t: 'typical answer time on plugin questions' },
+  { n: '1yr', t: 'of updates included with every product' },
+];
 
-function FeaturedSection() {
-  const featured = getFeaturedProducts();
-  const sectionRef = useRef<HTMLDivElement>(null);
+const coreEdition = products.find((p) => p.id === 'trading-dashboard-template')!;
+const agents = products.filter((p) => p.productType === 'agent');
+const editions = products.filter((p) => p.productType === 'flagship' || p.productType === 'bundle');
 
-  useEffect(() => {
-    const init = async () => {
-      if (!sectionRef.current) return;
-      const { gsap } = await import('gsap');
-      const { ScrollTrigger } = await import('gsap/ScrollTrigger');
-      gsap.registerPlugin(ScrollTrigger);
-      const cards = sectionRef.current.querySelectorAll('.featured-card');
-      gsap.fromTo(cards, { opacity: 0, y: 80 }, {
-        opacity: 1, y: 0, stagger: 0.15, duration: 0.8, ease: 'power3.out',
-        scrollTrigger: { trigger: sectionRef.current, start: 'top 75%' },
-      });
-    };
-    init().catch(console.error);
-  }, []);
+function money(n: number) {
+  return '$' + n.toLocaleString('en-US');
+}
 
-  const colors = ['#8B5CF6', '#10B981', '#F59E0B', '#EC4899'];
-
+function Marquee() {
   return (
-    <section style={{ padding: '80px 24px', maxWidth: 1400, margin: '0 auto' }}>
-      <div style={{ marginBottom: 48 }}>
-        <p style={{ fontSize: '0.7rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#555', marginBottom: 12, fontFamily: 'var(--font-body)' }}>
-          Flagship Products
-        </p>
-        <h2 style={{
-          fontFamily: 'var(--font-display)',
-          fontSize: 'clamp(2rem, 4vw, 3.5rem)',
-          fontWeight: 800,
-          color: '#E8E8E8',
-          letterSpacing: '-0.03em',
-          lineHeight: 1.1,
-        }}>
-          Built from real systems.<br />
-          <span style={{ color: '#555' }}>Not templates from templates.</span>
-        </h2>
+    <section style={{ background: 'var(--color-neutral-900)', overflow: 'hidden', padding: '20px 0' }}>
+      <motion.div animate={{ x: ['0%', '-50%'] }} transition={{ repeat: Infinity, duration: 26, ease: 'linear' }} style={{ display: 'flex', gap: 16, width: 'max-content' }}>
+        {[...RIBBON, ...RIBBON].map((r, i) => (
+          <span key={i} style={{ display: 'flex', alignItems: 'center', gap: 16, fontFamily: 'var(--font-mono)', fontSize: 12.5, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--color-neutral-300)', whiteSpace: 'nowrap' }}>
+            {r}<span style={{ width: 5, height: 5, borderRadius: 99, background: 'var(--color-accent-500)', display: 'block' }} />
+          </span>
+        ))}
+      </motion.div>
+    </section>
+  );
+}
+
+function Stats() {
+  return (
+    <section style={{ borderBottom: '1px solid var(--color-divider)', background: 'var(--color-neutral-100)' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 28px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))' }}>
+          {STATS.map((s) => (
+            <motion.div key={s.k} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} style={{ padding: '34px 0', borderRight: '1px solid var(--color-divider)' }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 'clamp(26px,2.6vw,36px)', fontWeight: 500, letterSpacing: '-0.02em', color: 'var(--color-accent-700)' }}>{s.v}</div>
+              <div style={{ fontSize: 12, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--color-neutral-600)', marginTop: 6 }}>{s.k}</div>
+            </motion.div>
+          ))}
+        </div>
       </div>
+    </section>
+  );
+}
 
-      <div ref={sectionRef} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 24 }}>
-        {featured.map((product, i) => (
-          <Link key={product.id} href={`/store/${product.id}`} style={{ textDecoration: 'none' }} className="featured-card">
-            <div style={{
-              background: '#0a0a0a',
-              border: `1px solid ${colors[i % colors.length]}15`,
-              borderRadius: 16,
-              overflow: 'hidden',
-              transition: 'all 0.4s cubic-bezier(0.25,0.46,0.45,0.94)',
-              cursor: 'pointer',
-            }}
-            onMouseEnter={e => {
-              (e.currentTarget as HTMLElement).style.transform = 'translateY(-8px)';
-              (e.currentTarget as HTMLElement).style.boxShadow = `0 24px 64px ${colors[i % colors.length]}15`;
-              (e.currentTarget as HTMLElement).style.borderColor = `${colors[i % colors.length]}30`;
-            }}
-            onMouseLeave={e => {
-              (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
-              (e.currentTarget as HTMLElement).style.boxShadow = 'none';
-              (e.currentTarget as HTMLElement).style.borderColor = `${colors[i % colors.length]}15`;
-            }}
-            >
-              {/* Product Image or 3D Orb fallback */}
-              <div style={{ height: 240, position: 'relative', overflow: 'hidden' }}>
-                {product.image ? (
-                  <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
-                ) : (
-                  <ProductOrb3D color={colors[i % colors.length]} height={240} />
-                )}
-                {product.badge && (
-                  <div style={{
-                    position: 'absolute', top: 16, right: 16,
-                    padding: '4px 10px', borderRadius: 4,
-                    background: colors[i], color: '#fff',
-                    fontSize: '0.58rem', fontWeight: 700,
-                    letterSpacing: '0.1em', textTransform: 'uppercase',
-                  }}>
-                    {product.badge}
-                  </div>
-                )}
+function Premise() {
+  return (
+    <section>
+      <div data-cv-2col style={{ maxWidth: 1200, margin: '0 auto', padding: '120px 28px', display: 'grid', gridTemplateColumns: 'minmax(0,0.85fr) minmax(0,1.15fr)', gap: 64, alignItems: 'start' }}>
+        <div>
+          <h6 style={{ marginBottom: 18 }}>The premise</h6>
+          <h2 style={{ fontSize: 'clamp(31px,3.4vw,46px)', lineHeight: 1.1, letterSpacing: '-0.015em', margin: '0 0 22px' }}>
+            Building the boring 80% costs you a quarter and a million tokens.
+          </h2>
+          <p style={{ fontSize: 17, lineHeight: 1.6, color: 'var(--color-neutral-800)', maxWidth: '42ch' }}>
+            You don&apos;t need help having strategy ideas. You need somewhere to run them — with position tracking that reconciles,
+            drawdown limits that actually halt an agent, and a UI you can look at during a 14% day.
+          </p>
+        </div>
+        <div style={{ display: 'grid', gap: 18 }}>
+          {PREMISE.map((p) => (
+            <motion.div key={p.n} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              style={{ display: 'flex', gap: 22, padding: '34px', borderRadius: 'calc(var(--radius-lg) * 1.15)', background: 'var(--color-surface)', alignItems: 'flex-start' }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--color-accent)', paddingTop: 6 }}>{p.n}</div>
+              <div>
+                <div style={{ fontFamily: 'var(--font-heading)', fontSize: 22, marginBottom: 8 }}>{p.t}</div>
+                <div style={{ fontSize: 15, lineHeight: 1.55, color: 'var(--color-neutral-800)' }}>{p.d}</div>
               </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
-              <div style={{ padding: '24px 24px 28px' }}>
-                <span style={{ fontSize: '1.8rem' }}>{product.emoji}</span>
-                <h3 style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '1.2rem', fontWeight: 700,
-                  color: '#E8E8E8', marginTop: 12, marginBottom: 8,
-                  letterSpacing: '-0.02em',
-                }}>
-                  {product.name}
-                </h3>
-                <p style={{
-                  fontSize: '0.8rem', color: '#777', lineHeight: 1.5,
-                  fontFamily: 'var(--font-body)', marginBottom: 20,
-                  display: '-webkit-box', WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical' as any, overflow: 'hidden',
-                }}>
-                  {product.description}
-                </p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{
-                    fontFamily: 'var(--font-display)',
-                    fontSize: '1.4rem', fontWeight: 800, color: '#E8E8E8',
-                  }}>
-                    ${product.price}
-                  </span>
-                  <span style={{
-                    fontSize: '0.7rem', color: colors[i],
-                    fontWeight: 600, letterSpacing: '0.05em',
-                    fontFamily: 'var(--font-body)',
-                  }}>
-                    View Details →
-                  </span>
-                </div>
+function CoreEditionCard() {
+  return (
+    <section style={{ maxWidth: 1200, margin: '0 auto', padding: '0 28px 120px' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 24, marginBottom: 32 }}>
+        <div>
+          <h6 style={{ marginBottom: 14 }}>Where everyone starts</h6>
+          <h2 style={{ fontSize: 'clamp(30px,3.2vw,44px)', letterSpacing: '-0.015em', lineHeight: 1.1, margin: 0 }}>Ninety-nine dollars to own the platform.</h2>
+        </div>
+        <Link href="/store" className="btn btn-ghost">Compare editions →</Link>
+      </div>
+      <div data-cv-2col style={{ borderRadius: 'calc(var(--radius-lg) * 1.15)', background: 'var(--color-surface)', overflow: 'hidden', boxShadow: 'var(--shadow-md)', display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1.15fr)' }}>
+        <div style={{ padding: '52px 46px', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+            <span className="tag tag-accent">Core edition</span>
+            <span className="tag tag-neutral">Next.js 15 · TS</span>
+          </div>
+          <h3 style={{ fontSize: 36, letterSpacing: '-0.015em', lineHeight: 1.14, margin: '0 0 14px' }}>Core Edition</h3>
+          <p style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--color-neutral-800)', margin: '0 0 26px' }}>{coreEdition.description}</p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px 20px', marginBottom: 32 }}>
+            {['Live VWAP + RSI agent included', 'Goal-based execution', 'Farm orchestration', 'Drawdown halts + reconciliation', '44 themes', '2,400+ source files'].map((f) => (
+              <div key={f} style={{ display: 'flex', gap: 9, alignItems: 'flex-start', fontSize: 14, lineHeight: 1.4 }}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-2-700)" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 3 }}><path d="M20 6 9 17l-5-5" /></svg>
+                <span>{f}</span>
               </div>
+            ))}
+          </div>
+          <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 32, fontWeight: 500 }}>{money(coreEdition.price)}</span>
+              <span style={{ fontSize: 13, color: 'var(--color-neutral-600)' }}>one-time</span>
+            </div>
+            <Link href="/store/trading-dashboard-template" className="btn btn-primary" style={{ height: 46, padding: '0 22px' }}>View details</Link>
+          </div>
+        </div>
+        <div style={{ position: 'relative', minHeight: 460, background: 'var(--color-neutral-200)', overflow: 'hidden' }}>
+          {coreEdition.image && <img src={coreEdition.image} alt="Core Edition dashboard" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top left' }} />}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function AgentRail() {
+  return (
+    <section style={{ position: 'relative', background: 'var(--color-neutral-100)', borderTop: '1px solid var(--color-divider)', borderBottom: '1px solid var(--color-divider)', padding: '80px 0' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto 32px', padding: '0 28px' }}>
+        <h6 style={{ marginBottom: 14 }}>The agents</h6>
+        <h2 style={{ fontSize: 'clamp(30px,3.2vw,44px)', letterSpacing: '-0.012em', margin: '0 0 12px' }}>Six strategies that trade while you sleep.</h2>
+        <p style={{ fontSize: 16, color: 'var(--color-neutral-800)', margin: 0, maxWidth: '52ch' }}>
+          Each one drops into the dashboard as a plugin. Run one, or run all six as a coordinated farm under shared risk limits.
+        </p>
+      </div>
+      <div style={{ display: 'flex', gap: 20, padding: '0 28px', overflowX: 'auto', scrollSnapType: 'x mandatory' }}>
+        {agents.map((p) => (
+          <Link key={p.id} href={`/store/${p.id}`} scroll={false} style={{
+            width: 300, flex: 'none', scrollSnapAlign: 'start', display: 'flex', flexDirection: 'column', gap: 14, padding: '30px 26px',
+            borderRadius: 'calc(var(--radius-lg) * 1.15)', background: 'var(--color-bg)', textDecoration: 'none', color: 'var(--color-text)', boxShadow: 'var(--shadow-sm)',
+          }}>
+            <div style={{ width: 46, height: 46, borderRadius: 99, background: 'var(--color-accent-2-100)', display: 'grid', placeItems: 'center', fontSize: 20 }}>{p.emoji}</div>
+            <div style={{ fontFamily: 'var(--font-heading)', fontSize: 21, letterSpacing: '-0.015em', lineHeight: 1.12, marginTop: 4 }}>{p.name}</div>
+            <div style={{ fontSize: 14, lineHeight: 1.5, color: 'var(--color-neutral-800)', flex: 1 }}>{p.description}</div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 14, borderTop: '1px solid var(--color-divider)' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 19, fontWeight: 500 }}>{money(p.price)}</span>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+            </div>
+          </Link>
+        ))}
+      </div>
+      <div style={{ maxWidth: 1200, margin: '20px auto 0', padding: '0 28px', display: 'flex', alignItems: 'center', gap: 14 }}>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--color-neutral-600)' }}>Drag or scroll</span>
+        <div style={{ flex: 1, height: 2, background: 'var(--color-divider)', borderRadius: 99 }} />
+      </div>
+    </section>
+  );
+}
+
+function SourceShowcase() {
+  return (
+    <section style={{ background: 'var(--color-neutral-900)', color: 'var(--color-neutral-100)' }}>
+      <div data-cv-2col style={{ maxWidth: 1200, margin: '0 auto', padding: '120px 28px', display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)', gap: 64, alignItems: 'start' }}>
+        <div style={{ paddingBottom: 40 }}>
+          <h6 style={{ color: 'var(--color-accent-400)', marginBottom: 18 }}>Source, not SaaS</h6>
+          <h2 style={{ fontSize: 'clamp(30px,3.2vw,44px)', lineHeight: 1.1, letterSpacing: '-0.015em', margin: '0 0 20px', color: 'var(--color-neutral-100)' }}>
+            Open it in your editor. Make it unrecognisable.
+          </h2>
+          <p style={{ fontSize: 16.5, lineHeight: 1.6, color: 'var(--color-neutral-300)', maxWidth: '44ch' }}>
+            No compiled binaries, no obfuscation, no license server. Clean TypeScript you can point Cursor at and refactor into your
+            own thing. There is no version of this where we can turn it off.
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 28 }}>
+            {EDITORS.map((e) => (
+              <span key={e} style={{ fontFamily: 'var(--font-mono)', fontSize: 12, padding: '7px 14px', borderRadius: 999, border: '1px solid color-mix(in srgb, var(--color-neutral-100) 22%, transparent)', color: 'var(--color-neutral-200)' }}>{e}</span>
+            ))}
+          </div>
+          <div style={{ display: 'grid', gap: 1, marginTop: 44, background: 'color-mix(in srgb, var(--color-neutral-100) 12%, transparent)', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
+            {SOURCE_NOTES.map((n) => (
+              <div key={n.t} style={{ padding: '22px 24px', background: 'var(--color-neutral-900)' }}>
+                <div style={{ fontFamily: 'var(--font-heading)', fontSize: 18, color: 'var(--color-neutral-100)', marginBottom: 6 }}>{n.t}</div>
+                <div style={{ fontSize: 14, lineHeight: 1.55, color: 'var(--color-neutral-400)' }}>{n.d}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{ position: 'sticky', top: 100, borderRadius: 'var(--radius-lg)', background: 'color-mix(in srgb, var(--color-neutral-900) 72%, #000)', border: '1px solid color-mix(in srgb, var(--color-neutral-100) 14%, transparent)', overflow: 'hidden', boxShadow: 'var(--shadow-lg)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px', borderBottom: '1px solid color-mix(in srgb, var(--color-neutral-100) 12%, transparent)' }}>
+            <span style={{ width: 9, height: 9, borderRadius: 99, background: 'var(--color-accent-500)' }} />
+            <span style={{ width: 9, height: 9, borderRadius: 99, background: 'var(--color-accent-2-500)' }} />
+            <span style={{ width: 9, height: 9, borderRadius: 99, background: 'var(--color-neutral-600)' }} />
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11.5, color: 'var(--color-neutral-500)', marginLeft: 8 }}>agents/vwap-rsi/strategy.ts</span>
+          </div>
+          <pre style={{ margin: 0, padding: 24, fontFamily: 'var(--font-mono)', fontSize: 12.5, lineHeight: 1.85, color: 'var(--color-neutral-300)', overflowX: 'auto' }}>
+{`// tune it, break it, ship it — it's your file now
+export const config: AgentConfig = {
+  venue:        'hyperliquid',
+  symbols:      ['BTC', 'ETH', 'SOL'],
+  entry:        { vwapBand: 1.5, rsiDiv: true },
+  risk:         { maxDrawdownPct: 8, perTradePct: 1.5 },
+  onHalt:       async () => farm.defensive(),
+};`}
+          </pre>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function EditionsStack() {
+  return (
+    <section style={{ maxWidth: 1200, margin: '0 auto', padding: '120px 28px 0' }}>
+      <div style={{ marginBottom: 40 }}>
+        <h6 style={{ marginBottom: 14 }}>Editions</h6>
+        <h2 style={{ fontSize: 'clamp(30px,3.2vw,44px)', letterSpacing: '-0.015em', lineHeight: 1.1, margin: 0 }}>Three steps, no wrong entry point.</h2>
+        <p style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--color-neutral-800)', maxWidth: '56ch', margin: '14px 0 0' }}>
+          Every edition includes the full platform and its source. Move up when you want more strategies — you only pay the difference.
+        </p>
+      </div>
+      <div style={{ display: 'grid', gap: 26, paddingBottom: 120 }}>
+        {editions.map((p) => (
+          <Link key={p.id} href={`/store/${p.id}`} style={{
+            display: 'grid', gridTemplateColumns: 'auto minmax(0,1fr) auto', gap: 32, alignItems: 'center', padding: '44px 44px',
+            borderRadius: 'calc(var(--radius-lg) * 1.15)', background: 'var(--color-surface)', textDecoration: 'none', color: 'var(--color-text)', boxShadow: 'var(--shadow-md)',
+          }}>
+            <div style={{ width: 64, height: 64, borderRadius: 99, background: 'var(--color-bg)', display: 'grid', placeItems: 'center', fontSize: 26 }}>{p.emoji}</div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                {p.badge && <span className="tag tag-accent">{p.badge}</span>}
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--color-neutral-600)' }}>{p.techStack?.[0] || 'Edition'}</span>
+              </div>
+              <div style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(24px,2.4vw,32px)', letterSpacing: '-0.02em', lineHeight: 1.1, marginBottom: 8 }}>{p.name}</div>
+              <div style={{ fontSize: 15, lineHeight: 1.55, color: 'var(--color-neutral-800)', maxWidth: '60ch' }}>{p.description}</div>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 34, fontWeight: 500, lineHeight: 1 }}>{money(p.price)}</div>
+              {p.wasPrice && <div style={{ fontSize: 13, color: 'var(--color-neutral-600)', textDecoration: 'line-through', fontFamily: 'var(--font-mono)', marginTop: 6 }}>{money(p.wasPrice)}</div>}
             </div>
           </Link>
         ))}
@@ -134,375 +262,90 @@ function FeaturedSection() {
   );
 }
 
-function DemoSection() {
+function ProofDemo() {
   return (
-    <section style={{ padding: '80px 24px', maxWidth: 1200, margin: '0 auto', textAlign: 'center' }}>
-      <p style={{ fontSize: '0.7rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#8B5CF6', marginBottom: 12 }}>
-        See It Running
-      </p>
-      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 800, color: '#E8E8E8', letterSpacing: '-0.03em', marginBottom: 16 }}>
-        Don't take our word for it.
-      </h2>
-      <p style={{ fontSize: '0.95rem', color: '#666', marginBottom: 40, maxWidth: 600, margin: '0 auto 40px' }}>
-        Click through the full dashboard. 6 agents, 7 farms, real-time analytics. No signup required.
-      </p>
-      <a href="https://ai-trading-dashboard-demo.vercel.app" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-        <div style={{ maxWidth: 1000, margin: '0 auto', borderRadius: 16, overflow: 'hidden', border: '1px solid #8B5CF620', cursor: 'pointer', transition: 'all 0.3s' }}>
-          <img src="/images/products/dashboard-overview-new.jpg" alt="AI Trading Dashboard Demo" style={{ width: '100%', display: 'block' }} />
+    <section data-cv-2col style={{ maxWidth: 1200, margin: '0 auto', padding: '0 28px 120px', display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1.4fr)', gap: 56, alignItems: 'center' }}>
+      <div>
+        <h6 style={{ marginBottom: 16 }}>Proof</h6>
+        <h2 style={{ fontSize: 'clamp(30px,3.2vw,42px)', lineHeight: 1.1, letterSpacing: '-0.015em', margin: '0 0 18px' }}>Click through it before you pay us anything.</h2>
+        <p style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--color-neutral-800)', margin: '0 0 26px' }}>
+          The demo is the product with sample data in it. Six agents, seven farms, live analytics, every tab. No signup, no email gate.
+        </p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+          <a href="https://ai-trading-dashboard-demo.vercel.app" target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ height: 46, padding: '0 22px' }}>Open the demo</a>
+          <Link href="/store/trading-dashboard-template" className="btn btn-secondary" style={{ height: 46, padding: '0 20px' }}>Own it for $99</Link>
         </div>
-      </a>
-      <div style={{ marginTop: 32, display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
-        <a href="https://ai-trading-dashboard-demo.vercel.app" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-          <button style={{ padding: '16px 40px', borderRadius: 8, border: 'none', background: '#8B5CF6', color: '#fff', fontSize: '0.88rem', fontWeight: 700, fontFamily: 'var(--font-display)', letterSpacing: '0.05em', textTransform: 'uppercase', cursor: 'pointer' }}>
-            Try Live Demo →
-          </button>
-        </a>
-        <a href="/store/trading-dashboard-template" style={{ textDecoration: 'none' }}>
-          <button style={{ padding: '16px 40px', borderRadius: 8, border: '1px solid #333', background: 'transparent', color: '#E8E8E8', fontSize: '0.88rem', fontWeight: 600, fontFamily: 'var(--font-display)', letterSpacing: '0.05em', textTransform: 'uppercase', cursor: 'pointer' }}>
-            Get Full Source — $149
-          </button>
-        </a>
+      </div>
+      <div style={{ position: 'relative', borderRadius: 'var(--radius-lg)', overflow: 'hidden', boxShadow: 'var(--shadow-lg)', aspectRatio: '16/10', background: 'var(--color-neutral-200)' }}>
+        <img src="/images/cival/gw-shot-live-trading.png" alt="Live trading dashboard" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
       </div>
     </section>
   );
 }
 
-function StatsSection() {
-  const stats = [
-    { value: '$184K', label: 'Demo Portfolio Value', color: '#10B981' },
-    { value: '6', label: 'Autonomous AI Agents', color: '#8B5CF6' },
-    { value: '2,847', label: 'Trades Executed', color: '#F59E0B' },
-    { value: '68%', label: 'Win Rate', color: '#EC4899' },
-  ];
-
+function Community() {
   return (
-    <section style={{
-      padding: '60px 24px',
-      maxWidth: 1400,
-      margin: '0 auto',
-      borderTop: '1px solid #111',
-      borderBottom: '1px solid #111',
-    }}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 32 }}>
-        {stats.map(s => (
-          <motion.div
-            key={s.label}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            style={{ textAlign: 'center' }}
-          >
-            <div style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(2rem, 4vw, 3.5rem)',
-              fontWeight: 800, color: s.color,
-              letterSpacing: '-0.03em',
-              lineHeight: 1,
-              marginBottom: 8,
-            }}>
-              {s.value}
-            </div>
-            <div style={{
-              fontSize: '0.72rem', color: '#555',
-              letterSpacing: '0.1em', textTransform: 'uppercase',
-              fontFamily: 'var(--font-body)',
-            }}>
-              {s.label}
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function IDESection() {
-  const ides = [
-    { name: 'Cursor', desc: 'AI-native editing', color: '#00D4AA', letter: 'C' },
-    { name: 'Windsurf', desc: 'Agentic IDE', color: '#3B82F6', letter: 'W' },
-    { name: 'VS Code', desc: 'Industry standard', color: '#007ACC', letter: 'VS' },
-    { name: 'Zed', desc: 'Lightning fast', color: '#F59E0B', letter: 'Z' },
-    { name: 'WebStorm', desc: 'Full IntelliSense', color: '#00CDD7', letter: 'WS' },
-    { name: 'Neovim', desc: 'Terminal power', color: '#57A143', letter: 'NV' },
-  ];
-
-  return (
-    <section style={{ padding: '100px 24px', maxWidth: 1200, margin: '0 auto' }}>
-      <div style={{ textAlign: 'center', marginBottom: 64 }}>
-        <p style={{ fontSize: '0.7rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#8B5CF6', marginBottom: 12, fontFamily: 'var(--font-body)' }}>
-          Full Source Code
-        </p>
-        <h2 style={{
-          fontFamily: 'var(--font-display)',
-          fontSize: 'clamp(2rem, 4vw, 3.2rem)',
-          fontWeight: 800, color: '#E8E8E8',
-          letterSpacing: '-0.03em', lineHeight: 1.1,
-          marginBottom: 20,
-        }}>
-          Open it in your favorite IDE.<br />
-          <span style={{ color: '#8B5CF6' }}>Make it yours.</span>
-        </h2>
-        <p style={{
-          fontSize: '0.95rem', color: '#666', lineHeight: 1.7,
-          fontFamily: 'var(--font-body)', maxWidth: 640, margin: '0 auto',
-        }}>
-          Every product ships as clean TypeScript source code. No lock-in, no black boxes, no compiled binaries.
-          Open the project in Cursor, Windsurf, VS Code, or any editor and customize every strategy, every threshold, every UI element.
-        </p>
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))', gap: 16, marginBottom: 64 }}>
-        {ides.map(ide => (
-          <motion.div
-            key={ide.name}
-            whileHover={{ y: -6, borderColor: ide.color + '50' }}
-            style={{
-              padding: '28px 20px', borderRadius: 12,
-              background: '#0a0a0a', border: '1px solid #1a1a1a',
-              textAlign: 'center', cursor: 'default',
-              transition: 'box-shadow 0.3s',
-            }}
-          >
-            <div style={{
-              width: 48, height: 48, borderRadius: 12,
-              background: ide.color + '15', border: `1px solid ${ide.color}30`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              margin: '0 auto 14px',
-              fontSize: '0.85rem', fontWeight: 800, color: ide.color,
-              fontFamily: 'var(--font-mono, monospace)',
-            }}>
-              {ide.letter}
-            </div>
-            <h3 style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: '0.95rem', fontWeight: 700,
-              color: '#E8E8E8', marginBottom: 4,
-            }}>
-              {ide.name}
-            </h3>
-            <p style={{
-              fontSize: '0.7rem', color: '#555',
-              fontFamily: 'var(--font-body)',
-            }}>
-              {ide.desc}
-            </p>
-          </motion.div>
-        ))}
-      </div>
-
-      <div style={{
-        display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 24,
-      }}>
-        {[
-          {
-            icon: '\uD83E\uDD16',
-            title: 'AI-Assisted Customization',
-            desc: 'Open in Cursor or Windsurf and use AI to modify strategies, add indicators, or build entirely new agents. The codebase is structured for AI-assisted development.',
-          },
-          {
-            icon: '\uD83D\uDD27',
-            title: 'Full TypeScript Source',
-            desc: 'Every line of code \u2014 strategies, risk management, UI components, API routes. No obfuscation, no compiled modules. Read it, modify it, own it.',
-          },
-          {
-            icon: '\u26A1',
-            title: '1-Click Setup',
-            desc: 'Double-click QUICK-START and the dashboard is running. The script installs dependencies, creates your config, and opens the browser. Deploy to Vercel when ready.',
-          },
-        ].map(item => (
-          <motion.div
-            key={item.title}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            style={{
-              padding: 32, borderRadius: 14,
-              background: '#0a0a0a', border: '1px solid #1a1a1a',
-            }}
-          >
-            <span style={{ fontSize: '2rem' }}>{item.icon}</span>
-            <h3 style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: '1.05rem', fontWeight: 700,
-              color: '#E8E8E8', marginTop: 16, marginBottom: 10,
-              letterSpacing: '-0.01em',
-            }}>
-              {item.title}
-            </h3>
-            <p style={{
-              fontSize: '0.82rem', color: '#777', lineHeight: 1.6,
-              fontFamily: 'var(--font-body)',
-            }}>
-              {item.desc}
-            </p>
-          </motion.div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function DiscordSection() {
-  return (
-    <section style={{
-      padding: '80px 24px',
-      maxWidth: 900,
-      margin: '0 auto',
-      textAlign: 'center',
-    }}>
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        style={{
-          background: 'linear-gradient(135deg, rgba(88,101,242,0.08), rgba(139,92,246,0.08))',
-          border: '1px solid rgba(88,101,242,0.2)',
-          borderRadius: 16,
-          padding: '48px 40px',
-        }}
-      >
-        <div style={{ fontSize: '2.5rem', marginBottom: 16 }}>💬</div>
-        <h2 style={{
-          fontFamily: 'var(--font-display)',
-          fontSize: 'clamp(1.5rem, 4vw, 2.2rem)',
-          fontWeight: 800, color: '#E8E8E8',
-          letterSpacing: '-0.03em', lineHeight: 1.1,
-          marginBottom: 12,
-        }}>
-          Join the Community
-        </h2>
-        <p style={{
-          fontSize: '0.95rem', color: '#888', lineHeight: 1.7,
-          fontFamily: 'var(--font-body)', marginBottom: 32,
-          maxWidth: 500, margin: '0 auto 32px',
-        }}>
-          Get help with setup, share your custom strategies, discuss plugins, and connect with other traders building autonomous systems.
-        </p>
-        <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <a href="https://discord.gg/EZk6gTx57k" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-            <motion.button
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.97 }}
-              style={{
-                padding: '14px 36px', borderRadius: 8,
-                border: 'none', background: '#5865F2',
-                color: '#fff', fontFamily: 'var(--font-display)',
-                fontSize: '0.85rem', fontWeight: 700,
-                letterSpacing: '0.04em',
-                cursor: 'pointer',
-                display: 'flex', alignItems: 'center', gap: 8,
-              }}
-            >
-              <svg width="20" height="15" viewBox="0 0 71 55" fill="none"><path d="M60.1 4.9A58.5 58.5 0 0045.4.2a.2.2 0 00-.2.1 40.7 40.7 0 00-1.8 3.7 54 54 0 00-16.2 0A26.4 26.4 0 0025.4.3a.2.2 0 00-.2-.1 58.4 58.4 0 00-14.7 4.6.2.2 0 00-.1.1C1.5 18.7-.9 32 .3 45.2v.1a58.7 58.7 0 0017.9 9.1.2.2 0 00.3-.1 42 42 0 003.6-5.9.2.2 0 00-.1-.3 38.7 38.7 0 01-5.5-2.6.2.2 0 01.1-.4 31 31 0 001.1-.8.2.2 0 01.2 0c11.6 5.3 24.1 5.3 35.5 0a.2.2 0 01.2 0 28 28 0 001.1.9.2.2 0 01.1.3 36.3 36.3 0 01-5.5 2.6.2.2 0 00-.1.4 47.2 47.2 0 003.6 5.8.2.2 0 00.3.1A58.5 58.5 0 0070 45.3v-.1C71.6 30 67.6 16.8 60.1 5a.2.2 0 00-.1 0zM23.7 37.1c-3.5 0-6.4-3.2-6.4-7.1s2.8-7.1 6.4-7.1 6.5 3.2 6.4 7.1c0 3.9-2.8 7.1-6.4 7.1zm23.6 0c-3.5 0-6.4-3.2-6.4-7.1s2.8-7.1 6.4-7.1 6.5 3.2 6.4 7.1c0 3.9-2.8 7.1-6.4 7.1z" fill="currentColor"/></svg>
-              Join Discord
-            </motion.button>
-          </a>
-          <a href="https://x.com/GWDSofficial" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-            <motion.button
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.97 }}
-              style={{
-                padding: '14px 36px', borderRadius: 8,
-                border: '1px solid #333', background: 'transparent',
-                color: '#E8E8E8', fontFamily: 'var(--font-display)',
-                fontSize: '0.85rem', fontWeight: 700,
-                letterSpacing: '0.04em',
-                cursor: 'pointer',
-                display: 'flex', alignItems: 'center', gap: 8,
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-              Follow @GWDSofficial
-            </motion.button>
-          </a>
+    <section style={{ maxWidth: 1200, margin: '0 auto', padding: '0 28px 120px' }}>
+      <div data-cv-2col style={{ borderRadius: 'calc(var(--radius-lg) * 1.15)', background: 'var(--color-accent-2-100)', padding: '60px 48px', display: 'grid', gridTemplateColumns: 'minmax(0,1.1fr) minmax(0,0.9fr)', gap: 48, alignItems: 'center' }}>
+        <div>
+          <h6 style={{ color: 'var(--color-accent-2-700)', marginBottom: 16 }}>Community</h6>
+          <h2 style={{ fontSize: 'clamp(28px,3vw,40px)', letterSpacing: '-0.02em', margin: '0 0 14px' }}>42 channels of people running this in production.</h2>
+          <p style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--color-accent-2-900)', margin: '0 0 26px', maxWidth: '48ch' }}>
+            Setup help, plugin sharing, strategy arguments at 3am. If you get stuck on a Supabase key, someone has already been stuck on it.
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+            <a href="https://discord.gg/EZk6gTx57k" target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ height: 46, padding: '0 22px' }}>Join the Discord</a>
+            <a href="https://x.com/GWDSofficial" target="_blank" rel="noopener noreferrer" className="btn btn-secondary" style={{ height: 46, padding: '0 20px', borderColor: 'var(--color-accent-2-300)' }}>Follow on X</a>
+          </div>
         </div>
-        <div style={{ display: 'flex', gap: 32, justifyContent: 'center', marginTop: 28, flexWrap: 'wrap' }}>
-          {[
-            { label: '42 channels', icon: '#' },
-            { label: 'Setup support', icon: '🛠️' },
-            { label: 'Plugin sharing', icon: '🔌' },
-            { label: 'Strategy talk', icon: '📊' },
-          ].map(item => (
-            <span key={item.label} style={{ fontSize: '0.78rem', color: '#666', fontFamily: 'var(--font-body)' }}>
-              {item.icon} {item.label}
-            </span>
+        <div style={{ display: 'grid', gap: 10 }}>
+          {COMMUNITY.map((c) => (
+            <div key={c.t} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '18px 22px', borderRadius: 99, background: 'color-mix(in srgb, #fff 55%, transparent)' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 16, fontWeight: 500, color: 'var(--color-accent-2-800)', minWidth: 52 }}>{c.n}</span>
+              <span style={{ fontSize: 14.5, color: 'var(--color-accent-2-900)' }}>{c.t}</span>
+            </div>
           ))}
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }
 
-function CTASection() {
+function FinalCTA() {
   return (
-    <section style={{
-      padding: '80px 24px 100px',
-      maxWidth: 900,
-      margin: '0 auto',
-      textAlign: 'center',
-    }}>
-      <motion.h2
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        style={{
-          fontFamily: 'var(--font-display)',
-          fontSize: 'clamp(2rem, 5vw, 3.5rem)',
-          fontWeight: 800, color: '#E8E8E8',
-          letterSpacing: '-0.03em', lineHeight: 1.1,
-          marginBottom: 20,
-        }}
-      >
-        Your trading system
-        <br />
-        <span style={{ color: '#8B5CF6' }}>is one deploy away.</span>
-      </motion.h2>
-      <motion.p
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.2 }}
-        style={{
-          fontSize: '0.95rem', color: '#666', lineHeight: 1.6,
-          fontFamily: 'var(--font-body)', marginBottom: 40,
-        }}
-      >
-        Full TypeScript source. Open in Cursor, Windsurf, or VS Code. Customize everything.
-      </motion.p>
-      <Link href="/store" style={{ textDecoration: 'none' }}>
-        <motion.button
-          whileHover={{ scale: 1.04 }}
-          whileTap={{ scale: 0.97 }}
-          style={{
-            padding: '18px 48px', borderRadius: 8,
-            border: 'none', background: '#8B5CF6',
-            color: '#fff', fontFamily: 'var(--font-display)',
-            fontSize: '0.88rem', fontWeight: 700,
-            letterSpacing: '0.06em', textTransform: 'uppercase',
-            cursor: 'pointer',
-          }}
-        >
-          Explore the Store
-        </motion.button>
-      </Link>
+    <section style={{ borderTop: '1px solid var(--color-divider)' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '130px 28px', textAlign: 'center' }}>
+        <h2 style={{ fontSize: 'clamp(38px,5.2vw,70px)', lineHeight: 1.06, letterSpacing: '-0.018em', margin: '0 auto 26px', maxWidth: '20ch' }}>Your desk, running by tonight.</h2>
+        <p style={{ fontSize: 17, color: 'var(--color-neutral-800)', margin: '0 auto 34px', maxWidth: '52ch' }}>
+          Three editions, full TypeScript source, agents that execute on Hyperliquid the moment you hand them a key. The template does
+          the boring part; the edge stays yours.
+        </p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center' }}>
+          <Link href="/store" className="btn btn-primary" style={{ height: 54, padding: '0 32px', fontSize: 16 }}>Explore the store</Link>
+        </div>
+      </div>
     </section>
   );
 }
 
 export default function Home() {
   return (
-    <>
+    <div className="cival">
       <Navbar />
-      <main style={{ background: '#000' }}>
+      <main>
         <Hero />
-        <FeaturedSection />
-        <DemoSection />
-        <StatsSection />
-        <IDESection />
-        <DiscordSection />
-        <CTASection />
+        <Marquee />
+        <Stats />
+        <Premise />
+        <CoreEditionCard />
+        <AgentRail />
+        <SourceShowcase />
+        <EditionsStack />
+        <ProofDemo />
+        <Community />
+        <FinalCTA />
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

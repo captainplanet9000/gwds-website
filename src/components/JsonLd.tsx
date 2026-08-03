@@ -2,13 +2,13 @@ export function OrganizationJsonLd() {
   const data = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'Gamma Waves Design Studio',
+    name: 'Cival Systems',
     url: 'https://gwds-website.vercel.app',
     logo: 'https://gwds-website.vercel.app/images/logo.png',
-    description: 'AI-powered trading tools, dashboard templates, and algorithmic trading agents.',
+    description: 'Trading infrastructure and autonomous agents, sold as source. An AI agent hedge fund starting point for Hyperliquid.',
     email: 'gammawavesdesign@gmail.com',
     sameAs: [
-      'https://x.com/Serra_AI',
+      'https://x.com/GWDSofficial',
       'https://github.com/captainplanet9000',
       'https://discord.gg/EZk6gTx57k',
     ],
@@ -39,7 +39,7 @@ export function ProductJsonLd({ product }: { product: { name: string; id: string
     },
     author: {
       '@type': 'Organization',
-      name: 'Gamma Waves Design Studio',
+      name: 'Cival Systems',
     },
   };
 

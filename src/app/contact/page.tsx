@@ -44,41 +44,20 @@ export default function ContactPage() {
     }
   };
 
+  const disabled = status === 'loading' || status === 'success';
+
   return (
-    <>
+    <div className="cival">
       <Navbar />
-      <main
-        style={{
-          paddingTop: '15vh',
-          minHeight: '100vh',
-          background: '#000',
-          paddingBottom: '10vh',
-        }}
-      >
-        <div style={{ maxWidth: '800px', margin: '0 auto', padding: '0 24px' }}>
+      <main className="cival-fade" style={{ paddingTop: '150px', minHeight: '100vh', paddingBottom: '96px' }}>
+        <div style={{ maxWidth: 700, margin: '0 auto', padding: '0 28px' }}>
           {/* Header */}
-          <div style={{ textAlign: 'center', marginBottom: '8vh' }}>
-            <h1
-              style={{
-                fontFamily: 'Syne, sans-serif',
-                fontSize: '8vw',
-                fontWeight: 800,
-                color: '#E8E8E8',
-                marginBottom: '16px',
-              }}
-            >
+          <div style={{ textAlign: 'center', marginBottom: 56 }}>
+            <h1 style={{ fontSize: 'clamp(36px,6vw,58px)', letterSpacing: '-0.015em', margin: '0 0 14px' }}>
               Get in Touch
             </h1>
-            <p
-              style={{
-                fontFamily: 'DM Sans, sans-serif',
-                fontSize: '1rem',
-                color: '#A8A8A8',
-                maxWidth: '500px',
-                margin: '0 auto',
-              }}
-            >
-              Questions about products, licensing, collaborations, or custom work? We'd love to hear
+            <p style={{ fontSize: 15.5, color: 'var(--color-neutral-700)', maxWidth: 480, margin: '0 auto', lineHeight: 1.6 }}>
+              Questions about products, licensing, collaborations, or custom work? We&apos;d love to hear
               from you.
             </p>
           </div>
@@ -87,128 +66,50 @@ export default function ContactPage() {
           <form
             ref={formRef}
             onSubmit={handleSubmit}
-            style={{
-              border: '1px solid rgba(232, 232, 232, 0.1)',
-              background: '#050505',
-              padding: '32px',
-            }}
+            className="card"
+            style={{ padding: 32, borderRadius: 'calc(var(--radius-lg) * 1.15)', gap: 18 }}
           >
             <div
+              data-cv-2col
               style={{
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr',
-                gap: '16px',
-                marginBottom: '16px',
+                gap: 18,
               }}
-              className="form-row"
             >
-              <div>
-                <label
-                  style={{
-                    display: 'block',
-                    fontFamily: 'DM Sans, sans-serif',
-                    fontSize: '0.85rem',
-                    fontWeight: 500,
-                    color: '#A8A8A8',
-                    marginBottom: '8px',
-                  }}
-                >
-                  Name
-                </label>
+              <div className="field">
+                <label>Name</label>
                 <input
+                  className="input"
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
-                  disabled={status === 'loading' || status === 'success'}
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    fontFamily: 'DM Sans, sans-serif',
-                    fontSize: '0.9rem',
-                    background: '#000',
-                    border: '1px solid rgba(232, 232, 232, 0.2)',
-                    color: '#E8E8E8',
-                    outline: 'none',
-                    transition: 'border-color 0.2s ease',
-                  }}
-                  onFocus={(e) => {
-                    e.currentTarget.style.borderColor = 'oklch(0.65 0.29 295)';
-                  }}
-                  onBlur={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(232, 232, 232, 0.2)';
-                  }}
+                  disabled={disabled}
                 />
               </div>
 
-              <div>
-                <label
-                  style={{
-                    display: 'block',
-                    fontFamily: 'DM Sans, sans-serif',
-                    fontSize: '0.85rem',
-                    fontWeight: 500,
-                    color: '#A8A8A8',
-                    marginBottom: '8px',
-                  }}
-                >
-                  Email
-                </label>
+              <div className="field">
+                <label>Email</label>
                 <input
+                  className="input"
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
-                  disabled={status === 'loading' || status === 'success'}
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    fontFamily: 'DM Sans, sans-serif',
-                    fontSize: '0.9rem',
-                    background: '#000',
-                    border: '1px solid rgba(232, 232, 232, 0.2)',
-                    color: '#E8E8E8',
-                    outline: 'none',
-                    transition: 'border-color 0.2s ease',
-                  }}
-                  onFocus={(e) => {
-                    e.currentTarget.style.borderColor = 'oklch(0.65 0.29 295)';
-                  }}
-                  onBlur={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(232, 232, 232, 0.2)';
-                  }}
+                  disabled={disabled}
                 />
               </div>
             </div>
 
-            <div style={{ marginBottom: '16px' }}>
-              <label
-                style={{
-                  display: 'block',
-                  fontFamily: 'DM Sans, sans-serif',
-                  fontSize: '0.85rem',
-                  fontWeight: 500,
-                  color: '#A8A8A8',
-                  marginBottom: '8px',
-                }}
-              >
-                Subject
-              </label>
+            <div className="field">
+              <label>Subject</label>
               <select
+                className="input"
                 value={formData.subject}
                 onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                disabled={status === 'loading' || status === 'success'}
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  fontFamily: 'DM Sans, sans-serif',
-                  fontSize: '0.9rem',
-                  background: '#000',
-                  border: '1px solid rgba(232, 232, 232, 0.2)',
-                  color: '#E8E8E8',
-                  outline: 'none',
-                  cursor: 'pointer',
-                }}
+                disabled={disabled}
+                style={{ cursor: 'pointer' }}
               >
                 <option>Product Question</option>
                 <option>Custom Work</option>
@@ -218,74 +119,26 @@ export default function ContactPage() {
               </select>
             </div>
 
-            <div style={{ marginBottom: '16px' }}>
-              <label
-                style={{
-                  display: 'block',
-                  fontFamily: 'DM Sans, sans-serif',
-                  fontSize: '0.85rem',
-                  fontWeight: 500,
-                  color: '#A8A8A8',
-                  marginBottom: '8px',
-                }}
-              >
-                Message
-              </label>
+            <div className="field">
+              <label>Message</label>
               <textarea
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 required
-                disabled={status === 'loading' || status === 'success'}
+                disabled={disabled}
                 rows={6}
+                className="input"
                 style={{
-                  width: '100%',
-                  padding: '12px',
-                  fontFamily: 'DM Sans, sans-serif',
-                  fontSize: '0.9rem',
-                  background: '#000',
-                  border: '1px solid rgba(232, 232, 232, 0.2)',
-                  color: '#E8E8E8',
-                  outline: 'none',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '12px 14px',
                   resize: 'vertical',
                   lineHeight: 1.6,
-                  transition: 'border-color 0.2s ease',
-                }}
-                onFocus={(e) => {
-                  e.currentTarget.style.borderColor = 'oklch(0.65 0.29 295)';
-                }}
-                onBlur={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(232, 232, 232, 0.2)';
+                  minHeight: 'unset',
                 }}
               />
             </div>
 
-            <button
-              type="submit"
-              disabled={status === 'loading' || status === 'success'}
-              style={{
-                width: '100%',
-                padding: '14px',
-                fontFamily: 'Syne, sans-serif',
-                fontSize: '0.9rem',
-                fontWeight: 600,
-                background: 'oklch(0.65 0.29 295)',
-                color: '#000',
-                border: 'none',
-                cursor: status === 'loading' || status === 'success' ? 'not-allowed' : 'pointer',
-                transition: 'all 0.3s ease',
-                opacity: status === 'loading' || status === 'success' ? 0.5 : 1,
-              }}
-              onMouseEnter={(e) => {
-                if (status === 'idle' || status === 'error') {
-                  e.currentTarget.style.background = '#E8E8E8';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (status === 'idle' || status === 'error') {
-                  e.currentTarget.style.background = 'oklch(0.65 0.29 295)';
-                }
-              }}
-            >
+            <button type="submit" disabled={disabled} className="btn btn-primary btn-block" style={{ height: 50, fontSize: 15 }}>
               {status === 'loading'
                 ? 'Sending...'
                 : status === 'success'
@@ -294,61 +147,25 @@ export default function ContactPage() {
             </button>
 
             {status === 'success' && (
-              <p
-                style={{
-                  fontFamily: 'DM Sans, sans-serif',
-                  fontSize: '0.85rem',
-                  color: 'oklch(0.65 0.29 295)',
-                  marginTop: '1.5vw',
-                  textAlign: 'center',
-                }}
-              >
-                Thanks for reaching out! We'll get back to you soon.
+              <p style={{ fontSize: 13.5, color: 'var(--color-accent-700)', textAlign: 'center', margin: 0 }}>
+                Thanks for reaching out! We&apos;ll get back to you soon.
               </p>
             )}
             {status === 'error' && (
-              <p
-                style={{
-                  fontFamily: 'DM Sans, sans-serif',
-                  fontSize: '0.85rem',
-                  color: '#EF4444',
-                  marginTop: '1.5vw',
-                  textAlign: 'center',
-                }}
-              >
+              <p style={{ fontSize: 13.5, color: 'var(--color-accent-2-700)', textAlign: 'center', margin: 0 }}>
                 Something went wrong. Please try again or email us directly.
               </p>
             )}
           </form>
 
           {/* Direct Contact */}
-          <div style={{ textAlign: 'center', marginTop: '6vh' }}>
-            <p
-              style={{
-                fontFamily: 'DM Sans, sans-serif',
-                fontSize: '0.85rem',
-                color: '#A8A8A8',
-                marginBottom: '1vh',
-              }}
-            >
+          <div style={{ textAlign: 'center', marginTop: 48 }}>
+            <p style={{ fontSize: 13.5, color: 'var(--color-neutral-700)', marginBottom: 8 }}>
               Or reach out directly:
             </p>
             <a
               href="mailto:gammawavesdesign@gmail.com"
-              style={{
-                fontFamily: 'Syne, sans-serif',
-                fontSize: '0.95rem',
-                fontWeight: 600,
-                color: 'oklch(0.65 0.29 295)',
-                textDecoration: 'none',
-                transition: 'color 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = '#E8E8E8';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = 'oklch(0.65 0.29 295)';
-              }}
+              style={{ fontFamily: 'var(--font-mono)', fontSize: 14, fontWeight: 600, color: 'var(--color-accent)' }}
             >
               gammawavesdesign@gmail.com
             </a>
@@ -356,30 +173,6 @@ export default function ContactPage() {
         </div>
       </main>
       <Footer />
-
-      <style jsx>{`
-        @media (max-width: 768px) {
-          h1 {
-            font-size: 14vw !important;
-          }
-          p {
-            font-size: 4vw !important;
-          }
-          .form-row {
-            grid-template-columns: 1fr !important;
-          }
-          label {
-            font-size: 3.5vw !important;
-          }
-          input,
-          select,
-          textarea,
-          button {
-            padding: 3vw !important;
-            font-size: 4vw !important;
-          }
-        }
-      `}</style>
-    </>
+    </div>
   );
 }

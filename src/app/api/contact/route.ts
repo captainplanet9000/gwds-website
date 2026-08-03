@@ -20,10 +20,10 @@ export async function POST(req: NextRequest) {
       const { Resend } = await import('resend');
       const resend = new Resend(process.env.RESEND_API_KEY);
       await resend.emails.send({
-        from: 'GWDS Contact <onboarding@resend.dev>',
+        from: 'Cival Systems Contact <onboarding@resend.dev>',
         to: 'gammawavesdesign@gmail.com',
         replyTo: email,
-        subject: `[GWDS Contact] ${subject || 'New Message'} from ${name}`,
+        subject: `[Cival Systems Contact] ${subject || 'New Message'} from ${name}`,
         html: `
           <div style="font-family:system-ui,sans-serif;max-width:600px;padding:20px;">
             <h2 style="color:#333;margin-bottom:4px;">New Contact Form Submission</h2>
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             chat_id: chatId,
-            text: `📩 GWDS Contact Form\n\nFrom: ${name} (${email})\nSubject: ${subject || 'General'}\n\n${message.substring(0, 500)}`,
+            text: `📩 Cival Systems Contact Form\n\nFrom: ${name} (${email})\nSubject: ${subject || 'General'}\n\n${message.substring(0, 500)}`,
             parse_mode: 'HTML',
           }),
         });

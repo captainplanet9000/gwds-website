@@ -56,30 +56,26 @@ export default function RegisterPage() {
 
   if (authLoading) {
     return (
-      <>
+      <div className="cival">
         <Navbar />
-        <main style={{ background: '#000', minHeight: '100vh', paddingTop: 160, paddingBottom: 80 }}>
-          <div style={{ textAlign: 'center', color: '#555', paddingTop: 100 }}>Loading...</div>
+        <main style={{ minHeight: '100vh', paddingTop: 160, paddingBottom: 80 }}>
+          <div style={{ textAlign: 'center', color: 'var(--color-neutral-600)', paddingTop: 100 }}>Loading...</div>
         </main>
         <Footer />
-      </>
+      </div>
     );
   }
 
   if (user) return null;
 
   return (
-    <>
+    <div className="cival">
       <Navbar />
-      <main style={{ background: '#000', minHeight: '100vh', paddingTop: 160, paddingBottom: 80 }}>
+      <main className="cival-fade" style={{ minHeight: '100vh', paddingTop: 160, paddingBottom: 80 }}>
         <div style={{ maxWidth: 420, margin: '0 auto', padding: '0 24px' }}>
           <h1
             style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(1.6rem, 3.5vw, 2rem)',
-              fontWeight: 800,
-              color: '#E8E8E8',
-              letterSpacing: '-0.03em',
+              fontSize: 'clamp(1.8rem, 3.5vw, 2.4rem)',
               marginBottom: 8,
               textAlign: 'center',
             }}
@@ -88,9 +84,8 @@ export default function RegisterPage() {
           </h1>
           <p
             style={{
-              fontFamily: 'var(--font-body)',
               fontSize: '0.9rem',
-              color: '#666',
+              color: 'var(--color-neutral-700)',
               textAlign: 'center',
               marginBottom: 32,
             }}
@@ -99,49 +94,14 @@ export default function RegisterPage() {
           </p>
 
           {success ? (
-            <div
-              style={{
-                padding: 24,
-                borderRadius: 10,
-                background: '#0a0a0a',
-                border: '1px solid #1a1a1a',
-                textAlign: 'center',
-              }}
-            >
-              <div style={{ fontSize: '2.5rem', marginBottom: 16 }}>✉️</div>
-              <h2
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '1.1rem',
-                  fontWeight: 700,
-                  color: '#E8E8E8',
-                  marginBottom: 8,
-                }}
-              >
-                Check your email
-              </h2>
-              <p
-                style={{
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '0.85rem',
-                  color: '#888',
-                  lineHeight: 1.6,
-                }}
-              >
-                We sent a verification link to <strong style={{ color: '#E8E8E8' }}>{email}</strong>.
+            <div className="card elev-md" style={{ padding: 24, textAlign: 'center' }}>
+              <div style={{ fontSize: '2.5rem', marginBottom: 16 }}>&#9993;&#65039;</div>
+              <h2 style={{ fontSize: '1.3rem', marginBottom: 8 }}>Check your email</h2>
+              <p style={{ fontSize: '0.85rem', color: 'var(--color-neutral-700)', lineHeight: 1.6 }}>
+                We sent a verification link to <strong style={{ color: 'var(--color-text)' }}>{email}</strong>.
                 Click the link to activate your account.
               </p>
-              <Link
-                href="/account/login"
-                style={{
-                  display: 'inline-block',
-                  marginTop: 20,
-                  color: '#8B5CF6',
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '0.85rem',
-                  textDecoration: 'underline',
-                }}
-              >
+              <Link href="/account/login" className="btn btn-ghost" style={{ marginTop: 20 }}>
                 Go to login
               </Link>
             </div>
@@ -152,154 +112,63 @@ export default function RegisterPage() {
 
               {/* Divider */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 16, margin: '24px 0' }}>
-                <div style={{ flex: 1, height: 1, background: '#1a1a1a' }} />
-                <span style={{ fontSize: '0.75rem', color: '#555', fontFamily: 'var(--font-body)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>or create with email</span>
-                <div style={{ flex: 1, height: 1, background: '#1a1a1a' }} />
+                <div style={{ flex: 1, height: 1, background: 'var(--color-divider)' }} />
+                <h6 style={{ margin: 0 }}>or create with email</h6>
+                <div style={{ flex: 1, height: 1, background: 'var(--color-divider)' }} />
               </div>
 
-              <form onSubmit={handleSubmit}>
-                <label
-                  style={{
-                    display: 'block',
-                    fontFamily: 'var(--font-body)',
-                    fontSize: '0.78rem',
-                    fontWeight: 600,
-                    color: '#888',
-                    marginBottom: 6,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                  }}
-                >
-                  Email
-                </label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  placeholder="you@example.com"
-                  style={{
-                    width: '100%',
-                    padding: '12px 14px',
-                    borderRadius: 8,
-                    border: '1px solid #1a1a1a',
-                    background: '#0a0a0a',
-                    color: '#E8E8E8',
-                    fontFamily: 'var(--font-body)',
-                    fontSize: '0.9rem',
-                    outline: 'none',
-                    marginBottom: 16,
-                    boxSizing: 'border-box',
-                  }}
-                />
+              <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 16 }}>
+                <div className="field">
+                  <label>Email</label>
+                  <input
+                    className="input"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    placeholder="you@example.com"
+                  />
+                </div>
 
-                <label
-                  style={{
-                    display: 'block',
-                    fontFamily: 'var(--font-body)',
-                    fontSize: '0.78rem',
-                    fontWeight: 600,
-                    color: '#888',
-                    marginBottom: 6,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                  }}
-                >
-                  Password
-                </label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  placeholder="At least 6 characters"
-                  style={{
-                    width: '100%',
-                    padding: '12px 14px',
-                    borderRadius: 8,
-                    border: '1px solid #1a1a1a',
-                    background: '#0a0a0a',
-                    color: '#E8E8E8',
-                    fontFamily: 'var(--font-body)',
-                    fontSize: '0.9rem',
-                    outline: 'none',
-                    marginBottom: 16,
-                    boxSizing: 'border-box',
-                  }}
-                />
+                <div className="field">
+                  <label>Password</label>
+                  <input
+                    className="input"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    placeholder="At least 6 characters"
+                  />
+                </div>
 
-                <label
-                  style={{
-                    display: 'block',
-                    fontFamily: 'var(--font-body)',
-                    fontSize: '0.78rem',
-                    fontWeight: 600,
-                    color: '#888',
-                    marginBottom: 6,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                  }}
-                >
-                  Confirm Password
-                </label>
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                  placeholder="••••••••"
-                  style={{
-                    width: '100%',
-                    padding: '12px 14px',
-                    borderRadius: 8,
-                    border: '1px solid #1a1a1a',
-                    background: '#0a0a0a',
-                    color: '#E8E8E8',
-                    fontFamily: 'var(--font-body)',
-                    fontSize: '0.9rem',
-                    outline: 'none',
-                    marginBottom: 16,
-                    boxSizing: 'border-box',
-                  }}
-                />
+                <div className="field">
+                  <label>Confirm Password</label>
+                  <input
+                    className="input"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    placeholder="••••••••"
+                  />
+                </div>
 
                 {error && (
                   <div
                     style={{
                       padding: '10px 14px',
-                      borderRadius: 8,
-                      background: 'rgba(239, 68, 68, 0.1)',
-                      border: '1px solid rgba(239, 68, 68, 0.3)',
-                      color: '#ef4444',
-                      fontFamily: 'var(--font-body)',
+                      borderRadius: 'var(--radius-md)',
+                      background: 'var(--color-accent-2-100)',
+                      color: 'var(--color-accent-2-800)',
                       fontSize: '0.82rem',
-                      marginBottom: 16,
                     }}
                   >
                     {error}
                   </div>
                 )}
 
-                <button
-                  type="submit"
-                  disabled={loading}
-                  style={{
-                    width: '100%',
-                    padding: '14px',
-                    borderRadius: 8,
-                    border: 'none',
-                    background: loading ? '#5b3aa0' : '#8B5CF6',
-                    color: '#fff',
-                    fontFamily: 'var(--font-display)',
-                    fontSize: '0.85rem',
-                    fontWeight: 700,
-                    letterSpacing: '0.05em',
-                    textTransform: 'uppercase',
-                    cursor: loading ? 'not-allowed' : 'pointer',
-                    transition: 'background 0.2s ease',
-                    opacity: loading ? 0.7 : 1,
-                  }}
-                >
+                <button type="submit" disabled={loading} className="btn btn-primary btn-block" style={{ height: 50 }}>
                   {loading ? 'Creating account...' : 'Create Account'}
                 </button>
               </form>
@@ -308,16 +177,12 @@ export default function RegisterPage() {
                 style={{
                   marginTop: 24,
                   textAlign: 'center',
-                  fontFamily: 'var(--font-body)',
                   fontSize: '0.85rem',
-                  color: '#555',
+                  color: 'var(--color-neutral-700)',
                 }}
               >
                 Already have an account?{' '}
-                <Link
-                  href="/account/login"
-                  style={{ color: '#8B5CF6', textDecoration: 'none', fontWeight: 600 }}
-                >
+                <Link href="/account/login" style={{ fontWeight: 600 }}>
                   Sign in
                 </Link>
               </div>
@@ -326,6 +191,6 @@ export default function RegisterPage() {
         </div>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

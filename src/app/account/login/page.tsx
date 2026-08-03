@@ -56,93 +56,32 @@ function LoginForm() {
   };
 
   if (authLoading) {
-    return <div style={{ textAlign: 'center', padding: '200px 24px', color: '#555' }}>Loading...</div>;
+    return <div style={{ textAlign: 'center', padding: '200px 24px', color: 'var(--color-neutral-600)' }}>Loading...</div>;
   }
 
   if (user) return null;
 
-  const inputStyle: React.CSSProperties = {
-    width: '100%',
-    padding: '12px 14px',
-    borderRadius: 8,
-    border: '1px solid #1a1a1a',
-    background: '#0a0a0a',
-    color: '#E8E8E8',
-    fontFamily: 'var(--font-body)',
-    fontSize: '0.9rem',
-    outline: 'none',
-    marginBottom: 16,
-    boxSizing: 'border-box',
-  };
-
-  const labelStyle: React.CSSProperties = {
-    display: 'block',
-    fontFamily: 'var(--font-body)',
-    fontSize: '0.78rem',
-    fontWeight: 600,
-    color: '#888',
-    marginBottom: 6,
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-  };
-
   return (
-    <div style={{ maxWidth: 420, margin: '0 auto', padding: '0 24px' }}>
-      <h1 style={{
-        fontFamily: 'var(--font-display)',
-        fontSize: 'clamp(1.6rem, 3.5vw, 2rem)',
-        fontWeight: 800,
-        color: '#E8E8E8',
-        letterSpacing: '-0.03em',
-        marginBottom: 8,
-        textAlign: 'center',
-      }}>
+    <div style={{ maxWidth: 420, margin: '0 auto', padding: '0 28px' }}>
+      <h1 style={{ fontSize: 'clamp(28px, 4vw, 40px)', letterSpacing: '-0.015em', textAlign: 'center', margin: '0 0 8px' }}>
         Sign In
       </h1>
-      <p style={{
-        fontFamily: 'var(--font-body)',
-        fontSize: '0.9rem',
-        color: '#666',
-        textAlign: 'center',
-        marginBottom: 32,
-      }}>
+      <p style={{ fontSize: 14.5, color: 'var(--color-neutral-700)', textAlign: 'center', marginBottom: 32 }}>
         Access your purchases and downloads
       </p>
 
       {magicLinkSent ? (
-        <div style={{
-          padding: 24,
-          borderRadius: 10,
-          background: '#0a0a0a',
-          border: '1px solid #1a1a1a',
-          textAlign: 'center',
-        }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: 16 }}>📧</div>
-          <h2 style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: '1.1rem',
-            fontWeight: 700,
-            color: '#E8E8E8',
-            marginBottom: 8,
-          }}>
-            Check your email
-          </h2>
-          <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.85rem', color: '#888', lineHeight: 1.6 }}>
-            We sent a login link to <strong style={{ color: '#E8E8E8' }}>{email}</strong>.
+        <div className="card" style={{ padding: '32px 28px', textAlign: 'center', gap: 12 }}>
+          <div style={{ fontSize: '2.5rem' }}>📧</div>
+          <h2 style={{ fontSize: 20, margin: 0 }}>Check your email</h2>
+          <p style={{ fontSize: 13.5, color: 'var(--color-neutral-700)', lineHeight: 1.6, margin: 0 }}>
+            We sent a login link to <strong style={{ color: 'var(--color-text)' }}>{email}</strong>.
             Click the link in the email to sign in.
           </p>
           <button
             onClick={() => setMagicLinkSent(false)}
-            style={{
-              marginTop: 20,
-              background: 'transparent',
-              border: 'none',
-              color: '#8B5CF6',
-              fontFamily: 'var(--font-body)',
-              fontSize: '0.85rem',
-              cursor: 'pointer',
-              textDecoration: 'underline',
-            }}
+            className="btn btn-ghost"
+            style={{ margin: '4px auto 0' }}
           >
             Try a different method
           </button>
@@ -153,72 +92,55 @@ function LoginForm() {
           <SocialAuthButtons />
 
           {/* Divider */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 16,
-            margin: '24px 0',
-          }}>
-            <div style={{ flex: 1, height: 1, background: '#1a1a1a' }} />
-            <span style={{ fontSize: '0.75rem', color: '#555', fontFamily: 'var(--font-body)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16, margin: '24px 0' }}>
+            <div style={{ flex: 1, height: 1, background: 'var(--color-divider)' }} />
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--color-neutral-600)', textTransform: 'uppercase', letterSpacing: '0.15em' }}>
               or
             </span>
-            <div style={{ flex: 1, height: 1, background: '#1a1a1a' }} />
+            <div style={{ flex: 1, height: 1, background: 'var(--color-divider)' }} />
           </div>
 
           {!showEmailForm ? (
             <button
               onClick={() => setShowEmailForm(true)}
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                borderRadius: 8,
-                border: '1px solid #1a1a1a',
-                background: 'transparent',
-                color: '#999',
-                fontFamily: 'var(--font-body)',
-                fontSize: '0.88rem',
-                fontWeight: 500,
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#333'; e.currentTarget.style.color = '#ccc'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#1a1a1a'; e.currentTarget.style.color = '#999'; }}
+              className="btn btn-secondary btn-block"
             >
               Sign in with email
             </button>
           ) : (
             <form onSubmit={handlePasswordLogin}>
-              <label style={labelStyle}>Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                placeholder="you@example.com"
-                style={inputStyle}
-                autoFocus
-              />
+              <div className="field" style={{ marginBottom: 16 }}>
+                <label>Email</label>
+                <input
+                  type="email"
+                  className="input"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="you@example.com"
+                  autoFocus
+                />
+              </div>
 
-              <label style={labelStyle}>Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                placeholder="••••••••"
-                style={inputStyle}
-              />
+              <div className="field" style={{ marginBottom: 16 }}>
+                <label>Password</label>
+                <input
+                  type="password"
+                  className="input"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  placeholder="••••••••"
+                />
+              </div>
 
               {error && (
                 <div style={{
-                  padding: '10px 14px',
-                  borderRadius: 8,
-                  background: 'rgba(239, 68, 68, 0.1)',
-                  border: '1px solid rgba(239, 68, 68, 0.3)',
-                  color: '#ef4444',
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '0.82rem',
+                  padding: '12px 16px',
+                  borderRadius: 'var(--radius-md)',
+                  background: 'var(--color-accent-2-100)',
+                  color: 'var(--color-accent-2-800)',
+                  fontSize: 13.5,
                   marginBottom: 16,
                 }}>
                   {error}
@@ -228,23 +150,8 @@ function LoginForm() {
               <button
                 type="submit"
                 disabled={loading}
-                style={{
-                  width: '100%',
-                  padding: '14px',
-                  borderRadius: 8,
-                  border: 'none',
-                  background: loading ? '#5b3aa0' : '#8B5CF6',
-                  color: '#fff',
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '0.85rem',
-                  fontWeight: 700,
-                  letterSpacing: '0.05em',
-                  textTransform: 'uppercase',
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  transition: 'background 0.2s ease',
-                  opacity: loading ? 0.7 : 1,
-                  marginBottom: 12,
-                }}
+                className="btn btn-primary btn-block"
+                style={{ marginBottom: 12 }}
               >
                 {loading ? 'Signing in...' : 'Sign In'}
               </button>
@@ -253,34 +160,16 @@ function LoginForm() {
                 type="button"
                 onClick={handleMagicLink}
                 disabled={loading}
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  borderRadius: 8,
-                  border: '1px solid #1a1a1a',
-                  background: 'transparent',
-                  color: '#888',
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '0.82rem',
-                  fontWeight: 500,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                }}
+                className="btn btn-secondary btn-block"
               >
                 Send magic link instead
               </button>
             </form>
           )}
 
-          <div style={{
-            marginTop: 24,
-            textAlign: 'center',
-            fontFamily: 'var(--font-body)',
-            fontSize: '0.85rem',
-            color: '#555',
-          }}>
+          <div style={{ marginTop: 24, textAlign: 'center', fontSize: 13.5, color: 'var(--color-neutral-700)' }}>
             Don&apos;t have an account?{' '}
-            <Link href="/account/register" style={{ color: '#8B5CF6', textDecoration: 'none', fontWeight: 600 }}>
+            <Link href="/account/register" style={{ fontWeight: 600 }}>
               Create one
             </Link>
           </div>
@@ -292,14 +181,14 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <>
+    <div className="cival">
       <Navbar />
-      <main style={{ background: '#000', minHeight: '100vh', paddingTop: 160, paddingBottom: 80 }}>
-        <Suspense fallback={<div style={{ textAlign: 'center', color: '#555', paddingTop: 200 }}>Loading...</div>}>
+      <main className="cival-fade" style={{ paddingTop: 160, paddingBottom: 96 }}>
+        <Suspense fallback={<div style={{ textAlign: 'center', color: 'var(--color-neutral-600)', paddingTop: 200 }}>Loading...</div>}>
           <LoginForm />
         </Suspense>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

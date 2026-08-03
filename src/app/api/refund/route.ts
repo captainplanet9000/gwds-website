@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
       const { Resend } = await import('resend');
       const resend = new Resend(process.env.RESEND_API_KEY);
       await resend.emails.send({
-        from: 'GWDS <onboarding@resend.dev>',
+        from: 'Cival Systems <onboarding@resend.dev>',
         to: 'gammawavesdesign@gmail.com',
         subject: `⚠️ Refund Request — Order ${orderId.slice(0, 8)}`,
         html: `<p><strong>Customer:</strong> ${email}</p><p><strong>Order:</strong> ${orderId}</p><p><strong>Amount:</strong> $${((order.total_cents || 0) / 100).toFixed(2)}</p><p><strong>Reason:</strong> ${reason}</p>`,

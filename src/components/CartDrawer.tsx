@@ -2,23 +2,33 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useCart } from '@/contexts/CartContext';
-import { products, getProduct } from '@/lib/products';
+import { getProduct, EDITION_INCLUDES } from '@/lib/products';
+
+function money(n: number) {
+  return '$' + n.toLocaleString('en-US');
+}
 
 export default function CartDrawer() {
-  const { state, dispatch, totalPrice, totalItems } = useCart();
+  const { state, dispatch, totalItems, totalPrice } = useCart();
   const { items, isOpen } = state;
 
-  // Check if cart has plugins that require dashboard
+  // Informational only — every line is still charged and downloadable at full
+  // price. This just nudges the shopper away from buying the same agent twice.
+  const coveredBy = (id: string): string | null => {
+    for (const line of items) {
+      const inc = EDITION_INCLUDES[line.product.id];
+      if (inc && inc.includes(id) && line.product.id !== id) return line.product.name;
+    }
+    return null;
+  };
+
   const hasPluginRequiringDashboard = items.some(item => item.product.requiresDashboard);
   const hasDashboard = items.some(item => item.product.id === 'trading-dashboard-template');
   const showDashboardWarning = hasPluginRequiringDashboard && !hasDashboard;
-  
   const dashboardProduct = getProduct('trading-dashboard-template');
 
   const handleAddDashboard = () => {
-    if (dashboardProduct && !hasDashboard) {
-      dispatch({ type: 'ADD_ITEM', product: dashboardProduct });
-    }
+    if (dashboardProduct && !hasDashboard) dispatch({ type: 'ADD_ITEM', product: dashboardProduct });
   };
 
   if (!isOpen) return null;
@@ -27,267 +37,77 @@ export default function CartDrawer() {
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             onClick={() => dispatch({ type: 'CLOSE_CART' })}
-            style={{
-              position: 'fixed',
-              inset: 0,
-              background: 'rgba(0,0,0,0.7)',
-              backdropFilter: 'blur(4px)',
-              zIndex: 999,
-            }}
-          />
+            style={{ position: 'fixed', inset: 0, background: 'rgba(15,18,25,0.6)', backdropFilter: 'blur(4px)', zIndex: 999 }} />
 
-          {/* Drawer */}
-          <motion.div
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            style={{
-              position: 'fixed',
-              top: 0,
-              right: 0,
-              bottom: 0,
-              width: 420,
-              maxWidth: '90vw',
-              background: '#0a0a0a',
-              borderLeft: '1px solid #1a1a1a',
-              zIndex: 1000,
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            {/* Header */}
-            <div style={{
-              padding: '24px',
-              borderBottom: '1px solid #1a1a1a',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}>
-              <h2 style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: '1.1rem',
-                fontWeight: 700,
-                color: '#E8E8E8',
-                letterSpacing: '-0.02em',
-              }}>
-                Cart ({totalItems})
-              </h2>
-              <button
-                onClick={() => dispatch({ type: 'CLOSE_CART' })}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#666',
-                  fontSize: '1.2rem',
-                  cursor: 'pointer',
-                  padding: '4px 8px',
-                }}
-              >
-                ✕
-              </button>
+          <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+            className="cival"
+            style={{ position: 'fixed', top: 0, right: 0, bottom: 0, width: 420, maxWidth: '90vw', background: 'var(--color-bg)', borderLeft: '1px solid var(--color-divider)', zIndex: 1000, display: 'flex', flexDirection: 'column' }}>
+            <div style={{ padding: 24, borderBottom: '1px solid var(--color-divider)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.3rem', margin: 0 }}>Your cart ({totalItems})</h2>
+              <button onClick={() => dispatch({ type: 'CLOSE_CART' })} style={{ background: 'none', border: 'none', color: 'var(--color-neutral-600)', fontSize: '1.2rem', cursor: 'pointer' }}>✕</button>
             </div>
 
-            {/* Items */}
             <div style={{ flex: 1, overflowY: 'auto', padding: 24 }}>
               {items.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '60px 0', color: '#555' }}>
-                  <p style={{ fontSize: '2rem', marginBottom: 12 }}>🛒</p>
-                  <p style={{ fontSize: '0.9rem', marginBottom: 8 }}>Your cart is empty</p>
-                  <Link
-                    href="/store"
-                    onClick={() => dispatch({ type: 'CLOSE_CART' })}
-                    style={{ fontSize: '0.8rem', color: '#8B5CF6', textDecoration: 'none' }}
-                  >
-                    Browse products →
-                  </Link>
+                <div style={{ padding: '64px 20px', borderRadius: 'calc(var(--radius-lg) * 1.15)', background: 'var(--color-surface)', textAlign: 'center' }}>
+                  <h3 style={{ margin: '0 0 10px' }}>Nothing in here yet.</h3>
+                  <p style={{ color: 'var(--color-neutral-700)', margin: '0 0 22px', fontSize: 14 }}>Start with the dashboard — every agent plugs into it.</p>
+                  <Link href="/store" onClick={() => dispatch({ type: 'CLOSE_CART' })} className="btn btn-primary">Browse the store</Link>
                 </div>
               ) : (
                 <>
-                  {/* Dashboard warning */}
                   {showDashboardWarning && (
-                    <div
-                      style={{
-                        backgroundColor: "#1a0a00",
-                        border: "2px solid #F59E0B",
-                        borderRadius: "8px",
-                        padding: "14px 16px",
-                        marginBottom: "16px",
-                        fontFamily: "var(--font-body)",
-                      }}
-                    >
-                      <div style={{ display: "flex", alignItems: "flex-start", gap: "10px", marginBottom: "10px" }}>
-                        <span style={{ fontSize: "18px", flexShrink: 0 }}>⚠️</span>
-                        <div style={{ flex: 1 }}>
-                          <div style={{ color: "#fff", fontSize: "14px", lineHeight: "1.5", marginBottom: "8px" }}>
-                            Some items require the AI Trading Dashboard. Make sure you own it or add it to your cart.
-                          </div>
-                          {dashboardProduct && (
-                            <button
-                              onClick={handleAddDashboard}
-                              style={{
-                                padding: "6px 12px",
-                                borderRadius: "6px",
-                                border: "none",
-                                background: "#F59E0B",
-                                color: "#000",
-                                fontSize: "13px",
-                                fontWeight: 600,
-                                cursor: "pointer",
-                                fontFamily: "var(--font-display)",
-                              }}
-                            >
-                              Add Dashboard (${dashboardProduct.price})
-                            </button>
-                          )}
-                        </div>
+                    <div style={{ background: 'var(--color-accent-2-100)', borderRadius: 'var(--radius-md)', padding: '14px 16px', marginBottom: 16 }}>
+                      <div style={{ color: 'var(--color-accent-2-900)', fontSize: 14, lineHeight: 1.5, marginBottom: 8 }}>
+                        Some items require Core Edition. Make sure you own it or add it to your cart.
                       </div>
+                      {dashboardProduct && (
+                        <button onClick={handleAddDashboard} className="btn btn-primary" style={{ height: 34, padding: '0 14px', fontSize: 13 }}>
+                          Add Core Edition ({money(dashboardProduct.price)})
+                        </button>
+                      )}
                     </div>
                   )}
-
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                    {items.map(item => (
-                    <div
-                      key={item.product.id}
-                      style={{
-                        display: 'flex',
-                        gap: 16,
-                        padding: 16,
-                        borderRadius: 10,
-                        background: '#111',
-                        border: '1px solid #1a1a1a',
-                      }}
-                    >
-                      {/* Emoji */}
-                      <div style={{
-                        width: 56,
-                        height: 56,
-                        borderRadius: 8,
-                        background: '#0a0a0a',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '1.5rem',
-                        flexShrink: 0,
-                      }}>
-                        {item.product.emoji}
-                      </div>
-
-                      {/* Info */}
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <h4 style={{
-                          fontFamily: 'var(--font-display)',
-                          fontSize: '0.85rem',
-                          fontWeight: 700,
-                          color: '#E8E8E8',
-                          marginBottom: 4,
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap',
-                        }}>
-                          {item.product.name}
-                        </h4>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <span style={{
-                            fontFamily: 'var(--font-display)',
-                            fontSize: '0.95rem',
-                            fontWeight: 700,
-                            color: '#E8E8E8',
-                          }}>
-                            ${item.product.price}
-                          </span>
-                          <button
-                            onClick={() => dispatch({ type: 'REMOVE_ITEM', productId: item.product.id })}
-                            style={{
-                              background: 'none',
-                              border: 'none',
-                              color: '#555',
-                              fontSize: '0.72rem',
-                              cursor: 'pointer',
-                              textDecoration: 'underline',
-                              fontFamily: 'var(--font-body)',
-                            }}
-                          >
-                            Remove
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 14, borderTop: '1px solid var(--color-divider)' }}>
+                    {items.map((item) => {
+                      const covered = coveredBy(item.product.id);
+                      return (
+                        <div key={item.product.id} style={{ display: 'flex', gap: 16, alignItems: 'center', padding: '18px 0', borderBottom: '1px solid var(--color-divider)' }}>
+                          <div style={{ width: 48, height: 48, flexShrink: 0, borderRadius: 99, background: 'var(--color-surface)', display: 'grid', placeItems: 'center', fontSize: '1.3rem' }}>
+                            {item.product.emoji}
+                          </div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: 16, lineHeight: 1.2 }}>{item.product.name}</div>
+                            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.06em', textTransform: 'uppercase', color: covered ? 'var(--color-accent-2-700)' : 'var(--color-neutral-600)', marginTop: 4 }}>
+                              {covered ? `Included in ${covered}` : item.product.badge || item.product.productType}
+                            </div>
+                          </div>
+                          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 15, fontWeight: 500, minWidth: 60, textAlign: 'right' }}>
+                            {money(item.product.price)}
+                          </div>
+                          <button onClick={() => dispatch({ type: 'REMOVE_ITEM', productId: item.product.id })} className="btn btn-icon btn-ghost" aria-label="Remove">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
                           </button>
                         </div>
-                      </div>
-                    </div>
-                  ))}
+                      );
+                    })}
                   </div>
                 </>
               )}
             </div>
 
-            {/* Footer */}
             {items.length > 0 && (
-              <div style={{
-                padding: 24,
-                borderTop: '1px solid #1a1a1a',
-              }}>
-                {/* Total */}
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginBottom: 20,
-                }}>
-                  <span style={{ fontSize: '0.85rem', color: '#888', fontFamily: 'var(--font-body)' }}>Total</span>
-                  <span style={{
-                    fontFamily: 'var(--font-display)',
-                    fontSize: '1.3rem',
-                    fontWeight: 800,
-                    color: '#E8E8E8',
-                  }}>
-                    ${totalPrice.toFixed(2)}
-                  </span>
+              <div style={{ padding: 24, borderTop: '1px solid var(--color-divider)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 20 }}>
+                  <span style={{ fontFamily: 'var(--font-heading)', fontSize: 18 }}>Total</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 28, fontWeight: 500 }}>{money(totalPrice)}</span>
                 </div>
-
-                <Link
-                  href="/checkout"
-                  onClick={() => dispatch({ type: 'CLOSE_CART' })}
-                  style={{ textDecoration: 'none' }}
-                >
-                  <button style={{
-                    width: '100%',
-                    padding: '16px',
-                    borderRadius: 8,
-                    border: 'none',
-                    background: '#8B5CF6',
-                    color: '#fff',
-                    fontSize: '0.85rem',
-                    fontWeight: 700,
-                    fontFamily: 'var(--font-display)',
-                    letterSpacing: '0.05em',
-                    textTransform: 'uppercase',
-                    cursor: 'pointer',
-                    transition: 'background 0.2s',
-                  }}>
-                    Checkout — ${totalPrice.toFixed(2)}
-                  </button>
+                <Link href="/checkout" onClick={() => dispatch({ type: 'CLOSE_CART' })} className="btn btn-primary btn-block" style={{ height: 48, fontSize: 15 }}>
+                  Checkout
                 </Link>
-
-                <button
-                  onClick={() => dispatch({ type: 'CLEAR_CART' })}
-                  style={{
-                    width: '100%',
-                    marginTop: 8,
-                    padding: '10px',
-                    borderRadius: 8,
-                    border: 'none',
-                    background: 'transparent',
-                    color: '#555',
-                    fontSize: '0.75rem',
-                    fontFamily: 'var(--font-body)',
-                    cursor: 'pointer',
-                  }}
-                >
+                <button onClick={() => dispatch({ type: 'CLEAR_CART' })} className="btn btn-ghost btn-block" style={{ marginTop: 8, fontSize: 13, height: 36 }}>
                   Clear cart
                 </button>
               </div>

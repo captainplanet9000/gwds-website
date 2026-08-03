@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Contact — GWDS",
-  description: "Get in touch with Gamma Waves Design Studio. Questions about products, licensing, collaborations, or custom work.",
+  title: "Contact",
+  description: "Get in touch with Cival Systems. Questions about products, licensing, collaborations, or custom work.",
   openGraph: {
-    title: "Contact — GWDS",
-    description: "Get in touch with Gamma Waves Design Studio for product questions, collaborations, and custom work.",
+    title: "Contact — Cival Systems",
+    description: "Get in touch with Cival Systems for product questions, collaborations, and custom work.",
   },
 };
 

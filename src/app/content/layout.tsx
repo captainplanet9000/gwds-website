@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Content — GWDS",
+  title: "Content",
   description: "6 content channels, 5 videos per day. Claymation, cooking shows, motivation, trading education — all AI-powered.",
   openGraph: {
-    title: "Content — GWDS",
+    title: "Content — Cival Systems",
     description: "6 content channels, 5 videos per day — all AI-powered content creation.",
   },
 };

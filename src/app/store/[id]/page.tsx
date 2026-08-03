@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   if (!product) return {};
   const cat = categories.find((c) => c.id === product.category);
   const priceStr = product.price > 0 ? `$${product.price}` : "Free";
-  const title = `${product.name} — ${priceStr} | GWDS`;
+  const title = `${product.name} — ${priceStr}`;
   const desc = product.description.length > 160 ? product.description.slice(0, 157) + "..." : product.description;
   return {
     title,
@@ -43,7 +43,8 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   if (!product) notFound();
 
   const related = products
-    .filter(p => p.category === product.category && p.id !== product.id)
+    .filter(p => p.category === product.category && p.id !== product.id && !p.legacy)
+    .sort((a, b) => Math.abs(a.price - product.price) - Math.abs(b.price - product.price))
     .slice(0, 3);
 
   const category = categories.find(c => c.id === product.category);
@@ -56,14 +57,14 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     description: product.description,
     image: product.image ? `${siteUrl}${product.image}` : undefined,
     url: `${siteUrl}/store/${product.id}`,
-    brand: { "@type": "Brand", name: "GWDS" },
+    brand: { "@type": "Brand", name: "Cival Systems" },
     offers: {
       "@type": "Offer",
       price: product.price,
       priceCurrency: "USD",
       availability: "https://schema.org/InStock",
       url: `${siteUrl}/store/${product.id}`,
-      seller: { "@type": "Organization", name: "Gamma Waves Design Studio" },
+      seller: { "@type": "Organization", name: "Cival Systems" },
     },
     category: category?.label || "Trading Tools",
   };

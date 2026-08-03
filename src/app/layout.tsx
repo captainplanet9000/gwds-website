@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./cival-theme.css";
 import { CartProvider } from "@/contexts/CartContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import CartDrawer from "@/components/CartDrawer";
@@ -16,11 +17,11 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gwds-website.vercel
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "GWDS — Gamma Waves Design Studio",
-    template: "%s — GWDS",
+    default: "Cival Systems — AI Agent Hedge Fund, Ready to Deploy",
+    template: "%s — Cival Systems",
   },
   description:
-    "AI trading tools and autonomous agents. 12 production-ready products — dashboard templates, strategy agents, flash loan arbitrage, and bundles. Built for crypto traders who automate.",
+    "A complete AI trading hedge fund starting point — dashboard, execution layer, risk engine, and six autonomous agents on Hyperliquid. Full TypeScript source. Editions from $99.",
   keywords: [
     "AI trading dashboard",
     "trading agents",
@@ -37,29 +38,29 @@ export const metadata: Metadata = {
     "DeFi tools",
     "Next.js trading dashboard",
   ],
-  authors: [{ name: "Gamma Waves Design Studio" }],
-  creator: "Gamma Waves Design Studio",
-  publisher: "Gamma Waves Design Studio",
+  authors: [{ name: "Cival Systems" }],
+  creator: "Cival Systems",
+  publisher: "Cival Systems",
   openGraph: {
     type: "website",
     locale: "en_US",
     url: siteUrl,
-    siteName: "GWDS — AI Trading Tools",
-    title: "GWDS — AI Trading Tools & Autonomous Agents",
-    description: "12 production-ready AI trading tools. Dashboard templates, strategy agents, flash loan arbitrage, and bundles. From $99.",
+    siteName: "Cival Systems",
+    title: "Cival Systems — AI Agent Hedge Fund, Ready to Deploy",
+    description: "Dashboard, execution layer, risk engine, and six autonomous agents on Hyperliquid. Full TypeScript source. Editions from $99.",
     images: [
       {
         url: "/images/og-image.png",
         width: 1200,
         height: 630,
-        alt: "GWDS — AI Trading Tools & Autonomous Agents",
+        alt: "Cival Systems — AI Agent Hedge Fund, Ready to Deploy",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "GWDS — AI Trading Tools & Autonomous Agents",
-    description: "12 production-ready AI trading tools. Dashboard templates, strategy agents, flash loan arbitrage. From $99.",
+    title: "Cival Systems — AI Agent Hedge Fund, Ready to Deploy",
+    description: "Dashboard, execution layer, risk engine, and six autonomous agents on Hyperliquid. Editions from $99.",
     images: ["/images/og-image.png"],
     creator: "@GWDSofficial",
   },
@@ -90,17 +91,18 @@ const jsonLd = {
     {
       "@type": "Organization",
       "@id": `${siteUrl}/#organization`,
-      name: "Gamma Waves Design Studio",
+      name: "Cival Systems",
       alternateName: "GWDS",
       url: siteUrl,
       logo: {
         "@type": "ImageObject",
         url: `${siteUrl}/images/logo.png`,
       },
-      description: "AI trading tools and autonomous agents. 12 production-ready products for crypto traders who automate.",
+      description: "Trading infrastructure and autonomous agents, sold as source. An AI agent hedge fund starting point for Hyperliquid.",
       sameAs: [
         "https://x.com/GWDSofficial",
         "https://github.com/captainplanet9000",
+        "https://discord.gg/EZk6gTx57k",
       ],
       contactPoint: {
         "@type": "ContactPoint",
@@ -112,8 +114,8 @@ const jsonLd = {
       "@type": "WebSite",
       "@id": `${siteUrl}/#website`,
       url: siteUrl,
-      name: "GWDS — Gamma Waves Design Studio",
-      description: "Digital products studio crafting AI templates, trading tools, animations, NFTs, and creative assets.",
+      name: "Cival Systems",
+      description: "Trading infrastructure and autonomous agents, sold as source.",
       publisher: {
         "@id": `${siteUrl}/#organization`,
       },

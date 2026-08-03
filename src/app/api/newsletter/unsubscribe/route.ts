@@ -20,8 +20,8 @@ export async function GET(req: NextRequest) {
       <body style="background:#000;color:#E8E8E8;font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;">
         <div>
           <h1 style="font-size:2rem;margin-bottom:16px;">Unsubscribed</h1>
-          <p style="color:#888;font-size:0.95rem;">You've been removed from the GWDS mailing list.</p>
-          <a href="https://gwds-website.vercel.app" style="color:#8B5CF6;font-size:0.85rem;margin-top:24px;display:inline-block;">← Back to GWDS</a>
+          <p style="color:#888;font-size:0.95rem;">You've been removed from the Cival Systems mailing list.</p>
+          <a href="https://gwds-website.vercel.app" style="color:#8B5CF6;font-size:0.85rem;margin-top:24px;display:inline-block;">← Back to Cival Systems</a>
         </div>
       </body>
     </html>

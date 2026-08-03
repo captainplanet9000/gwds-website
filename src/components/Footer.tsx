@@ -5,264 +5,77 @@ import Link from 'next/link';
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
-  const footerLinks = [
-    { href: '/store', label: 'Store' },
-    { href: '/about', label: 'About' },
-    { href: '/contact', label: 'Contact' },
-    { href: '/docs/setup', label: 'Setup Guide' },
-  ];
-
-  const socialLinks = [
-    { href: 'https://discord.gg/EZk6gTx57k', label: 'Discord' },
-    { href: 'https://x.com/GWDSofficial', label: 'X (Twitter)' },
-    { href: 'https://github.com/captainplanet9000', label: 'GitHub' },
-    { href: '/content', label: 'Content' },
-  ];
-
   return (
-    <footer
-      style={{
-        borderTop: '1px solid rgba(232, 232, 232, 0.1)',
-        background: '#000',
-        padding: '48px 40px 0',
-      }}
-    >
-      <div
-        style={{
-          maxWidth: '1200px',
-          margin: '0 auto',
-        }}
-      >
-        {/* Top Row */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '48px',
-            marginBottom: '40px',
-          }}
-          className="footer-grid"
-        >
-          {/* Brand */}
-          <div>
-            <Link href="/" style={{ textDecoration: 'none' }}>
-              <span
-                style={{
-                  fontFamily: 'Syne, sans-serif',
-                  fontSize: '1.25rem',
-                  fontWeight: 700,
-                  color: '#E8E8E8',
-                  letterSpacing: '-0.02em',
-                }}
-              >
-                GWDS
-              </span>
-            </Link>
-            <p
-              style={{
-                fontFamily: 'DM Sans, sans-serif',
-                fontSize: '0.85rem',
-                color: '#A8A8A8',
-                marginTop: '12px',
-                lineHeight: 1.6,
-              }}
-            >
-              Gamma Waves Design Studio
-              <br />
-              Digital products & creative tools
-            </p>
+    <footer className="cival" style={{ background: 'var(--color-neutral-900)', color: 'var(--color-neutral-300)' }}>
+      <div data-cv-2col style={{ maxWidth: 1200, margin: '0 auto', padding: '72px 28px 40px', display: 'grid', gridTemplateColumns: 'minmax(0,1.3fr) repeat(4, minmax(0,1fr))', gap: 34 }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
+            <span style={{ display: 'inline-flex', alignItems: 'stretch', borderRadius: 999, overflow: 'hidden', border: '1.5px solid var(--color-neutral-100)' }}>
+              <span style={{ fontFamily: 'var(--font-heading)', fontSize: 18, padding: '6px 14px', lineHeight: 1.25, color: 'var(--color-neutral-100)' }}>Cival</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, fontWeight: 500, letterSpacing: '0.16em', textTransform: 'uppercase', padding: '0 14px', background: 'var(--color-neutral-100)', color: 'var(--color-neutral-900)', display: 'flex', alignItems: 'center' }}>Systems</span>
+            </span>
           </div>
+          <p style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--color-neutral-400)', margin: 0, maxWidth: '34ch' }}>
+            Cival Systems. Trading infrastructure and autonomous agents, sold as source.
+          </p>
+        </div>
 
-          {/* Navigation */}
-          <div>
-            <h4
-              style={{
-                fontFamily: 'Syne, sans-serif',
-                fontSize: '0.875rem',
-                fontWeight: 600,
-                color: '#E8E8E8',
-                marginBottom: '16px',
-              }}
-            >
-              Navigation
-            </h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {footerLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  style={{
-                    fontFamily: 'DM Sans, sans-serif',
-                    fontSize: '0.85rem',
-                    color: '#A8A8A8',
-                    textDecoration: 'none',
-                    transition: 'color 0.2s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = '#E8E8E8';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = '#A8A8A8';
-                  }}
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* Social */}
-          <div>
-            <h4
-              style={{
-                fontFamily: 'Syne, sans-serif',
-                fontSize: '0.875rem',
-                fontWeight: 600,
-                color: '#E8E8E8',
-                marginBottom: '16px',
-              }}
-            >
-              Connect
-            </h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {socialLinks.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    fontFamily: 'DM Sans, sans-serif',
-                    fontSize: '0.85rem',
-                    color: '#A8A8A8',
-                    textDecoration: 'none',
-                    transition: 'color 0.2s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = '#E8E8E8';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = '#A8A8A8';
-                  }}
-                >
-                  {link.label}
-                </a>
-              ))}
-              <a
-                href="mailto:gammawavesdesign@gmail.com"
-                style={{
-                  fontFamily: 'DM Sans, sans-serif',
-                  fontSize: '0.85rem',
-                  color: '#A8A8A8',
-                  textDecoration: 'none',
-                  transition: 'color 0.2s ease',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.color = '#E8E8E8';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color = '#A8A8A8';
-                }}
-              >
-                Email
-              </a>
-            </div>
+        <div>
+          <h6 style={{ color: 'var(--color-neutral-500)', marginBottom: 14 }}>Product</h6>
+          <div style={{ display: 'grid', gap: 9, fontSize: 14 }}>
+            <Link href="/store" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>All products</Link>
+            <Link href="/store" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Pricing</Link>
+            <Link href="/store/trading-dashboard-template" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Core Edition — $99</Link>
+            <Link href="/store?cat=agent" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Trading agents</Link>
           </div>
         </div>
 
-        {/* Bottom Row */}
-        <div
-          style={{
-            paddingTop: '24px',
-            borderTop: '1px solid rgba(232, 232, 232, 0.05)',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            paddingBottom: '24px',
-          }}
-          className="footer-bottom"
-        >
-          <p
-            style={{
-              fontFamily: 'DM Sans, sans-serif',
-              fontSize: '0.8rem',
-              color: '#666',
-            }}
-          >
-            © {currentYear} Gamma Waves Design Studio. All rights reserved.
-          </p>
-
-          <div style={{ display: 'flex', gap: '24px' }}>
-            {[
-              { label: 'Privacy', href: '/privacy' },
-              { label: 'Terms', href: '/terms' },
-              { label: 'Refunds', href: '/refunds' },
-              { label: 'Request Refund', href: '/refund-request' },
-              { label: 'Disclaimer', href: '/disclaimer' },
-            ].map(({ label, href }) => (
-              <Link
-                key={label}
-                href={href}
-                style={{
-                  fontFamily: 'DM Sans, sans-serif',
-                  fontSize: '0.8rem',
-                  color: '#666',
-                  textDecoration: 'none',
-                }}
-              >
-                {label}
-              </Link>
-            ))}
+        <div>
+          <h6 style={{ color: 'var(--color-neutral-500)', marginBottom: 14 }}>Resources</h6>
+          <div style={{ display: 'grid', gap: 9, fontSize: 14 }}>
+            <Link href="/docs/setup" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Documentation</Link>
+            <Link href="/content" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Content</Link>
+            <Link href="/refunds" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Refund policy</Link>
+            <Link href="/disclaimer" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Disclaimer</Link>
           </div>
         </div>
 
-        {/* Disclaimer Bar */}
-        <div
-          style={{
-            borderTop: '1px solid rgba(232, 232, 232, 0.08)',
-            paddingTop: '20px',
-            paddingBottom: '24px',
-            display: 'flex',
-            justifyContent: 'center',
-          }}
-        >
-          <p
-            style={{
-              fontFamily: 'DM Sans, sans-serif',
-              fontSize: '12px',
-              color: '#64748B',
-              lineHeight: 1.7,
-              maxWidth: '800px',
-              textAlign: 'center',
-              margin: 0,
-            }}
-          >
-            GWDS products are software templates and source code sold as development starting points. They are not financial advice. Trading cryptocurrencies, futures, and digital assets involves substantial risk of loss. Past performance shown in demos or marketing does not guarantee future results. GWDS is not a registered investment advisor or broker-dealer.
-          </p>
+        <div>
+          <h6 style={{ color: 'var(--color-neutral-500)', marginBottom: 14 }}>Studio</h6>
+          <div style={{ display: 'grid', gap: 9, fontSize: 14 }}>
+            <Link href="/about" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>About</Link>
+            <Link href="/contact" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Contact</Link>
+            <Link href="/account/login" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Sign in</Link>
+            <Link href="/terms" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Legal &amp; refunds</Link>
+          </div>
+        </div>
+
+        <div>
+          <h6 style={{ color: 'var(--color-neutral-500)', marginBottom: 14 }}>Connect</h6>
+          <div style={{ display: 'grid', gap: 9, fontSize: 14 }}>
+            <a href="https://discord.gg/EZk6gTx57k" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Discord</a>
+            <a href="https://x.com/GWDSofficial" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>X · @GWDSofficial</a>
+            <a href="https://github.com/captainplanet9000" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>GitHub</a>
+            <a href="mailto:gammawavesdesign@gmail.com" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Email</a>
+          </div>
         </div>
       </div>
 
-      <style jsx>{`
-        @media (max-width: 768px) {
-          .footer-grid {
-            grid-template-columns: 1fr !important;
-            gap: 6vh !important;
-          }
-          .footer-bottom {
-            flex-direction: column !important;
-            gap: 3vh !important;
-            text-align: center !important;
-          }
-          span,
-          h4 {
-            font-size: 5vw !important;
-          }
-          p,
-          a {
-            font-size: 3.5vw !important;
-          }
-        }
-      `}</style>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 28px 56px' }}>
+        <hr style={{ border: 0, height: 1, background: 'color-mix(in srgb, var(--color-neutral-100) 14%, transparent)', margin: '0 0 24px' }} />
+        <p style={{ fontSize: 11.5, lineHeight: 1.65, color: 'var(--color-neutral-500)', margin: '0 0 16px', maxWidth: '96ch' }}>
+          Cival Systems products are software templates and source code sold as development starting points. They are not financial advice.
+          Trading cryptocurrencies, futures, and digital assets involves substantial risk of loss. Past performance shown in demos or marketing
+          does not guarantee future results. Cival Systems is not a registered investment advisor or broker-dealer.
+        </p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, alignItems: 'center', fontSize: 12, color: 'var(--color-neutral-500)' }}>
+          <span style={{ fontFamily: 'var(--font-mono)' }}>© {currentYear} Cival Systems</span>
+          <Link href="/privacy" style={{ color: 'var(--color-neutral-400)', textDecoration: 'none' }}>Privacy</Link>
+          <Link href="/terms" style={{ color: 'var(--color-neutral-400)', textDecoration: 'none' }}>Terms</Link>
+          <Link href="/refunds" style={{ color: 'var(--color-neutral-400)', textDecoration: 'none' }}>Refunds</Link>
+          <Link href="/disclaimer" style={{ color: 'var(--color-neutral-400)', textDecoration: 'none' }}>Disclaimer</Link>
+        </div>
+      </div>
     </footer>
   );
 }

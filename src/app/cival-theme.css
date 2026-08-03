@@ -1,0 +1,137 @@
+/* ==========================================
+   CIVAL SYSTEMS — design tokens
+   Scoped under .cival so the rest of the site (admin, account, docs)
+   keeps its existing look untouched.
+   ========================================== */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600;700&display=swap');
+
+.cival {
+  --font-heading: 'Instrument Serif', 'Times New Roman', serif;
+  --font-body: 'Instrument Sans', 'Helvetica Neue', Helvetica, sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  /* cobalt theme tokens, lifted from the Claude Design source */
+  --color-bg: #f3f2ef;
+  --color-surface: #e6e4de;
+  --color-text: #0f1219;
+  --color-divider: color-mix(in srgb, #0f1219 15%, transparent);
+  --color-neutral-100: #f9f8f5;
+  --color-neutral-200: #eceae5;
+  --color-neutral-300: #dbd8d1;
+  --color-neutral-400: #bfbbb3;
+  --color-neutral-500: #9e9a92;
+  --color-neutral-600: #7f7b74;
+  --color-neutral-700: #605d57;
+  --color-neutral-800: #43413c;
+  --color-neutral-900: #17191d;
+  --color-accent: #1d4ed8;
+  --color-accent-100: #eaf0ff;
+  --color-accent-200: #d3e0ff;
+  --color-accent-300: #aec5ff;
+  --color-accent-400: #7ba0f8;
+  --color-accent-500: #4a78ea;
+  --color-accent-600: #1d4ed8;
+  --color-accent-700: #163ba6;
+  --color-accent-800: #102a76;
+  --color-accent-900: #0a1a4a;
+  --color-accent-2: #c0442f;
+  --color-accent-2-100: #ffefeb;
+  --color-accent-2-200: #ffdcd3;
+  --color-accent-2-300: #ffbba9;
+  --color-accent-2-400: #f6907a;
+  --color-accent-2-500: #e26550;
+  --color-accent-2-600: #c04430;
+  --color-accent-2-700: #963224;
+  --color-accent-2-800: #6b2319;
+  --color-accent-2-900: #451610;
+
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 28px;
+  --shadow-sm: 0 1px 2px color-mix(in srgb, #17191d 14%, transparent);
+  --shadow-md: 0 3px 10px color-mix(in srgb, #17191d 16%, transparent);
+  --shadow-lg: 0 12px 32px color-mix(in srgb, #17191d 22%, transparent);
+
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  min-height: 100vh;
+}
+
+.cival h1, .cival h2, .cival h3, .cival h4, .cival h5, .cival .card-title {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  color: var(--color-text);
+}
+.cival h6, .cival .card-kicker {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-size: 11px;
+  color: var(--color-accent);
+}
+.cival a { color: var(--color-accent-700); text-decoration: none; }
+.cival a:hover { color: var(--color-accent); }
+
+.cival .btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  cursor: pointer; text-decoration: none;
+  font-family: var(--font-body); font-weight: 600;
+  font-size: 14px; line-height: 1.2; color: var(--color-text);
+  background: transparent; border: 1px solid transparent;
+  padding: 0 22px; height: 46px;
+  border-radius: 999px;
+  transition: background .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+.cival .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.cival .btn-primary { background: var(--color-accent); color: #fff; }
+.cival .btn-primary:hover { background: var(--color-accent-700); }
+.cival .btn-secondary { border-color: var(--color-divider); background: color-mix(in srgb, var(--color-bg) 70%, transparent); }
+.cival .btn-secondary:hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.cival .btn-ghost { color: var(--color-accent); background: transparent; padding-inline: 4px; }
+.cival .btn-ghost:hover { background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
+.cival .btn-icon { width: 36px; height: 36px; padding: 0; }
+.cival .btn-block { width: 100%; }
+
+.cival .field > label {
+  display: block; font-size: 12px; margin-bottom: 5px;
+  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+}
+.cival .input {
+  width: 100%; min-height: 44px; padding: 6px 14px; font: inherit;
+  font-size: 14px; color: var(--color-text); caret-color: var(--color-accent);
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider); border-radius: 999px;
+}
+.cival .input:hover { border-color: color-mix(in srgb, var(--color-text) 45%, transparent); }
+.cival .input:focus-visible { border-color: var(--color-accent); outline: none; }
+
+.cival .card {
+  display: flex; flex-direction: column; gap: 8px;
+  padding: 13px; border-radius: calc(var(--radius-lg) * 1.15); background: var(--color-surface);
+}
+.cival .tag {
+  display: inline-flex; align-items: center; font-size: 11px;
+  letter-spacing: 0.02em; padding: 4px 10px; border-radius: 999px;
+  font-family: var(--font-mono); text-transform: uppercase;
+}
+.cival .tag-accent { background: var(--color-accent-100); color: var(--color-accent-800); }
+.cival .tag-accent-2 { background: var(--color-accent-2-100); color: var(--color-accent-2-800); }
+.cival .tag-neutral { background: var(--color-neutral-100); color: var(--color-neutral-800); }
+
+.cival .radio { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
+.cival .hr { height: 1px; border: 0; margin: 18px 0; background: var(--color-divider); }
+.cival .elev-md { box-shadow: var(--shadow-md); }
+.cival .elev-lg { box-shadow: var(--shadow-lg); }
+
+.cival ::selection { background: color-mix(in srgb, var(--color-accent) 30%, transparent); }
+
+@keyframes cvFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes cvRise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.cival-fade { animation: cvFade .35s ease both; }
+
+@media (max-width: 900px) {
+  .cival [data-cv-2col] { grid-template-columns: 1fr !important; }
+}
