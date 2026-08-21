@@ -1,0 +1,119 @@
+/* ==========================================================================
+   GWDS design tokens — legacy + short-name aliases
+   This file is NOT auto-generated. It maps two older naming conventions
+   onto the current hierarchical names in tokens.css:
+
+     1. `--color-*`            (site's original naming in globals.css)
+     2. `--gwds-color-accent`, `--gwds-font-display`, ... (short v1 names)
+
+   Keeping these aliases means a rename in tokens.json doesn't force an
+   atomic migration across every component. Remove a row from this file
+   the moment the last caller stops using it.
+   ========================================================================== */
+
+:root {
+  /* --- legacy site variables (original globals.css) ----------------------- */
+  --color-black:            var(--gwds-color-surface-background);
+  --color-near-black:       var(--gwds-color-surface-near-black);
+  --color-text-primary:     var(--gwds-color-text-primary);
+  --color-text-muted:       var(--gwds-color-text-secondary);
+  --color-text-dim:         var(--gwds-color-text-muted);
+  --color-accent:           var(--gwds-color-brand-accent);
+  --color-accent-warm:      var(--gwds-color-brand-accent-warm);
+  --color-border:           var(--gwds-color-border-default);
+  --color-border-hover:     var(--gwds-color-border-hover);
+
+  /* --- short v1 aliases used by ThemePicker.tsx / admin/theme page ------- */
+  --gwds-color-accent:         var(--gwds-color-brand-accent);
+  --gwds-color-accent-warm:    var(--gwds-color-brand-accent-warm);
+  --gwds-color-bg:             var(--gwds-color-surface-background);
+  --gwds-color-bg-elevated:    var(--gwds-color-surface-near-black);
+  --gwds-color-card:           var(--gwds-color-surface-card);
+  --gwds-color-muted:          var(--gwds-color-surface-muted);
+  --gwds-color-border:         var(--gwds-color-border-default);
+  --gwds-color-text:           var(--gwds-color-text-primary);
+
+  --gwds-font-display:         var(--gwds-font-family-display);
+  --gwds-font-body:            var(--gwds-font-family-body);
+  --gwds-font-mono:            var(--gwds-font-family-mono);
+
+  --gwds-font-w-normal:        var(--gwds-font-weight-normal);
+  --gwds-font-w-medium:        var(--gwds-font-weight-medium);
+  --gwds-font-w-semibold:      var(--gwds-font-weight-semibold);
+  --gwds-font-w-bold:          var(--gwds-font-weight-bold);
+  --gwds-font-w-black:         var(--gwds-font-weight-black);
+
+  --gwds-text-xs:              var(--gwds-font-size-static-xs);
+  --gwds-text-sm:              var(--gwds-font-size-static-sm);
+  --gwds-text-base:            var(--gwds-font-size-static-base);
+  --gwds-text-lg:              var(--gwds-font-size-static-lg);
+  --gwds-text-xl:              var(--gwds-font-size-static-xl);
+  --gwds-text-2xl:             var(--gwds-font-size-static-2xl);
+  --gwds-text-3xl:             var(--gwds-font-size-static-3xl);
+  --gwds-text-4xl:             var(--gwds-font-size-static-4xl);
+  --gwds-text-5xl:             var(--gwds-font-size-static-5xl);
+  --gwds-text-6xl:             var(--gwds-font-size-static-6xl);
+  --gwds-text-h1:              var(--gwds-font-size-fluid-h1);
+  --gwds-text-h2:              var(--gwds-font-size-fluid-h2);
+  --gwds-text-h3:              var(--gwds-font-size-fluid-h3);
+  --gwds-text-h4:              var(--gwds-font-size-fluid-h4);
+  --gwds-text-h5:              var(--gwds-font-size-fluid-h5);
+  --gwds-text-h6:              var(--gwds-font-size-fluid-h6);
+  --gwds-text-body:            var(--gwds-font-size-fluid-body);
+  --gwds-text-btn:             var(--gwds-font-size-fluid-btn);
+
+  --gwds-leading-tight:        var(--gwds-font-leading-tight);
+  --gwds-leading-snug:         var(--gwds-font-leading-snug);
+  --gwds-leading-normal:       var(--gwds-font-leading-normal);
+  --gwds-leading-relaxed:      var(--gwds-font-leading-relaxed);
+  --gwds-leading-loose:        var(--gwds-font-leading-loose);
+
+  --gwds-tracking-tighter:     var(--gwds-font-tracking-tighter);
+  --gwds-tracking-tight:       var(--gwds-font-tracking-tight);
+  --gwds-tracking-normal:      var(--gwds-font-tracking-normal);
+  --gwds-tracking-wide:        var(--gwds-font-tracking-wide);
+  --gwds-tracking-wider:       var(--gwds-font-tracking-wider);
+  --gwds-tracking-widest:      var(--gwds-font-tracking-widest);
+
+  --gwds-border-0:             var(--gwds-border-width-0);
+  --gwds-border-thin:          var(--gwds-border-width-thin);
+  --gwds-border-med:           var(--gwds-border-width-med);
+  --gwds-border-thick:         var(--gwds-border-width-thick);
+
+  --gwds-glow-accent-sm:       var(--gwds-shadow-glow-accent-sm);
+  --gwds-glow-accent-md:       var(--gwds-shadow-glow-accent-md);
+  --gwds-glow-accent-lg:       var(--gwds-shadow-glow-accent-lg);
+
+  --gwds-duration-fast:        var(--gwds-motion-duration-fast);
+  --gwds-duration-base:        var(--gwds-motion-duration-base);
+  --gwds-duration-slow:        var(--gwds-motion-duration-slow);
+  --gwds-duration-slower:      var(--gwds-motion-duration-slower);
+
+  --gwds-ease-linear:          var(--gwds-motion-easing-linear);
+  --gwds-ease-in:              var(--gwds-motion-easing-in);
+  --gwds-ease-out:             var(--gwds-motion-easing-out);
+  --gwds-ease-in-out:          var(--gwds-motion-easing-in-out);
+  --gwds-ease-bounce:          var(--gwds-motion-easing-bounce);
+
+  --gwds-space-0-5:            var(--gwds-space-0-5);
+
+  --gwds-container:            var(--gwds-layout-container-max);
+  --gwds-container-narrow:     var(--gwds-layout-container-narrow);
+  --gwds-gutter:               var(--gwds-layout-gutter);
+
+  --gwds-space-fluid-inline-sm: var(--gwds-space-fluid-inline-sm);
+  --gwds-space-fluid-inline-md: var(--gwds-space-fluid-inline-md);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --gwds-motion-duration-fast:   0ms;
+    --gwds-motion-duration-base:   0ms;
+    --gwds-motion-duration-slow:   0ms;
+    --gwds-motion-duration-slower: 0ms;
+    --gwds-duration-fast:   0ms;
+    --gwds-duration-base:   0ms;
+    --gwds-duration-slow:   0ms;
+    --gwds-duration-slower: 0ms;
+  }
+}

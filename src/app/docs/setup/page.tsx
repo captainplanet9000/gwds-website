@@ -73,7 +73,7 @@ const faqs = [
   { q: 'Is Supabase free?', a: 'Yes. The free tier includes 500MB of database storage and 1GB of file storage — more than enough to run the dashboard.' },
   { q: 'Can I deploy this publicly?', a: 'Yes. The dashboard is designed to deploy to Vercel (free tier works). You can also self-host on any Node.js-compatible platform.' },
   { q: 'Do I get updates?', a: "Yes — all purchases include 1 year of free updates. You'll receive an email when new versions are available." },
-  { q: 'What if I need help?', a: "Email gammawavesdesign@gmail.com and we'll help you get set up. Most issues are resolved within 24 hours." },
+  { q: 'What if I need help?', a: "Use the Cival support form and we'll help you get set up. Most requests receive a response within one business day." },
 ];
 
 export default function SetupGuidePage() {
@@ -134,7 +134,7 @@ export default function SetupGuidePage() {
             {coreSteps.map((item) => (
               <div key={item.step} style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
                 <span style={{
-                  minWidth: 32, height: 32, borderRadius: '50%', background: 'var(--color-accent)', color: '#fff',
+                  minWidth: 32, height: 32, borderRadius: '50%', background: 'var(--color-accent)', color: 'var(--color-bg)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 600, flexShrink: 0,
                 }}>

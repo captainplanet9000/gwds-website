@@ -1,84 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { CommerceError, errorResponseBody, requireVerifiedUser } from '@/lib/commerce';
 import { createServerClient } from '@/lib/supabase';
-import { getProduct } from '@/lib/products';
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ orderId: string }> }
-) {
-  const { orderId } = await params;
-
+export async function GET(req: NextRequest, { params }: { params: Promise<{ orderId: string }> }) {
   try {
+    const user = await requireVerifiedUser(req);
+    const { orderId } = await params;
+    if (!/^[0-9a-f-]{36}$/i.test(orderId)) throw new CommerceError('INVALID_ORDER_ID', 'Invalid order.', 400);
+
     const supabase = createServerClient();
-
-    // Get order — try UUID id first, then stripe_session_id pattern (for free/coupon orders)
-    let order: any = null;
-    const { data: byId } = await supabase
+    const { data: order } = await supabase
       .from('orders')
-      .select('*')
+      .select('id,status,fulfillment_status,total_cents,created_at')
       .eq('id', orderId)
-      .single();
+      .eq('user_id', user.id)
+      .maybeSingle();
+    if (!order) throw new CommerceError('ORDER_NOT_FOUND', 'Order not found.', 404);
 
-    if (byId) {
-      order = byId;
-    } else {
-      // Free orders store stripe_session_id as "local-GWDS-xxx"
-      const { data: bySession } = await supabase
-        .from('orders')
-        .select('*')
-        .eq('stripe_session_id', `local-${orderId}`)
-        .single();
-      order = bySession;
-    }
-
-    if (!order) {
-      return NextResponse.json({ error: 'Order not found' }, { status: 404 });
-    }
-
-    // Get order items (use the actual UUID, not the URL param)
-    const dbId = order.id;
-    const { data: items } = await supabase
-      .from('order_items')
-      .select('*')
-      .eq('order_id', dbId);
-
-    // Get download tokens
-    const { data: downloads } = await supabase
-      .from('downloads')
-      .select('*')
-      .eq('order_id', dbId);
-
-    // Enrich items with product details and download tokens
-    const enrichedItems = (items || []).map((item: any) => {
-      const product = getProduct(item.product_id);
-      const dl = (downloads || []).find(
-        (d: any) => d.product_id === item.product_id
-      );
-
-      const remaining = dl ? (dl.max_downloads || 5) - (dl.downloaded_count || 0) : 0;
-
-      return {
-        productId: item.product_id,
-        productName: product?.name || item.product_id,
-        emoji: product?.emoji || '📦',
-        priceCents: item.price_cents,
-        quantity: item.quantity,
-        downloadToken: dl?.download_token || null,
-        downloadsRemaining: remaining,
-        expiresAt: dl?.expires_at || null,
-      };
-    });
-
-    return NextResponse.json({
-      id: order.id,
-      status: order.status,
-      customerEmail: order.customer_email,
-      totalCents: order.total_cents,
-      createdAt: order.created_at,
-      items: enrichedItems,
-    });
-  } catch (err: any) {
-    console.error('Order fetch error:', err.message);
-    return NextResponse.json({ error: 'Failed to fetch order' }, { status: 500 });
+    const { data: items } = await supabase.from('order_items')
+      .select('id,product_id,quantity,price_cents,product_version')
+      .eq('order_id', order.id);
+    return NextResponse.json({ ...order, items: items || [] }, { headers: { 'Cache-Control': 'private, no-store' } });
+  } catch (error) {
+    const status = error instanceof CommerceError ? error.status : 500;
+    return NextResponse.json(errorResponseBody(error), { status, headers: { 'Cache-Control': 'no-store' } });
   }
 }

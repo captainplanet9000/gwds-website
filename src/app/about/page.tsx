@@ -13,7 +13,7 @@ const values = [
   {
     emoji: '🔨',
     title: 'We Ship What We Use',
-    desc: "Nothing in the store is theoretical. Every trading agent, every dashboard component, every automation pipeline was built for our own systems first. You're buying source code that runs in production — not mockups or demos.",
+    desc: "The products began as internal prototypes and working tools. Buyers receive source code to inspect, test, and adapt—not a promise of trading performance or production fitness.",
   },
   {
     emoji: '📐',
@@ -53,7 +53,7 @@ const projects = [
   {
     name: 'Cival Systems',
     role: 'Autonomous Trading Platform',
-    desc: 'Multi-agent trading system with 6+ specialized strategies, real-time position management, and a full Next.js dashboard. Runs on Hyperliquid mainnet. The architecture behind most of our store products.',
+    desc: 'Multi-agent trading workspace with 6+ strategy modules, position-management interfaces, and a Next.js dashboard with Hyperliquid integration points. The architecture behind the store products.',
     tags: ['Next.js', 'TypeScript', 'Supabase', 'Hyperliquid'],
   },
   {
@@ -159,8 +159,8 @@ export default function AboutPage() {
             >
               Cival Systems is a one-person operation building at the intersection
               of trading systems, AI automation, and 3D production. Everything in the store
-              started as an internal tool — built to solve a real problem, tested with real
-              capital, then packaged as source code for other developers and traders.
+              started as an internal tool or prototype, then was packaged as source code for
+              developers and traders to review, test, and adapt for their own requirements.
             </p>
             <p
               style={{

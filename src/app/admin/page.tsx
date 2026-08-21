@@ -63,7 +63,7 @@ export default function AdminDashboard() {
               color: '#E8E8E8', 
               marginBottom: 8,
               letterSpacing: '-0.02em' 
-            }}>GWDS Admin</h1>
+            }}>Cival Admin</h1>
             <p style={{ fontSize: '0.85rem', color: '#666' }}>Sign in to access the dashboard</p>
           </div>
           
@@ -313,7 +313,7 @@ export default function AdminDashboard() {
   }));
 
   // Top products (mock data - would come from stats.top_products)
-  const topProducts = stats?.top_products || [
+  const topProducts: Array<{ name: string; revenue: number; count: number }> = stats?.top_products || [
     { name: 'ClawdBot Pro', revenue: 1250, count: 8 },
     { name: 'Agent Toolkit', revenue: 980, count: 12 },
     { name: 'AI Bundle', revenue: 750, count: 5 },
@@ -324,7 +324,7 @@ export default function AdminDashboard() {
   const maxProductRevenue = Math.max(...topProducts.map(p => p.revenue));
 
   // Recent activity (mock data - would come from stats.recent_activity)
-  const recentActivity = stats?.recent_activity || [
+  const recentActivity: Array<{ type: string; message: string; time: string; icon: string }> = stats?.recent_activity || [
     { type: 'order', message: 'New order from John Doe', time: '2 mins ago', icon: '🛒' },
     { type: 'subscriber', message: 'New subscriber: jane@example.com', time: '15 mins ago', icon: '📧' },
     { type: 'message', message: 'Message from Sarah Smith', time: '1 hour ago', icon: '💬' },

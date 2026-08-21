@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from 'react';
-import { createBrowserClient } from '@/lib/supabase';
+import { createBrowserClient, isBrowserSupabaseConfigured } from '@/lib/supabase';
 import type { User, Session, Provider } from '@supabase/supabase-js';
 
 interface AuthContextType {
@@ -20,10 +20,21 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(isBrowserSupabaseConfigured);
 
   useEffect(() => {
-    const supabase = createBrowserClient();
+    if (!isBrowserSupabaseConfigured()) return;
+
+    // The public catalogue must remain usable when account infrastructure is
+    // not configured for a deployment. Account actions still surface the
+    // configuration error when a visitor explicitly attempts to use them.
+    let supabase: ReturnType<typeof createBrowserClient>;
+    try {
+      supabase = createBrowserClient();
+    } catch {
+      const timeoutId = window.setTimeout(() => setLoading(false), 0);
+      return () => window.clearTimeout(timeoutId);
+    }
 
     // Get initial session
     supabase.auth.getSession().then(({ data: { session: s } }) => {

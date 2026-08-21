@@ -3,8 +3,16 @@
    Raw Materials-inspired premium aesthetic
    ========================================== */
 
-/* Import premium fonts */
+/* Import premium fonts before every other CSS import. */
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap');
+
+/* Design tokens — `--gwds-*` custom properties generated from tokens.json,
+   followed by legacy / short-name aliases so the site's existing
+   `--color-*` selectors and v1 `--gwds-color-accent` style shorthands keep
+   working. Edit design-system/tokens.json and run
+   `node design-system/scripts/build-tokens.mjs` to regenerate tokens.css. */
+@import '../../design-system/tokens.css';
+@import '../../design-system/tokens.aliases.css';
 
 /* ==========================================
    CSS RESET & BASE

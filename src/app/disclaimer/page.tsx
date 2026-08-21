@@ -25,7 +25,7 @@ export default function DisclaimerPage() {
             Trading &amp; Financial <span style={{ color: "var(--color-accent)" }}>Disclaimer</span>
           </h1>
           <p style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--color-neutral-600)", marginBottom: 48 }}>
-            Last updated: March 6, 2026
+            Last updated: August 13, 2026
           </p>
 
           <div
@@ -271,8 +271,8 @@ export default function DisclaimerPage() {
               If you have questions about this disclaimer, contact us at:
             </p>
             <p style={{ fontSize: 16, lineHeight: 1.7 }}>
-              <a href="mailto:gammawavesdesign@gmail.com" style={{ color: "var(--color-accent)" }}>
-                gammawavesdesign@gmail.com
+              <a href="/contact" style={{ color: "var(--color-accent)" }}>
+                Cival support form
               </a>
             </p>
           </section>

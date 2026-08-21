@@ -17,7 +17,7 @@ export default function TermsPage() {
             Terms of <span style={{ color: "var(--color-accent)" }}>Service</span>
           </h1>
           <p style={{ fontFamily: "var(--font-mono)", fontSize: 11.5, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-neutral-600)", marginBottom: 48 }}>
-            Last updated: March 6, 2026
+            Last updated: August 13, 2026
           </p>
 
           {/* Section 1 */}
@@ -160,10 +160,10 @@ export default function TermsPage() {
             </p>
             <ul style={{ color: "var(--color-neutral-800)", fontSize: 16, lineHeight: 1.7, marginLeft: 24, marginBottom: 16 }}>
               <li style={{ marginBottom: 8 }}>
-                <strong style={{ color: "var(--color-text)" }}>Unlimited downloads:</strong> No cap on the number of times you can download.
+                <strong style={{ color: "var(--color-text)" }}>Account-bound access:</strong> An active entitlement stays attached to the verified account used at checkout.
               </li>
               <li style={{ marginBottom: 8 }}>
-                <strong style={{ color: "var(--color-text)" }}>No expiration:</strong> Your access does not expire. Lifetime access to the purchased version.
+                <strong style={{ color: "var(--color-text)" }}>Short-lived links:</strong> Each generated link expires after 15 minutes and permits up to three retrievals. You can generate another link from your account while the entitlement remains active.
               </li>
               <li style={{ marginBottom: 8 }}>
                 <strong style={{ color: "var(--color-text)" }}>Version access:</strong> Access is granted to the version available at the time of purchase. Future major version updates may be separate products.
@@ -175,7 +175,7 @@ export default function TermsPage() {
           <section style={{ marginBottom: 48 }}>
             <h2 style={{ fontSize: 24, marginBottom: 16 }}>8. Refund Policy</h2>
             <p style={{ color: "var(--color-neutral-800)", fontSize: 16, lineHeight: 1.7, marginBottom: 16 }}>
-              We offer a <strong style={{ color: "var(--color-text)" }}>30-day money-back guarantee</strong> on all digital products. If you are not satisfied with your purchase for any reason, you may request a full refund within 30 days.
+              We offer a <strong style={{ color: "var(--color-text)" }}>30-day refund request window</strong> for eligible digital-product purchases. Requests are reviewed under the eligibility and abuse exclusions in the Refund Policy.
             </p>
             <p style={{ color: "var(--color-neutral-800)", fontSize: 16, lineHeight: 1.7, marginBottom: 16 }}>
               Refunds are not available for trading losses, unsatisfactory trading performance, or any financial outcome. The refund guarantee covers product quality and satisfaction with the software itself.
@@ -297,7 +297,7 @@ export default function TermsPage() {
               For questions about these Terms of Service, contact us at:
             </p>
             <p style={{ fontSize: 16, lineHeight: 1.7 }}>
-              <a href="mailto:gammawavesdesign@gmail.com">gammawavesdesign@gmail.com</a>
+              <a href="/contact">Cival support form</a>
             </p>
           </section>
 

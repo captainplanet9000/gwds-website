@@ -7,29 +7,24 @@ import Footer from '@/components/Footer';
 import ProductVideo from '@/components/ProductVideo';
 import RequiresDashboardBanner from '@/components/RequiresDashboardBanner';
 import { useCart } from '@/contexts/CartContext';
-import { EDITION_INCLUDES } from '@/lib/products';
+import { EDITION_INCLUDES, type Product } from '@/lib/products';
+import { STORE_SALES_ENABLED } from '@/lib/store-config';
 
 function money(n: number) {
   return '$' + n.toLocaleString('en-US');
 }
 
-export default function ProductDetailClient({ product, related }: { product: any; related: any[]; category?: any }) {
+export default function ProductDetailClient({ product, related }: { product: Product; related: Product[] }) {
   const { items, dispatch } = useCart();
   const [added, setAdded] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const [purchaseCount, setPurchaseCount] = useState<number>(0);
-
-  useEffect(() => {
-    fetch('/api/products/stats').then(r => r.json()).then(d => {
-      setPurchaseCount(d.purchaseCounts?.[product.id] || 0);
-    }).catch(() => {});
-  }, [product.id]);
 
   useEffect(() => {
     if (lightboxIndex === null) return;
+    const imageCount = product.images?.length || 0;
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setLightboxIndex(null);
-      if (e.key === 'ArrowRight' && product.images && lightboxIndex < product.images.length - 1) setLightboxIndex(lightboxIndex + 1);
+      if (e.key === 'ArrowRight' && lightboxIndex < imageCount - 1) setLightboxIndex(lightboxIndex + 1);
       if (e.key === 'ArrowLeft' && lightboxIndex > 0) setLightboxIndex(lightboxIndex - 1);
     };
     window.addEventListener('keydown', handler);
@@ -46,6 +41,7 @@ export default function ProductDetailClient({ product, related }: { product: any
   })();
 
   const addToCart = () => {
+    if (!STORE_SALES_ENABLED) return;
     dispatch({ type: 'ADD_ITEM', product });
     dispatch({ type: 'OPEN_CART' });
     setAdded(true);
@@ -53,6 +49,7 @@ export default function ProductDetailClient({ product, related }: { product: any
   };
 
   const buyNow = () => {
+    if (!STORE_SALES_ENABLED) return;
     dispatch({ type: 'CLEAR_CART' });
     dispatch({ type: 'ADD_ITEM', product });
   };
@@ -73,8 +70,15 @@ export default function ProductDetailClient({ product, related }: { product: any
           <div data-cv-2col style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.15fr) minmax(0,0.85fr)', gap: 48, alignItems: 'start' }}>
             <div style={{ position: 'relative', borderRadius: 'calc(var(--radius-lg) * 1.15)', overflow: 'hidden', aspectRatio: '16/10', background: 'var(--color-neutral-200)', boxShadow: 'var(--shadow-md)' }}>
               {product.image && (
-                <img src={product.image} alt={product.name} onClick={() => product.images?.length > 0 && setLightboxIndex(0)}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', cursor: product.images?.length > 0 ? 'zoom-in' : 'default' }} />
+                <button
+                  type="button"
+                  aria-label={`Open ${product.name} screenshot gallery`}
+                  onClick={() => (product.images?.length || 0) > 0 && setLightboxIndex(0)}
+                  style={{ all: 'unset', position: 'absolute', inset: 0, display: 'block', cursor: (product.images?.length || 0) > 0 ? 'zoom-in' : 'default' }}
+                >
+                  <img src={product.image} alt={product.name}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
+                </button>
               )}
             </div>
 
@@ -88,7 +92,7 @@ export default function ProductDetailClient({ product, related }: { product: any
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 22 }}>
                 <span style={{ fontFamily: 'var(--font-mono)', fontSize: 38, fontWeight: 500, letterSpacing: '-0.02em' }}>{money(product.price)}</span>
                 {product.wasPrice && <span style={{ fontSize: 14, color: 'var(--color-neutral-600)', textDecoration: 'line-through', fontFamily: 'var(--font-mono)' }}>{money(product.wasPrice)}</span>}
-                <span style={{ fontSize: 13, color: 'var(--color-neutral-600)' }}>one-time · lifetime license</span>
+                <span style={{ fontSize: 13, color: 'var(--color-neutral-600)' }}>one-time product license</span>
               </div>
 
               {product.requiresDashboard && <RequiresDashboardBanner />}
@@ -99,7 +103,11 @@ export default function ProductDetailClient({ product, related }: { product: any
                 </div>
               )}
 
-              {coveredBy ? (
+              {!STORE_SALES_ENABLED ? (
+                <div role="status" style={{ padding: '14px 18px', borderRadius: 'var(--radius-md)', background: 'var(--color-accent-2-100)', color: 'var(--color-accent-2-900)', fontSize: 14, lineHeight: 1.55, marginBottom: 14 }}>
+                  Release verification is in progress. Checkout remains closed and no payment can be taken.
+                </div>
+              ) : coveredBy ? (
                 <div style={{ padding: '14px 18px', borderRadius: 'var(--radius-md)', background: 'var(--color-accent-2-100)', color: 'var(--color-accent-2-800)', fontSize: 14, fontWeight: 600, marginBottom: 14 }}>
                   Already included in your {coveredBy}
                 </div>
@@ -121,14 +129,8 @@ export default function ProductDetailClient({ product, related }: { product: any
                 </a>
               )}
 
-              {purchaseCount > 0 && (
-                <p style={{ fontSize: 13, color: 'var(--color-neutral-600)', marginBottom: 14 }}>
-                  🔥 {purchaseCount} {purchaseCount === 1 ? 'developer has' : 'developers have'} purchased this
-                </p>
-              )}
-
               <div style={{ display: 'grid', gap: 2, borderRadius: 'var(--radius-lg)', overflow: 'hidden', border: '1px solid var(--color-divider)' }}>
-                {['Instant download after purchase', 'Full source code, nothing compiled', 'One year of free updates', 'Discord community access'].map((a) => (
+                {['Verified release archive', 'Account-bound perpetual license', 'Short-lived private download links', 'One year of compatible updates where specified'].map((a) => (
                   <div key={a} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 18px', background: 'var(--color-neutral-100)', fontSize: 14 }}>
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-2-700)" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><path d="M20 6 9 17l-5-5" /></svg>
                     {a}
@@ -166,12 +168,20 @@ export default function ProductDetailClient({ product, related }: { product: any
               {product.images.map((img: string, i: number) => {
                 const label = img.split('/').pop()?.replace('gw-shot-', '').replace('gw-card-', '').replace(/\.(png|jpg)$/, '').replace(/-/g, ' ') || '';
                 return (
-                  <figure key={img} onClick={() => setLightboxIndex(i)} style={{ margin: 0, cursor: 'pointer' }}>
-                    <div style={{ position: 'relative', aspectRatio: '16/10', borderRadius: 'var(--radius-lg)', overflow: 'hidden', background: 'var(--color-neutral-200)', boxShadow: 'var(--shadow-sm)' }}>
-                      <img src={img} alt={label} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
-                    </div>
-                    <figcaption style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.06em', textTransform: 'uppercase', marginTop: 9, textAlign: 'left' }}>{label}</figcaption>
-                  </figure>
+                  <button
+                    key={img}
+                    type="button"
+                    aria-label={`Open screenshot ${i + 1} of ${product.images?.length}: ${label}`}
+                    onClick={() => setLightboxIndex(i)}
+                    style={{ all: 'unset', display: 'block', width: '100%', cursor: 'zoom-in' }}
+                  >
+                    <figure style={{ margin: 0 }}>
+                      <div style={{ position: 'relative', aspectRatio: '16/10', borderRadius: 'var(--radius-lg)', overflow: 'hidden', background: 'var(--color-neutral-200)', boxShadow: 'var(--shadow-sm)' }}>
+                        <img src={img} alt={label} loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
+                      </div>
+                      <figcaption style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.06em', textTransform: 'uppercase', marginTop: 9, textAlign: 'left' }}>{label}</figcaption>
+                    </figure>
+                  </button>
                 );
               })}
             </div>
@@ -257,13 +267,14 @@ export default function ProductDetailClient({ product, related }: { product: any
       <AnimatePresence>
         {lightboxIndex !== null && product.images && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setLightboxIndex(null)}
-            style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(15,18,25,0.92)', backdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'zoom-out' }}>
-            <button onClick={() => setLightboxIndex(null)} style={{ position: 'absolute', top: 20, right: 24, background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 8, color: '#fff', fontSize: '1.2rem', width: 44, height: 44, cursor: 'pointer' }}>✕</button>
+            role="dialog" aria-modal="true" aria-label={`${product.name} screenshot ${lightboxIndex + 1} of ${product.images.length}`}
+            style={{ position: 'fixed', inset: 0, zIndex: 20000, background: 'rgba(15,18,25,0.92)', backdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'zoom-out' }}>
+            <button aria-label="Close screenshot gallery" onClick={() => setLightboxIndex(null)} style={{ position: 'absolute', top: 20, right: 24, background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 8, color: '#fff', fontSize: '1.2rem', width: 44, height: 44, cursor: 'pointer' }}>✕</button>
             {lightboxIndex > 0 && (
-              <button onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex - 1); }} style={{ position: 'absolute', left: 20, top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 8, color: '#fff', fontSize: '1.4rem', width: 48, height: 48, cursor: 'pointer' }}>‹</button>
+              <button aria-label="Previous screenshot" onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex - 1); }} style={{ position: 'absolute', left: 20, top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 8, color: '#fff', fontSize: '1.4rem', width: 48, height: 48, cursor: 'pointer' }}>‹</button>
             )}
             {lightboxIndex < product.images.length - 1 && (
-              <button onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex + 1); }} style={{ position: 'absolute', right: 20, top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 8, color: '#fff', fontSize: '1.4rem', width: 48, height: 48, cursor: 'pointer' }}>›</button>
+              <button aria-label="Next screenshot" onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex + 1); }} style={{ position: 'absolute', right: 20, top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 8, color: '#fff', fontSize: '1.4rem', width: 48, height: 48, cursor: 'pointer' }}>›</button>
             )}
             <motion.img key={lightboxIndex} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.2 }}
               src={product.images[lightboxIndex]} alt={product.name} onClick={(e) => e.stopPropagation()}

@@ -6,28 +6,28 @@ import { products } from '@/lib/products';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
-const RIBBON = ['A hedge fund starting point', 'Full TypeScript source', 'Runs on Hyperliquid', 'Skip months of build time', 'From $99', 'One-click setup', 'Agents that execute', 'Own it outright'];
+const RIBBON = ['A trading-workspace starting point', 'TypeScript source', 'Hyperliquid integration', 'Paper mode first', 'From $99', 'Setup guides included', 'Strategy modules', 'One-time license'];
 const STATS = [
-  { v: '$184K', k: 'Demo portfolio' },
-  { v: '6', k: 'Autonomous agents' },
-  { v: '2,847', k: 'Trades executed' },
-  { v: '68%', k: 'Win rate' },
+  { v: '2,100+', k: 'Source files in Core' },
+  { v: '6', k: 'Strategy modules' },
+  { v: '44', k: 'Interface themes' },
+  { v: '3', k: 'Product editions' },
 ];
 const PREMISE = [
-  { n: '01', t: 'The runtime is the hard part', d: 'Order lifecycle, reconciliation, agent supervision, halts that actually halt. Weeks of work with no upside when it goes right.' },
-  { n: '02', t: 'Agents execute, not suggest', d: "These aren't alert bots. They size, enter, trail, and flatten on Hyperliquid without a human in the loop." },
-  { n: '03', t: 'You own the source', d: 'Full TypeScript. Fork it, rename it, sell your own thing on top of it. No license server, no phone-home.' },
+  { n: '01', t: 'The runtime is the hard part', d: 'Order lifecycle, reconciliation, agent supervision and drawdown halts are months of work before a single strategy earns its keep. That part is already built and running.' },
+  { n: '02', t: 'Every screen already exists', d: 'Live trading, position monitor, order flow, trade journal, correlation, analytics, farm orchestration — the whole interface layer, not a starter template with three charts bolted on.' },
+  { n: '03', t: 'Then you make it yours', d: 'Readable TypeScript, no license server, no phone-home. Point Cursor at the repo and rebuild any part of it into something only you run.' },
 ];
 const EDITORS = ['Cursor', 'Windsurf', 'VS Code', 'Zed', 'WebStorm', 'Neovim'];
 const SOURCE_NOTES = [
   { t: 'AI-assisted customisation', d: 'Point Cursor or Windsurf at the repo and change strategies, add indicators, or build a new agent from an existing one.' },
-  { t: 'Full TypeScript, no obfuscation', d: 'Strategies, risk management, UI components, API routes — every line readable and editable.' },
-  { t: 'One-click setup', d: 'Double-click QUICK-START: dependencies install, config is written, the dashboard opens. Deploy to Vercel when you’re ready.' },
+  { t: 'TypeScript, no obfuscation', d: 'Strategies, risk management, UI components, and API routes are supplied as editable source.' },
+  { t: 'Guided setup', d: 'QUICK-START scripts, an environment template, and deployment documentation are included.' },
 ];
 const COMMUNITY = [
-  { n: '42', t: 'channels, including a dedicated setup room' },
-  { n: '24h', t: 'typical answer time on plugin questions' },
-  { n: '1yr', t: 'of updates included with every product' },
+  { n: 'Open', t: 'community Discord link' },
+  { n: 'Email', t: 'direct support channel' },
+  { n: 'Docs', t: 'setup and deployment guides' },
 ];
 
 const coreEdition = products.find((p) => p.id === 'trading-dashboard-template')!;
@@ -56,7 +56,7 @@ function Stats() {
   return (
     <section style={{ borderBottom: '1px solid var(--color-divider)', background: 'var(--color-neutral-100)' }}>
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 28px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))' }}>
+        <div data-cv-stats style={{ display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))' }}>
           {STATS.map((s) => (
             <motion.div key={s.k} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} style={{ padding: '34px 0', borderRight: '1px solid var(--color-divider)' }}>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: 'clamp(26px,2.6vw,36px)', fontWeight: 500, letterSpacing: '-0.02em', color: 'var(--color-accent-700)' }}>{s.v}</div>
@@ -106,7 +106,7 @@ function CoreEditionCard() {
       <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 24, marginBottom: 32 }}>
         <div>
           <h6 style={{ marginBottom: 14 }}>Where everyone starts</h6>
-          <h2 style={{ fontSize: 'clamp(30px,3.2vw,44px)', letterSpacing: '-0.015em', lineHeight: 1.1, margin: 0 }}>Ninety-nine dollars to own the platform.</h2>
+          <h2 style={{ fontSize: 'clamp(30px,3.2vw,44px)', letterSpacing: '-0.015em', lineHeight: 1.1, margin: 0 }}>Ninety-nine dollars for the Core source license.</h2>
         </div>
         <Link href="/store" className="btn btn-ghost">Compare editions →</Link>
       </div>
@@ -119,7 +119,7 @@ function CoreEditionCard() {
           <h3 style={{ fontSize: 36, letterSpacing: '-0.015em', lineHeight: 1.14, margin: '0 0 14px' }}>Core Edition</h3>
           <p style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--color-neutral-800)', margin: '0 0 26px' }}>{coreEdition.description}</p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px 20px', marginBottom: 32 }}>
-            {['Live VWAP + RSI agent included', 'Goal-based execution', 'Farm orchestration', 'Drawdown halts + reconciliation', '44 themes', '2,400+ source files'].map((f) => (
+            {['VWAP + RSI strategy module', 'Goal configuration', 'Farm orchestration UI', 'Risk-control modules', '44 themes', '2,100+ source files'].map((f) => (
               <div key={f} style={{ display: 'flex', gap: 9, alignItems: 'flex-start', fontSize: 14, lineHeight: 1.4 }}>
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-2-700)" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 3 }}><path d="M20 6 9 17l-5-5" /></svg>
                 <span>{f}</span>
@@ -135,7 +135,7 @@ function CoreEditionCard() {
           </div>
         </div>
         <div style={{ position: 'relative', minHeight: 460, background: 'var(--color-neutral-200)', overflow: 'hidden' }}>
-          {coreEdition.image && <img src={coreEdition.image} alt="Core Edition dashboard" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top left' }} />}
+          {coreEdition.image && <img src={coreEdition.image} alt="Core Edition dashboard" loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top left' }} />}
         </div>
       </div>
     </section>
@@ -147,7 +147,7 @@ function AgentRail() {
     <section style={{ position: 'relative', background: 'var(--color-neutral-100)', borderTop: '1px solid var(--color-divider)', borderBottom: '1px solid var(--color-divider)', padding: '80px 0' }}>
       <div style={{ maxWidth: 1200, margin: '0 auto 32px', padding: '0 28px' }}>
         <h6 style={{ marginBottom: 14 }}>The agents</h6>
-        <h2 style={{ fontSize: 'clamp(30px,3.2vw,44px)', letterSpacing: '-0.012em', margin: '0 0 12px' }}>Six strategies that trade while you sleep.</h2>
+        <h2 style={{ fontSize: 'clamp(30px,3.2vw,44px)', letterSpacing: '-0.012em', margin: '0 0 12px' }}>Six strategy modules to inspect and adapt.</h2>
         <p style={{ fontSize: 16, color: 'var(--color-neutral-800)', margin: 0, maxWidth: '52ch' }}>
           Each one drops into the dashboard as a plugin. Run one, or run all six as a coordinated farm under shared risk limits.
         </p>
@@ -186,8 +186,8 @@ function SourceShowcase() {
             Open it in your editor. Make it unrecognisable.
           </h2>
           <p style={{ fontSize: 16.5, lineHeight: 1.6, color: 'var(--color-neutral-300)', maxWidth: '44ch' }}>
-            No compiled binaries, no obfuscation, no license server. Clean TypeScript you can point Cursor at and refactor into your
-            own thing. There is no version of this where we can turn it off.
+            No compiled binaries, no obfuscation, no license server. Reviewable TypeScript you can inspect in your editor and adapt
+            within the product license. Your local copy does not depend on a Cival activation service.
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 28 }}>
             {EDITORS.map((e) => (
@@ -203,14 +203,14 @@ function SourceShowcase() {
             ))}
           </div>
         </div>
-        <div style={{ position: 'sticky', top: 100, borderRadius: 'var(--radius-lg)', background: 'color-mix(in srgb, var(--color-neutral-900) 72%, #000)', border: '1px solid color-mix(in srgb, var(--color-neutral-100) 14%, transparent)', overflow: 'hidden', boxShadow: 'var(--shadow-lg)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px', borderBottom: '1px solid color-mix(in srgb, var(--color-neutral-100) 12%, transparent)' }}>
+        <div style={{ position: 'sticky', top: 100, borderRadius: 'var(--radius-lg)', background: '#070f0e', border: '1px solid var(--color-divider)', overflow: 'hidden', boxShadow: 'var(--shadow-lg)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px', borderBottom: '1px solid var(--color-divider)' }}>
             <span style={{ width: 9, height: 9, borderRadius: 99, background: 'var(--color-accent-500)' }} />
             <span style={{ width: 9, height: 9, borderRadius: 99, background: 'var(--color-accent-2-500)' }} />
             <span style={{ width: 9, height: 9, borderRadius: 99, background: 'var(--color-neutral-600)' }} />
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11.5, color: 'var(--color-neutral-500)', marginLeft: 8 }}>agents/vwap-rsi/strategy.ts</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11.5, color: 'var(--color-neutral-600)', marginLeft: 8 }}>agents/vwap-rsi/strategy.ts</span>
           </div>
-          <pre style={{ margin: 0, padding: 24, fontFamily: 'var(--font-mono)', fontSize: 12.5, lineHeight: 1.85, color: 'var(--color-neutral-300)', overflowX: 'auto' }}>
+          <pre style={{ margin: 0, padding: 24, fontFamily: 'var(--font-mono)', fontSize: 12.5, lineHeight: 1.85, color: 'var(--color-neutral-700)', overflowX: 'auto' }}>
 {`// tune it, break it, ship it — it's your file now
 export const config: AgentConfig = {
   venue:        'hyperliquid',
@@ -233,12 +233,12 @@ function EditionsStack() {
         <h6 style={{ marginBottom: 14 }}>Editions</h6>
         <h2 style={{ fontSize: 'clamp(30px,3.2vw,44px)', letterSpacing: '-0.015em', lineHeight: 1.1, margin: 0 }}>Three steps, no wrong entry point.</h2>
         <p style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--color-neutral-800)', maxWidth: '56ch', margin: '14px 0 0' }}>
-          Every edition includes the full platform and its source. Move up when you want more strategies — you only pay the difference.
+          Every edition includes the platform source plus the modules listed on its product page. Edition purchases are separate one-time licenses.
         </p>
       </div>
       <div style={{ display: 'grid', gap: 26, paddingBottom: 120 }}>
         {editions.map((p) => (
-          <Link key={p.id} href={`/store/${p.id}`} style={{
+          <Link key={p.id} href={`/store/${p.id}`} data-cv-edition style={{
             display: 'grid', gridTemplateColumns: 'auto minmax(0,1fr) auto', gap: 32, alignItems: 'center', padding: '44px 44px',
             borderRadius: 'calc(var(--radius-lg) * 1.15)', background: 'var(--color-surface)', textDecoration: 'none', color: 'var(--color-text)', boxShadow: 'var(--shadow-md)',
           }}>
@@ -269,7 +269,7 @@ function ProofDemo() {
         <h6 style={{ marginBottom: 16 }}>Proof</h6>
         <h2 style={{ fontSize: 'clamp(30px,3.2vw,42px)', lineHeight: 1.1, letterSpacing: '-0.015em', margin: '0 0 18px' }}>Click through it before you pay us anything.</h2>
         <p style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--color-neutral-800)', margin: '0 0 26px' }}>
-          The demo is the product with sample data in it. Six agents, seven farms, live analytics, every tab. No signup, no email gate.
+          The interactive demo shows the interface with sample data so you can evaluate the workflow before purchase. It does not show verified live performance.
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
           <a href="https://ai-trading-dashboard-demo.vercel.app" target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ height: 46, padding: '0 22px' }}>Open the demo</a>
@@ -277,7 +277,7 @@ function ProofDemo() {
         </div>
       </div>
       <div style={{ position: 'relative', borderRadius: 'var(--radius-lg)', overflow: 'hidden', boxShadow: 'var(--shadow-lg)', aspectRatio: '16/10', background: 'var(--color-neutral-200)' }}>
-        <img src="/images/cival/gw-shot-live-trading.png" alt="Live trading dashboard" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <img src="/images/cival/gw-shot-live-trading.png" alt="Live trading dashboard" loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
       </div>
     </section>
   );
@@ -289,18 +289,18 @@ function Community() {
       <div data-cv-2col style={{ borderRadius: 'calc(var(--radius-lg) * 1.15)', background: 'var(--color-accent-2-100)', padding: '60px 48px', display: 'grid', gridTemplateColumns: 'minmax(0,1.1fr) minmax(0,0.9fr)', gap: 48, alignItems: 'center' }}>
         <div>
           <h6 style={{ color: 'var(--color-accent-2-700)', marginBottom: 16 }}>Community</h6>
-          <h2 style={{ fontSize: 'clamp(28px,3vw,40px)', letterSpacing: '-0.02em', margin: '0 0 14px' }}>42 channels of people running this in production.</h2>
+          <h2 style={{ fontSize: 'clamp(28px,3vw,40px)', letterSpacing: '-0.02em', margin: '0 0 14px' }}>Talk setup, plugins, and testing with the community.</h2>
           <p style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--color-accent-2-900)', margin: '0 0 26px', maxWidth: '48ch' }}>
-            Setup help, plugin sharing, strategy arguments at 3am. If you get stuck on a Supabase key, someone has already been stuck on it.
+            Use Discord for community discussion and email for direct purchase or account support. Community content is not financial advice.
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
             <a href="https://discord.gg/EZk6gTx57k" target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ height: 46, padding: '0 22px' }}>Join the Discord</a>
-            <a href="https://x.com/GWDSofficial" target="_blank" rel="noopener noreferrer" className="btn btn-secondary" style={{ height: 46, padding: '0 20px', borderColor: 'var(--color-accent-2-300)' }}>Follow on X</a>
+            <a href="/contact" className="btn btn-secondary" style={{ height: 46, padding: '0 20px', borderColor: 'var(--color-accent-2-300)' }}>Get release updates</a>
           </div>
         </div>
         <div style={{ display: 'grid', gap: 10 }}>
           {COMMUNITY.map((c) => (
-            <div key={c.t} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '18px 22px', borderRadius: 99, background: 'color-mix(in srgb, #fff 55%, transparent)' }}>
+            <div key={c.t} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '18px 22px', borderRadius: 99, background: 'color-mix(in srgb, var(--color-accent-2) 16%, transparent)' }}>
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: 16, fontWeight: 500, color: 'var(--color-accent-2-800)', minWidth: 52 }}>{c.n}</span>
               <span style={{ fontSize: 14.5, color: 'var(--color-accent-2-900)' }}>{c.t}</span>
             </div>
@@ -315,10 +315,10 @@ function FinalCTA() {
   return (
     <section style={{ borderTop: '1px solid var(--color-divider)' }}>
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '130px 28px', textAlign: 'center' }}>
-        <h2 style={{ fontSize: 'clamp(38px,5.2vw,70px)', lineHeight: 1.06, letterSpacing: '-0.018em', margin: '0 auto 26px', maxWidth: '20ch' }}>Your desk, running by tonight.</h2>
-        <p style={{ fontSize: 17, color: 'var(--color-neutral-800)', margin: '0 auto 34px', maxWidth: '52ch' }}>
-          Three editions, full TypeScript source, agents that execute on Hyperliquid the moment you hand them a key. The template does
-          the boring part; the edge stays yours.
+        <h2 style={{ fontSize: 'clamp(38px,5.2vw,70px)', lineHeight: 1.06, letterSpacing: '-0.018em', margin: '0 auto 26px', maxWidth: '20ch' }}>Run the desk. Then make it yours.</h2>
+        <p style={{ fontSize: 17, color: 'var(--color-neutral-800)', margin: '0 auto 34px', maxWidth: '54ch' }}>
+          Three editions, six strategy agents, and the entire interface layer for running them 24/7 — all as TypeScript source you
+          keep. Start in paper mode, extend it however far you want to take it.
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center' }}>
           <Link href="/store" className="btn btn-primary" style={{ height: 54, padding: '0 32px', fontSize: 16 }}>Explore the store</Link>

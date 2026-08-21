@@ -5,7 +5,7 @@ import type { CSSProperties } from "react";
 
 export const metadata: Metadata = {
   title: "Refund Policy",
-  description: "30-day money-back guarantee on all Cival Systems digital products. Learn about our refund process.",
+  description: "The 30-day refund request window and review process for Cival Systems digital products.",
 };
 
 const sectionHeadingStyle: CSSProperties = { fontSize: 24, margin: "0 0 16px" };
@@ -21,7 +21,7 @@ export default function RefundsPage() {
           <h6 style={{ marginBottom: 14 }}>Legal</h6>
           <h1 style={{ fontSize: "clamp(34px,4.2vw,50px)", letterSpacing: "-0.015em", marginBottom: 16 }}>Refund Policy</h1>
           <p style={{ fontFamily: "var(--font-mono)", fontSize: 13, color: "var(--color-neutral-600)", marginBottom: 48 }}>
-            Last updated: March 2, 2026
+            Last updated: August 13, 2026
           </p>
 
           <div
@@ -35,7 +35,7 @@ export default function RefundsPage() {
           >
             <h2 style={{ fontSize: 28, color: "var(--color-accent-900)", marginBottom: 12 }}>30-Day Money-Back Guarantee</h2>
             <p style={{ color: "var(--color-accent-800)", fontSize: 17, lineHeight: 1.7, margin: 0 }}>
-              We stand behind our products. If you&apos;re not satisfied, we&apos;ll refund your purchase—no questions asked.
+              We stand behind our products. Eligible purchases may be refunded when requested within 30 days, subject to the review and abuse exclusions below.
             </p>
           </div>
 
@@ -47,11 +47,10 @@ export default function RefundsPage() {
                 <strong style={{ color: "var(--color-text)" }}>Timeframe:</strong> Request is made within 30 days of purchase
               </li>
               <li>
-                <strong style={{ color: "var(--color-text)" }}>Download limit:</strong> Product has been downloaded no more than once (we allow one
-                trial download)
+                <strong style={{ color: "var(--color-text)" }}>Order:</strong> The request concerns a completed purchase made through your verified account
               </li>
               <li>
-                <strong style={{ color: "var(--color-text)" }}>Reason:</strong> You provide a brief explanation (helps us improve our products)
+                <strong style={{ color: "var(--color-text)" }}>Reason:</strong> You provide enough detail for us to identify the issue and review the request
               </li>
             </ul>
           </section>
@@ -61,9 +60,9 @@ export default function RefundsPage() {
             <p style={bodyStyle}>Refunds cannot be issued if:</p>
             <ul style={listStyle}>
               <li>More than 30 days have passed since purchase</li>
-              <li>Product has been downloaded more than once (indicates active use)</li>
               <li>You have resold, shared, or distributed the product</li>
-              <li>Product was purchased during a promotion explicitly marked &quot;no refunds&quot;</li>
+              <li>The request is based solely on trading losses, performance, or a financial outcome</li>
+              <li>The request is fraudulent, abusive, or duplicates a refund already issued for the order</li>
             </ul>
           </section>
 
@@ -77,21 +76,21 @@ export default function RefundsPage() {
                 marginBottom: 16,
               }}
             >
-              <p style={bodyStyle}>Send an email to:</p>
+              <p style={bodyStyle}>Open a refund request:</p>
               <p style={{ fontSize: 20, fontWeight: 600, marginBottom: 16 }}>
-                <a href="mailto:gammawavesdesign@gmail.com">gammawavesdesign@gmail.com</a>
+                <a href="/refund-request">Refund request form</a>
               </p>
               <p style={{ color: "var(--color-neutral-800)", fontSize: 16, lineHeight: 1.7, marginBottom: 12 }}>Include:</p>
               <ul style={{ ...listStyle, marginBottom: 0 }}>
                 <li>Your order ID (found in confirmation email)</li>
                 <li>Email address used for purchase</li>
                 <li>Product name(s)</li>
-                <li>Brief reason for refund request (optional but appreciated)</li>
+                <li>A brief reason for the request</li>
               </ul>
             </div>
             <p style={{ color: "var(--color-neutral-600)", fontSize: 14, lineHeight: 1.7 }}>
               💡 <strong style={{ color: "var(--color-neutral-800)" }}>Tip:</strong> If you&apos;re having technical issues with a product, contact{" "}
-              <a href="mailto:gammawavesdesign@gmail.com">gammawavesdesign@gmail.com</a> first—we may be able to help!
+              <a href="/contact">Cival support</a> first—we may be able to help!
             </p>
           </section>
 
@@ -120,7 +119,7 @@ export default function RefundsPage() {
                       justifyContent: "center",
                       fontFamily: "var(--font-mono)",
                       fontWeight: 700,
-                      color: "#fff",
+                      color: "var(--color-bg)",
                       flexShrink: 0,
                     }}
                   >
@@ -149,7 +148,7 @@ export default function RefundsPage() {
             <h2 style={sectionHeadingStyle}>6. Partial Refunds</h2>
             <p style={bodyStyle}>If you purchased a bundle or multiple products:</p>
             <ul style={listStyle}>
-              <li>You may request a partial refund for unused products (not downloaded)</li>
+              <li>You may request a partial refund for separately priced products in a multi-product order</li>
               <li>Bundle discounts are prorated—you cannot refund one item at full price from a discounted bundle</li>
             </ul>
           </section>
@@ -158,10 +157,10 @@ export default function RefundsPage() {
             <h2 style={sectionHeadingStyle}>7. Questions?</h2>
             <p style={bodyStyle}>If you have questions about our refund policy or need assistance:</p>
             <p style={{ fontSize: 17, lineHeight: 1.7, marginBottom: 8 }}>
-              📧 Refunds: <a href="mailto:gammawavesdesign@gmail.com">gammawavesdesign@gmail.com</a>
+              📧 Refunds: <a href="/refund-request">Refund request form</a>
             </p>
             <p style={{ fontSize: 17, lineHeight: 1.7 }}>
-              💬 Support: <a href="mailto:gammawavesdesign@gmail.com">gammawavesdesign@gmail.com</a>
+              💬 Support: <a href="/contact">Cival support form</a>
             </p>
           </section>
 

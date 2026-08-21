@@ -1,6 +1,6 @@
 "use client";
 import { createContext, useContext, useReducer, useEffect, type ReactNode } from "react";
-import { Product } from "@/lib/products";
+import { getProduct, type Product } from "@/lib/products";
 
 export interface CartItem {
   product: Product;
@@ -41,7 +41,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
       return {
         ...state,
         items: state.items.map((i) =>
-          i.product.id === action.productId ? { ...i, quantity: action.quantity } : i
+          i.product.id === action.productId ? { ...i, quantity: 1 } : i
         ),
       };
     case "CLEAR_CART":
@@ -85,8 +85,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try {
       const saved = localStorage.getItem("gwds-cart");
       if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) dispatch({ type: "HYDRATE", items: parsed });
+        const parsed: unknown = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          const items = parsed.flatMap((entry): CartItem[] => {
+            if (!entry || typeof entry !== "object" || !("product" in entry)) return [];
+            const rawProduct = entry.product;
+            if (!rawProduct || typeof rawProduct !== "object" || !("id" in rawProduct) || typeof rawProduct.id !== "string") return [];
+            const currentProduct = getProduct(rawProduct.id);
+            return currentProduct && !currentProduct.legacy
+              ? [{ product: currentProduct, quantity: 1 }]
+              : [];
+          });
+          dispatch({ type: "HYDRATE", items: items.slice(0, 12) });
+        }
       }
     } catch {}
   }, []);

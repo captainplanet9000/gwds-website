@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { products, getProduct, categories } from '@/lib/products';
+import { STORE_SALES_ENABLED } from '@/lib/store-config';
 import ProductDetailClient from './ProductDetailClient';
 import { notFound } from 'next/navigation';
 
@@ -48,7 +49,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     .slice(0, 3);
 
   const category = categories.find(c => c.id === product.category);
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gwds-website.vercel.app";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.civalsystems.com";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -62,7 +63,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
       "@type": "Offer",
       price: product.price,
       priceCurrency: "USD",
-      availability: "https://schema.org/InStock",
+      availability: STORE_SALES_ENABLED ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       url: `${siteUrl}/store/${product.id}`,
       seller: { "@type": "Organization", name: "Cival Systems" },
     },
@@ -75,7 +76,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <ProductDetailClient product={product} related={related} category={category} />
+      <ProductDetailClient product={product} related={related} />
     </>
   );
 }

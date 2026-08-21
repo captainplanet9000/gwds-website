@@ -31,7 +31,7 @@ const EMAIL_TEMPLATES = {
   'newsletter': {
     subject: '📬 Your Monthly Newsletter',
     content: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #000; color: #E8E8E8; padding: 40px 20px;">
-  <h1 style="color: #8B5CF6; font-size: 28px; margin-bottom: 24px;">What's New at GWDS 📬</h1>
+  <h1 style="color: #4ade9f; font-size: 28px; margin-bottom: 24px;">What's New at Cival Systems 📬</h1>
   
   <div style="background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
     <h3 style="color: #EC4899; font-size: 18px; margin-bottom: 8px;">✨ This Month's Highlights</h3>
@@ -49,13 +49,13 @@ const EMAIL_TEMPLATES = {
   
   <a href="https://gwds-website.vercel.app/store" style="display: inline-block; padding: 16px 32px; background: linear-gradient(135deg, #8B5CF6, #EC4899); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px;">Browse Store →</a>
   
-  <p style="font-size: 14px; color: #666; margin-top: 40px; padding-top: 20px; border-top: 1px solid #1a1a1a;">Stay awesome,<br/>The GWDS Team</p>
+  <p style="font-size: 14px; color: #666; margin-top: 40px; padding-top: 20px; border-top: 1px solid #1a1a1a;">Stay sharp,<br/>The Cival Systems Team</p>
 </div>`
   },
   'update': {
-    subject: '📣 Important Update from GWDS',
+    subject: '📣 Important Update from Cival Systems',
     content: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #000; color: #E8E8E8; padding: 40px 20px;">
-  <h1 style="color: #3B82F6; font-size: 28px; margin-bottom: 16px;">Update from GWDS 📣</h1>
+  <h1 style="color: #4ade9f; font-size: 28px; margin-bottom: 16px;">Update from Cival Systems 📣</h1>
   <p style="font-size: 16px; line-height: 1.6; margin-bottom: 24px;">We wanted to share some important information with you...</p>
   
   <div style="background: #0a0a0a; border-left: 4px solid #8B5CF6; padding: 20px; margin-bottom: 24px;">
@@ -145,7 +145,7 @@ export default function SubscribersAdmin() {
   if (!authed) return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
       <div style={{ maxWidth: 360, width: '100%', padding: 24 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 800, color: '#E8E8E8', marginBottom: 24, textAlign: 'center' }}>GWDS Admin</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 800, color: '#E8E8E8', marginBottom: 24, textAlign: 'center' }}>Cival Admin</h1>
         <input 
           type="password" 
           value={password} 

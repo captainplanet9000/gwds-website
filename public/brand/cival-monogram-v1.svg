@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Cival Systems monogram</title>
+  <desc id="desc">Mint green C on a deep green-black rounded square.</desc>
+  <rect width="512" height="512" rx="104" fill="#06110e"/>
+  <rect x="18" y="18" width="476" height="476" rx="88" fill="none" stroke="#174d3b" stroke-width="8"/>
+  <path d="M350 154c-21-29-50-43-87-43-68 0-111 57-111 145s43 145 111 145c38 0 68-15 90-46" fill="none" stroke="#4ade9f" stroke-width="52" stroke-linecap="round"/>
+</svg>

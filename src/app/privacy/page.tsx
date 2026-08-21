@@ -23,7 +23,7 @@ export default function PrivacyPage() {
             Privacy Policy
           </h1>
           <p style={{ fontFamily: "var(--font-mono)", color: "var(--color-neutral-600)", fontSize: 13, marginBottom: 48 }}>
-            Last updated: March 2, 2026
+            Last updated: August 13, 2026
           </p>
 
           <section style={{ marginBottom: 48 }}>
@@ -135,7 +135,7 @@ export default function PrivacyPage() {
                 <strong style={{ color: "var(--color-text)" }}>Order data:</strong> Indefinitely for accounting and support purposes
               </li>
               <li style={{ marginBottom: 8 }}>
-                <strong style={{ color: "var(--color-text)" }}>Download tokens:</strong> 7 days after purchase (then expired, not deleted)
+                <strong style={{ color: "var(--color-text)" }}>Download tokens:</strong> Individual links expire after 15 minutes and are retained only as hashed delivery and abuse-prevention records under our operational retention schedule
               </li>
               <li style={{ marginBottom: 8 }}>
                 <strong style={{ color: "var(--color-text)" }}>Email communications:</strong> As long as necessary for support
@@ -170,10 +170,7 @@ export default function PrivacyPage() {
               </li>
             </ul>
             <p style={{ color: "var(--color-neutral-700)", fontSize: 16, lineHeight: 1.7, marginBottom: 16 }}>
-              To exercise these rights, contact us at{" "}
-              <a href="mailto:gammawavesdesign@gmail.com">
-                gammawavesdesign@gmail.com
-              </a>
+              To exercise these rights, use the <a href="/contact">Cival support form</a>.
             </p>
           </section>
 
@@ -223,16 +220,10 @@ export default function PrivacyPage() {
               For privacy-related questions or requests:
             </p>
             <p style={{ fontFamily: "var(--font-mono)", fontSize: 14, lineHeight: 1.7, marginBottom: 8 }}>
-              Email:{" "}
-              <a href="mailto:gammawavesdesign@gmail.com">
-                gammawavesdesign@gmail.com
-              </a>
+              Privacy requests: <a href="/contact">Cival support form</a>
             </p>
             <p style={{ fontFamily: "var(--font-mono)", fontSize: 14, lineHeight: 1.7 }}>
-              Support:{" "}
-              <a href="mailto:gammawavesdesign@gmail.com">
-                gammawavesdesign@gmail.com
-              </a>
+              Support: <a href="/contact">Cival support form</a>
             </p>
           </section>
 

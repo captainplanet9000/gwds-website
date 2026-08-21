@@ -11,14 +11,14 @@ const steps = [
   },
   {
     num: '02',
-    title: 'Download Instantly',
-    desc: 'One-click purchase. Get source files, docs, and implementation guides delivered immediately.',
+    title: 'Access Your Account',
+    desc: 'After confirmed payment, use your verified account to generate a short-lived download link.',
     color: 'oklch(0.75 0.15 195)',
   },
   {
     num: '03',
     title: 'Deploy & Scale',
-    desc: 'Ship faster with production-ready assets. From AI templates to live trading dashboards.',
+    desc: 'Review the source, configure paper mode, run your own tests, and deploy only after validation.',
     color: 'oklch(0.82 0.18 85)',
   },
 ];

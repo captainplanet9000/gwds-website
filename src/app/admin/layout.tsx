@@ -88,7 +88,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div style={{ padding: '24px 20px', borderBottom: '1px solid #1a1a1a', flexShrink: 0 }}>
             <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.1rem', fontWeight: 800, color: '#E8E8E8', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: 8 }}>
               <div style={{ width: 28, height: 28, background: 'linear-gradient(135deg, #8B5CF6, #EC4899)', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem' }}>🌊</div>
-              <span>GWDS</span>
+              <span>Cival</span>
             </div>
           </div>
           
@@ -159,9 +159,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 ← Store
               </Link>
               <button 
-                onClick={() => { 
+                onClick={async () => {
+                  await fetch('/api/admin/auth', { method: 'DELETE' }).catch(() => undefined);
                   sessionStorage.removeItem('gwds-admin'); 
-                  document.cookie = 'gwds-admin-session=; Max-Age=0; Path=/'; 
                   window.location.href = '/admin'; 
                 }}
                 style={{ padding: '8px 16px', borderRadius: 6, border: '1px solid #1a1a1a', background: 'transparent', color: '#888', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer' }}

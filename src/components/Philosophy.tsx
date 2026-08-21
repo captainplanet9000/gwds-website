@@ -95,7 +95,7 @@ export default function Philosophy() {
               marginBottom: '2vw',
             }}
           >
-            We don't follow templates. We don't chase trends. We build things that feel fresh,
+            We don&apos;t follow templates. We don&apos;t chase trends. We build things that feel fresh,
             work flawlessly, and push boundaries.
           </p>
 

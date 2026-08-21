@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { Product, categories } from "@/lib/products";
 import { useCart } from "@/contexts/CartContext";
+import { STORE_SALES_ENABLED } from '@/lib/store-config';
 
 interface QuickViewModalProps {
   product: Product | null;
@@ -30,7 +31,7 @@ export default function QuickViewModal({ product, onClose }: QuickViewModalProps
   }, [product]);
 
   const handleAddToCart = () => {
-    if (product && product.price > 0) {
+    if (STORE_SALES_ENABLED && product && product.price > 0) {
       addItem(product);
       openCart();
       onClose();
@@ -83,8 +84,10 @@ export default function QuickViewModal({ product, onClose }: QuickViewModalProps
               {/* Image */}
               <div style={{ aspectRatio: "1", position: "relative", overflow: "hidden", borderRadius: "20px 0 0 20px", background: "#0A0A0F" }}>
                 <img
-                  src={`/images/products/${product.id}.png`}
+                  src={product.image || "/images/og-store.png"}
                   alt={product.name}
+                  loading="lazy"
+                  decoding="async"
                   style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 />
               </div>
@@ -121,11 +124,12 @@ export default function QuickViewModal({ product, onClose }: QuickViewModalProps
                   {product.price > 0 && (
                     <motion.button
                       onClick={handleAddToCart}
+                      disabled={!STORE_SALES_ENABLED}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       style={{ flex: 1, padding: "14px 24px", borderRadius: 10, border: "none", background: "linear-gradient(135deg, #8B5CF6, #7C3AED)", color: "white", fontWeight: 700, fontSize: 14, cursor: "pointer", boxShadow: "0 0 20px rgba(139,92,246,0.3)" }}
                     >
-                      Add to Cart — ${product.price}
+                      {STORE_SALES_ENABLED ? `Add to Cart — $${product.price}` : 'Release verification'}
                     </motion.button>
                   )}
                   <Link href={`/store/${product.id}`} onClick={onClose} style={{ textDecoration: "none" }}>

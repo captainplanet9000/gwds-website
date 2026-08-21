@@ -7,8 +7,13 @@ interface Coupon {
   is_active: boolean; expires_at: string | null; created_at: string;
 }
 
-const emptyForm = { 
-  code: '', description: '', discount_type: 'percentage' as const, 
+interface CouponForm {
+  code: string; description: string; discount_type: 'percentage' | 'fixed';
+  discount_value: number; max_uses: string; min_order: number; is_active: boolean; expires_at: string;
+}
+
+const emptyForm: CouponForm = {
+  code: '', description: '', discount_type: 'percentage',
   discount_value: 10, max_uses: '', min_order: 0, is_active: true, expires_at: '' 
 };
 
@@ -130,7 +135,7 @@ export default function CouponsAdmin() {
   if (!authed) return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
       <div style={{ maxWidth: 360, width: '100%', padding: 24 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 800, color: '#E8E8E8', marginBottom: 24, textAlign: 'center' }}>GWDS Admin</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 800, color: '#E8E8E8', marginBottom: 24, textAlign: 'center' }}>Cival Admin</h1>
         <input 
           type="password" 
           value={password} 

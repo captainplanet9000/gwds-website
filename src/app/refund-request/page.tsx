@@ -1,24 +1,26 @@
 'use client';
 import { useState } from 'react';
+import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function RefundRequestPage() {
   const [orderId, setOrderId] = useState('');
-  const [email, setEmail] = useState('');
   const [reason, setReason] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
+  const { user, session, loading: authLoading } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!orderId || !email || !reason) return;
+    if (!orderId || !reason || !session?.access_token) return;
     setStatus('loading');
     try {
       const res = await fetch('/api/refund', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderId, email, reason }),
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+        body: JSON.stringify({ orderId, reason }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed');
@@ -26,7 +28,7 @@ export default function RefundRequestPage() {
       setMessage(data.message);
     } catch (err: any) {
       setStatus('error');
-      setMessage(err.message || 'Something went wrong. Email us at gammawavesdesign@gmail.com');
+      setMessage(err.message || 'Something went wrong. Please use the Cival support form.');
     }
   };
 
@@ -44,7 +46,12 @@ export default function RefundRequestPage() {
           <div className="card" style={{ padding: 32, background: 'var(--color-accent-2-100)', textAlign: 'center', gap: 4 }}>
             <p style={{ fontSize: '1.4rem', marginBottom: 12 }}>✅</p>
             <p style={{ fontSize: 15, color: 'var(--color-accent-2-800)', fontWeight: 600 }}>{message}</p>
-            <p style={{ fontSize: 13, color: 'var(--color-neutral-700)', marginTop: 12 }}>Check your email for confirmation.</p>
+            <p style={{ fontSize: 13, color: 'var(--color-neutral-700)', marginTop: 12 }}>Support will follow up at your verified account email.</p>
+          </div>
+        ) : !authLoading && !user ? (
+          <div className="card" style={{ padding: 32, textAlign: 'center' }}>
+            <p style={{ marginBottom: 16 }}>Sign in with the verified account that owns the order.</p>
+            <Link href="/account/login" className="btn btn-primary">Sign in</Link>
           </div>
         ) : (
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -53,8 +60,8 @@ export default function RefundRequestPage() {
               <input className="input" value={orderId} onChange={e => setOrderId(e.target.value)} placeholder="From your confirmation email" required />
             </div>
             <div className="field">
-              <label>Email Address</label>
-              <input className="input" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email used at checkout" required />
+              <label>Verified account email</label>
+              <input className="input" type="email" value={user?.email || ''} readOnly />
             </div>
             <div className="field">
               <label>Reason for Refund</label>

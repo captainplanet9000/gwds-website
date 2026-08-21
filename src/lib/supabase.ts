@@ -1,4 +1,15 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+
+const browserGlobal = globalThis as typeof globalThis & {
+  __civalSupabaseClient?: SupabaseClient;
+};
+
+export function isBrowserSupabaseConfigured() {
+  return Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  );
+}
 
 // Browser client (using anon key - safe for client-side)
 export function createBrowserClient() {
@@ -9,7 +20,10 @@ export function createBrowserClient() {
     throw new Error("Missing Supabase environment variables");
   }
 
-  return createClient(supabaseUrl, supabaseAnonKey);
+  if (!browserGlobal.__civalSupabaseClient) {
+    browserGlobal.__civalSupabaseClient = createClient(supabaseUrl, supabaseAnonKey);
+  }
+  return browserGlobal.__civalSupabaseClient;
 }
 
 // Server client (using service role key - for API routes only)
