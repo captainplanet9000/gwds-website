@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { products } from '@/lib/products';
 import { createServerClient } from '@/lib/supabase';
-import { adminUnauthorized, verifyAdmin } from '@/lib/admin-auth';
+import { adminUnauthorized, requireAdmin } from '@/lib/admin-auth';
 
 export async function GET(req: NextRequest) {
-  if (!verifyAdmin(req)) return adminUnauthorized();
+  if (!await requireAdmin(req)) return adminUnauthorized();
   const sb = createServerClient();
   let totalRevenue = 0;
   let totalOrders = 0;

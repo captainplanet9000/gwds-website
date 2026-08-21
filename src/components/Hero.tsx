@@ -27,25 +27,23 @@ export default function Hero() {
         <div style={{ maxWidth: 680 }}>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 26 }}>
             <span className="tag tag-accent">Hyperliquid · source template</span>
-            <span style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--color-neutral-700)', whiteSpace: 'nowrap' }}>v2 — 3 editions</span>
+            <span style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--color-neutral-700)', whiteSpace: 'nowrap' }}>v2 · verified paper release</span>
           </motion.div>
           <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}
             style={{ fontSize: 'clamp(42px,5.8vw,76px)', lineHeight: 1.04, letterSpacing: '-0.018em', margin: '0 0 24px' }}>
-            Your own personal<br />AI agent hedge fund.
+            Your paper-trading<br />command center.
           </motion.h1>
           <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.16 }}
             style={{ fontSize: 19, lineHeight: 1.55, maxWidth: 560, color: 'var(--color-neutral-800)', margin: '0 0 18px' }}>
-            Every screen and component you need to run agents around the clock — live dashboard, order execution, risk engine,
-            farm orchestration, backtesting and analytics — shipped as readable TypeScript you own outright.
+            A polished operations dashboard for simulated orders, agent workspaces, goals, risk review, audit history, and portable backups — shipped as readable TypeScript you own.
           </motion.p>
           <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
             style={{ fontSize: 16.5, lineHeight: 1.55, maxWidth: 560, color: 'var(--color-neutral-700)', margin: '0 0 34px' }}>
-            Six strategy agents work on day one. The other 2,100 files are the starting point you build your own desk on top of —
-            paper mode first, live when you say so.
+            The supported release is deliberately paper-only: no exchange connector, wallet-secret form, withdrawal flow, or live-order endpoint.
           </motion.p>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.24 }} style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
             <Link href="/store/trading-dashboard-template" className="btn btn-primary" style={{ height: 50, padding: '0 26px', fontSize: 15 }}>Start from $99</Link>
-            <a href="https://ai-trading-dashboard-demo.vercel.app" target="_blank" rel="noopener noreferrer" className="btn btn-secondary" style={{ height: 50, padding: '0 22px', fontSize: 15, gap: 8 }}>
+            <a href="https://cival-core-v2-template.vercel.app" target="_blank" rel="noopener noreferrer" className="btn btn-secondary" style={{ height: 50, padding: '0 22px', fontSize: 15, gap: 8 }}>
               Open the interactive demo
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h6v6" /><path d="M10 14 21 3" /><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></svg>
             </a>

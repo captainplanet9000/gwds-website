@@ -12,9 +12,7 @@ const visibleProducts = products.filter((p) => !p.legacy);
 
 const CATS = [
   { id: 'all', label: 'All' },
-  { id: 'flagship', label: 'Editions' },
-  { id: 'agent', label: 'Strategy research · $149' },
-  { id: 'extension', label: 'Extensions · $79' },
+  { id: 'flagship', label: 'Verified releases' },
 ] as const;
 
 function money(n: number) {
@@ -44,9 +42,6 @@ export default function StorePage() {
       const okQ = !q || (p.name + ' ' + p.description).toLowerCase().includes(q);
       return okCat && okQ;
     });
-    // Core Edition (the only flagship) leads the catalogue — it's the $99 entry point
-    // the rest of the site funnels to. Bundles rank below it rather than alongside it,
-    // otherwise the descending-price tie-break floats the $399 Desk Edition to the top.
     const order: Record<string, number> = { flagship: 0, bundle: 1, agent: 2, extension: 3 };
     if (sort === 'asc') list = [...list].sort((a, b) => a.price - b.price);
     else if (sort === 'desc') list = [...list].sort((a, b) => b.price - a.price);
@@ -68,13 +63,12 @@ export default function StorePage() {
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 32, flexWrap: 'wrap', marginBottom: 36, paddingTop: 66 }}>
           <div>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11.5, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--color-accent)', marginBottom: 12 }}>
-              Store · 3 editions, 3 focused add-ons
+              Store · verified source releases
             </div>
             <h1 style={{ fontSize: 'clamp(40px,5vw,62px)', letterSpacing: '-0.018em', lineHeight: 1.08, margin: 0 }}>The catalogue.</h1>
           </div>
           <p style={{ fontSize: 15.5, lineHeight: 1.6, color: 'var(--color-neutral-800)', maxWidth: '40ch', margin: 0 }}>
-            Start with the Core workspace, add the research or market extensions you need, or choose a verified bundle.
-            Every purchase is versioned source code with account-bound delivery.
+            Cival Core 2.0 is the current verified release. Retired prototypes and incomplete add-ons are not listed or available for purchase.
           </p>
         </div>
 
@@ -86,14 +80,14 @@ export default function StorePage() {
 
         <div data-cv-2col style={{ display: 'grid', gridTemplateColumns: 'repeat(3,minmax(0,1fr))', gap: 1, background: 'var(--color-divider)', borderRadius: 'var(--radius-lg)', overflow: 'hidden', marginBottom: 28 }}>
           <div style={{ background: 'var(--color-neutral-100)', padding: '24px 26px' }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--color-accent)', marginBottom: 11 }}>Start with one edition</div>
-            <div style={{ fontFamily: 'var(--font-heading)', fontSize: 19, marginBottom: 7, lineHeight: 1.25 }}>$99 · $199 · $349</div>
-            <div style={{ fontSize: 13.5, lineHeight: 1.55, color: 'var(--color-neutral-800)' }}>Core, Trader, and Desk provide a clear path from the base workspace to the complete source bundle.</div>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--color-accent)', marginBottom: 11 }}>One verified release</div>
+            <div style={{ fontFamily: 'var(--font-heading)', fontSize: 19, marginBottom: 7, lineHeight: 1.25 }}>Cival Core 2.0 · $99</div>
+            <div style={{ fontSize: 13.5, lineHeight: 1.55, color: 'var(--color-neutral-800)' }}>A clean, versioned source package with paper-only execution and a public demo.</div>
           </div>
           <div style={{ background: 'var(--color-neutral-100)', padding: '24px 26px' }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--color-accent)', marginBottom: 11 }}>Only what is actually wired</div>
-            <div style={{ fontFamily: 'var(--font-heading)', fontSize: 19, marginBottom: 7, lineHeight: 1.25 }}>7 strategies · one pack</div>
-            <div style={{ fontSize: 13.5, lineHeight: 1.55, color: 'var(--color-neutral-800)' }}>The research pack follows the seven live dispatcher paths and includes reproducible evidence—including failures.</div>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--color-accent)', marginBottom: 11 }}>Safe by default</div>
+            <div style={{ fontFamily: 'var(--font-heading)', fontSize: 19, marginBottom: 7, lineHeight: 1.25 }}>Paper orders only</div>
+            <div style={{ fontSize: 13.5, lineHeight: 1.55, color: 'var(--color-neutral-800)' }}>No exchange connector, wallet secret form, withdrawal flow, or live-order endpoint.</div>
           </div>
           <div style={{ background: 'var(--color-neutral-100)', padding: '24px 26px' }}>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--color-accent)', marginBottom: 11 }}>Account-bound licenses</div>
@@ -105,7 +99,7 @@ export default function StorePage() {
         <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'center', padding: '16px 0', borderTop: '1px solid var(--color-divider)', borderBottom: '1px solid var(--color-divider)', position: 'sticky', top: 66, background: 'var(--color-bg)', zIndex: 40 }}>
           <div style={{ position: 'relative', flex: '1 1 220px', maxWidth: 320 }}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-600)" strokeWidth="2.75" strokeLinecap="round" style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)' }}><path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16z" /><path d="m21 21-4.3-4.3" /></svg>
-            <input className="input" type="search" placeholder="Search editions, agents, extensions…" value={query} onChange={(e) => setQuery(e.target.value)} style={{ paddingLeft: 38 }} />
+            <input className="input" type="search" placeholder="Search verified releases…" value={query} onChange={(e) => setQuery(e.target.value)} style={{ paddingLeft: 38 }} />
           </div>
           <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap', marginRight: 'auto' }}>
             {CATS.map((c) => {

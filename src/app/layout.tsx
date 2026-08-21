@@ -21,20 +21,16 @@ export const metadata: Metadata = {
     template: "%s — Cival Systems",
   },
   description:
-    "Versioned trading-workspace source, reproducible strategy research, and focused market extensions. Inspect the code, start in paper mode, and deploy on your own terms.",
+    "Cival Core 2.0 is a versioned, paper-only trading-workspace source template with simulated orders, agent controls, risk views, audit history, and portable backups.",
   keywords: [
     "AI trading dashboard",
     "trading agents",
     "trading source templates",
     "crypto trading tools",
     "algorithmic trading",
-    "flash loan arbitrage",
-    "meme coin trading",
-    "strategy research source",
     "algorithmic trading template",
-    "trading automation",
-    "Hyperliquid",
-    "DeFi tools",
+    "paper trading dashboard",
+    "simulated trading workspace",
     "Next.js trading dashboard",
   ],
   authors: [{ name: "Cival Systems" }],
@@ -46,7 +42,7 @@ export const metadata: Metadata = {
     url: siteUrl,
     siteName: "Cival Systems",
     title: "Cival Systems — Trading Systems, Shipped as Source",
-    description: "Versioned trading-workspace source, reproducible strategy research, and focused market extensions. Inspect the code, start in paper mode, and deploy on your own terms.",
+    description: "Cival Core 2.0 is a versioned, paper-only operations dashboard source template with simulated orders and portable backups.",
     images: [
       {
         url: "/brand/cival-og-1200x630-v1.png",
@@ -59,7 +55,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Cival Systems — Trading Systems, Shipped as Source",
-    description: "Versioned trading-workspace source, reproducible strategy research, and focused market extensions. Paper mode first.",
+    description: "Cival Core 2.0 is a versioned, paper-only operations dashboard source template.",
     images: ["/brand/cival-og-1200x630-v1.png"],
   },
   icons: {

@@ -112,6 +112,9 @@ export default function ContactPage() {
                 style={{ cursor: 'pointer' }}
               >
                 <option>Product Question</option>
+                <option>Technical Support</option>
+                <option>Managed Hosting</option>
+                <option>Billing or Refund</option>
                 <option>Custom Work</option>
                 <option>Collaboration</option>
                 <option>Licensing</option>
@@ -148,7 +151,7 @@ export default function ContactPage() {
 
             {status === 'success' && (
               <p style={{ fontSize: 13.5, color: 'var(--color-accent-700)', textAlign: 'center', margin: 0 }}>
-                Thanks for reaching out! We&apos;ll get back to you soon.
+                Your request was received. Keep this browser confirmation for your records.
               </p>
             )}
             {status === 'error' && (
@@ -164,7 +167,7 @@ export default function ContactPage() {
               Product, licence, hosting, and refund requests are routed to the Cival support inbox.
             </p>
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: 14, fontWeight: 600, color: 'var(--color-accent)' }}>
-              Typical response: within one business day
+              Requests are handled on a best-effort basis; no response-time SLA is promised.
             </span>
           </div>
         </div>

@@ -1,4 +1,3 @@
-import { randomBytes } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import process from 'node:process';
@@ -13,18 +12,18 @@ function vercel(args, input) {
   return `${result.stdout || ''}\n${result.stderr || ''}`;
 }
 
-const listing = vercel(['env', 'ls', 'production']);
 const values = {
   NEXT_PUBLIC_HOSTING_SALES_ENABLED: 'false',
-  HOSTING_CREDENTIAL_KEY_VERSION: '1',
+  HOSTING_AUTOMATION_ENABLED: 'false',
+  VERCEL_HOSTING_TEAM_ID: 'team_UQDiJYPKA5kNGAaBbijEk5FX',
+  CIVAL_CORE_GITHUB_REPO: 'captainplanet9000/ai-trading-dashboard',
+  CIVAL_CORE_GITHUB_REPO_ID: '1173044109',
+  CIVAL_CORE_GIT_REF: 'main',
 };
-if (!listing.includes('HOSTING_CREDENTIAL_MASTER_KEY')) {
-  values.HOSTING_CREDENTIAL_MASTER_KEY = randomBytes(32).toString('base64');
-}
 
 for (const [key, value] of Object.entries(values)) {
   vercel(['env', 'add', key, 'production', '--force'], value);
   console.log(`Configured production ${key}`);
 }
 
-console.log('Managed-hosting checkout remains disabled. Credential material was never printed.');
+console.log('Managed paper-hosting checkout and automation remain disabled. Add a dedicated scoped automation token only for the tenant drill.');

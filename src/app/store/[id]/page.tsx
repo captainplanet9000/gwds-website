@@ -5,13 +5,13 @@ import ProductDetailClient from './ProductDetailClient';
 import { notFound } from 'next/navigation';
 
 export function generateStaticParams() {
-  return products.map(p => ({ id: p.id }));
+  return products.filter((product) => !product.legacy).map((product) => ({ id: product.id }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
   const product = getProduct(id);
-  if (!product) return {};
+  if (!product || product.legacy) return {};
   const cat = categories.find((c) => c.id === product.category);
   const priceStr = product.price > 0 ? `$${product.price}` : "Free";
   const title = `${product.name} — ${priceStr}`;
@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const product = getProduct(id);
-  if (!product) notFound();
+  if (!product || product.legacy) notFound();
 
   const related = products
     .filter(p => p.category === product.category && p.id !== product.id && !p.legacy)

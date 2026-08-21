@@ -21,6 +21,7 @@ language plpgsql
 security definer
 set search_path = public, pg_temp
 as $$
+#variable_conflict use_column
 declare
   v_claimed integer;
   v_order public.orders%rowtype;

@@ -1,4 +1,3 @@
-import { createCipheriv, createHash, randomBytes } from 'node:crypto';
 import type Stripe from 'stripe';
 import { CommerceError } from '@/lib/commerce';
 
@@ -20,8 +19,8 @@ export const HOSTING_PLAN_COPY = [
     priceCents: 1900,
     priceLabel: '$19',
     intervalLabel: '/ month',
-    description: 'One supervised agent with managed updates and operations.',
-    features: ['One live agent', '250 agent-hours', 'Core Edition licence included'],
+    description: 'One private paper workspace with cloud saves and managed updates.',
+    features: ['Private paper workspace', 'Verified customer sign-in', 'Core Edition licence included'],
   },
   {
     id: 'desk',
@@ -29,8 +28,8 @@ export const HOSTING_PLAN_COPY = [
     priceCents: 7900,
     priceLabel: '$79',
     intervalLabel: '/ month',
-    description: 'Six coordinated agents with shared risk controls.',
-    features: ['Six-agent farm', '1,000 agent-hours', 'Desk Edition licence included', 'Priority support'],
+    description: 'A managed paper-research desk with priority operations support.',
+    features: ['Coordinated paper agents', 'Cloud workspace backups', 'Release updates', 'Priority support'],
     featured: true,
   },
   {
@@ -39,8 +38,8 @@ export const HOSTING_PLAN_COPY = [
     priceCents: 29900,
     priceLabel: '$299',
     intervalLabel: '/ month',
-    description: 'Dedicated multi-workspace runtime for professional teams.',
-    features: ['Dedicated workers', 'Multiple workspaces', 'Team access', 'Private agent delivery'],
+    description: 'A custom paper-research deployment for professional teams.',
+    features: ['Dedicated deployment', 'Custom onboarding', 'Role-planning workshop', 'Private support channel'],
   },
 ] as const;
 
@@ -87,36 +86,6 @@ export function parsePeriod(subscription: Stripe.Subscription) {
     start: start ? new Date(start * 1000).toISOString() : null,
     end: end ? new Date(end * 1000).toISOString() : null,
     trialEnd: subscription.trial_end ? new Date(subscription.trial_end * 1000).toISOString() : null,
-  };
-}
-
-function encryptionKey(): Buffer {
-  const configured = process.env.HOSTING_CREDENTIAL_MASTER_KEY;
-  if (!configured) throw new CommerceError('CREDENTIAL_VAULT_UNAVAILABLE', 'Credential storage is not configured.', 503);
-  const decoded = /^[a-f0-9]{64}$/i.test(configured)
-    ? Buffer.from(configured, 'hex')
-    : Buffer.from(configured, 'base64');
-  if (decoded.length !== 32) {
-    throw new CommerceError('CREDENTIAL_VAULT_UNAVAILABLE', 'Credential storage is not configured.', 503);
-  }
-  return decoded;
-}
-
-export function encryptHostingCredential(secret: string, context: string) {
-  if (secret.length < 16 || secret.length > 4096) {
-    throw new CommerceError('INVALID_CREDENTIAL', 'The credential format is not valid.');
-  }
-  const iv = randomBytes(12);
-  const cipher = createCipheriv('aes-256-gcm', encryptionKey(), iv);
-  cipher.setAAD(Buffer.from(context, 'utf8'));
-  const ciphertext = Buffer.concat([cipher.update(secret, 'utf8'), cipher.final()]);
-  return {
-    ciphertext: ciphertext.toString('base64'),
-    iv: iv.toString('base64'),
-    authTag: cipher.getAuthTag().toString('base64'),
-    fingerprint: createHash('sha256').update(secret, 'utf8').digest('hex'),
-    lastFour: secret.slice(-4),
-    keyVersion: Number(process.env.HOSTING_CREDENTIAL_KEY_VERSION || '1'),
   };
 }
 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { adminUnauthorized, verifyAdmin } from '@/lib/admin-auth';
+import { adminUnauthorized, requireAdmin } from '@/lib/admin-auth';
 import { normalizeHostingText } from '@/lib/hosting';
 import { deliverHostingNotification } from '@/lib/hosting-notifications';
 import { createServerClient } from '@/lib/supabase';
@@ -18,31 +18,30 @@ function validUuid(value: unknown): value is string {
   return typeof value === 'string' && /^[0-9a-f-]{36}$/i.test(value);
 }
 
-async function audit(action: string, data: { user_id?: string | null; subscription_id?: string | null; instance_id?: string | null; metadata?: Record<string, unknown> }) {
+async function audit(action: string, data: { user_id?: string | null; subscription_id?: string | null; instance_id?: string | null; metadata?: Record<string, unknown> }, actorId: string) {
   await createServerClient().from('hosting_audit').insert({
     user_id: data.user_id || null,
     subscription_id: data.subscription_id || null,
     instance_id: data.instance_id || null,
-    actor_type: 'admin', actor_id: 'cival-admin', action,
+    actor_type: 'admin', actor_id: actorId, action,
     metadata: data.metadata || {},
   });
 }
 
 export async function GET(req: NextRequest) {
-  if (!verifyAdmin(req)) return adminUnauthorized();
+  if (!await requireAdmin(req)) return adminUnauthorized();
   const supabase = createServerClient();
-  const [plans, subscriptions, onboarding, instances, credentials, tasks, incidents, usage, history] = await Promise.all([
+  const [plans, subscriptions, onboarding, instances, tasks, incidents, usage, history] = await Promise.all([
     supabase.from('hosting_plans').select('*').order('sort_order'),
     supabase.from('hosting_subscriptions').select('*').order('created_at', { ascending: false }).limit(500),
     supabase.from('hosting_onboarding').select('*').order('updated_at', { ascending: false }).limit(500),
     supabase.from('hosting_instances').select('*').order('updated_at', { ascending: false }).limit(500),
-    supabase.from('hosting_credentials').select('id,instance_id,user_id,credential_type,key_version,fingerprint,last_four,status,verified_at,rotated_at,revoked_at,created_at,updated_at').order('updated_at', { ascending: false }).limit(500),
     supabase.from('hosting_provisioning_tasks').select('*').order('priority', { ascending: false }).order('created_at').limit(1000),
     supabase.from('hosting_incidents').select('*').order('started_at', { ascending: false }).limit(500),
     supabase.from('hosting_usage_daily').select('*').order('usage_date', { ascending: false }).limit(1000),
     supabase.from('hosting_audit').select('*').order('created_at', { ascending: false }).limit(250),
   ]);
-  const firstError = [plans, subscriptions, onboarding, instances, credentials, tasks, incidents, usage, history].find((result) => result.error)?.error;
+  const firstError = [plans, subscriptions, onboarding, instances, tasks, incidents, usage, history].find((result) => result.error)?.error;
   if (firstError) return NextResponse.json({ error: 'Hosting operations data could not be loaded.' }, { status: 503 });
 
   const rows = subscriptions.data || [];
@@ -60,13 +59,14 @@ export async function GET(req: NextRequest) {
       openIncidents: (incidents.data || []).filter((item) => item.status !== 'resolved').length,
     },
     plans: plans.data || [], subscriptions: rows, onboarding: onboarding.data || [],
-    instances: instanceRows, credentials: credentials.data || [], tasks: taskRows,
+    instances: instanceRows, tasks: taskRows,
     incidents: incidents.data || [], usage: usage.data || [], history: history.data || [],
   }, { headers: { 'Cache-Control': 'no-store' } });
 }
 
 export async function PATCH(req: NextRequest) {
-  if (!verifyAdmin(req)) return adminUnauthorized();
+  const admin = await requireAdmin(req, ['owner', 'operator']);
+  if (!admin) return adminUnauthorized();
   try {
     if (Number(req.headers.get('content-length') || '0') > 32_768) return NextResponse.json({ error: 'Request too large' }, { status: 413 });
     const body = await req.json() as Record<string, unknown>;
@@ -108,7 +108,7 @@ export async function PATCH(req: NextRequest) {
       if (patch.status === 'decommissioned') patch.decommissioned_at = now;
       const { data, error } = await supabase.from('hosting_instances').update(patch).eq('id', current.id).select().single();
       if (error) throw error;
-      await audit('instance_updated', { user_id: current.user_id, subscription_id: current.subscription_id, instance_id: current.id, metadata: { fields: Object.keys(patch) } });
+      await audit('instance_updated', { user_id: current.user_id, subscription_id: current.subscription_id, instance_id: current.id, metadata: { fields: Object.keys(patch) } }, admin.userId);
       if (patch.status === 'active' && current.status !== 'active') {
         const { data: subscription } = await supabase.from('hosting_subscriptions').select('customer_email').eq('id', current.subscription_id).single();
         await supabase.from('hosting_notifications').insert({ subscription_id: current.subscription_id, template: 'hosting_activated', recipient_email: subscription?.customer_email, dedup_key: `hosting-activated-${current.id}`, payload: { instance_id: current.id } });
@@ -126,7 +126,7 @@ export async function PATCH(req: NextRequest) {
       if (patch.status === 'approved' || patch.status === 'complete') patch.reviewed_at = now;
       const { data, error } = await supabase.from('hosting_onboarding').update(patch).eq('id', current.id).select().single();
       if (error) throw error;
-      await audit('onboarding_updated', { user_id: current.user_id, subscription_id: current.subscription_id, metadata: { status: patch.status } });
+      await audit('onboarding_updated', { user_id: current.user_id, subscription_id: current.subscription_id, metadata: { status: patch.status } }, admin.userId);
       return NextResponse.json({ onboarding: data });
     }
 
@@ -145,20 +145,20 @@ export async function PATCH(req: NextRequest) {
       const { data, error } = await supabase.from('hosting_provisioning_tasks').update(patch).eq('id', task.id).select().single();
       if (error) throw error;
       const owner = Array.isArray(task.hosting_instances) ? task.hosting_instances[0] : task.hosting_instances;
-      await audit('provisioning_task_updated', { user_id: owner?.user_id, subscription_id: owner?.subscription_id, instance_id: task.instance_id, metadata: { task_id: task.id, status: patch.status } });
+      await audit('provisioning_task_updated', { user_id: owner?.user_id, subscription_id: owner?.subscription_id, instance_id: task.instance_id, metadata: { task_id: task.id, status: patch.status } }, admin.userId);
       return NextResponse.json({ task: data });
     }
 
     if (action === 'create_task' && validUuid(body.instanceId)) {
       const { data: instance } = await supabase.from('hosting_instances').select('id,user_id,subscription_id').eq('id', body.instanceId).maybeSingle();
       const taskType = typeof body.taskType === 'string' ? body.taskType : 'custom';
-      const allowed = ['review','create_project','create_database','configure_secrets','deploy','health_check','backup_check','recovery_test','suspend','resume','decommission','custom'];
+      const allowed = ['review','create_project','create_database','configure_workspace','deploy','health_check','backup_check','recovery_test','suspend','resume','decommission','custom'];
       if (!instance || !allowed.includes(taskType)) return NextResponse.json({ error: 'Invalid task' }, { status: 400 });
       const priority = typeof body.priority === 'number' ? Math.max(0, Math.min(100, Math.round(body.priority))) : 50;
       const idempotencyKey = `${taskType}-${instance.id}-${Date.now()}`;
       const { data, error } = await supabase.from('hosting_provisioning_tasks').insert({ instance_id: instance.id, task_type: taskType, priority, idempotency_key: idempotencyKey, payload: body.payload && typeof body.payload === 'object' ? body.payload : {} }).select().single();
       if (error) throw error;
-      await audit('provisioning_task_created', { user_id: instance.user_id, subscription_id: instance.subscription_id, instance_id: instance.id, metadata: { task_id: data.id, task_type: taskType } });
+      await audit('provisioning_task_created', { user_id: instance.user_id, subscription_id: instance.subscription_id, instance_id: instance.id, metadata: { task_id: data.id, task_type: taskType } }, admin.userId);
       return NextResponse.json({ task: data });
     }
 
@@ -175,7 +175,7 @@ export async function PATCH(req: NextRequest) {
         : supabase.from('hosting_incidents').insert(row);
       const { data, error } = await query.select().single();
       if (error) throw error;
-      await audit('incident_updated', { user_id: instance.user_id, subscription_id: instance.subscription_id, instance_id: instance.id, metadata: { incident_id: data.id, severity, status } });
+      await audit('incident_updated', { user_id: instance.user_id, subscription_id: instance.subscription_id, instance_id: instance.id, metadata: { incident_id: data.id, severity, status } }, admin.userId);
       if (!validUuid(body.incidentId) && row.customer_visible) {
         const { data: subscription } = await supabase.from('hosting_subscriptions').select('customer_email').eq('id', instance.subscription_id).single();
         await supabase.from('hosting_notifications').insert({ subscription_id: instance.subscription_id, template: 'hosting_incident', recipient_email: subscription?.customer_email, dedup_key: `hosting-incident-${data.id}`, payload: { title, detail: description } });
@@ -196,19 +196,8 @@ export async function PATCH(req: NextRequest) {
       }
       const { data, error } = await supabase.from('hosting_plans').update({ launch_ready: launchReady, updated_at: now }).eq('id', plan.id).select().single();
       if (error) throw error;
-      await audit('hosting_plan_gate_updated', { metadata: { plan_id: plan.id, launch_ready: launchReady } });
+      await audit('hosting_plan_gate_updated', { metadata: { plan_id: plan.id, launch_ready: launchReady } }, admin.userId);
       return NextResponse.json({ plan: data, salesEnabled: process.env.NEXT_PUBLIC_HOSTING_SALES_ENABLED === 'true' });
-    }
-
-    if (action === 'verify_credential' && validUuid(body.credentialId)) {
-      const status = body.status === 'active' ? 'active' : 'invalid';
-      const { data: credential } = await supabase.from('hosting_credentials').select('*,hosting_instances(subscription_id)').eq('id', body.credentialId).maybeSingle();
-      if (!credential) return NextResponse.json({ error: 'Credential not found' }, { status: 404 });
-      const { data, error } = await supabase.from('hosting_credentials').update({ status, verified_at: status === 'active' ? now : null, updated_at: now }).eq('id', credential.id).select('id,instance_id,user_id,credential_type,last_four,status,verified_at').single();
-      if (error) throw error;
-      const owner = Array.isArray(credential.hosting_instances) ? credential.hosting_instances[0] : credential.hosting_instances;
-      await audit('credential_status_updated', { user_id: credential.user_id, subscription_id: owner?.subscription_id, instance_id: credential.instance_id, metadata: { credential_type: credential.credential_type, status } });
-      return NextResponse.json({ credential: data });
     }
 
     return NextResponse.json({ error: 'Unsupported hosting operation' }, { status: 400 });

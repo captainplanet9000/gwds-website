@@ -8,31 +8,31 @@ const STEPS = [
     "The same verified account you use for purchases and downloads. No terminal, no Supabase project, no Vercel account.",
   ],
   [
-    "Add a Hyperliquid API wallet",
-    "Trading permission only. Withdrawals are never authorised and we never take custody of funds.",
+    "Choose a paper workspace",
+    "Select the supported managed plan. No exchange key, wallet, or custody permission is accepted.",
   ],
   [
     "Pick your agents",
-    "Choose from the six strategy modules, or run one. Each drops into the dashboard as a plugin.",
+    "Use the included paper agents and risk controls to explore the workflow with simulated orders.",
   ],
   [
-    "Set risk limits and go live",
-    "Start on paper, confirm the behaviour you expect, then promote to real size when you are ready.",
+    "Work safely in paper mode",
+    "Your private workspace is tied to your verified Cival account, saved to the cloud, backed up, and kept paper-only.",
   ],
 ];
 
 const INCLUDED = [
   [
     "Managed runtime",
-    "Servers, database, queues and agent workers are provisioned and supervised for you — the parts that break at 3am.",
+    "The app deployment, authenticated workspace database, provisioning queue, health checks and backups are operated for you.",
   ],
   [
     "Agent supervision",
-    "Health scoring, automatic restarts and farm orchestration. If a worker cannot recover, positions flatten to your configured defensive state and you are alerted.",
+    "Health scoring and automated deployment recovery keep the paper workspace available. Incidents are tracked in your account and the operations console.",
   ],
   [
     "Risk engine always on",
-    "Drawdown halts, per-trade sizing and reconciliation run server-side, independent of whether your laptop is open.",
+    "Paper-only constraints are verified at deployment and by the health gate. The hosted release has no live-order or withdrawal route.",
   ],
   [
     "Updates applied for you",
@@ -40,15 +40,15 @@ const INCLUDED = [
   ],
   [
     "Isolated tenancy",
-    "A separate runtime and data boundary per customer. No shared exchange keys and no shared trading state.",
+    "A separate deployment and row-level-secured workspace record per customer. No exchange keys are requested or stored.",
   ],
   [
     "Encrypted secrets",
-    "Exchange and AI credentials are encrypted at rest, scoped, revocable, and never written into source archives.",
+    "Customer authentication is handled by Supabase; provider automation credentials remain server-only and never enter a customer release.",
   ],
   [
     "Your strategy stays private",
-    "Custom agents and parameters live in your workspace. They are never shared between accounts or used to train anything.",
+    "Your paper orders, audit events and settings live behind your account and are never used to train a model.",
   ],
   [
     "Never locked in",
@@ -73,8 +73,8 @@ const PLANS = [
     name: "Solo",
     price: "$19",
     per: "/ mo",
-    blurb: "One live agent on real size, supervised and patched by us.",
-    items: ["1 live agent", "250 agent-hours", "Core Edition licence included"],
+    blurb: "One private cloud-saved paper workspace, provisioned and patched by us.",
+    items: ["Verified customer sign-in", "Automated backups", "Core Edition licence included"],
     featured: false,
   },
   {
@@ -82,13 +82,12 @@ const PLANS = [
     price: "$79",
     per: "/ mo",
     blurb:
-      "All six agents as a coordinated farm. This is the plan that replaces building it yourself.",
+      "A managed paper-research desk with release updates and priority operations support.",
     items: [
-      "All 6 agents, run as a farm",
-      "Shared risk limits + regime coordinator",
-      "1,000 agent-hours",
-      "Desk Edition licence included",
-      "Priority Discord channel",
+      "Coordinated paper agents",
+      "Cloud workspace backups",
+      "Paper-only health verification",
+      "Priority support",
     ],
     featured: true,
   },
@@ -96,12 +95,12 @@ const PLANS = [
     name: "Fund",
     price: "$299",
     per: "/ mo",
-    blurb: "Multiple books, multiple operators, private agents.",
+    blurb: "A custom paper-research deployment for professional teams.",
     items: [
-      "Unlimited agents and workspaces",
-      "Team seats and role permissions",
-      "Dedicated workers, no shared queue",
-      "Private agent development",
+      "Dedicated deployment",
+      "Custom onboarding",
+      "Role-planning workshop",
+      "Private support channel",
     ],
     featured: false,
   },
@@ -111,20 +110,20 @@ const MATRIX = [
   ["Full TypeScript source", "Yours forever", "Yours forever"],
   ["Servers and database", "You provide and configure", "Provisioned for you"],
   ["Updates and patches", "Manual pull", "Applied automatically"],
-  ["Agent supervision and restarts", "Your machine", "Managed workers"],
+  ["Deployment health and recovery", "You operate it", "Managed checks"],
   [
-    "Risk engine uptime",
-    "Only while your machine runs",
-    "Always on, server-side",
+    "Workspace persistence",
+    "Browser storage and JSON export",
+    "Authenticated cloud saves and backups",
   ],
-  ["Time to first live agent", "An afternoon", "Under ten minutes"],
+  ["Provisioning target", "You configure it", "Automated after onboarding"],
   ["Cost", "One-time, $99–399", "Monthly, cancel anytime"],
 ];
 
 const FAQ = [
   [
-    "Do you ever touch my funds?",
-    "No. You connect a Hyperliquid API wallet with trading permission only. Withdrawals are never authorised and we never hold custody. Never paste your main private key — here or anywhere else.",
+    "Do you ever touch my funds or keys?",
+    "No. The supported hosted release is paper-only and does not accept an exchange key, wallet key, withdrawal permission, or custody of funds.",
   ],
   [
     "Can I self-host later?",
@@ -132,15 +131,15 @@ const FAQ = [
   ],
   [
     "What happens if the service goes down?",
-    "Agents run on isolated workers with automatic restarts. If a worker cannot recover, your positions are flattened to your configured defensive state and you are alerted.",
+    "The deployment health gate retries recoverable failures, records incidents, and preserves a validated workspace backup. Because the service is paper-only, an outage cannot submit or manage a real position.",
   ],
   [
     "Is my strategy code private?",
-    "Yes. Custom agents and parameters live in your workspace, encrypted at rest, and are never used to train anything or shared with other accounts.",
+    "Yes. Paper workspace state is restricted by your verified account and tenant record and is never used to train anything or shared with other customers.",
   ],
   [
     "Does hosting reduce trading risk?",
-    "No. Hosting removes infrastructure work, not market risk. You remain responsible for your strategy, your risk limits and your capital.",
+    "Hosting removes infrastructure work but does not validate a strategy or promise performance. The supported release uses simulated orders only.",
   ],
 ];
 
@@ -158,12 +157,12 @@ const STATUS = [
   [
     "Hosted control plane",
     "Built",
-    "Tenant ownership, onboarding, encrypted credential intake, provisioning tasks, health, usage, incidents, backups, recovery and teardown state are implemented.",
+    "Tenant ownership, onboarding, provisioning tasks, health, usage, incidents, backups, recovery and teardown state are implemented without customer trading credentials.",
   ],
   [
     "Operations console",
     "Built",
-    "Cival operators can manage plans, subscriptions, customers, onboarding, deployments, credentials, tasks, incidents and the audit trail.",
+    "Cival operators can manage plans, subscriptions, customers, onboarding, deployments, tasks, incidents and the audit trail.",
   ],
   [
     "Hosted subscriptions",
@@ -173,7 +172,7 @@ const STATUS = [
   [
     "Tenant runtime",
     "Launch gate",
-    "The service remains unavailable for payment until the Core release builds cleanly and isolated deployment, monitoring, backup and recovery drills pass.",
+    "The service remains unavailable for payment until automated deployment credentials are installed and an isolated end-to-end provisioning, monitoring, backup and recovery drill passes.",
   ],
 ];
 
@@ -233,9 +232,9 @@ export default function HostedPage() {
               margin: "0 0 14px",
             }}
           >
-            Same product, same source, none of the infrastructure. Create an
-            account, connect a Hyperliquid API wallet, pick your agents. We
-            handle the servers, the database, the supervision and the updates.
+            Same paper-only product, same source, none of the infrastructure.
+            Create an account and choose a managed workspace. We handle the
+            deployment, authenticated database, health checks, backups and updates.
           </p>
           <p
             style={{
@@ -440,10 +439,10 @@ export default function HostedPage() {
                 margin: "0 0 34px",
               }}
             >
-              Paid hosting includes the edition licence outright — five months
-              of Desk costs about what the Desk edition costs on its own, and
-              you keep the source if you cancel. Agent-hours are billed per
-              running agent, not per trade.
+              Paid plans include a Cival Core 2.0 source licence. You keep that
+              purchased release if you later cancel hosting. Agent-hours refer
+              only to simulated research activity; the supported service cannot
+              submit live trades.
             </p>
 
             <div

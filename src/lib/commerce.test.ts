@@ -52,9 +52,9 @@ describe('sellable catalog invariants', () => {
     expect(product!.downloadUrl).toMatch(/^downloads\/[a-z0-9.-]+\.zip$/);
   });
 
-  it('marks every add-on as requiring the Core platform', () => {
+  it('only exposes the verified Core release while add-ons remain gated', () => {
+    expect(active.map((product) => product.id)).toEqual(['trading-dashboard-template']);
     const addons = active.filter((product) => product.productType === 'agent' || product.productType === 'extension');
-    expect(addons.length).toBeGreaterThan(0);
     expect(addons.every((product) => product.requiresDashboard === true)).toBe(true);
   });
 });

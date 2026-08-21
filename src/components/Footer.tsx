@@ -25,8 +25,8 @@ export default function Footer() {
           <div data-cv-linklist style={{ display: 'grid', gap: 9, fontSize: 14 }}>
             <Link href="/store" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>All products</Link>
             <Link href="/store" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Pricing</Link>
-            <Link href="/store/trading-dashboard-template" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Core Edition — $99</Link>
-            <Link href="/store?cat=agent" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Trading agents</Link>
+            <Link href="/store/trading-dashboard-template" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Cival Core 2.0 — $99</Link>
+            <Link href="/docs/setup" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Core setup guide</Link>
             <Link href="/hosted" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Managed hosting</Link>
             <Link href="/account/hosting" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Hosting account</Link>
           </div>
@@ -40,6 +40,7 @@ export default function Footer() {
             <Link href="/refunds" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Refund policy</Link>
             <Link href="/disclaimer" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Disclaimer</Link>
             <Link href="/hosting-terms" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Hosting terms</Link>
+            <Link href="/status" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Service status</Link>
           </div>
         </div>
 
@@ -77,6 +78,7 @@ export default function Footer() {
           <Link href="/refunds" style={{ color: 'var(--color-neutral-400)', textDecoration: 'none' }}>Refunds</Link>
           <Link href="/disclaimer" style={{ color: 'var(--color-neutral-400)', textDecoration: 'none' }}>Disclaimer</Link>
           <Link href="/hosting-terms" style={{ color: 'var(--color-neutral-400)', textDecoration: 'none' }}>Hosting Terms</Link>
+          <Link href="/status" style={{ color: 'var(--color-neutral-400)', textDecoration: 'none' }}>Status</Link>
         </div>
       </div>
     </footer>

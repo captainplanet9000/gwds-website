@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCoupon, updateCoupon, deleteCoupon } from '@/lib/store-db';
-import { adminUnauthorized, verifyAdmin } from '@/lib/admin-auth';
+import { adminUnauthorized, requireAdmin } from '@/lib/admin-auth';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  if (!verifyAdmin(req)) return adminUnauthorized();
+  if (!await requireAdmin(req)) return adminUnauthorized();
   try {
     const { id } = await params;
     const coupon = await getCoupon(id);
@@ -15,7 +15,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 }
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  if (!verifyAdmin(req)) return adminUnauthorized();
+  if (!await requireAdmin(req, ['owner', 'operator'])) return adminUnauthorized();
   try {
     const { id } = await params;
     const body = await req.json();
@@ -34,7 +34,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  if (!verifyAdmin(req)) return adminUnauthorized();
+  if (!await requireAdmin(req, ['owner'])) return adminUnauthorized();
   try {
     const { id } = await params;
     const deleted = await deleteCoupon(id);

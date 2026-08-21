@@ -516,6 +516,7 @@ language plpgsql
 security definer
 set search_path = public, pg_temp
 as $$
+#variable_conflict use_column
 declare
   v_order_id uuid;
   v_claimed integer;

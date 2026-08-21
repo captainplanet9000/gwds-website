@@ -205,7 +205,25 @@ async function syncHostingSubscription(event: Stripe.Event, subscription: Stripe
   });
   if (error) throw new Error(`HOSTING_SYNC_FAILED:${error.message}`);
   const internalId = subscription.metadata?.hosting_subscription_id;
-  if (internalId && /^[0-9a-f-]{36}$/i.test(internalId)) await deliverHostingNotification(internalId);
+  if (internalId && /^[0-9a-f-]{36}$/i.test(internalId)) {
+    const supabase = createServerClient();
+    const { data: instance } = await supabase.from('hosting_instances')
+      .select('id,provider_project_id')
+      .eq('subscription_id', internalId)
+      .maybeSingle();
+    if (instance?.provider_project_id) {
+      const taskType = ['active', 'trialing'].includes(subscription.status) ? 'resume' : 'suspend';
+      await supabase.from('hosting_provisioning_tasks').upsert({
+        instance_id: instance.id,
+        task_type: taskType,
+        status: 'queued',
+        priority: 95,
+        idempotency_key: `stripe-${taskType}-${event.id}`,
+        payload: { stripe_event_id: event.id, subscription_status: subscription.status },
+      }, { onConflict: 'idempotency_key', ignoreDuplicates: true });
+    }
+    await deliverHostingNotification(internalId);
+  }
 }
 
 function invoiceSubscriptionId(invoice: Stripe.Invoice): string | null {

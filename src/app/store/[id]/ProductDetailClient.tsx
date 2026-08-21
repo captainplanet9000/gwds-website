@@ -209,7 +209,7 @@ export default function ProductDetailClient({ product, related }: { product: Pro
               <div style={{ marginTop: 24, padding: '22px 24px', borderRadius: 'var(--radius-lg)', background: 'var(--color-accent-2-100)' }}>
                 <div style={{ fontFamily: 'var(--font-heading)', fontSize: 17, marginBottom: 8, color: 'var(--color-accent-2-900)' }}>Not included</div>
                 <p style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--color-accent-2-900)', margin: 0 }}>
-                  API keys, exchange accounts, funded capital, or signals. You bring your keys, your capital, and your own risk limits. This is software, not advice.
+                  Exchange connectivity, wallet credentials, live-order execution, funded capital, or trading signals. The supported release is paper-only software, not financial advice.
                 </p>
               </div>
             </div>
@@ -222,9 +222,9 @@ export default function ProductDetailClient({ product, related }: { product: Pro
           <div data-cv-2col style={{ display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 1, background: 'var(--color-divider)', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
             {[
               { n: '01', t: 'Download & extract', d: 'Grab the zip from your download page and unpack it wherever you keep projects.' },
-              { n: '02', t: 'Run QUICK-START', d: 'Double-click the script. It installs dependencies, writes your config, and opens the dashboard.' },
-              { n: '03', t: 'Add your keys', d: 'The setup wizard walks through Hyperliquid, Supabase, and your AI provider.' },
-              { n: '04', t: 'Go live', d: 'Create an agent, set risk limits, and let it trade. Or stay in demo mode as long as you like.' },
+              { n: '02', t: 'Install dependencies', d: 'Run npm ci in the extracted product folder with Node.js 20 or newer.' },
+              { n: '03', t: 'Open the paper desk', d: 'Run npm run dev and open localhost:3000. Local mode does not require an exchange, wallet, API key, or database.' },
+              { n: '04', t: 'Verify your changes', d: 'Use simulated orders, export a backup, and run npm run check before deploying your fork.' },
             ].map((s) => (
               <div key={s.n} style={{ background: 'var(--color-neutral-100)', padding: '28px 26px' }}>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--color-accent)', marginBottom: 14 }}>{s.n}</div>

@@ -6,22 +6,23 @@ import process from 'node:process';
 
 const workspace = process.cwd();
 const sourceRoot = path.resolve(process.env.RELEASE_SOURCE_ROOT || 'tmp/release-audit/extracted');
+const coreSource = path.resolve(process.env.RELEASE_CORE_SOURCE_ROOT || '../Cival_Core_Release2/product');
 const outputRoot = path.resolve(process.env.RELEASE_OUTPUT_ROOT || 'tmp/release-build');
 const stageRoot = path.join(outputRoot, 'staging');
 const artifactRoot = path.join(outputRoot, 'artifacts');
 const assetsRoot = path.join(workspace, 'release-assets');
 
 const paths = {
-  core: path.join(sourceRoot, 'core'),
+  core: coreSource,
   meme: path.join(sourceRoot, 'meme'),
   flash: path.join(sourceRoot, 'flash'),
 };
 
-for (const [name, source] of Object.entries(paths)) {
+for (const [name, source] of Object.entries({ core: paths.core })) {
   try {
     if (!(await stat(source)).isDirectory()) throw new Error();
   } catch {
-    throw new Error(`Missing ${name} release source: ${source}. Run scripts/audit-release-inventory.mjs first or set RELEASE_SOURCE_ROOT.`);
+    throw new Error(`Missing ${name} release source: ${source}. Set RELEASE_CORE_SOURCE_ROOT to the verified Cival Core product directory.`);
   }
 }
 
@@ -30,7 +31,7 @@ await mkdir(stageRoot, { recursive: true });
 await mkdir(artifactRoot, { recursive: true });
 
 const excludedNames = new Set([
-  '.git', '.next', '.turbo', 'node_modules', 'coverage', 'dist', 'build',
+  '.git', '.next', '.turbo', '.vercel', 'node_modules', 'coverage', 'dist', 'build',
   'tsconfig.tsbuildinfo', 'typecheck-output.txt', '.DS_Store', 'Thumbs.db',
 ]);
 
@@ -49,13 +50,11 @@ async function copyReleaseSource(source, destination) {
 const licence = await readFile(path.join(assetsRoot, 'strategy-pack', 'LICENSE.md'), 'utf8');
 
 async function stageCore() {
-  const destination = path.join(stageRoot, 'ai-trading-dashboard-v1.0.1');
+  const commandShell = process.env.ComSpec || 'cmd.exe';
+  execFileSync(commandShell, ['/d', '/s', '/c', 'npm run check'], { cwd: paths.core, stdio: 'inherit' });
+  execFileSync(commandShell, ['/d', '/s', '/c', 'npm run audit:prod'], { cwd: paths.core, stdio: 'inherit' });
+  const destination = path.join(stageRoot, 'cival-core-v2.0.0');
   await copyReleaseSource(paths.core, destination);
-  await writeFile(path.join(destination, 'LICENSE.md'), licence);
-  const readmePath = path.join(destination, 'README.md');
-  const readme = await readFile(readmePath, 'utf8');
-  const notice = `# Cival Core Edition 1.0.1\n\n> Start in demo, paper, or exchange testnet mode. This is source code, not a managed service or a promise of trading results. Review authentication, database policies, credential handling, order sizing, and emergency controls before enabling live execution.\n\n`;
-  await writeFile(readmePath, `${notice}${readme.replaceAll('gwds.app', 'civalsystems.com').replaceAll('support@gwds.app', 'support@civalsystems.com')}`);
   return destination;
 }
 
@@ -180,24 +179,8 @@ async function writeBundle(name, nestedArtifacts) {
 }
 
 const coreStage = await stageCore();
-const strategyStage = await stageStrategyPack();
-const memeStage = await stageMeme();
-const flashStage = await stageFlash();
-
-runEvidence(strategyStage, false);
-runEvidence(strategyStage, true);
-
-const coreArtifact = await zipDirectory(coreStage, 'ai-trading-dashboard-v1.0.1.zip');
-const strategyArtifact = await zipDirectory(strategyStage, 'strategy-pack-v1.0.0.zip');
-const memeArtifact = await zipDirectory(memeStage, 'meme-trading-suite-v1.0.1.zip');
-const flashArtifact = await zipDirectory(flashStage, 'flash-loan-arbitrage-v1.1.1.zip');
-
-const traderStage = await writeBundle('trader-edition-v1.0.0', [coreArtifact, strategyArtifact]);
-const deskStage = await writeBundle('desk-edition-v1.0.0', [coreArtifact, strategyArtifact, memeArtifact, flashArtifact]);
-const traderArtifact = await zipDirectory(traderStage, 'trader-edition-v1.0.0.zip');
-const deskArtifact = await zipDirectory(deskStage, 'desk-edition-v1.0.0.zip');
-
-const artifacts = [coreArtifact, strategyArtifact, memeArtifact, flashArtifact, traderArtifact, deskArtifact];
+const coreArtifact = await zipDirectory(coreStage, 'cival-core-v2.0.0.zip');
+const artifacts = [coreArtifact];
 const releaseManifest = [];
 for (const artifact of artifacts) {
   releaseManifest.push({

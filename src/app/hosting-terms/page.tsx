@@ -15,11 +15,11 @@ const sections = [
   ],
   [
     "2. Eligibility and account security",
-    "You must provide accurate account information, keep your login secure, use a dedicated API wallet, enable only permissions needed for trading, and keep withdrawals disabled. Never provide a seed phrase or the private key for your primary wallet. You are responsible for every instruction and risk limit submitted through your account.",
+    "You must provide accurate account information and keep your login secure. The supported service is paper-only and does not accept exchange API keys, wallet secrets, seed phrases, private keys, or authority to submit live orders. You are responsible for the research settings and simulated risk limits submitted through your account.",
   ],
   [
     "3. Activation and operator review",
-    "Payment does not by itself place a strategy live. Cival may require onboarding information, credential verification, paper-mode observation and operator approval. A workspace remains queued, suspended or paper-only until required safety checks pass. Cival may reject or suspend unsafe, unlawful, abusive, unsupported or technically incompatible configurations.",
+    "Payment does not place a strategy live. Cival may require onboarding information and operator approval. Every supported workspace remains paper-only. Cival may reject or suspend unsafe, unlawful, abusive, unsupported or technically incompatible configurations.",
   ],
   [
     "4. Billing and cancellation",
@@ -31,7 +31,7 @@ const sections = [
   ],
   [
     "6. Credentials and customer data",
-    "Cival encrypts submitted service credentials at rest and restricts access to operations needed to deliver the service. Credentials are not displayed after submission. You may rotate or revoke them from your account. Cival may retain billing, security and audit records as described in the Privacy Policy and may delete runtime data after service termination.",
+    "Cival does not request or store exchange, wallet, or third-party provider secrets for the supported paper service. Customer workspace state is isolated by verified account and tenant access controls. Cival may retain billing, security and audit records as described in the Privacy Policy and may delete runtime data after service termination.",
   ],
   [
     "7. Availability, maintenance and incidents",
@@ -43,7 +43,7 @@ const sections = [
   ],
   [
     "9. Suspension and termination",
-    "Cival may suspend a workspace for failed payment, security risk, credential failure, abuse, legal requirements, provider restrictions, unsupported configuration or risk to other customers. After cancellation or termination, Cival may decommission runtime resources and delete credentials. Billing records and audit logs may be retained where legally or operationally required.",
+    "Cival may suspend a workspace for failed payment, security risk, abuse, legal requirements, provider restrictions, unsupported configuration or risk to other customers. After cancellation or termination, Cival may decommission runtime resources and delete workspace state according to the Privacy Policy. Billing records and audit logs may be retained where legally or operationally required.",
   ],
   [
     "10. Support and notices",
@@ -68,7 +68,7 @@ export default function HostingTermsPage() {
             These terms supplement the Cival Systems{" "}
             <Link href="/terms">Terms</Link>,{" "}
             <Link href="/privacy">Privacy Policy</Link>,{" "}
-            <Link href="/refund-policy">Refund Policy</Link>, and{" "}
+            <Link href="/refunds">Refund Policy</Link>, and{" "}
             <Link href="/disclaimer">Trading Disclaimer</Link>. If there is a
             conflict about Managed Hosting, these service-specific terms
             control. This operational draft should receive business/legal review

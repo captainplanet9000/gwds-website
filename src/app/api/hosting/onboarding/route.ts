@@ -14,13 +14,9 @@ export async function PUT(req: NextRequest) {
     if (!/^[0-9a-f-]{36}$/i.test(subscriptionId)) throw new CommerceError('INVALID_SUBSCRIPTION', 'Choose a valid subscription.');
 
     const workspaceName = normalizeHostingText(body.workspaceName, 80, true);
-    const environment = body.environment === 'live' ? 'live' : 'paper';
+    const environment = 'paper';
     const region = typeof body.region === 'string' && ['iad1', 'sfo1', 'fra1', 'sin1'].includes(body.region) ? body.region : 'iad1';
     const riskProfile = typeof body.riskProfile === 'string' && ['conservative', 'balanced', 'custom'].includes(body.riskProfile) ? body.riskProfile : 'conservative';
-    const accountAddress = normalizeHostingText(body.accountAddress, 128, environment === 'live');
-    if (accountAddress && !/^0x[a-fA-F0-9]{40}$/.test(accountAddress)) {
-      throw new CommerceError('INVALID_ACCOUNT_ADDRESS', 'Enter a valid public Hyperliquid account address. Never enter a private key.');
-    }
     const requestedAgents = Array.isArray(body.requestedAgents)
       ? [...new Set(body.requestedAgents.filter((item): item is string => typeof item === 'string' && (HOSTING_AGENT_IDS as readonly string[]).includes(item)))].slice(0, HOSTING_AGENT_IDS.length)
       : [];
@@ -37,7 +33,7 @@ export async function PUT(req: NextRequest) {
     }
     const now = new Date().toISOString();
     const { data, error } = await supabase.from('hosting_onboarding').update({
-      workspace_name: workspaceName, environment, region, account_address: accountAddress,
+      workspace_name: workspaceName, environment, region, account_address: null,
       requested_agents: requestedAgents, risk_profile: riskProfile,
       max_drawdown_pct: drawdown, max_position_usd: position,
       customer_notes: normalizeHostingText(body.customerNotes, 2000),

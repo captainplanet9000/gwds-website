@@ -30,7 +30,6 @@ const required = [
   'RESEND_API_KEY',
   'RESEND_FROM_EMAIL',
   'SUPPORT_EMAIL',
-  'GWDS_ADMIN_PASSWORD',
   'GWDS_ADMIN_SESSION_SECRET',
   'CIVAL_RATE_LIMIT_SECRET',
   'NEWSLETTER_SIGNING_SECRET',
@@ -46,6 +45,11 @@ const desired = {
   NEXT_PUBLIC_STORE_SALES_ENABLED: 'false',
   NEXT_PUBLIC_HOSTING_SALES_ENABLED: 'false',
   STRIPE_AUTOMATIC_TAX: 'false',
+  HOSTING_AUTOMATION_ENABLED: 'false',
+  VERCEL_HOSTING_TEAM_ID: 'team_UQDiJYPKA5kNGAaBbijEk5FX',
+  CIVAL_CORE_GITHUB_REPO: 'captainplanet9000/ai-trading-dashboard',
+  CIVAL_CORE_GITHUB_REPO_ID: '1173044109',
+  CIVAL_CORE_GIT_REF: 'main',
 };
 const npxCli = path.join(path.dirname(process.execPath), 'node_modules', 'npm', 'bin', 'npx-cli.js');
 

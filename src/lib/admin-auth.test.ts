@@ -1,6 +1,12 @@
 import type { NextRequest } from 'next/server';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { ADMIN_COOKIE, createAdminSession, verifyAdmin, verifyAdminPassword } from './admin-auth';
+import { ADMIN_COOKIE, createAdminSession, readAdminSession, verifyAdmin } from './admin-auth';
+
+const identity = {
+  userId: '84e6814e-3019-4652-ad06-862a76dc6ed6',
+  email: 'owner@example.com',
+  role: 'owner' as const,
+};
 
 function requestWithCookie(value?: string): NextRequest {
   return {
@@ -13,25 +19,18 @@ function requestWithCookie(value?: string): NextRequest {
 describe('admin sessions', () => {
   beforeEach(() => {
     process.env.GWDS_ADMIN_SESSION_SECRET = 'test-session-secret-that-is-longer-than-thirty-two-characters';
-    process.env.GWDS_ADMIN_PASSWORD = 'a-strong-test-password';
   });
 
   it('uses a signed, verifiable cookie', () => {
-    const token = createAdminSession();
+    const token = createAdminSession(identity);
     expect(token.split('.')).toHaveLength(2);
     expect(verifyAdmin(requestWithCookie(token))).toBe(true);
+    expect(readAdminSession(requestWithCookie(token))?.role).toBe('owner');
   });
 
   it('rejects missing and tampered cookies', () => {
-    const token = createAdminSession();
+    const token = createAdminSession(identity);
     expect(verifyAdmin(requestWithCookie())).toBe(false);
     expect(verifyAdmin(requestWithCookie(`${token.slice(0, -1)}x`))).toBe(false);
-  });
-
-  it('compares the configured password without a source-code fallback', () => {
-    expect(verifyAdminPassword('a-strong-test-password')).toBe(true);
-    expect(verifyAdminPassword('gwds-admin-2026')).toBe(false);
-    delete process.env.GWDS_ADMIN_PASSWORD;
-    expect(verifyAdminPassword('a-strong-test-password')).toBe(false);
   });
 });

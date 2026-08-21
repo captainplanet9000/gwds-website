@@ -68,14 +68,12 @@ export default function HostingAccountPage() {
     workspaceName: "",
     environment: "paper",
     region: "iad1",
-    accountAddress: "",
     riskProfile: "conservative",
     maxDrawdownPct: "5",
     maxPositionUsd: "",
     customerNotes: "",
     requestedAgents: ["darvas-box"] as string[],
   });
-  const [secret, setSecret] = useState("");
 
   useEffect(() => {
     if (!authLoading && !user)
@@ -95,9 +93,8 @@ export default function HostingAccountPage() {
     if (current)
       setForm({
         workspaceName: current.workspace_name || "",
-        environment: current.environment || "paper",
+        environment: "paper",
         region: current.region || "iad1",
-        accountAddress: current.account_address || "",
         riskProfile: current.risk_profile || "conservative",
         maxDrawdownPct: current.max_drawdown_pct?.toString() || "5",
         maxPositionUsd: current.max_position_usd?.toString() || "",
@@ -160,7 +157,6 @@ export default function HostingAccountPage() {
         return;
       }
       setNotice("Saved. Your operations status has been updated.");
-      setSecret("");
       await load();
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "Request failed");
@@ -489,9 +485,9 @@ export default function HostingAccountPage() {
                     <Status value={onboarding.status} />
                   </div>
                   <p style={{ color: "var(--color-neutral-700)" }}>
-                    Start with paper execution. Live requests require a public
-                    account address and operator review. Never enter a seed
-                    phrase or your main wallet key.
+                    This service supports paper research only. It never accepts
+                    exchange credentials, wallet secrets, seed phrases, or
+                    private keys.
                   </p>
                   <div
                     data-cv-2col
@@ -527,16 +523,7 @@ export default function HostingAccountPage() {
                     </label>
                     <label>
                       Environment
-                      <select
-                        style={field}
-                        value={form.environment}
-                        onChange={(e) =>
-                          setForm({ ...form, environment: e.target.value })
-                        }
-                      >
-                        <option value="paper">Paper</option>
-                        <option value="live">Request live review</option>
-                      </select>
+                      <input style={field} value="Paper only" readOnly />
                     </label>
                     <label>
                       Risk profile
@@ -575,17 +562,6 @@ export default function HostingAccountPage() {
                         value={form.maxPositionUsd}
                         onChange={(e) =>
                           setForm({ ...form, maxPositionUsd: e.target.value })
-                        }
-                      />
-                    </label>
-                    <label style={{ gridColumn: "1/-1" }}>
-                      Public Hyperliquid account address
-                      <input
-                        style={field}
-                        placeholder="0x... (never a private key)"
-                        value={form.accountAddress}
-                        onChange={(e) =>
-                          setForm({ ...form, accountAddress: e.target.value })
                         }
                       />
                     </label>
@@ -658,72 +634,6 @@ export default function HostingAccountPage() {
                   >
                     Submit for operator review
                   </button>
-                </section>
-              )}
-
-              {instance && (
-                <section
-                  style={{
-                    padding: 26,
-                    border: "1px solid var(--color-divider)",
-                    borderRadius: "var(--radius-lg)",
-                    marginBottom: 18,
-                    background: "var(--color-surface)",
-                  }}
-                >
-                  <h2 style={{ marginTop: 0 }}>Secure credential vault</h2>
-                  <p
-                    style={{
-                      color: "var(--color-neutral-700)",
-                      lineHeight: 1.6,
-                    }}
-                  >
-                    Use a dedicated Hyperliquid API wallet with trading
-                    permission only. Withdrawals must remain disabled. The
-                    secret is encrypted with AES-256-GCM, never displayed again,
-                    and can be revoked or rotated here. Do not submit your main
-                    wallet private key or seed phrase.
-                  </p>
-                  <input
-                    type="password"
-                    autoComplete="new-password"
-                    style={field}
-                    placeholder="Dedicated API-wallet secret"
-                    value={secret}
-                    onChange={(e) => setSecret(e.target.value)}
-                  />
-                  <div style={{ display: "flex", gap: 9, marginTop: 12 }}>
-                    <button
-                      className="btn btn-primary"
-                      disabled={!!busy || secret.length < 16}
-                      onClick={() =>
-                        call("credential", "/api/hosting/credentials", {
-                          instanceId: instance.id,
-                          credentialType: "hyperliquid_api_wallet",
-                          secret,
-                        })
-                      }
-                    >
-                      Encrypt and submit for verification
-                    </button>
-                    <button
-                      className="btn btn-secondary"
-                      disabled={!!busy}
-                      onClick={() =>
-                        call(
-                          "revoke",
-                          "/api/hosting/credentials",
-                          {
-                            instanceId: instance.id,
-                            credentialType: "hyperliquid_api_wallet",
-                          },
-                          "DELETE",
-                        )
-                      }
-                    >
-                      Revoke stored credential
-                    </button>
-                  </div>
                 </section>
               )}
 

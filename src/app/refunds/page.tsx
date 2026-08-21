@@ -98,8 +98,8 @@ export default function RefundsPage() {
             <h2 style={sectionHeadingStyle}>4. Processing Timeline</h2>
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               {[
-                { n: 1, title: "Review (24-48 hours)", body: "We verify your request meets eligibility criteria." },
-                { n: 2, title: "Approval & Processing (1-2 business days)", body: "Once approved, we initiate the refund via Stripe." },
+                { n: 1, title: "Eligibility review", body: "We verify the order and the request against this policy. Timing varies with request volume and the information provided." },
+                { n: 2, title: "Approval and initiation", body: "Once approved, we initiate the refund to the original payment method through Stripe." },
                 {
                   n: 3,
                   title: "Bank Processing (5-10 business days)",

@@ -12,7 +12,6 @@ type HostingData = {
   subscriptions: Row[];
   onboarding: Row[];
   instances: Row[];
-  credentials: Row[];
   tasks: Row[];
   incidents: Row[];
   usage: Row[];
@@ -186,7 +185,7 @@ export default function HostingOperationsPage() {
             Hosting Operations
           </h1>
           <p style={{ color: "#789488", margin: 0 }}>
-            Billing, onboarding, provisioning, credentials, runtime health,
+            Billing, onboarding, provisioning, runtime health,
             recovery, incidents and teardown.
           </p>
         </div>

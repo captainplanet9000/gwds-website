@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 
 const navItems = [
   { name: 'Dashboard', href: '/admin', icon: '📊' },
@@ -17,12 +18,23 @@ const navItems = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { signOut } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [authState, setAuthState] = useState<'checking' | 'authenticated' | 'guest'>('checking');
+  const [admin, setAdmin] = useState<{ email: string; role: string } | null>(null);
 
   useEffect(() => {
     fetch('/api/admin/auth', { cache: 'no-store' })
-      .then((response) => setAuthState(response.ok ? 'authenticated' : 'guest'))
+      .then(async (response) => {
+        if (!response.ok) {
+          setAdmin(null);
+          setAuthState('guest');
+          return;
+        }
+        const body = await response.json();
+        setAdmin(body.admin || null);
+        setAuthState('authenticated');
+      })
       .catch(() => setAuthState('guest'));
   }, [pathname]);
 
@@ -146,10 +158,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {/* User Pill */}
           <div style={{ padding: 16, borderTop: '1px solid #1a1a1a', flexShrink: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', background: '#111', borderRadius: 8, border: '1px solid #1a1a1a' }}>
-              <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, #8B5CF6, #EC4899)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem', fontWeight: 700, flexShrink: 0 }}>A</div>
+              <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, #4ade9f, #14b8a6)', color: '#03110b', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem', fontWeight: 700, flexShrink: 0 }}>{admin?.email?.slice(0, 1).toUpperCase() || 'A'}</div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: '0.82rem', fontWeight: 600, color: '#E8E8E8', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Admin</div>
-                <div style={{ fontSize: '0.7rem', color: '#555', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Superuser</div>
+                <div style={{ fontSize: '0.82rem', fontWeight: 600, color: '#E8E8E8', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{admin?.email || 'Admin'}</div>
+                <div style={{ fontSize: '0.7rem', color: '#6c8f80', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{admin?.role || 'admin'}</div>
               </div>
             </div>
           </div>
@@ -179,7 +191,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <button 
                 onClick={async () => {
                   await fetch('/api/admin/auth', { method: 'DELETE' }).catch(() => undefined);
-                  sessionStorage.removeItem('gwds-admin'); 
+                  await signOut().catch(() => undefined);
                   router.replace('/admin');
                   router.refresh();
                 }}

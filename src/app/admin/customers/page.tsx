@@ -2,36 +2,12 @@
 import { useState, useEffect } from 'react';
 
 export default function AdminCustomers() {
-  const [authed, setAuthed] = useState(false);
-  const [password, setPassword] = useState('');
   const [customers, setCustomers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState<'spent' | 'orders' | 'recent'>('spent');
 
-  useEffect(() => { 
-    if (sessionStorage.getItem('gwds-admin') === 'true') setAuthed(true); 
-  }, []);
-
-  const login = () => {
-    fetch('/api/admin/auth', { 
-      method: 'POST', 
-      headers: { 'Content-Type': 'application/json' }, 
-      body: JSON.stringify({ password }) 
-    })
-    .then(r => r.json())
-    .then(d => { 
-      if (d.ok) { 
-        setAuthed(true); 
-        sessionStorage.setItem('gwds-admin', 'true'); 
-      } else {
-        alert('Invalid password'); 
-      }
-    });
-  };
-
   useEffect(() => {
-    if (!authed) return;
     fetch('/api/admin/customers')
       .then(r => r.json())
       .then(d => { 
@@ -39,18 +15,7 @@ export default function AdminCustomers() {
         setLoading(false); 
       })
       .catch(() => setLoading(false));
-  }, [authed]);
-
-  if (!authed) return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
-      <div style={{ maxWidth: 360, width: '100%', padding: 24 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 800, color: '#E8E8E8', marginBottom: 24, textAlign: 'center' }}>Cival Admin</h1>
-        <input type="password" value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === 'Enter' && login()} placeholder="Password"
-          style={{ width: '100%', padding: '14px 16px', background: '#111', border: '1px solid #222', borderRadius: 8, color: '#E8E8E8', fontSize: '0.88rem', outline: 'none', marginBottom: 12, boxSizing: 'border-box' }} />
-        <button onClick={login} style={{ width: '100%', padding: '14px', borderRadius: 8, border: 'none', background: '#8B5CF6', color: '#fff', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer', textTransform: 'uppercase' }}>Login</button>
-      </div>
-    </div>
-  );
+  }, []);
 
   const filteredCustomers = customers.filter(c => 
     search === '' || 
