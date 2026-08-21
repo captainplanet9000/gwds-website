@@ -1,0 +1,125 @@
+// =============================================================================
+//  GWDS design tokens — SCSS variables
+//  Mirror of tokens.css for SCSS codebases. Prefer the CSS variables directly
+//  whenever possible (they support runtime theme swapping); use these only when
+//  you must compile a value at build time.
+// =============================================================================
+
+// ---------- BRAND ------------------------------------------------------------
+$gwds-color-accent:          oklch(0.65 0.29 295);
+$gwds-color-accent-warm:     #D4A574;
+$gwds-color-electric-purple: oklch(0.65 0.29 295);
+$gwds-color-deep-purple:     oklch(0.58 0.32 290);
+$gwds-color-light-purple:    oklch(0.75 0.20 295);
+$gwds-color-cyan-bright:     oklch(0.75 0.15 195);
+$gwds-color-cyan-deep:       oklch(0.65 0.18 195);
+
+// ---------- SURFACE ----------------------------------------------------------
+$gwds-color-bg:          #000000;
+$gwds-color-bg-elevated: #050505;
+$gwds-color-card:        #12121A;
+$gwds-color-muted:       #1A1A2E;
+
+// ---------- BORDER -----------------------------------------------------------
+$gwds-color-border:        rgba(232, 232, 232, 0.1);
+$gwds-color-border-hover:  rgba(232, 232, 232, 0.3);
+$gwds-color-border-strong: oklch(0.20 0.03 260);
+
+// ---------- TEXT -------------------------------------------------------------
+$gwds-color-text:           #E8E8E8;
+$gwds-color-text-secondary: #A8A8A8;
+$gwds-color-text-muted:     #666666;
+$gwds-color-text-inverse:   #000000;
+
+// ---------- SEMANTIC ---------------------------------------------------------
+$gwds-color-success: oklch(0.70 0.18 145);
+$gwds-color-warning: oklch(0.75 0.20 85);
+$gwds-color-error:   oklch(0.65 0.25 25);
+$gwds-color-info:    oklch(0.70 0.15 235);
+
+// ---------- TYPE -------------------------------------------------------------
+$gwds-font-display: "Syne", "Space Grotesk", sans-serif;
+$gwds-font-body:    "DM Sans", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+$gwds-font-mono:    "JetBrains Mono", "Fira Code", Consolas, monospace;
+
+$gwds-fw-normal: 400;
+$gwds-fw-medium: 500;
+$gwds-fw-semibold: 600;
+$gwds-fw-bold: 700;
+$gwds-fw-black: 800;
+
+$gwds-text-xs:   0.64rem;
+$gwds-text-sm:   0.8rem;
+$gwds-text-base: 1rem;
+$gwds-text-lg:   1.25rem;
+$gwds-text-xl:   1.563rem;
+$gwds-text-2xl:  1.953rem;
+$gwds-text-3xl:  2.441rem;
+$gwds-text-4xl:  3.052rem;
+$gwds-text-5xl:  3.815rem;
+$gwds-text-6xl:  4.768rem;
+
+// ---------- SPACE ------------------------------------------------------------
+$gwds-space-0:  0;
+$gwds-space-1:  0.25rem;
+$gwds-space-2:  0.5rem;
+$gwds-space-3:  0.75rem;
+$gwds-space-4:  1rem;
+$gwds-space-5:  1.25rem;
+$gwds-space-6:  1.5rem;
+$gwds-space-8:  2rem;
+$gwds-space-10: 2.5rem;
+$gwds-space-12: 3rem;
+$gwds-space-16: 4rem;
+$gwds-space-20: 5rem;
+$gwds-space-24: 6rem;
+$gwds-space-32: 8rem;
+
+// ---------- RADIUS -----------------------------------------------------------
+$gwds-radius-none: 0;
+$gwds-radius-sm:   0.375rem;
+$gwds-radius-md:   0.5rem;
+$gwds-radius-lg:   0.75rem;
+$gwds-radius-xl:   1rem;
+$gwds-radius-2xl:  1.5rem;
+$gwds-radius-full: 9999px;
+
+// ---------- SHADOW -----------------------------------------------------------
+$gwds-shadow-sm: 0 1px 2px  rgba(0, 0, 0, 0.3);
+$gwds-shadow-md: 0 4px 6px  rgba(0, 0, 0, 0.4);
+$gwds-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+$gwds-shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.6);
+$gwds-glow-sm:   0 0 20px rgba(139, 92, 246, 0.15);
+$gwds-glow-md:   0 0 30px rgba(139, 92, 246, 0.25);
+$gwds-glow-lg:   0 0 40px rgba(139, 92, 246, 0.35);
+
+// ---------- MOTION -----------------------------------------------------------
+$gwds-dur-fast:   150ms;
+$gwds-dur-base:   200ms;
+$gwds-dur-slow:   300ms;
+$gwds-dur-slower: 400ms;
+
+$gwds-ease-in:     cubic-bezier(0.4, 0, 1, 1);
+$gwds-ease-out:    cubic-bezier(0, 0, 0.2, 1);
+$gwds-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+$gwds-ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+// ---------- LAYOUT -----------------------------------------------------------
+$gwds-container:        1600px;
+$gwds-container-narrow: 1200px;
+$gwds-gutter:           5vw;
+
+// ---------- BREAKPOINT MIXINS ------------------------------------------------
+$gwds-bp-xs:  375px;
+$gwds-bp-sm:  640px;
+$gwds-bp-md:  768px;
+$gwds-bp-lg:  1024px;
+$gwds-bp-xl:  1280px;
+$gwds-bp-2xl: 1600px;
+
+@mixin gwds-up($bp) {
+  @media (min-width: $bp) { @content; }
+}
+@mixin gwds-down($bp) {
+  @media (max-width: calc($bp - 1px)) { @content; }
+}

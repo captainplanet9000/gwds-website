@@ -1,16 +1,19 @@
 import { Metadata } from 'next';
 import { products, getProduct, categories } from '@/lib/products';
+import { STORE_SALES_ENABLED } from '@/lib/store-config';
 import ProductDetailClient from './ProductDetailClient';
 import { notFound } from 'next/navigation';
 
 export function generateStaticParams() {
-  return products.map(p => ({ id: p.id }));
+  return products.filter((product) => !product.legacy).map((product) => ({ id: product.id }));
 }
+
+export const dynamicParams = false;
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
   const product = getProduct(id);
-  if (!product) return {};
+  if (!product || product.legacy) return {};
   const cat = categories.find((c) => c.id === product.category);
   const priceStr = product.price > 0 ? `$${product.price}` : "Free";
   const title = `${product.name} — ${priceStr}`;
@@ -40,7 +43,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const product = getProduct(id);
-  if (!product) notFound();
+  if (!product || product.legacy) notFound();
 
   const related = products
     .filter(p => p.category === product.category && p.id !== product.id && !p.legacy)
@@ -48,7 +51,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     .slice(0, 3);
 
   const category = categories.find(c => c.id === product.category);
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gwds-website.vercel.app";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.civalsystems.com";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -62,7 +65,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
       "@type": "Offer",
       price: product.price,
       priceCurrency: "USD",
-      availability: "https://schema.org/InStock",
+      availability: STORE_SALES_ENABLED ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       url: `${siteUrl}/store/${product.id}`,
       seller: { "@type": "Organization", name: "Cival Systems" },
     },
@@ -75,7 +78,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <ProductDetailClient product={product} related={related} category={category} />
+      <ProductDetailClient product={product} related={related} />
     </>
   );
 }

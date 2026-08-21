@@ -1,0 +1,13 @@
+{
+  "name": "cival-seven-strategy-research-pack",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "verify:evidence": "node --experimental-strip-types scripts/run-backtest.mjs --offline --coins BTC,ETH --interval 1h --days 30 --confidence 60",
+    "backtest:fresh": "node --experimental-strip-types scripts/run-backtest.mjs --coins BTC,ETH --interval 1h --days 30 --confidence 60"
+  }
+}

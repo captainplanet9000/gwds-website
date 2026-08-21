@@ -2,34 +2,11 @@
 import { useState, useEffect } from 'react';
 
 export default function MessagesAdmin() {
-  const [authed, setAuthed] = useState(false);
-  const [password, setPassword] = useState('');
   const [contacts, setContacts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null);
-
-  useEffect(() => { 
-    if (sessionStorage.getItem('gwds-admin') === 'true') setAuthed(true); 
-  }, []);
-
-  const login = () => {
-    fetch('/api/admin/auth', { 
-      method: 'POST', 
-      headers: { 'Content-Type': 'application/json' }, 
-      body: JSON.stringify({ password }) 
-    })
-    .then(r => r.json())
-    .then(d => { 
-      if (d.ok) { 
-        setAuthed(true); 
-        sessionStorage.setItem('gwds-admin', 'true'); 
-      } else {
-        alert('Invalid password'); 
-      }
-    });
-  };
 
   const fetchContacts = () => { 
     setLoading(true);
@@ -42,7 +19,7 @@ export default function MessagesAdmin() {
       .catch(() => setLoading(false));
   };
 
-  useEffect(() => { if (authed) fetchContacts(); }, [authed]);
+  useEffect(() => { fetchContacts(); }, []);
 
   const updateStatus = async (id: string, status: string) => {
     await fetch('/api/admin/contacts', { 
@@ -52,23 +29,6 @@ export default function MessagesAdmin() {
     });
     fetchContacts();
   };
-
-  if (!authed) return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
-      <div style={{ maxWidth: 360, width: '100%', padding: 24 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 800, color: '#E8E8E8', marginBottom: 24, textAlign: 'center' }}>GWDS Admin</h1>
-        <input 
-          type="password" 
-          value={password} 
-          onChange={e => setPassword(e.target.value)} 
-          onKeyDown={e => e.key === 'Enter' && login()} 
-          placeholder="Password"
-          style={{ width: '100%', padding: '14px 16px', background: '#111', border: '1px solid #222', borderRadius: 8, color: '#E8E8E8', fontSize: '0.88rem', outline: 'none', marginBottom: 12, boxSizing: 'border-box' }} 
-        />
-        <button onClick={login} style={{ width: '100%', padding: '14px', borderRadius: 8, border: 'none', background: '#8B5CF6', color: '#fff', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer', textTransform: 'uppercase' }}>Login</button>
-      </div>
-    </div>
-  );
 
   const statusColors: Record<string, { bg: string; text: string; dot: string }> = {
     new: { bg: '#EF444420', text: '#EF4444', dot: '#EF4444' },
@@ -113,9 +73,6 @@ export default function MessagesAdmin() {
   const newMessages = contacts.filter(c => c.status === 'new').length;
   const repliedMessages = contacts.filter(c => c.status === 'replied').length;
   
-  // Calculate avg response time (mock - would need actual reply timestamps)
-  const avgResponseTime = '2h 15m';
-
   const getRelativeTime = (date: string) => {
     const now = new Date();
     const then = new Date(date);
@@ -152,7 +109,7 @@ export default function MessagesAdmin() {
           { label: 'Total Messages', value: contacts.length, color: '#8B5CF6', icon: '💬' },
           { label: 'New (Unread)', value: newMessages, color: '#EF4444', icon: '🔴' },
           { label: 'Replied', value: repliedMessages, color: '#10B981', icon: '✓' },
-          { label: 'Avg Response Time', value: avgResponseTime, color: '#F59E0B', icon: '⏱' },
+          { label: 'Response Time', value: 'Not tracked', color: '#F59E0B', icon: '⏱' },
         ].map(s => (
           <div key={s.label} style={{
             background: '#0a0a0a',

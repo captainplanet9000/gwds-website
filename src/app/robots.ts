@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.civalsystems.com').replace(/\/$/, '');
   return {
     rules: [
       {
@@ -9,6 +10,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/admin/', '/api/', '/checkout/success', '/account/'],
       },
     ],
-    sitemap: 'https://gwds-website.vercel.app/sitemap.xml',
+    sitemap: `${siteUrl}/sitemap.xml`,
   };
 }

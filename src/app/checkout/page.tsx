@@ -1,10 +1,10 @@
 'use client';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useCart } from '@/contexts/CartContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { track } from '@vercel/analytics';
 
 function money(n: number) {
@@ -12,14 +12,15 @@ function money(n: number) {
 }
 
 export default function CheckoutPage() {
-  const { state, dispatch, totalPrice } = useCart();
-  const router = useRouter();
-  const [email, setEmail] = useState('');
+  const { state, totalPrice } = useCart();
+  const { user, session, loading: authLoading } = useAuth();
+  const email = user?.email || '';
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [agreedToPluginDisclaimer, setAgreedToPluginDisclaimer] = useState(false);
+  const [marketingConsent, setMarketingConsent] = useState(false);
   const [couponCode, setCouponCode] = useState('');
   const [couponLoading, setCouponLoading] = useState(false);
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount: number; discount_type: string; discount_value: number } | null>(null);
@@ -38,8 +39,11 @@ export default function CheckoutPage() {
     try {
       const res = await fetch('/api/coupons/validate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: couponCode.trim(), total: totalPrice }),
+        headers: {
+          'Content-Type': 'application/json',
+          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+        },
+        body: JSON.stringify({ code: couponCode.trim(), items: state.items.map(item => ({ productId: item.product.id })) }),
       });
       const data = await res.json();
       if (data.valid) {
@@ -63,7 +67,8 @@ export default function CheckoutPage() {
   };
 
   const handleCheckout = async () => {
-    if (!email || !name) { setError('Please fill in all fields'); return; }
+    if (!user || !session?.access_token) { setError('Sign in with a verified account before checkout'); return; }
+    if (!name) { setError('Please enter your name'); return; }
     if (!agreedToTerms) { setError('You must agree to the Terms of Service and Trading Disclaimer to proceed'); return; }
     if (hasPluginRequiringDashboard && !agreedToPluginDisclaimer) { setError('You must acknowledge that plugin products require Core Edition'); return; }
     if (state.items.length === 0) { setError('Your cart is empty'); return; }
@@ -77,11 +82,14 @@ export default function CheckoutPage() {
 
       const res = await fetch('/api/checkout', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
         body: JSON.stringify({
           items: state.items.map(i => ({ productId: i.product.id, quantity: i.quantity })),
-          email, name,
+          name,
           couponCode: appliedCoupon?.code || undefined,
+          acceptedTerms: agreedToTerms,
+          acceptedPluginRequirement: agreedToPluginDisclaimer,
+          marketingConsent,
         }),
         signal: controller.signal,
       });
@@ -97,17 +105,9 @@ export default function CheckoutPage() {
 
       const data = await res.json();
 
-      if (data.free) {
-        track('purchase', { value: 0, coupon: couponCode || undefined, items: state.items.length });
-        dispatch({ type: 'CLEAR_CART' });
-        router.push(`/checkout/success?orderId=${data.orderId}`);
-      } else if (data.stripeUrl) {
+      if (data.stripeUrl) {
         track('checkout_start', { value: discountedTotal, items: state.items.length, coupon: couponCode || undefined });
         window.location.href = data.stripeUrl;
-      } else if (data.orderId) {
-        track('purchase', { value: discountedTotal, items: state.items.length });
-        dispatch({ type: 'CLEAR_CART' });
-        router.push(`/checkout/success?orderId=${data.orderId}`);
       } else {
         setError(data.error || 'Checkout failed — please try again');
       }
@@ -118,14 +118,15 @@ export default function CheckoutPage() {
     }
   };
 
-  const canCheckout = agreedToTerms && (!hasPluginRequiringDashboard || agreedToPluginDisclaimer) && !loading;
+  const canCheckout = Boolean(user && session?.access_token) && agreedToTerms
+    && (!hasPluginRequiringDashboard || agreedToPluginDisclaimer) && !loading && !authLoading;
 
   return (
     <div className="cival">
       <Navbar />
       <main className="cival-fade" style={{ maxWidth: 1000, margin: '0 auto', padding: '150px 28px 96px' }}>
         <h1 style={{ fontSize: 'clamp(36px,4.4vw,54px)', letterSpacing: '-0.015em', margin: '0 0 8px' }}>Checkout</h1>
-        <p style={{ color: 'var(--color-neutral-700)', margin: '0 0 34px' }}>Files are on the download page the second this clears.</p>
+        <p style={{ color: 'var(--color-neutral-700)', margin: '0 0 34px' }}>Stripe handles payment; verified licenses appear in your account after the signed confirmation event.</p>
 
         {showPluginWarning && (
           <div style={{ background: 'var(--color-accent-2-100)', borderRadius: 'var(--radius-lg)', padding: '16px 20px', marginBottom: 32 }}>
@@ -146,11 +147,18 @@ export default function CheckoutPage() {
         ) : (
           <div data-cv-2col style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.35fr) minmax(0,0.95fr)', gap: 36, alignItems: 'start' }}>
             <div style={{ display: 'grid', gap: 18 }}>
+              {!authLoading && !user && (
+                <div style={{ padding: '16px 20px', border: '1px solid var(--color-accent)', borderRadius: 'var(--radius-lg)', background: 'var(--color-accent-100)', fontSize: 14 }}>
+                  A verified account is required so licenses and future downloads stay attached to you.{' '}
+                  <Link href="/account/login" style={{ fontWeight: 700 }}>Sign in</Link> or{' '}
+                  <Link href="/account/register" style={{ fontWeight: 700 }}>create an account</Link>.
+                </div>
+              )}
               <div className="field"><label>Full name</label><input className="input" value={name} onChange={e => setName(e.target.value)} placeholder="Alex Rowan" /></div>
               <div className="field">
-                <label>Email for delivery</label>
-                <input className="input" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@fund.xyz" />
-                <p style={{ fontSize: 12, color: 'var(--color-neutral-600)', marginTop: 6 }}>Download links will be sent to this email</p>
+                <label>Verified account email</label>
+                <input className="input" type="email" value={email} readOnly placeholder="Sign in to continue" />
+                <p style={{ fontSize: 12, color: 'var(--color-neutral-600)', marginTop: 6 }}>Receipts and licenses are attached to this account. Change it by signing out.</p>
               </div>
 
               <div style={{ padding: '16px 20px', border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-lg)', background: 'var(--color-surface)' }}>
@@ -180,8 +188,15 @@ export default function CheckoutPage() {
               <label className="radio" style={{ alignItems: 'flex-start', gap: 11, padding: '16px 20px', border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-lg)', background: 'var(--color-surface)' }}>
                 <input type="checkbox" checked={agreedToTerms} onChange={e => setAgreedToTerms(e.target.checked)} style={{ marginTop: 3, width: 16, height: 16, accentColor: 'var(--color-accent)' }} />
                 <span style={{ fontSize: 13.5, lineHeight: 1.5, color: 'var(--color-neutral-800)' }}>
-                  I agree to the <Link href="/terms">Terms of Service</Link> and acknowledge the <Link href="/disclaimer">Trading Disclaimer</Link>.
+                  I agree to the <Link href="/terms">Terms of Service</Link> and <Link href="/refunds">Refund Policy</Link>, and acknowledge the <Link href="/disclaimer">Trading Disclaimer</Link>.
                   I understand I am purchasing software source code and architecture, not financial advice or guaranteed returns.
+                </span>
+              </label>
+
+              <label className="radio" style={{ alignItems: 'flex-start', gap: 11, padding: '14px 20px', border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-lg)' }}>
+                <input type="checkbox" checked={marketingConsent} onChange={e => setMarketingConsent(e.target.checked)} style={{ marginTop: 3, width: 16, height: 16, accentColor: 'var(--color-accent)' }} />
+                <span style={{ fontSize: 13.5, lineHeight: 1.5, color: 'var(--color-neutral-800)' }}>
+                  Email me optional product updates and Cival Systems news. I can unsubscribe at any time.
                 </span>
               </label>
 
@@ -197,7 +212,7 @@ export default function CheckoutPage() {
               {error && <div style={{ padding: '12px 16px', borderRadius: 'var(--radius-md)', background: 'var(--color-accent-2-100)', color: 'var(--color-accent-2-800)', fontSize: 13.5 }}>{error}</div>}
 
               <button onClick={handleCheckout} disabled={!canCheckout} className="btn btn-primary btn-block" style={{ height: 52, fontSize: 15 }}>
-                {loading ? 'Processing…' : discountedTotal === 0 ? 'Complete order (free)' : `Pay ${money(discountedTotal)}`}
+                {loading ? 'Preparing secure checkout…' : `Continue to Stripe · ${money(discountedTotal)}`}
               </button>
               <p style={{ fontSize: 12, color: 'var(--color-neutral-600)', textAlign: 'center' }}>
                 Secure payment via Stripe. Your card details never touch our servers.
@@ -230,7 +245,7 @@ export default function CheckoutPage() {
                 </div>
               </div>
               <p style={{ fontSize: 12, lineHeight: 1.55, color: 'var(--color-neutral-600)', marginTop: 16 }}>
-                Lifetime license, one year of updates, Discord access. Source code — refunds per our <Link href="/refunds">refund policy</Link>.
+                Perpetual license to the purchased version; one year of compatible updates where specified. Source code purchase — see the <Link href="/refunds">refund policy</Link>.
               </p>
             </aside>
           </div>

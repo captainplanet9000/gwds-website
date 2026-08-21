@@ -1,93 +1,84 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase';
+import {
+  CommerceError,
+  DOWNLOAD_MAX_USES,
+  DOWNLOAD_TTL_SECONDS,
+  errorResponseBody,
+  getSiteUrl,
+  hashDownloadToken,
+  newDownloadToken,
+  requireVerifiedUser,
+} from '@/lib/commerce';
+
+export const runtime = 'nodejs';
 
 export async function POST(req: NextRequest) {
   try {
-    const authHeader = req.headers.get('authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const user = await requireVerifiedUser(req);
+    const body = await req.json() as { orderId?: unknown; productId?: unknown };
+    if (typeof body.orderId !== 'string' || !/^[0-9a-f-]{36}$/i.test(body.orderId)
+      || typeof body.productId !== 'string' || !/^[a-z0-9-]{2,80}$/.test(body.productId)) {
+      throw new CommerceError('INVALID_DOWNLOAD_REQUEST', 'Choose a valid purchase to download.');
     }
 
-    const token = authHeader.replace('Bearer ', '');
     const supabase = createServerClient();
-
-    // Verify user
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    if (authError || !user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const { orderId, productId } = await req.json();
-
-    if (!orderId || !productId) {
-      return NextResponse.json({ error: 'Missing orderId or productId' }, { status: 400 });
-    }
-
-    // Verify the order belongs to this user
-    const { data: order, error: orderError } = await supabase
+    const { data: order } = await supabase
       .from('orders')
-      .select('id, customer_email')
-      .eq('id', orderId)
-      .eq('customer_email', user.email)
-      .single();
+      .select('id,status')
+      .eq('id', body.orderId)
+      .eq('user_id', user.id)
+      .in('status', ['paid', 'completed'])
+      .maybeSingle();
+    if (!order) throw new CommerceError('ORDER_NOT_FOUND', 'This paid order was not found.', 404);
 
-    if (orderError || !order) {
-      return NextResponse.json({ error: 'Order not found' }, { status: 404 });
-    }
-
-    // Generate new download token
-    const newToken = crypto.randomUUID();
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 7);
-
-    // Check if a download record exists
-    const { data: existing } = await supabase
-      .from('downloads')
+    const { data: item } = await supabase
+      .from('order_items')
       .select('id')
-      .eq('order_id', orderId)
-      .eq('product_id', productId)
-      .single();
+      .eq('order_id', order.id)
+      .eq('product_id', body.productId)
+      .maybeSingle();
+    if (!item) throw new CommerceError('PRODUCT_NOT_PURCHASED', 'This product is not part of the order.', 403);
 
-    if (existing) {
-      // Update existing record
-      const { error: updateError } = await supabase
-        .from('downloads')
-        .update({
-          download_token: newToken,
-          expires_at: expiresAt.toISOString(),
-          downloaded_count: 0,
-        })
-        .eq('id', existing.id);
-
-      if (updateError) {
-        console.error('Failed to update download:', updateError);
-        return NextResponse.json({ error: 'Failed to regenerate download' }, { status: 500 });
-      }
-    } else {
-      // Create new download record
-      const { error: insertError } = await supabase.from('downloads').insert({
-        order_id: orderId,
-        product_id: productId,
-        download_token: newToken,
-        expires_at: expiresAt.toISOString(),
-        downloaded_count: 0,
-        max_downloads: 5,
-      });
-
-      if (insertError) {
-        console.error('Failed to create download:', insertError);
-        return NextResponse.json({ error: 'Failed to regenerate download' }, { status: 500 });
-      }
+    const [{ data: entitlement }, { data: product }] = await Promise.all([
+      supabase.from('entitlements').select('id,status').eq('source_order_item_id', item.id).eq('user_id', user.id).eq('status', 'active').maybeSingle(),
+      supabase.from('products').select('artifact_ready,artifact_path,artifact_sha256,artifact_size_bytes').eq('id', body.productId).maybeSingle(),
+    ]);
+    if (!entitlement) throw new CommerceError('ENTITLEMENT_INACTIVE', 'Your license for this product is not active.', 403);
+    if (!product?.artifact_ready || !product.artifact_path || !product.artifact_sha256 || !product.artifact_size_bytes) {
+      throw new CommerceError('RELEASE_NOT_READY', 'This release is temporarily unavailable while its archive is verified.', 503);
     }
 
-    const downloadUrl = `/api/downloads/${orderId}/${productId}?token=${newToken}`;
+    // Confirm Storage can sign the exact artifact before issuing a customer token.
+    const { data: health, error: storageError } = await supabase.storage.from('downloads').createSignedUrl(product.artifact_path, 30);
+    if (storageError || !health?.signedUrl) {
+      throw new CommerceError('DOWNLOAD_SERVICE_UNAVAILABLE', 'Downloads are temporarily unavailable. Please try again later.', 503);
+    }
 
-    return NextResponse.json({ downloadUrl, expiresAt: expiresAt.toISOString() });
+    const rawToken = newDownloadToken();
+    const expiresAt = new Date(Date.now() + DOWNLOAD_TTL_SECONDS * 1000).toISOString();
+    const { error: tokenError } = await supabase.from('downloads').upsert({
+      order_id: order.id,
+      product_id: body.productId,
+      entitlement_id: entitlement.id,
+      download_token: null,
+      token_hash: hashDownloadToken(rawToken),
+      expires_at: expiresAt,
+      downloaded_count: 0,
+      max_downloads: DOWNLOAD_MAX_USES,
+      revoked_at: null,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'order_id,product_id' });
+    if (tokenError) throw new CommerceError('TOKEN_ISSUE_FAILED', 'A download link could not be created.', 503);
+
+    const path = `/api/downloads/${order.id}/${encodeURIComponent(body.productId)}?token=${encodeURIComponent(rawToken)}`;
+    return NextResponse.json({
+      downloadUrl: `${getSiteUrl()}${path}`,
+      expiresAt,
+      maxDownloads: DOWNLOAD_MAX_USES,
+    }, { headers: { 'Cache-Control': 'private, no-store' } });
   } catch (error) {
-    console.error('Regenerate download error:', error);
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Internal error' },
-      { status: 500 }
-    );
+    const status = error instanceof CommerceError ? error.status : 500;
+    return NextResponse.json(errorResponseBody(error), { status, headers: { 'Cache-Control': 'no-store' } });
   }
 }

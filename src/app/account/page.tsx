@@ -9,12 +9,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { getProduct } from '@/lib/products';
 
 interface DownloadInfo {
-  id: string;
-  product_id: string;
-  download_token: string;
-  expires_at: string;
-  downloaded_count: number;
-  max_downloads: number;
+  expiresAt: string;
+  downloadedCount: number;
+  maxDownloads: number;
+  revoked: boolean;
 }
 
 interface OrderItemInfo {
@@ -22,7 +20,11 @@ interface OrderItemInfo {
   product_id: string;
   quantity: number;
   price_cents: number;
-  downloads: DownloadInfo[];
+  entitlementStatus: string;
+  artifactReady: boolean;
+  currentVersion: string | null;
+  updatesUntil: string | null;
+  download: DownloadInfo | null;
 }
 
 interface OrderInfo {
@@ -84,7 +86,9 @@ export default function AccountPage() {
         },
         body: JSON.stringify({ orderId, productId }),
       });
-      if (!res.ok) throw new Error('Failed to regenerate download');
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to create download link');
+      window.location.assign(data.downloadUrl);
       await fetchOrders();
     } catch (err: any) {
       alert(err.message);
@@ -109,8 +113,6 @@ export default function AccountPage() {
   const formatCurrency = (cents: number) => {
     return `$${(cents / 100).toFixed(2)}`;
   };
-
-  const isExpired = (expiresAt: string) => new Date(expiresAt) < new Date();
 
   if (authLoading) {
     return (
@@ -265,7 +267,7 @@ export default function AccountPage() {
                         >
                           {formatCurrency(order.total_cents)}
                         </span>
-                        <span className={order.status === 'completed' ? 'tag tag-accent-2' : 'tag tag-neutral'}>
+                        <span className={order.status === 'completed' || order.status === 'paid' ? 'tag tag-accent-2' : 'tag tag-neutral'}>
                           {order.status}
                         </span>
                       </div>
@@ -275,12 +277,9 @@ export default function AccountPage() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                       {order.items.map((item) => {
                         const product = getProduct(item.product_id);
-                        const download = item.downloads?.[0];
-                        const expired = download ? isExpired(download.expires_at) : false;
-                        const maxedOut = download
-                          ? download.downloaded_count >= download.max_downloads
-                          : false;
-                        const canDownload = download && !expired && !maxedOut;
+                        const download = item.download;
+                        const canDownload = item.entitlementStatus === 'active' && item.artifactReady
+                          && (order.status === 'paid' || order.status === 'completed');
                         const regKey = `${order.id}-${item.product_id}`;
 
                         return (
@@ -317,8 +316,8 @@ export default function AccountPage() {
                                     color: 'var(--color-neutral-600)',
                                   }}
                                 >
-                                  Downloaded {download.downloaded_count}/{download.max_downloads} times
-                                  {expired && (
+                                  Last link: {download.downloadedCount}/{download.maxDownloads} downloads used
+                                  {download.revoked && (
                                     <span style={{ color: 'var(--color-accent-2-700)', marginLeft: 8 }}>
                                       • Link expired
                                     </span>
@@ -328,30 +327,14 @@ export default function AccountPage() {
                             </div>
 
                             <div style={{ display: 'flex', gap: 8 }}>
-                              {canDownload ? (
-                                <a
-                                  href={`/api/downloads/${order.id}/${item.product_id}?token=${download.download_token}`}
-                                  className="btn btn-primary"
-                                  style={{ height: 38, fontSize: '0.78rem', whiteSpace: 'nowrap' }}
-                                >
-                                  Download
-                                </a>
-                              ) : (
-                                <button
-                                  onClick={() => handleRegenerateDownload(order.id, item.product_id)}
-                                  disabled={regenerating === regKey}
-                                  className="btn btn-secondary"
-                                  style={{
-                                    height: 38,
-                                    fontSize: '0.78rem',
-                                    color: 'var(--color-accent)',
-                                    borderColor: 'var(--color-accent)',
-                                    whiteSpace: 'nowrap',
-                                  }}
-                                >
-                                  {regenerating === regKey ? 'Regenerating...' : 'New Download Link'}
-                                </button>
-                              )}
+                              <button
+                                onClick={() => handleRegenerateDownload(order.id, item.product_id)}
+                                disabled={!canDownload || regenerating === regKey}
+                                className={canDownload ? 'btn btn-primary' : 'btn btn-secondary'}
+                                style={{ height: 38, fontSize: '0.78rem', whiteSpace: 'nowrap' }}
+                              >
+                                {regenerating === regKey ? 'Creating link...' : canDownload ? 'Download' : 'Unavailable'}
+                              </button>
                             </div>
                           </div>
                         );
@@ -361,6 +344,14 @@ export default function AccountPage() {
                 ))}
               </div>
             )}
+          </section>
+
+          <section style={{ marginBottom: 48, padding: 24, border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-lg)', background: 'var(--color-surface)' }}>
+            <h2 style={{ fontSize: '1.3rem', margin: '0 0 8px' }}>Managed Hosting</h2>
+            <p style={{ color: 'var(--color-neutral-700)', lineHeight: 1.6, margin: '0 0 16px' }}>
+              Manage paper-hosting plans, onboarding, billing, workspace health, backups and incidents.
+            </p>
+            <Link href="/account/hosting" className="btn btn-primary">Open hosting workspace</Link>
           </section>
 
           {/* Browse more */}

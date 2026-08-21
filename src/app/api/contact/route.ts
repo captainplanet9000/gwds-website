@@ -1,65 +1,55 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { Resend } from 'resend';
+import { CommerceError, enforceRateLimit, errorResponseBody } from '@/lib/commerce';
 import { createServerClient } from '@/lib/supabase';
+
+function text(value: unknown, max: number): string {
+  return typeof value === 'string' ? value.replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max) : '';
+}
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>'"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[character]!);
+}
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, email, subject, message } = await req.json();
-    if (!name || !email || !message) {
-      return NextResponse.json({ error: 'Name, email, and message are required' }, { status: 400 });
+    await enforceRateLimit(req, 'contact_form', 5, 60 * 60);
+    const body = await req.json() as Record<string, unknown>;
+    const name = text(body.name, 120);
+    const email = text(body.email, 320).toLowerCase();
+    const subject = text(body.subject, 160) || 'General question';
+    const message = text(body.message, 5000);
+    if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || message.length < 10) {
+      throw new CommerceError('INVALID_CONTACT_REQUEST', 'Enter a valid name, email, and message.');
     }
 
-    // Save to Supabase
-    const sb = createServerClient();
-    const { error: dbError } = await sb.from('contact_submissions').insert({
-      name, email, subject: subject || 'General', message,
-    });
-    if (dbError) console.error('Contact DB error:', dbError);
+    const supabase = createServerClient();
+    const { error } = await supabase.from('contact_submissions').insert({ name, email, subject, message });
+    if (error) throw new CommerceError('CONTACT_SAVE_FAILED', 'Your message could not be saved. Please try again.', 503);
 
-    // Send email notification to Anthony via Resend
-    try {
-      const { Resend } = await import('resend');
-      const resend = new Resend(process.env.RESEND_API_KEY);
+    const apiKey = process.env.RESEND_API_KEY;
+    const from = process.env.RESEND_FROM_EMAIL;
+    const support = process.env.SUPPORT_EMAIL || 'support@civalsystems.com';
+    if (apiKey && from) {
+      const resend = new Resend(apiKey);
       await resend.emails.send({
-        from: 'Cival Systems Contact <onboarding@resend.dev>',
-        to: 'gammawavesdesign@gmail.com',
+        from,
+        to: support,
         replyTo: email,
-        subject: `[Cival Systems Contact] ${subject || 'New Message'} from ${name}`,
-        html: `
-          <div style="font-family:system-ui,sans-serif;max-width:600px;padding:20px;">
-            <h2 style="color:#333;margin-bottom:4px;">New Contact Form Submission</h2>
-            <hr style="border:1px solid #eee;margin:16px 0;">
-            <p><strong>From:</strong> ${name} (${email})</p>
-            <p><strong>Subject:</strong> ${subject || 'General'}</p>
-            <p><strong>Message:</strong></p>
-            <div style="background:#f5f5f5;padding:16px;border-radius:8px;white-space:pre-wrap;">${message}</div>
-            <hr style="border:1px solid #eee;margin:16px 0;">
-            <p style="color:#999;font-size:12px;">Reply directly to this email to respond to the customer.</p>
-          </div>
-        `,
-      });
-    } catch (emailErr) {
-      console.error('Contact email failed:', emailErr);
+        subject: `[Cival Systems] ${subject}`,
+        html: `<h2>New support message</h2><p><strong>From:</strong> ${escapeHtml(name)} (${escapeHtml(email)})</p><p><strong>Subject:</strong> ${escapeHtml(subject)}</p><div style="white-space:pre-wrap">${escapeHtml(message)}</div>`,
+        text: `From: ${name} (${email})\nSubject: ${subject}\n\n${message}`,
+      }, { idempotencyKey: `contact-${hashForId(email, subject, message)}` });
     }
 
-    // Send Telegram notification
-    try {
-      const botToken = process.env.TELEGRAM_BOT_TOKEN;
-      const chatId = process.env.TELEGRAM_CHAT_ID;
-      if (botToken && chatId) {
-        await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: chatId,
-            text: `📩 Cival Systems Contact Form\n\nFrom: ${name} (${email})\nSubject: ${subject || 'General'}\n\n${message.substring(0, 500)}`,
-            parse_mode: 'HTML',
-          }),
-        });
-      }
-    } catch { /* Telegram notification is best-effort */ }
-
-    return NextResponse.json({ ok: true });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json({ ok: true }, { headers: { 'Cache-Control': 'no-store' } });
+  } catch (error) {
+    const status = error instanceof CommerceError ? error.status : 500;
+    return NextResponse.json(errorResponseBody(error), { status, headers: { 'Cache-Control': 'no-store' } });
   }
+}
+
+function hashForId(...parts: string[]): string {
+  let hash = 2166136261;
+  for (const character of parts.join('|')) hash = Math.imul(hash ^ character.charCodeAt(0), 16777619);
+  return (hash >>> 0).toString(16);
 }

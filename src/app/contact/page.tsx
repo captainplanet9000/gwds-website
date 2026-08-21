@@ -112,6 +112,9 @@ export default function ContactPage() {
                 style={{ cursor: 'pointer' }}
               >
                 <option>Product Question</option>
+                <option>Technical Support</option>
+                <option>Managed Hosting</option>
+                <option>Billing or Refund</option>
                 <option>Custom Work</option>
                 <option>Collaboration</option>
                 <option>Licensing</option>
@@ -148,27 +151,24 @@ export default function ContactPage() {
 
             {status === 'success' && (
               <p style={{ fontSize: 13.5, color: 'var(--color-accent-700)', textAlign: 'center', margin: 0 }}>
-                Thanks for reaching out! We&apos;ll get back to you soon.
+                Your request was received. Keep this browser confirmation for your records.
               </p>
             )}
             {status === 'error' && (
               <p style={{ fontSize: 13.5, color: 'var(--color-accent-2-700)', textAlign: 'center', margin: 0 }}>
-                Something went wrong. Please try again or email us directly.
+                Something went wrong. Please try again in a moment.
               </p>
             )}
           </form>
 
-          {/* Direct Contact */}
+          {/* Response expectation */}
           <div style={{ textAlign: 'center', marginTop: 48 }}>
             <p style={{ fontSize: 13.5, color: 'var(--color-neutral-700)', marginBottom: 8 }}>
-              Or reach out directly:
+              Product, licence, hosting, and refund requests are routed to the Cival support inbox.
             </p>
-            <a
-              href="mailto:gammawavesdesign@gmail.com"
-              style={{ fontFamily: 'var(--font-mono)', fontSize: 14, fontWeight: 600, color: 'var(--color-accent)' }}
-            >
-              gammawavesdesign@gmail.com
-            </a>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 14, fontWeight: 600, color: 'var(--color-accent)' }}>
+              Requests are handled on a best-effort basis; no response-time SLA is promised.
+            </span>
           </div>
         </div>
       </main>

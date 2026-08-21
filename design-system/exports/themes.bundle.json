@@ -1,0 +1,70 @@
+{
+  "$description": "Every theme in the registry, bundled into one file. Consumers that only support a single import (Claude Design, lightweight picker UIs) can point at this.",
+  "active": "default",
+  "themes": [
+    {
+      "name": "default",
+      "description": "Canonical GWDS theme - black surfaces, electric-purple accent, editorial type.",
+      "tokens": {
+        "gwds-color-brand-accent":        "oklch(0.65 0.29 295)",
+        "gwds-color-brand-accent-warm":   "#D4A574",
+        "gwds-color-surface-background":  "#000000",
+        "gwds-color-surface-near-black":  "#050505",
+        "gwds-color-surface-card":        "#12121A",
+        "gwds-color-surface-muted":       "#1A1A2E",
+        "gwds-color-border-default":      "rgba(232, 232, 232, 0.1)",
+        "gwds-color-border-hover":        "rgba(232, 232, 232, 0.3)",
+        "gwds-color-text-primary":        "#E8E8E8",
+        "gwds-color-text-secondary":      "#A8A8A8",
+        "gwds-color-text-muted":          "#666666",
+        "gwds-color-text-inverse":        "#000000",
+        "gwds-font-family-display":       "Syne, 'Space Grotesk', sans-serif",
+        "gwds-font-family-body":          "'DM Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+        "gwds-radius-md":                 "0.5rem"
+      }
+    },
+    {
+      "name": "violet-neon",
+      "description": "Amplified brand theme - saturated electric purple, cyan lift, stronger glow. Seasonal drops and limited editions.",
+      "tokens": {
+        "gwds-color-brand-accent":        "oklch(0.72 0.33 295)",
+        "gwds-color-brand-accent-warm":   "#FFD580",
+        "gwds-color-surface-background":  "#050008",
+        "gwds-color-surface-near-black":  "#0C0618",
+        "gwds-color-surface-card":        "#160B2A",
+        "gwds-color-surface-muted":       "#1F1240",
+        "gwds-color-border-default":      "rgba(167, 139, 250, 0.18)",
+        "gwds-color-border-hover":        "rgba(167, 139, 250, 0.4)",
+        "gwds-color-text-primary":        "#F5EFFF",
+        "gwds-color-text-secondary":      "#B8AAD6",
+        "gwds-color-text-muted":          "#6E608A",
+        "gwds-color-text-inverse":        "#0B0414",
+        "gwds-shadow-glow-accent-sm":     "0 0 28px rgba(167, 139, 250, 0.28)",
+        "gwds-shadow-glow-accent-md":     "0 0 40px rgba(167, 139, 250, 0.42)",
+        "gwds-shadow-glow-accent-lg":     "0 0 56px rgba(167, 139, 250, 0.55)"
+      }
+    },
+    {
+      "name": "studio-light",
+      "description": "Light studio theme - paper-white surfaces, ink-black text, same editorial type. Press kits, case studies, print-style storytelling.",
+      "tokens": {
+        "gwds-color-brand-accent":        "oklch(0.52 0.25 295)",
+        "gwds-color-brand-accent-warm":   "#9E7B4A",
+        "gwds-color-surface-background":  "#FAFAF8",
+        "gwds-color-surface-near-black":  "#F1F0EC",
+        "gwds-color-surface-card":        "#FFFFFF",
+        "gwds-color-surface-muted":       "#EDEAE3",
+        "gwds-color-border-default":      "rgba(12, 12, 14, 0.08)",
+        "gwds-color-border-hover":        "rgba(12, 12, 14, 0.22)",
+        "gwds-color-text-primary":        "#0C0C0E",
+        "gwds-color-text-secondary":      "#43434A",
+        "gwds-color-text-muted":          "#7A7A82",
+        "gwds-color-text-inverse":        "#FFFFFF",
+        "gwds-shadow-xs":                 "0 1px 2px rgba(12, 12, 14, 0.06)",
+        "gwds-shadow-sm":                 "0 1px 3px rgba(12, 12, 14, 0.08)",
+        "gwds-shadow-md":                 "0 6px 16px rgba(12, 12, 14, 0.10)",
+        "gwds-shadow-lg":                 "0 16px 36px rgba(12, 12, 14, 0.12)"
+      }
+    }
+  ]
+}

@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getSiteUrl } from '@/lib/commerce';
+import { newsletterToken } from '@/lib/newsletter';
 import { createServerClient } from '@/lib/supabase';
+import { adminUnauthorized, requireAdmin } from '@/lib/admin-auth';
 
 export async function POST(req: NextRequest) {
+  if (!await requireAdmin(req, ['owner', 'operator'])) return adminUnauthorized();
   try {
     const { subject, html, test } = await req.json();
     if (!subject || !html) {
@@ -9,8 +13,13 @@ export async function POST(req: NextRequest) {
     }
 
     const sb = createServerClient();
+    const apiKey = process.env.RESEND_API_KEY;
+    const from = process.env.RESEND_FROM_EMAIL;
+    if (!apiKey || !from) {
+      return NextResponse.json({ error: 'Email delivery is not configured' }, { status: 503 });
+    }
     const { Resend } = await import('resend');
-    const resend = new Resend(process.env.RESEND_API_KEY);
+    const resend = new Resend(apiKey);
 
     // Get active subscribers
     const { data: subscribers } = await sb.from('newsletter_subscribers')
@@ -23,7 +32,7 @@ export async function POST(req: NextRequest) {
 
     // If test mode, only send to owner
     const recipients = test
-      ? ['gammawavesdesign@gmail.com']
+      ? [process.env.SUPPORT_EMAIL || 'support@civalsystems.com']
       : subscribers.map(s => s.email);
 
     let sent = 0;
@@ -35,21 +44,23 @@ export async function POST(req: NextRequest) {
       const batch = recipients.slice(i, i + 10);
       for (const email of batch) {
         try {
-          await resend.emails.send({
-            from: 'GWDS <onboarding@resend.dev>',
+          const unsubscribeUrl = `${getSiteUrl()}/api/newsletter/unsubscribe?email=${encodeURIComponent(email)}&token=${encodeURIComponent(newsletterToken(email))}`;
+          const { error } = await resend.emails.send({
+            from,
             to: email,
             subject,
             html: `
-              <div style="background:#000;color:#E8E8E8;padding:40px;font-family:system-ui,sans-serif;max-width:600px;margin:0 auto;">
+              <div style="background:#f5ead8;color:#29251f;padding:40px;font-family:system-ui,sans-serif;max-width:600px;margin:0 auto;">
                 ${html}
-                <hr style="border:1px solid #222;margin:32px 0 16px;">
-                <p style="color:#555;font-size:11px;">
-                  You received this because you subscribed to GWDS updates.<br>
-                  <a href="https://gwds-website.vercel.app/api/newsletter/unsubscribe?email=${encodeURIComponent(email)}" style="color:#8B5CF6;">Unsubscribe</a>
+                <hr style="border:0;border-top:1px solid #d8c8af;margin:32px 0 16px;">
+                <p style="color:#6b6257;font-size:11px;">
+                  You received this because you subscribed to Cival Systems updates.<br>
+                  <a href="${unsubscribeUrl}" style="color:#9b5129;">Unsubscribe</a>
                 </p>
               </div>
             `,
-          });
+          }, { idempotencyKey: `broadcast-${newsletterToken(`${subject}:${email}`).slice(0, 32)}` });
+          if (error) throw new Error(error.message);
           sent++;
         } catch (err: any) {
           failed++;

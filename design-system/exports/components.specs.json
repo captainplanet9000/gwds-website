@@ -1,0 +1,166 @@
+{
+  "$description": "Component specs — one entry per reusable primitive and common composite. Each spec points at the live React source, the resolved token references, and the allowed variants. Use this when porting to Figma auto-layout, Storybook, or AI-assisted codegen.",
+  "components": {
+    "Button": {
+      "source": "src/app/globals.css (.btn)",
+      "description": "Text-forward button with an inverted-on-hover treatment. No shadow or glow by default.",
+      "tokens": {
+        "padding": "1.2vw 2.5vw (mobile: 3vw 6vw)",
+        "fontFamily": "{font.family.display}",
+        "fontSize": "{font.size.fluid.btn}",
+        "fontWeight": "{font.weight.semibold}",
+        "letterSpacing": "-0.01em",
+        "border": "1px solid {color.border.default}",
+        "background": "transparent",
+        "color": "{color.text.primary}",
+        "transition": "all 0.3s ease"
+      },
+      "variants": {
+        "primary":   { "background": "{color.brand.accent}",   "color": "{color.text.inverse}",  "border": "1px solid {color.brand.accent}" },
+        "secondary": { "background": "transparent",             "color": "{color.text.primary}",  "border": "1px solid {color.border.default}" },
+        "ghost":     { "background": "transparent",             "color": "{color.text.secondary}","border": "1px solid transparent" },
+        "danger":    { "background": "{color.semantic.error}",  "color": "{color.text.inverse}",  "border": "1px solid {color.semantic.error}" }
+      },
+      "states": {
+        "hover":    { "background": "{color.text.primary}", "color": "{color.text.inverse}", "border": "1px solid {color.text.primary}" },
+        "focus":    { "outline": "2px solid {color.brand.accent}", "outlineOffset": "4px" },
+        "disabled": { "opacity": 0.4, "cursor": "not-allowed" }
+      },
+      "sizes": {
+        "sm": { "padding": "0.5rem 1rem", "fontSize": "{font.size.static.sm}" },
+        "md": { "padding": "0.75rem 1.5rem", "fontSize": "{font.size.static.base}" },
+        "lg": { "padding": "1rem 2rem", "fontSize": "{font.size.static.lg}" }
+      }
+    },
+
+    "Card": {
+      "source": "component/tile usage across site",
+      "tokens": {
+        "background": "{color.surface.card}",
+        "border": "1px solid {color.border.default}",
+        "borderRadius": "{radius.md}",
+        "padding": "{space.6}",
+        "boxShadow": "{shadow.md}"
+      },
+      "states": {
+        "hover": { "border": "1px solid {color.border.hover}", "boxShadow": "{shadow.lg}" }
+      }
+    },
+
+    "Input": {
+      "source": "form fields across /contact, /checkout",
+      "tokens": {
+        "background": "{color.surface.card}",
+        "border": "1px solid {color.border.default}",
+        "borderRadius": "{radius.sm}",
+        "padding": "{space.3} {space.4}",
+        "color": "{color.text.primary}",
+        "fontFamily": "{font.family.body}",
+        "fontSize": "{font.size.static.base}"
+      },
+      "states": {
+        "focus":       { "border": "1px solid {color.brand.accent}", "outline": "none" },
+        "placeholder": { "color": "{color.text.muted}" },
+        "disabled":    { "opacity": 0.5, "cursor": "not-allowed" }
+      }
+    },
+
+    "Navbar": {
+      "source": "src/components/Navbar.tsx",
+      "tokens": {
+        "height": "4rem",
+        "padding": "0 {layout.gutter}",
+        "background": "{color.surface.bg}",
+        "borderBottom": "1px solid {color.border.default}",
+        "fontFamily": "{font.family.display}",
+        "fontSize": "{font.size.static.base}",
+        "zIndex": "{z.sticky}"
+      }
+    },
+
+    "Hero": {
+      "source": "src/components/Hero.tsx",
+      "tokens": {
+        "minHeight": "100vh",
+        "padding": "10vh {layout.gutter}",
+        "background": "{color.surface.bg}",
+        "heroHeading": {
+          "fontFamily": "{font.family.display}",
+          "fontSize": "{font.size.fluid.h1}",
+          "fontWeight": "{font.weight.black}",
+          "letterSpacing": "{font.tracking.tight}",
+          "lineHeight": "{font.leading.tight}"
+        }
+      }
+    },
+
+    "ProductCard": {
+      "source": "src/components/ProductCard.tsx",
+      "tokens": {
+        "background": "{color.surface.card}",
+        "border": "1px solid {color.border.default}",
+        "borderRadius": "{radius.md}",
+        "padding": "{space.6}",
+        "aspectRatio": "3 / 4 (image region)",
+        "mediaRadius": "{radius.sm}",
+        "titleFont": "{font.family.display}",
+        "titleSize": "{font.size.static.lg}",
+        "priceColor": "{color.brand.accent}"
+      },
+      "states": {
+        "hover": { "transform": "translateY(-4px)", "boxShadow": "{shadow.lg}" }
+      }
+    },
+
+    "CartDrawer": {
+      "source": "src/components/CartDrawer.tsx",
+      "tokens": {
+        "width": "min(420px, 90vw)",
+        "background": "{color.surface.bg-elevated}",
+        "borderLeft": "1px solid {color.border.default}",
+        "padding": "{space.8} {space.6}",
+        "zIndex": "{z.modal}"
+      }
+    },
+
+    "Footer": {
+      "source": "src/components/Footer.tsx",
+      "tokens": {
+        "padding": "6rem {layout.gutter} 3rem",
+        "background": "{color.surface.bg-elevated}",
+        "borderTop": "1px solid {color.border.default}",
+        "fontFamily": "{font.family.body}",
+        "fontSize": "{font.size.static.sm}",
+        "color": "{color.text.secondary}"
+      }
+    }
+  },
+
+  "patterns": {
+    "section": {
+      "minHeight": "100vh",
+      "padding": "10vh 0",
+      "verticalRhythm": "Prefer vh-based spacing to keep the editorial feel responsive."
+    },
+    "container": {
+      "maxWidth": "{layout.container-max}",
+      "padding": "0 {layout.gutter}"
+    },
+    "container-narrow": {
+      "maxWidth": "{layout.container-narrow}",
+      "padding": "0 {layout.gutter}"
+    },
+    "grid": {
+      "gap": "3vw",
+      "breakpoints": {
+        "mobile": "1 column below 768px",
+        "tablet": "2 columns up to 1024px",
+        "desktop": "as configured (2/3/4 col)"
+      }
+    },
+    "selection": {
+      "background": "{color.brand.accent}",
+      "color": "{color.text.inverse}"
+    }
+  }
+}

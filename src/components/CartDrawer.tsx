@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useCart } from '@/contexts/CartContext';
 import { getProduct, EDITION_INCLUDES } from '@/lib/products';
+import { STORE_SALES_ENABLED } from '@/lib/store-config';
 
 function money(n: number) {
   return '$' + n.toLocaleString('en-US');
@@ -104,9 +105,15 @@ export default function CartDrawer() {
                   <span style={{ fontFamily: 'var(--font-heading)', fontSize: 18 }}>Total</span>
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: 28, fontWeight: 500 }}>{money(totalPrice)}</span>
                 </div>
-                <Link href="/checkout" onClick={() => dispatch({ type: 'CLOSE_CART' })} className="btn btn-primary btn-block" style={{ height: 48, fontSize: 15 }}>
-                  Checkout
-                </Link>
+                {STORE_SALES_ENABLED ? (
+                  <Link href="/checkout" onClick={() => dispatch({ type: 'CLOSE_CART' })} className="btn btn-primary btn-block" style={{ height: 48, fontSize: 15 }}>
+                    Checkout
+                  </Link>
+                ) : (
+                  <button type="button" disabled className="btn btn-primary btn-block" style={{ height: 48, fontSize: 15, opacity: 0.55 }}>
+                    Checkout opens after release verification
+                  </button>
+                )}
                 <button onClick={() => dispatch({ type: 'CLEAR_CART' })} className="btn btn-ghost btn-block" style={{ marginTop: 8, fontSize: 13, height: 36 }}>
                   Clear cart
                 </button>

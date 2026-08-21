@@ -1,29 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase';
+import { validNewsletterToken } from '@/lib/newsletter';
 
 export async function GET(req: NextRequest) {
-  const email = req.nextUrl.searchParams.get('email');
-  if (!email) {
-    return new NextResponse('<html><body style="background:#000;color:#fff;font-family:system-ui;display:flex;align-items:center;justify-content:center;min-height:100vh;"><h1>Invalid link</h1></body></html>', {
-      headers: { 'Content-Type': 'text/html' },
-    });
+  const email = (req.nextUrl.searchParams.get('email') || '').trim().toLowerCase();
+  const token = req.nextUrl.searchParams.get('token') || '';
+  if (!email || !token || !validNewsletterToken(email, token)) {
+    return new NextResponse('Invalid unsubscribe link.', { status: 400, headers: { 'Content-Type': 'text/plain', 'Cache-Control': 'no-store' } });
   }
 
-  const sb = createServerClient();
-  await sb.from('newsletter_subscribers').update({
+  await createServerClient().from('newsletter_subscribers').update({
     is_active: false,
     unsubscribed_at: new Date().toISOString(),
-  }).eq('email', email.toLowerCase().trim());
+  }).eq('email', email);
 
-  return new NextResponse(`
-    <html>
-      <body style="background:#000;color:#E8E8E8;font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;">
-        <div>
-          <h1 style="font-size:2rem;margin-bottom:16px;">Unsubscribed</h1>
-          <p style="color:#888;font-size:0.95rem;">You've been removed from the Cival Systems mailing list.</p>
-          <a href="https://gwds-website.vercel.app" style="color:#8B5CF6;font-size:0.85rem;margin-top:24px;display:inline-block;">← Back to Cival Systems</a>
-        </div>
-      </body>
-    </html>
-  `, { headers: { 'Content-Type': 'text/html' } });
+  return new NextResponse('<!doctype html><html><body style="font-family:Arial,sans-serif;background:#f5ead8;color:#29251f;display:grid;place-items:center;min-height:100vh"><main><h1>Unsubscribed</h1><p>You will no longer receive Cival Systems marketing email.</p><a href="/">Return to Cival Systems</a></main></body></html>', {
+    headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' },
+  });
 }

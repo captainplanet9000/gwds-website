@@ -2,14 +2,16 @@ import Stripe from 'stripe';
 
 let _stripe: Stripe | null = null;
 
-export function getStripe(): Stripe | null {
+export function getStripe(): Stripe {
   const key = process.env.STRIPE_SECRET_KEY;
-  if (!key || key === 'sk_test_REPLACE_ME') return null;
-  if (!_stripe) _stripe = new Stripe(key, { apiVersion: '2024-12-18.acacia' as any });
+  if (!key || !/^sk_(test|live)_/.test(key)) {
+    throw new Error('STRIPE_SECRET_KEY is not configured');
+  }
+  if (!_stripe) _stripe = new Stripe(key);
   return _stripe;
 }
 
 export function isStripeConfigured(): boolean {
   const key = process.env.STRIPE_SECRET_KEY;
-  return !!key && key !== 'sk_test_REPLACE_ME';
+  return !!key && /^sk_(test|live)_/.test(key);
 }

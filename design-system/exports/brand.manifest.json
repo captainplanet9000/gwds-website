@@ -1,0 +1,71 @@
+{
+  "$description": "Brand asset manifest — logos, marks, favicons, and fonts. Every path is relative to the gwds.app site root (public/...). Copy these alongside tokens when porting the brand into another tool.",
+  "brand": {
+    "name": "GWDS",
+    "long_name": "Gamma Waves Design Studio",
+    "mission": "Empowering creators with cutting-edge tools and systems that turn ideas into revenue.",
+    "tagline": "We design unusual digital products.",
+    "voice": ["Innovative", "Empowering", "Autonomous", "Professional", "Direct"],
+    "mood": ["editorial", "premium", "minimal", "high-contrast"]
+  },
+  "logo": {
+    "primary": {
+      "path": "public/images/logo.png",
+      "variants": [
+        { "name": "default",   "path": "public/images/logo.png",       "on": "dark" },
+        { "name": "light",     "path": "public/images/logo-light.png", "on": "light" },
+        { "name": "3d",        "component": "src/components/GWDSLogo3D.tsx", "notes": "Three.js mesh — interactive hero usage only." },
+        { "name": "wordmark",  "component": "src/components/Logo.tsx", "notes": "React component, theme-aware via CSS vars." }
+      ],
+      "clear_space": "1x the cap-height of the 'G' on every side.",
+      "min_size": "24px tall on screen; 12mm tall in print."
+    },
+    "favicon": {
+      "ico":  "public/favicon.ico",
+      "png":  "public/images/favicon.png",
+      "apple":"public/images/icon-192.png"
+    }
+  },
+  "social": {
+    "og_image": {
+      "path": "public/images/og-image.png",
+      "size": "1200x630",
+      "usage": "Open Graph preview for links"
+    }
+  },
+  "imagery": {
+    "hero_backdrop": "public/images/hero-bg.png",
+    "categories":    "public/images/categories/",
+    "products":      "public/images/products/"
+  },
+  "fonts": {
+    "Syne": {
+      "role": "display",
+      "weights": [400, 500, 600, 700, 800],
+      "source": "Google Fonts",
+      "url": "https://fonts.google.com/specimen/Syne",
+      "license": "SIL Open Font License 1.1",
+      "webfont": "@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&display=swap');"
+    },
+    "DM Sans": {
+      "role": "body",
+      "weights": [300, 400, 500, 600, 700],
+      "source": "Google Fonts",
+      "url": "https://fonts.google.com/specimen/DM+Sans",
+      "license": "SIL Open Font License 1.1",
+      "webfont": "@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap');"
+    },
+    "JetBrains Mono": {
+      "role": "mono",
+      "weights": [400, 500, 600, 700],
+      "source": "Google Fonts",
+      "url": "https://fonts.google.com/specimen/JetBrains+Mono",
+      "license": "SIL Open Font License 1.1",
+      "optional": true
+    }
+  },
+  "3d_assets": {
+    "typeface": "public/fonts/helvetiker_bold.typeface.json",
+    "orb_component": "src/components/ProductOrb3D.tsx"
+  }
+}

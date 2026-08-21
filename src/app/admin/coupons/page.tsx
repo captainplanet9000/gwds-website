@@ -7,14 +7,17 @@ interface Coupon {
   is_active: boolean; expires_at: string | null; created_at: string;
 }
 
-const emptyForm = { 
-  code: '', description: '', discount_type: 'percentage' as const, 
+interface CouponForm {
+  code: string; description: string; discount_type: 'percentage' | 'fixed';
+  discount_value: number; max_uses: string; min_order: number; is_active: boolean; expires_at: string;
+}
+
+const emptyForm: CouponForm = {
+  code: '', description: '', discount_type: 'percentage',
   discount_value: 10, max_uses: '', min_order: 0, is_active: true, expires_at: '' 
 };
 
 export default function CouponsAdmin() {
-  const [authed, setAuthed] = useState(false);
-  const [password, setPassword] = useState('');
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -25,27 +28,6 @@ export default function CouponsAdmin() {
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
 
-  useEffect(() => { 
-    if (sessionStorage.getItem('gwds-admin') === 'true') setAuthed(true); 
-  }, []);
-
-  const login = () => {
-    fetch('/api/admin/auth', { 
-      method: 'POST', 
-      headers: { 'Content-Type': 'application/json' }, 
-      body: JSON.stringify({ password }) 
-    })
-    .then(r => r.json())
-    .then(d => { 
-      if (d.ok) { 
-        setAuthed(true); 
-        sessionStorage.setItem('gwds-admin', 'true'); 
-      } else {
-        alert('Invalid password'); 
-      }
-    });
-  };
-
   const fetchCoupons = async () => { 
     setLoading(true); 
     const res = await fetch('/api/admin/coupons'); 
@@ -54,7 +36,7 @@ export default function CouponsAdmin() {
     setLoading(false); 
   };
 
-  useEffect(() => { if (authed) fetchCoupons(); }, [authed]);
+  useEffect(() => { void fetchCoupons(); }, []);
 
   const resetForm = () => { 
     setForm(emptyForm); 
@@ -126,23 +108,6 @@ export default function CouponsAdmin() {
     await fetch(`/api/admin/coupons/${c.id}`, { method: 'DELETE' }); 
     fetchCoupons(); 
   };
-
-  if (!authed) return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
-      <div style={{ maxWidth: 360, width: '100%', padding: 24 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 800, color: '#E8E8E8', marginBottom: 24, textAlign: 'center' }}>GWDS Admin</h1>
-        <input 
-          type="password" 
-          value={password} 
-          onChange={e => setPassword(e.target.value)} 
-          onKeyDown={e => e.key === 'Enter' && login()} 
-          placeholder="Password"
-          style={{ width: '100%', padding: '14px 16px', background: '#111', border: '1px solid #222', borderRadius: 8, color: '#E8E8E8', fontSize: '0.88rem', fontFamily: 'var(--font-body)', outline: 'none', marginBottom: 12, boxSizing: 'border-box' }} 
-        />
-        <button onClick={login} style={{ width: '100%', padding: '14px', borderRadius: 8, border: 'none', background: '#8B5CF6', color: '#fff', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer', textTransform: 'uppercase' }}>Login</button>
-      </div>
-    </div>
-  );
 
   const filteredCoupons = coupons.filter(c => {
     const isExpired = c.expires_at && new Date(c.expires_at) < new Date();
