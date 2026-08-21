@@ -70,4 +70,18 @@ Use a new verified test customer:
 
 ## Managed hosting
 
-The `/hosted` page is informational. Do not sell hosting until tenant isolation, encrypted customer secrets, provisioning/teardown, runtime health, backups/restore tests, incident response, metering, subscription billing, service terms, and support capacity are implemented and tested independently from source-code sales.
+The customer and operator control plane is implemented under `/account/hosting` and `/admin/hosting`, but `NEXT_PUBLIC_HOSTING_SALES_ENABLED` must remain `false` until every gate below passes:
+
+- Core and every included licence artifact passes clean install, TypeScript, tests, production build, secret scan and dependency audit.
+- Each customer receives a genuinely isolated runtime and database boundary; provider project/database references are recorded in the instance.
+- `HOSTING_CREDENTIAL_MASTER_KEY` is a unique 32-byte production secret, key rotation is rehearsed, logs are confirmed to redact payloads, and only dedicated trade-only API wallets are accepted.
+- Automatic health checks and heartbeats are connected to the real tenant runtime; degraded/unreachable states alert the monitored support channel.
+- Backups are enabled and a restore/recovery drill is recorded for the exact deployed release before activation.
+- Provision, suspend, resume and decommission tasks have been executed end-to-end on a non-customer tenant.
+- Stripe test mode passes subscription start, renewal, failed invoice, payment recovery, plan cancellation, portal access, replayed webhook idempotency and livemode mismatch rejection.
+- Customer isolation tests prove a second user cannot read or mutate another subscription, onboarding, instance, usage, incident, audit or credential.
+- Service terms, privacy/data handling, refund/cancellation policy, uptime/support targets, tax treatment and incident-response ownership receive business/legal approval.
+- At least one plan has valid recurring Stripe product/price IDs, a verified included artifact and `launch_ready=true`.
+- Admin activation refuses tenants without active billing, approved onboarding, provider/database/release references, healthy runtime and backups, and a recorded recovery test.
+
+Only after those checks pass: set `NEXT_PUBLIC_HOSTING_SALES_ENABLED=true`, redeploy, complete one controlled live subscription, confirm the webhook-created tenant queue, and monitor billing/runtime events continuously. Store sales can remain independently disabled.

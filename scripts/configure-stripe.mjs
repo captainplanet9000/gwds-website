@@ -71,6 +71,12 @@ const catalog = [
   },
 ];
 
+const hostingCatalog = [
+  { id: 'solo', name: 'Cival Hosted — Solo', description: 'One supervised managed agent, 250 agent-hours, and Core Edition licence.', amount: 1900 },
+  { id: 'desk', name: 'Cival Hosted — Desk', description: 'Six-agent managed farm, 1,000 agent-hours, Desk Edition licence, and priority support.', amount: 7900 },
+  { id: 'fund', name: 'Cival Hosted — Fund', description: 'Dedicated managed workers, multiple workspaces, team access, and private agent delivery.', amount: 29900 },
+];
+
 const retiredPriceIds = [
   'price_1U09vdLLyk0oaesNIb1MgxJh',
   'price_1U09veLLyk0oaesNLxwlRQ8l',
@@ -100,6 +106,11 @@ const enabledEvents = [
   'checkout.session.completed',
   'checkout.session.expired',
   'payment_intent.payment_failed',
+  'customer.subscription.created',
+  'customer.subscription.updated',
+  'customer.subscription.deleted',
+  'invoice.paid',
+  'invoice.payment_failed',
 ];
 
 const account = await stripe.accounts.retrieve();
@@ -205,6 +216,70 @@ for (const item of catalog) {
 }
 
 const retired = [];
+
+const hostingResults = [];
+for (const item of hostingCatalog) {
+  let product = existingProducts.data.find((candidate) => candidate.metadata?.cival_hosting_plan_id === item.id);
+  let price;
+  if (product) {
+    const prices = await stripe.prices.list({ product: product.id, active: true, type: 'recurring', limit: 100 });
+    price = prices.data.find((candidate) => candidate.currency === 'usd' && candidate.unit_amount === item.amount && candidate.recurring?.interval === 'month');
+  }
+  if (apply) {
+    if (!product) {
+      product = await stripe.products.create({
+        name: item.name,
+        description: item.description,
+        metadata: { commerce_kind: 'hosting', cival_hosting_plan_id: item.id },
+      }, { idempotencyKey: `cival-hosting-product-${item.id}-v1` });
+    } else {
+      product = await stripe.products.update(product.id, { active: true, name: item.name, description: item.description, metadata: { ...product.metadata, commerce_kind: 'hosting', cival_hosting_plan_id: item.id } });
+    }
+    if (!price) {
+      price = await stripe.prices.create({
+        product: product.id,
+        currency: 'usd',
+        unit_amount: item.amount,
+        recurring: { interval: 'month' },
+        tax_behavior: 'exclusive',
+        metadata: { commerce_kind: 'hosting', cival_hosting_plan_id: item.id },
+      }, { idempotencyKey: `cival-hosting-price-${item.id}-${item.amount}-monthly-v1` });
+    }
+    if (product.default_price !== price.id) await stripe.products.update(product.id, { default_price: price.id });
+
+    if (env.NEXT_PUBLIC_SUPABASE_URL && env.SUPABASE_SERVICE_ROLE_KEY) {
+      const response = await fetch(`${env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/hosting_plans?id=eq.${encodeURIComponent(item.id)}`, {
+        method: 'PATCH',
+        headers: {
+          apikey: env.SUPABASE_SERVICE_ROLE_KEY,
+          Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
+          'Content-Type': 'application/json',
+          Prefer: 'return=minimal',
+        },
+        body: JSON.stringify({ stripe_product_id: product.id, stripe_price_id: price.id, launch_ready: false, updated_at: new Date().toISOString() }),
+      });
+      if (!response.ok) throw new Error(`Could not bind hosting plan ${item.id} to Stripe: ${response.status} ${await response.text()}`);
+    }
+  }
+  hostingResults.push({ id: item.id, productId: product?.id || null, priceId: price?.id || null, amount: price?.unit_amount || item.amount, active: Boolean(product?.active && price?.active) });
+}
+
+let portalConfiguration = null;
+if (apply) {
+  const configurations = await stripe.billingPortal.configurations.list({ limit: 100 });
+  portalConfiguration = configurations.data.find((candidate) => candidate.is_default) || configurations.data[0];
+  const portalFeatures = {
+    customer_update: { enabled: true, allowed_updates: ['address', 'email', 'name', 'phone', 'tax_id'] },
+    invoice_history: { enabled: true },
+    payment_method_update: { enabled: true },
+    subscription_cancel: { enabled: true, mode: 'at_period_end', cancellation_reason: { enabled: true, options: ['too_expensive', 'missing_features', 'switched_service', 'unused', 'other'] } },
+    subscription_update: { enabled: false },
+  };
+  portalConfiguration = portalConfiguration
+    ? await stripe.billingPortal.configurations.update(portalConfiguration.id, { business_profile: { headline: 'Manage your Cival Systems hosting subscription', privacy_policy_url: `${siteUrl}/privacy`, terms_of_service_url: `${siteUrl}/terms` }, features: portalFeatures })
+    : await stripe.billingPortal.configurations.create({ business_profile: { headline: 'Manage your Cival Systems hosting subscription', privacy_policy_url: `${siteUrl}/privacy`, terms_of_service_url: `${siteUrl}/terms` }, features: portalFeatures });
+}
+
 if (apply) {
   for (const priceId of retiredPriceIds) {
     const price = await stripe.prices.retrieve(priceId);
@@ -262,6 +337,8 @@ console.log(JSON.stringify({
   },
   statementDescriptor: updatedAccount.settings?.payments?.statement_descriptor,
   products: results,
+  hostingProducts: hostingResults,
+  billingPortal: portalConfiguration ? { id: portalConfiguration.id, active: portalConfiguration.active, isDefault: portalConfiguration.is_default } : null,
   retiredProducts: retired,
   webhook: endpoint ? { url: endpoint.url, status: endpoint.status, events: endpoint.enabled_events } : null,
   webhookSecretConfigured,

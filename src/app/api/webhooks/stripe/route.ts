@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import type Stripe from 'stripe';
 import { createServerClient } from '@/lib/supabase';
 import { sendOrderReadyEmail, type OrderEmailData } from '@/lib/email';
+import { deliverHostingNotification } from '@/lib/hosting-notifications';
 import { hashPayload, type OrderItemRow } from '@/lib/commerce';
+import { parsePeriod } from '@/lib/hosting';
 import { getStripe } from '@/lib/stripe';
 
 export const runtime = 'nodejs';
@@ -140,6 +142,93 @@ async function fulfillSession(event: Stripe.Event, session: Stripe.Checkout.Sess
   await deliverOrderEmail(result?.order_id || orderId);
 }
 
+async function activateHostingSession(event: Stripe.Event, session: Stripe.Checkout.Session, payloadHash: string) {
+  if (session.mode !== 'subscription') throw new Error('HOSTING_SESSION_MODE_MISMATCH');
+  const hostingSubscriptionId = requireMetadataId(session.metadata?.hosting_subscription_id, 'HOSTING_SUBSCRIPTION_ID');
+  const userId = requireMetadataId(session.metadata?.user_id, 'USER_ID');
+  const planId = session.metadata?.hosting_plan_id;
+  const customerEmail = session.customer_details?.email || session.customer_email;
+  const stripeSubscriptionId = objectId(session.subscription);
+  const stripeCustomerId = objectId(session.customer);
+  if (!planId || !/^[a-z0-9-]{2,40}$/.test(planId) || !customerEmail || !stripeSubscriptionId || !stripeCustomerId) {
+    throw new Error('HOSTING_SESSION_DATA_MISSING');
+  }
+
+  const subscription = await getStripe().subscriptions.retrieve(stripeSubscriptionId, { expand: ['items.data.price'] });
+  const price = subscription.items.data[0]?.price;
+  if (!price || subscription.items.data.length !== 1 || subscription.metadata?.commerce_kind !== 'hosting'
+    || subscription.metadata?.hosting_subscription_id !== hostingSubscriptionId
+    || subscription.metadata?.hosting_plan_id !== planId || subscription.metadata?.user_id !== userId) {
+    throw new Error('HOSTING_SUBSCRIPTION_METADATA_MISMATCH');
+  }
+  const periods = parsePeriod(subscription);
+  const { data, error } = await createServerClient().rpc('activate_hosting_checkout', {
+    p_event_id: event.id,
+    p_event_type: event.type,
+    p_payload_hash: payloadHash,
+    p_subscription_id: hostingSubscriptionId,
+    p_user_id: userId,
+    p_plan_id: planId,
+    p_checkout_session_id: session.id,
+    p_stripe_customer_id: stripeCustomerId,
+    p_stripe_subscription_id: subscription.id,
+    p_stripe_price_id: price.id,
+    p_customer_email: customerEmail,
+    p_status: subscription.status,
+    p_period_start: periods.start,
+    p_period_end: periods.end,
+    p_trial_end: periods.trialEnd,
+    p_cancel_at_period_end: subscription.cancel_at_period_end,
+    p_livemode: event.livemode,
+  });
+  if (error || !data?.[0]) throw new Error(`HOSTING_ACTIVATION_FAILED:${error?.message || 'no result'}`);
+
+  await createServerClient().from('customers').update({ stripe_customer_id: stripeCustomerId, updated_at: new Date().toISOString() })
+    .eq('user_id', userId);
+  await deliverHostingNotification(hostingSubscriptionId);
+}
+
+async function syncHostingSubscription(event: Stripe.Event, subscription: Stripe.Subscription, payloadHash: string) {
+  if (subscription.metadata?.commerce_kind !== 'hosting') return;
+  const periods = parsePeriod(subscription);
+  const { error } = await createServerClient().rpc('sync_hosting_subscription', {
+    p_event_id: event.id,
+    p_event_type: event.type,
+    p_payload_hash: payloadHash,
+    p_stripe_subscription_id: subscription.id,
+    p_status: subscription.status,
+    p_cancel_at_period_end: subscription.cancel_at_period_end,
+    p_period_start: periods.start,
+    p_period_end: periods.end,
+    p_trial_end: periods.trialEnd,
+    p_livemode: event.livemode,
+  });
+  if (error) throw new Error(`HOSTING_SYNC_FAILED:${error.message}`);
+  const internalId = subscription.metadata?.hosting_subscription_id;
+  if (internalId && /^[0-9a-f-]{36}$/i.test(internalId)) await deliverHostingNotification(internalId);
+}
+
+function invoiceSubscriptionId(invoice: Stripe.Invoice): string | null {
+  const record = invoice as Stripe.Invoice & {
+    subscription?: string | { id: string } | null;
+    parent?: { subscription_details?: { subscription?: string | { id: string } | null } } | null;
+  };
+  return objectId(record.subscription || record.parent?.subscription_details?.subscription || null);
+}
+
+async function syncHostingInvoice(event: Stripe.Event, invoice: Stripe.Invoice, payloadHash: string) {
+  const subscriptionId = invoiceSubscriptionId(invoice);
+  if (!subscriptionId) return;
+  const subscription = await getStripe().subscriptions.retrieve(subscriptionId);
+  if (subscription.metadata?.commerce_kind !== 'hosting') return;
+  await syncHostingSubscription(event, subscription, payloadHash);
+  await createServerClient().from('hosting_subscriptions').update({
+    last_invoice_status: invoice.status,
+    last_payment_at: event.type === 'invoice.paid' ? new Date().toISOString() : undefined,
+    updated_at: new Date().toISOString(),
+  }).eq('stripe_subscription_id', subscriptionId);
+}
+
 async function applyStatusEvent(args: {
   event: Stripe.Event;
   payloadHash: string;
@@ -212,9 +301,12 @@ export async function POST(req: NextRequest) {
 
     switch (event.type) {
       case 'checkout.session.completed':
-      case 'checkout.session.async_payment_succeeded':
-        await fulfillSession(event, event.data.object, payloadHash);
+      case 'checkout.session.async_payment_succeeded': {
+        const session = event.data.object;
+        if (session.metadata?.commerce_kind === 'hosting') await activateHostingSession(event, session, payloadHash);
+        else await fulfillSession(event, session, payloadHash);
         break;
+      }
       case 'checkout.session.async_payment_failed':
         await applyStatusEvent({ event, payloadHash, sessionId: event.data.object.id, status: 'payment_failed', reason: event.type, revoke: false });
         break;
@@ -246,6 +338,15 @@ export async function POST(req: NextRequest) {
         await applyStatusEvent({ event, payloadHash, paymentIntentId: objectId(charge.payment_intent), status: won ? 'paid' : 'dispute_lost', reason: `dispute_${dispute.status}`, revoke: !won, restore: won });
         break;
       }
+      case 'customer.subscription.created':
+      case 'customer.subscription.updated':
+      case 'customer.subscription.deleted':
+        await syncHostingSubscription(event, event.data.object, payloadHash);
+        break;
+      case 'invoice.paid':
+      case 'invoice.payment_failed':
+        await syncHostingInvoice(event, event.data.object, payloadHash);
+        break;
     }
     return NextResponse.json({ received: true });
   } catch (error) {

@@ -44,6 +44,7 @@ const desired = {
   ...Object.fromEntries(required.map((key) => [key, source[key].replace(/[\r\n]+$/, '')])),
   NEXT_PUBLIC_SITE_URL: 'https://www.civalsystems.com',
   NEXT_PUBLIC_STORE_SALES_ENABLED: 'false',
+  NEXT_PUBLIC_HOSTING_SALES_ENABLED: 'false',
   STRIPE_AUTOMATIC_TAX: 'false',
 };
 const npxCli = path.join(path.dirname(process.execPath), 'node_modules', 'npm', 'bin', 'npx-cli.js');

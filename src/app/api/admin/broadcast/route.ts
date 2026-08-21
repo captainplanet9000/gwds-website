@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSiteUrl } from '@/lib/commerce';
 import { newsletterToken } from '@/lib/newsletter';
 import { createServerClient } from '@/lib/supabase';
+import { adminUnauthorized, verifyAdmin } from '@/lib/admin-auth';
 
 export async function POST(req: NextRequest) {
+  if (!verifyAdmin(req)) return adminUnauthorized();
   try {
     const { subject, html, test } = await req.json();
     if (!subject || !html) {

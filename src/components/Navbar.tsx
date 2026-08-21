@@ -29,7 +29,7 @@ export default function Navbar() {
 
   return (
     <nav
-      className="cival"
+      className="cival site-navbar"
       style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000,
         minHeight: 0,

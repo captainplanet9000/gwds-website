@@ -12,6 +12,8 @@ import { useAuth } from '@/contexts/AuthContext';
 function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
+  const requestedNext = params.get('next');
+  const nextPath = requestedNext?.startsWith('/account') ? requestedNext : '/account';
   const { user, loading: authLoading, signIn, signInWithMagicLink } = useAuth();
 
   const [email, setEmail] = useState(params.get('email') || '');
@@ -23,9 +25,9 @@ function LoginForm() {
 
   useEffect(() => {
     if (!authLoading && user) {
-      router.push('/account');
+      router.push(nextPath);
     }
-  }, [user, authLoading, router]);
+  }, [user, authLoading, router, nextPath]);
 
   const handlePasswordLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,7 +35,7 @@ function LoginForm() {
     setLoading(true);
     try {
       await signIn(email, password);
-      router.push('/account');
+      router.push(nextPath);
     } catch (err: any) {
       setError(err.message || 'Login failed');
     } finally {

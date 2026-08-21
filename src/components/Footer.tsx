@@ -28,6 +28,7 @@ export default function Footer() {
             <Link href="/store/trading-dashboard-template" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Core Edition — $99</Link>
             <Link href="/store?cat=agent" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Trading agents</Link>
             <Link href="/hosted" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Managed hosting</Link>
+            <Link href="/account/hosting" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Hosting account</Link>
           </div>
         </div>
 
@@ -38,6 +39,7 @@ export default function Footer() {
             <Link href="/content" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Content</Link>
             <Link href="/refunds" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Refund policy</Link>
             <Link href="/disclaimer" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Disclaimer</Link>
+            <Link href="/hosting-terms" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Hosting terms</Link>
           </div>
         </div>
 
@@ -74,6 +76,7 @@ export default function Footer() {
           <Link href="/terms" style={{ color: 'var(--color-neutral-400)', textDecoration: 'none' }}>Terms</Link>
           <Link href="/refunds" style={{ color: 'var(--color-neutral-400)', textDecoration: 'none' }}>Refunds</Link>
           <Link href="/disclaimer" style={{ color: 'var(--color-neutral-400)', textDecoration: 'none' }}>Disclaimer</Link>
+          <Link href="/hosting-terms" style={{ color: 'var(--color-neutral-400)', textDecoration: 'none' }}>Hosting Terms</Link>
         </div>
       </div>
     </footer>

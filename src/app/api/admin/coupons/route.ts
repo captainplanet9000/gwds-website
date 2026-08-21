@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAllCoupons, createCoupon } from '@/lib/store-db';
+import { adminUnauthorized, verifyAdmin } from '@/lib/admin-auth';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  if (!verifyAdmin(req)) return adminUnauthorized();
   try {
     const coupons = await getAllCoupons();
     return NextResponse.json({ coupons });
@@ -11,6 +13,7 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  if (!verifyAdmin(req)) return adminUnauthorized();
   try {
     const body = await req.json();
     const { code, description, discount_type, discount_value, max_uses, min_order, applies_to, excludes, is_active, expires_at } = body;

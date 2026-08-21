@@ -1,7 +1,7 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 const navItems = [
   { name: 'Dashboard', href: '/admin', icon: '📊' },
@@ -11,11 +11,29 @@ const navItems = [
   { name: 'Coupons', href: '/admin/coupons', icon: '🎟️' },
   { name: 'Subscribers', href: '/admin/subscribers', icon: '📧' },
   { name: 'Messages', href: '/admin/messages', icon: '💬' },
+  { name: 'Hosting Ops', href: '/admin/hosting', icon: '⚙️' },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [authState, setAuthState] = useState<'checking' | 'authenticated' | 'guest'>('checking');
+
+  useEffect(() => {
+    fetch('/api/admin/auth', { cache: 'no-store' })
+      .then((response) => setAuthState(response.ok ? 'authenticated' : 'guest'))
+      .catch(() => setAuthState('guest'));
+  }, [pathname]);
+
+  useEffect(() => {
+    if (authState === 'guest' && pathname !== '/admin') window.location.replace('/admin');
+  }, [authState, pathname]);
+
+  if (authState === 'checking') {
+    return <div style={{ minHeight: '100vh', background: '#000', color: '#888', display: 'grid', placeItems: 'center' }}>Checking admin session...</div>;
+  }
+  if (authState === 'guest') return pathname === '/admin' ? <>{children}</> : null;
 
   return (
     <>
@@ -162,7 +180,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 onClick={async () => {
                   await fetch('/api/admin/auth', { method: 'DELETE' }).catch(() => undefined);
                   sessionStorage.removeItem('gwds-admin'); 
-                  window.location.href = '/admin'; 
+                  router.replace('/admin');
+                  router.refresh();
                 }}
                 style={{ padding: '8px 16px', borderRadius: 6, border: '1px solid #1a1a1a', background: 'transparent', color: '#888', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer' }}
               >

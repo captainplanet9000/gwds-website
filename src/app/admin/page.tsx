@@ -9,8 +9,10 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const saved = sessionStorage.getItem('gwds-admin');
-    if (saved === 'true') setAuthed(true);
+    fetch('/api/admin/auth', { cache: 'no-store' }).then((response) => {
+      setAuthed(response.ok);
+      if (!response.ok) sessionStorage.removeItem('gwds-admin');
+    }).catch(() => setAuthed(false));
   }, []);
 
   const login = () => {
@@ -20,8 +22,8 @@ export default function AdminDashboard() {
       body: JSON.stringify({ password }),
     }).then(r => r.json()).then(d => {
       if (d.ok) { 
-        setAuthed(true); 
         sessionStorage.setItem('gwds-admin', 'true'); 
+        window.location.reload();
       } else {
         alert('Invalid password');
       }
@@ -222,7 +224,7 @@ export default function AdminDashboard() {
   const RevenueChart = ({ data }: { data: any[] }) => {
     if (!data || data.length === 0) return null;
     
-    const max = Math.max(...data.map(d => d.value));
+    const max = Math.max(1, ...data.map(d => Number.isFinite(Number(d.value)) ? Number(d.value) : 0));
     const width = 600;
     const height = 220;
     const padding = 50;
@@ -230,9 +232,10 @@ export default function AdminDashboard() {
     const chartHeight = height - padding * 2;
     
     const points = data.map((d, i) => {
-      const x = padding + (i / (data.length - 1)) * chartWidth;
-      const y = padding + chartHeight - (d.value / max) * chartHeight;
-      return { x, y, value: d.value, label: d.label };
+      const x = padding + (data.length === 1 ? 0.5 : i / (data.length - 1)) * chartWidth;
+      const value = Number.isFinite(Number(d.value)) ? Number(d.value) : 0;
+      const y = padding + chartHeight - (value / max) * chartHeight;
+      return { x, y, value, label: d.label };
     });
     
     const pathD = points.map((p, i) => 

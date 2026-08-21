@@ -54,3 +54,4 @@ next-env.d.ts
 # Local release/brand build outputs and secret-bearing deployment audits
 /tmp/
 /brand-package/
+/supabase/.temp/
