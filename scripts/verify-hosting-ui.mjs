@@ -28,6 +28,9 @@ const customerRedirect = page.url();
 await page.goto(`${baseUrl}/admin/hosting`, { waitUntil: 'domcontentloaded' });
 await page.waitForTimeout(600);
 const adminRedirect = page.url();
+const adminText = await page.locator('body').innerText();
+const adminGate = adminText.includes('Owner account and authenticator verification are required.')
+  && adminText.includes('Shared admin passwords are disabled.');
 const adminApi = await page.request.get(`${baseUrl}/api/admin/hosting`);
 const credentialApi = await page.request.post(`${baseUrl}/api/hosting/credentials`, { data: {} });
 
@@ -36,6 +39,7 @@ const result = {
   publicCheck,
   customerRedirect,
   adminRedirect,
+  adminGate,
   adminApiStatus: adminApi.status(),
   credentialApiStatus: credentialApi.status(),
   unexpectedConsoleErrors,
@@ -46,7 +50,7 @@ await browser.close();
 if (publicCheck.heading !== 1 || !publicCheck.paperOnly || !publicCheck.launchGate
   || publicCheck.secretPrompt || publicCheck.errorOverlay !== 0
   || !customerRedirect.includes('/account/login?next=/account/hosting')
-  || !adminRedirect.endsWith('/admin') || adminApi.status() !== 401
+  || !adminRedirect.includes('/admin') || !adminGate || adminApi.status() !== 401
   || credentialApi.status() !== 410 || unexpectedConsoleErrors.length) {
   process.exitCode = 1;
 }
