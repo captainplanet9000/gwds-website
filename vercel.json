@@ -2,6 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
   "crons": [
-    { "path": "/api/cron/hosting-provision", "schedule": "*/2 * * * *" }
+    { "path": "/api/cron/hosting-provision", "schedule": "0 7 * * *" }
   ]
 }

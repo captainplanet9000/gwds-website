@@ -36,6 +36,12 @@ For every customer-visible incident, record start time, severity, current status
 
 ## Recovery
 
+The repository uses a once-daily, no-op-compatible Vercel Cron schedule so the
+storefront can deploy on the current Hobby plan. Before managed hosting is
+enabled, upgrade to Vercel Pro (or install an equivalent reliable scheduler),
+change the worker cadence to every two minutes, and pass the tenant lifecycle
+and recovery drill. A daily worker is not an acceptable customer-hosting SLA.
+
 1. Disable the affected sales gate.
 2. Preserve logs and database state; rotate exposed credentials before redeploying.
 3. Restore from a validated backup into an isolated target.
