@@ -1,9 +1,13 @@
 # Cival Systems nine-step release gauntlet
 
-Run date: 2026-08-20 PDT  
-Storefront commit: `31128b4`  
-Production deployment: `dpl_3QARBUzukBvY2TKs693PmrubbHfm`  
-Canonical URL: `https://www.civalsystems.com`  
+Run date: 2026-08-20 PDT
+
+Storefront commit: `31128b4`
+
+Production deployment: `dpl_3QARBUzukBvY2TKs693PmrubbHfm`
+
+Canonical URL: `https://www.civalsystems.com`
+
 Release verdict: **storefront deployed and verified; paid sales remain gated**
 
 ## 1. Product scope and truth — PASS
