@@ -2,9 +2,9 @@
 
 Run date: 2026-08-20 PDT
 
-Storefront commit: `31128b4`
+Storefront merge commit: `cb7fb8e8e834d78f5b2835f4c8a54df4d1c0f89d`
 
-Production deployment: `dpl_3QARBUzukBvY2TKs693PmrubbHfm`
+Production deployment: `dpl_6KKB29SGntZChZPDvWWHF4SSmCix`
 
 Canonical URL: `https://www.civalsystems.com`
 
