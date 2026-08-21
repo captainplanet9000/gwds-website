@@ -26,7 +26,9 @@ await page.waitForTimeout(600);
 const customerRedirect = page.url();
 
 await page.goto(`${baseUrl}/admin/hosting`, { waitUntil: 'domcontentloaded' });
-await page.waitForTimeout(600);
+await page.getByText('Owner account and authenticator verification are required.')
+  .waitFor({ state: 'visible', timeout: 8_000 })
+  .catch(() => undefined);
 const adminRedirect = page.url();
 const adminText = await page.locator('body').innerText();
 const adminGate = adminText.includes('Owner account and authenticator verification are required.')
