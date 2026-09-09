@@ -131,6 +131,20 @@ begin
     else
       raise exception 'INVALID_COUPON_CONFIGURATION';
     end if;
+
+    -- Reserve this use now, inside the same row-locked transaction that just
+    -- checked max_uses, instead of waiting for fulfill_store_order() to count
+    -- it after payment. Without this, concurrent checkout sessions for a
+    -- shared/leaked single-use code can each pass the max_uses check before
+    -- any of them has paid (used_count is still 0 for all of them), letting
+    -- more customers redeem a capped coupon than max_uses allows. The
+    -- reservation is released by release_store_checkout_coupon() below if
+    -- this order fails synchronously, and by apply_store_order_status_event()
+    -- if the Stripe session instead expires unpaid; fulfill_store_order() no
+    -- longer increments used_count on payment, since it is already reserved.
+    update public.gwds_coupons
+    set used_count = coalesce(used_count, 0) + 1, updated_at = now()
+    where id = v_coupon.id;
   end if;
 
   if v_subtotal - v_discount < 50 then
@@ -168,4 +182,58 @@ $$;
 revoke all on function public.create_store_checkout(uuid,text,text,text,text,text,text,boolean,jsonb)
   from public, anon, authenticated;
 grant execute on function public.create_store_checkout(uuid,text,text,text,text,text,text,boolean,jsonb)
+  to service_role;
+
+-- Releases the coupon-use reservation taken by create_store_checkout() above
+-- when a checkout fails synchronously (catalog/Stripe error, session bind
+-- failure, etc.) before the customer ever reached Stripe. Without this, every
+-- failed checkout attempt would permanently burn one of the coupon's
+-- max_uses, eventually locking legitimate customers out of a coupon that was
+-- never actually redeemed. Guarded to only fire once, from 'checkout_pending',
+-- so a retried failure handler or an order that already resolved (paid,
+-- expired, etc.) can never double-release or mis-release the reservation.
+create or replace function public.release_store_checkout_coupon(
+  p_order_id uuid,
+  p_reason text
+)
+returns boolean
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  v_order public.orders%rowtype;
+begin
+  select * into v_order
+  from public.orders
+  where id = p_order_id
+  for update;
+
+  if v_order.id is null then
+    raise exception 'ORDER_NOT_FOUND';
+  end if;
+
+  if v_order.status <> 'checkout_pending' then
+    return false;
+  end if;
+
+  if v_order.coupon_code is not null then
+    update public.gwds_coupons
+    set used_count = greatest(coalesce(used_count, 0) - 1, 0), updated_at = now()
+    where code = v_order.coupon_code;
+  end if;
+
+  update public.orders
+  set status = 'checkout_failed',
+      failure_reason = left(coalesce(p_reason, 'UNEXPECTED'), 500),
+      updated_at = now()
+  where id = p_order_id;
+
+  return true;
+end;
+$$;
+
+revoke all on function public.release_store_checkout_coupon(uuid, text)
+  from public, anon, authenticated;
+grant execute on function public.release_store_checkout_coupon(uuid, text)
   to service_role;

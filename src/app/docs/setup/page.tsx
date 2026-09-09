@@ -64,7 +64,7 @@ export default function SetupGuidePage() {
         </div>
 
         <section style={{ marginTop: 38, padding: 26, border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-lg)' }}>
-          <h2 style={{ fontSize: 22, marginTop: 0 }}>Optional managed paper mode</h2>
+          <h2 style={{ fontSize: 22, marginTop: 0 }}>Optional managed hosting</h2>
           <p style={{ color: 'var(--color-neutral-700)', lineHeight: 1.7 }}>
             The source supports authenticated cloud saves when Cival configures a managed tenant. Do not put a Supabase service-role key or any exchange/wallet credential into the customer application. Managed hosting is not available for purchase until the public launch gate is open.
           </p>

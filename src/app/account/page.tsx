@@ -346,10 +346,18 @@ export default function AccountPage() {
             )}
           </section>
 
+          <section style={{ marginBottom: 24, padding: 24, border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-lg)', background: 'var(--color-surface)' }}>
+            <h2 style={{ fontSize: '1.3rem', margin: '0 0 8px' }}>Your Live Instance</h2>
+            <p style={{ color: 'var(--color-neutral-700)', lineHeight: 1.6, margin: '0 0 16px' }}>
+              Status, halt/resume trading, your agent wallet, and which strategy agents are installed.
+            </p>
+            <Link href="/account/instance" className="btn btn-primary">Open your instance</Link>
+          </section>
+
           <section style={{ marginBottom: 48, padding: 24, border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-lg)', background: 'var(--color-surface)' }}>
             <h2 style={{ fontSize: '1.3rem', margin: '0 0 8px' }}>Managed Hosting</h2>
             <p style={{ color: 'var(--color-neutral-700)', lineHeight: 1.6, margin: '0 0 16px' }}>
-              Manage paper-hosting plans, onboarding, billing, workspace health, backups and incidents.
+              Manage managed-hosting plans, onboarding, billing, workspace health, backups and incidents.
             </p>
             <Link href="/account/hosting" className="btn btn-primary">Open hosting workspace</Link>
           </section>

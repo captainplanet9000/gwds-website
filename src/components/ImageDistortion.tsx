@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState, useMemo } from 'react';
-import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
 interface ImageDistortionProps {
@@ -102,13 +102,15 @@ function DisplacementPlane({ imageUrl, intensity = 0.4 }: { imageUrl: string; in
     material.uniforms.uIntensity.value = intensity;
   });
 
-  const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
+  // r3f pointer events are ThreeEvent<PointerEvent>, not THREE.Event - only the former carries `uv`.
+  const handlePointerMove = (e: { uv?: { x: number; y: number } }) => {
     if (!meshRef.current) return;
     const mesh = meshRef.current;
     
     // Convert to UV coordinates
-    mouseRef.current.targetX = e.uv!.x;
-    mouseRef.current.targetY = e.uv!.y;
+    if (!e.uv) return;
+    mouseRef.current.targetX = e.uv.x;
+    mouseRef.current.targetY = e.uv.y;
   };
 
   return (

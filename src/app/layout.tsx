@@ -9,28 +9,33 @@ import { LenisProvider } from "@/lib/lenis";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { OrganizationJsonLd } from "@/components/JsonLd";
 import TrackingPixels from "@/components/TrackingPixels";
-import { inlineThemeBootstrap } from "@design/theme-loader";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.civalsystems.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gwds-website.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Cival Systems — Trading Systems, Shipped as Source",
+    default: "Cival Systems — AI Agent Hedge Fund, Ready to Deploy",
     template: "%s — Cival Systems",
   },
   description:
-    "Cival Core 2.0 is a versioned, paper-only trading-workspace source template with simulated orders, agent controls, risk views, audit history, and portable backups.",
+    "A complete AI trading hedge fund starting point — dashboard, execution layer, risk engine, and six autonomous agents on Hyperliquid. Full TypeScript source. Editions from $99.",
   keywords: [
     "AI trading dashboard",
     "trading agents",
-    "trading source templates",
+    "autonomous trading",
     "crypto trading tools",
     "algorithmic trading",
-    "algorithmic trading template",
-    "paper trading dashboard",
-    "simulated trading workspace",
+    "flash loan arbitrage",
+    "meme coin trading",
+    "Darvas Box agent",
+    "Elliott Wave AI",
+    "VWAP breakout",
+    "trading automation",
+    "Hyperliquid",
+    "DeFi tools",
     "Next.js trading dashboard",
   ],
   authors: [{ name: "Cival Systems" }],
@@ -41,30 +46,27 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: siteUrl,
     siteName: "Cival Systems",
-    title: "Cival Systems — Trading Systems, Shipped as Source",
-    description: "Cival Core 2.0 is a versioned, paper-only operations dashboard source template with simulated orders and portable backups.",
+    title: "Cival Systems — AI Agent Hedge Fund, Ready to Deploy",
+    description: "Dashboard, execution layer, risk engine, and six autonomous agents on Hyperliquid. Full TypeScript source. Editions from $99.",
     images: [
       {
-        url: "/brand/cival-og-1200x630-v1.png",
+        url: "/images/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Cival Systems trading workspace source templates",
+        alt: "Cival Systems — AI Agent Hedge Fund, Ready to Deploy",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Cival Systems — Trading Systems, Shipped as Source",
-    description: "Cival Core 2.0 is a versioned, paper-only operations dashboard source template.",
-    images: ["/brand/cival-og-1200x630-v1.png"],
+    title: "Cival Systems — AI Agent Hedge Fund, Ready to Deploy",
+    description: "Dashboard, execution layer, risk engine, and six autonomous agents on Hyperliquid. Editions from $99.",
+    images: ["/images/og-image.png"],
+    creator: "@GWDSofficial",
   },
   icons: {
-    icon: [
-      { url: "/favicon.ico", sizes: "32x32" },
-      { url: "/favicon.png", type: "image/png", sizes: "32x32" },
-      { url: "/brand/cival-social-avatar-512-v1.png", type: "image/png", sizes: "512x512" },
-    ],
-    apple: "/images/apple-touch-icon.png",
+    icon: "/favicon.ico",
+    apple: "/images/icon-192.png",
   },
   robots: {
     index: true,
@@ -90,19 +92,21 @@ const jsonLd = {
       "@type": "Organization",
       "@id": `${siteUrl}/#organization`,
       name: "Cival Systems",
+      alternateName: "GWDS",
       url: siteUrl,
       logo: {
         "@type": "ImageObject",
-        url: `${siteUrl}/brand/cival-social-avatar-512-v1.png`,
+        url: `${siteUrl}/images/logo.png`,
       },
-      description: "Trading workspace and strategy source-code templates for developers to inspect, test, and adapt.",
+      description: "Trading infrastructure and autonomous agents, sold as source. An AI agent hedge fund starting point for Hyperliquid.",
       sameAs: [
+        "https://x.com/GWDSofficial",
         "https://github.com/captainplanet9000",
         "https://discord.gg/EZk6gTx57k",
       ],
       contactPoint: {
         "@type": "ContactPoint",
-        url: `${siteUrl}/contact`,
+        email: "gammawavesdesign@gmail.com",
         contactType: "Customer Service",
       },
     },
@@ -111,7 +115,7 @@ const jsonLd = {
       "@id": `${siteUrl}/#website`,
       url: siteUrl,
       name: "Cival Systems",
-      description: "Trading workspace and strategy templates, sold as source code.",
+      description: "Trading infrastructure and autonomous agents, sold as source.",
       publisher: {
         "@id": `${siteUrl}/#organization`,
       },
@@ -145,8 +149,6 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        {/* Rehydrate persisted theme name before first paint to avoid FOUC. */}
-        <script dangerouslySetInnerHTML={{ __html: inlineThemeBootstrap() }} />
       </head>
       <body className="noise-overlay scanlines">
         <LenisProvider>
@@ -160,6 +162,7 @@ export default function RootLayout({
         </LenisProvider>
         <TrackingPixels />
         <Analytics />
+          <OrganizationJsonLd />
         <SpeedInsights />
         <GoogleAnalytics gaId="G-L49QGMVWDK" />
       </body>

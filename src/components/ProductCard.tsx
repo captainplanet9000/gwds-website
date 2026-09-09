@@ -8,7 +8,6 @@ import { useCart } from "@/contexts/CartContext";
 import { Card } from "./ui/Card";
 import { Badge } from "./ui/Badge";
 import { Button } from "./ui/Button";
-import { STORE_SALES_ENABLED } from '@/lib/store-config';
 
 interface ProductCardProps {
   product: Product;
@@ -25,7 +24,7 @@ export default function ProductCard({ product, view = "grid", onQuickView }: Pro
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (STORE_SALES_ENABLED && product.price > 0) {
+    if (product.price > 0) {
       addItem(product);
       openCart();
     }
@@ -101,11 +100,10 @@ export default function ProductCard({ product, view = "grid", onQuickView }: Pro
                   <Button
                     variant="primary"
                     size="sm"
-                    disabled={!STORE_SALES_ENABLED}
                     onClick={handleAddToCart}
                     aria-label={`Add ${product.name} to cart`}
                   >
-                    {STORE_SALES_ENABLED ? 'Add to Cart' : 'Release verification'}
+                    Add to Cart
                   </Button>
                 )}
               </div>

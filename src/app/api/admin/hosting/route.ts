@@ -14,6 +14,16 @@ const TASK_STATUSES = ['queued','in_progress','blocked','completed','failed','ca
 const INCIDENT_STATUSES = ['investigating','identified','monitoring','resolved'];
 const SEVERITIES = ['info','minor','major','critical'];
 
+type HostCapacityRow = {
+  host: string;
+  admissions_enabled: boolean;
+  max_tenants: number;
+  active_tenants: number;
+  available_slots: number;
+  note: string | null;
+  updated_at: string;
+};
+
 function validUuid(value: unknown): value is string {
   return typeof value === 'string' && /^[0-9a-f-]{36}$/i.test(value);
 }
@@ -31,7 +41,7 @@ async function audit(action: string, data: { user_id?: string | null; subscripti
 export async function GET(req: NextRequest) {
   if (!await requireAdmin(req)) return adminUnauthorized();
   const supabase = createServerClient();
-  const [plans, subscriptions, onboarding, instances, tasks, incidents, usage, history] = await Promise.all([
+  const [plans, subscriptions, onboarding, instances, tasks, incidents, usage, history, capacity, reservations, hosts] = await Promise.all([
     supabase.from('hosting_plans').select('*').order('sort_order'),
     supabase.from('hosting_subscriptions').select('*').order('created_at', { ascending: false }).limit(500),
     supabase.from('hosting_onboarding').select('*').order('updated_at', { ascending: false }).limit(500),
@@ -40,16 +50,25 @@ export async function GET(req: NextRequest) {
     supabase.from('hosting_incidents').select('*').order('started_at', { ascending: false }).limit(500),
     supabase.from('hosting_usage_daily').select('*').order('usage_date', { ascending: false }).limit(1000),
     supabase.from('hosting_audit').select('*').order('created_at', { ascending: false }).limit(250),
+    supabase.from('hosting_capacity').select('max_subscriptions').eq('id', true).single(),
+    supabase.from('hosting_subscriptions').select('id', { count: 'exact', head: true })
+      .in('status', ['pending_checkout','incomplete','trialing','active','past_due','unpaid','paused']),
+    supabase.rpc('hosting_host_capacity'),
   ]);
-  const firstError = [plans, subscriptions, onboarding, instances, tasks, incidents, usage, history].find((result) => result.error)?.error;
+  const firstError = [plans, subscriptions, onboarding, instances, tasks, incidents, usage, history, capacity, reservations, hosts].find((result) => result.error)?.error;
   if (firstError) return NextResponse.json({ error: 'Hosting operations data could not be loaded.' }, { status: 503 });
 
   const rows = subscriptions.data || [];
   const instanceRows = instances.data || [];
   const taskRows = tasks.data || [];
+  const hostRows = (hosts.data || []) as HostCapacityRow[];
   return NextResponse.json({
     salesEnabled: process.env.NEXT_PUBLIC_HOSTING_SALES_ENABLED === 'true',
     stats: {
+      subscriptionCapacity: capacity.data!.max_subscriptions,
+      reservedSubscriptions: reservations.count ?? 0,
+      acceptingHosts: hostRows.filter((item) => item.admissions_enabled && Number(item.available_slots) > 0).length,
+      availableHostSlots: hostRows.reduce((sum, item) => sum + (item.admissions_enabled ? Number(item.available_slots) : 0), 0),
       activeSubscriptions: rows.filter((item) => ['active', 'trialing'].includes(item.status)).length,
       recurringRevenueCents: rows.filter((item) => ['active', 'trialing'].includes(item.status)).reduce((sum, item) => sum + item.price_cents, 0),
       activeInstances: instanceRows.filter((item) => item.status === 'active').length,
@@ -61,6 +80,7 @@ export async function GET(req: NextRequest) {
     plans: plans.data || [], subscriptions: rows, onboarding: onboarding.data || [],
     instances: instanceRows, tasks: taskRows,
     incidents: incidents.data || [], usage: usage.data || [], history: history.data || [],
+    hosts: hostRows,
   }, { headers: { 'Cache-Control': 'no-store' } });
 }
 

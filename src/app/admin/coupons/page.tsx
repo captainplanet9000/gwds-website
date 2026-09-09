@@ -133,10 +133,10 @@ export default function CouponsAdmin() {
   const inputStyle: React.CSSProperties = { 
     width: '100%', 
     padding: '12px 14px', 
-    background: '#111', 
+    background: 'var(--admin-surface-raised)', 
     border: '1px solid #222', 
     borderRadius: 8, 
-    color: '#E8E8E8', 
+    color: 'var(--admin-text)', 
     fontSize: '0.85rem', 
     fontFamily: 'var(--font-body)', 
     outline: 'none', 
@@ -147,7 +147,7 @@ export default function CouponsAdmin() {
   const labelStyle: React.CSSProperties = { 
     display: 'block', 
     fontSize: '0.7rem', 
-    color: '#666', 
+    color: 'var(--admin-text-dim)', 
     marginBottom: 6, 
     fontFamily: 'var(--font-body)', 
     letterSpacing: '0.05em', 
@@ -164,9 +164,9 @@ export default function CouponsAdmin() {
           fontWeight: 800, 
           marginBottom: 8,
           letterSpacing: '-0.03em',
-          color: '#E8E8E8'
+          color: 'var(--admin-text)'
         }}>Coupons</h1>
-        <p style={{ fontSize: '0.9rem', color: '#666' }}>
+        <p style={{ fontSize: '0.9rem', color: 'var(--admin-text-dim)' }}>
           Manage discount codes and promotional offers
         </p>
       </div>
@@ -174,14 +174,14 @@ export default function CouponsAdmin() {
       {/* Stats */}
       <div className="admin-stat-grid-4" style={{ marginBottom: 24 }}>
         {[
-          { label: 'Total Coupons', value: coupons.length, color: '#8B5CF6', icon: '🎟️' },
-          { label: 'Active', value: activeCoupons.length, color: '#10B981', icon: '✓' },
-          { label: 'Total Redemptions', value: totalRedemptions, color: '#F59E0B', icon: '🔄' },
-          { label: 'Revenue from Coupons', value: `$${totalRevenue.toLocaleString()}`, color: '#EC4899', icon: '💰' },
+          { label: 'Total Coupons', value: coupons.length, color: 'var(--admin-accent)', icon: '🎟️' },
+          { label: 'Active', value: activeCoupons.length, color: 'var(--admin-success)', icon: '✓' },
+          { label: 'Total Redemptions', value: totalRedemptions, color: 'var(--admin-warning)', icon: '🔄' },
+          { label: 'Revenue from Coupons', value: `$${totalRevenue.toLocaleString()}`, color: 'var(--admin-accent)', icon: '💰' },
         ].map(s => (
           <div key={s.label} style={{
-            background: '#0a0a0a',
-            border: '1px solid #1a1a1a',
+            background: 'var(--admin-surface)',
+            border: '1px solid var(--admin-border)',
             borderRadius: 12,
             padding: 20,
             position: 'relative',
@@ -197,7 +197,7 @@ export default function CouponsAdmin() {
             }}></div>
             <div style={{ position: 'relative' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
-                <p style={{ fontSize: '0.72rem', color: '#666', letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 600 }}>{s.label}</p>
+                <p style={{ fontSize: '0.72rem', color: 'var(--admin-text-dim)', letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 600 }}>{s.label}</p>
                 <span style={{ fontSize: '1.3rem', opacity: 0.5 }}>{s.icon}</span>
               </div>
               <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 800, color: s.color, letterSpacing: '-0.02em' }}>{s.value}</p>
@@ -212,9 +212,9 @@ export default function CouponsAdmin() {
           marginBottom: 20, 
           padding: '14px 18px', 
           borderRadius: 8, 
-          background: '#10B98115', 
-          border: '1px solid #10B98140', 
-          color: '#10B981', 
+          background: 'var(--admin-success)15', 
+          border: '1px solid var(--admin-success)40', 
+          color: 'var(--admin-success)', 
           fontSize: '0.85rem',
           fontWeight: 500,
           display: 'flex',
@@ -235,7 +235,7 @@ export default function CouponsAdmin() {
             padding: '12px 24px', 
             borderRadius: 8, 
             border: 'none', 
-            background: 'linear-gradient(135deg, #8B5CF6, #EC4899)', 
+            background: 'linear-gradient(135deg, var(--admin-accent), var(--admin-accent))', 
             color: '#fff', 
             fontSize: '0.82rem', 
             fontWeight: 700, 
@@ -248,7 +248,7 @@ export default function CouponsAdmin() {
             e.currentTarget.style.boxShadow = '0 4px 12px rgba(139, 92, 246, 0.3)';
           }}
           onMouseLeave={e => {
-            e.currentTarget.style.background = 'linear-gradient(135deg, #8B5CF6, #EC4899)';
+            e.currentTarget.style.background = 'linear-gradient(135deg, var(--admin-accent), var(--admin-accent))';
             e.currentTarget.style.boxShadow = 'none';
           }}
         >
@@ -262,8 +262,8 @@ export default function CouponsAdmin() {
           marginBottom: 24, 
           padding: 24, 
           borderRadius: 12, 
-          background: '#0a0a0a', 
-          border: '1px solid #1a1a1a',
+          background: 'var(--admin-surface)', 
+          border: '1px solid var(--admin-border)',
           boxShadow: '0 8px 32px rgba(0,0,0,0.4)'
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
@@ -271,7 +271,7 @@ export default function CouponsAdmin() {
               fontFamily: 'var(--font-display)', 
               fontSize: '1.1rem', 
               fontWeight: 700,
-              color: '#E8E8E8'
+              color: 'var(--admin-text)'
             }}>
               {editingId ? 'Edit Coupon' : 'Create New Coupon'}
             </h2>
@@ -280,14 +280,14 @@ export default function CouponsAdmin() {
               style={{ 
                 background: 'none', 
                 border: 'none', 
-                color: '#666', 
+                color: 'var(--admin-text-dim)', 
                 cursor: 'pointer', 
                 fontSize: '1.2rem',
                 padding: '4px 8px',
                 transition: 'color 0.15s ease'
               }}
-              onMouseEnter={e => e.currentTarget.style.color = '#E8E8E8'}
-              onMouseLeave={e => e.currentTarget.style.color = '#666'}
+              onMouseEnter={e => e.currentTarget.style.color = 'var(--admin-text)'}
+              onMouseLeave={e => e.currentTarget.style.color = 'var(--admin-text-dim)'}
             >
               ✕
             </button>
@@ -307,7 +307,7 @@ export default function CouponsAdmin() {
                   letterSpacing: '0.08em',
                   fontWeight: 600
                 }} 
-                onFocus={e => e.target.style.borderColor = '#8B5CF6'}
+                onFocus={e => e.target.style.borderColor = 'var(--admin-accent)'}
                 onBlur={e => e.target.style.borderColor = '#222'}
               />
             </div>
@@ -317,7 +317,7 @@ export default function CouponsAdmin() {
                 value={form.discount_type} 
                 onChange={e => setForm({ ...form, discount_type: e.target.value as any })} 
                 style={{ ...inputStyle, cursor: 'pointer' }}
-                onFocus={e => e.target.style.borderColor = '#8B5CF6'}
+                onFocus={e => e.target.style.borderColor = 'var(--admin-accent)'}
                 onBlur={e => e.target.style.borderColor = '#222'}
               >
                 <option value="percentage">Percentage (%)</option>
@@ -333,7 +333,7 @@ export default function CouponsAdmin() {
                 min={0} 
                 step={form.discount_type === 'percentage' ? 1 : 0.01}
                 style={inputStyle} 
-                onFocus={e => e.target.style.borderColor = '#8B5CF6'}
+                onFocus={e => e.target.style.borderColor = 'var(--admin-accent)'}
                 onBlur={e => e.target.style.borderColor = '#222'}
               />
             </div>
@@ -346,7 +346,7 @@ export default function CouponsAdmin() {
               onChange={e => setForm({ ...form, description: e.target.value })} 
               placeholder="e.g., Launch sale - 25% off everything" 
               style={inputStyle} 
-              onFocus={e => e.target.style.borderColor = '#8B5CF6'}
+              onFocus={e => e.target.style.borderColor = 'var(--admin-accent)'}
               onBlur={e => e.target.style.borderColor = '#222'}
             />
           </div>
@@ -361,7 +361,7 @@ export default function CouponsAdmin() {
                 placeholder="Unlimited" 
                 min={1} 
                 style={inputStyle} 
-                onFocus={e => e.target.style.borderColor = '#8B5CF6'}
+                onFocus={e => e.target.style.borderColor = 'var(--admin-accent)'}
                 onBlur={e => e.target.style.borderColor = '#222'}
               />
             </div>
@@ -375,7 +375,7 @@ export default function CouponsAdmin() {
                 min={0} 
                 step={0.01}
                 style={inputStyle} 
-                onFocus={e => e.target.style.borderColor = '#8B5CF6'}
+                onFocus={e => e.target.style.borderColor = 'var(--admin-accent)'}
                 onBlur={e => e.target.style.borderColor = '#222'}
               />
             </div>
@@ -386,7 +386,7 @@ export default function CouponsAdmin() {
                 value={form.expires_at} 
                 onChange={e => setForm({ ...form, expires_at: e.target.value })} 
                 style={{ ...inputStyle, colorScheme: 'dark' }} 
-                onFocus={e => e.target.style.borderColor = '#8B5CF6'}
+                onFocus={e => e.target.style.borderColor = 'var(--admin-accent)'}
                 onBlur={e => e.target.style.borderColor = '#222'}
               />
             </div>
@@ -394,7 +394,7 @@ export default function CouponsAdmin() {
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
             <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
-              <div style={{ position: 'relative', width: 48, height: 26, background: form.is_active ? '#10B981' : '#333', borderRadius: 13, transition: 'background 0.2s ease', cursor: 'pointer' }}
+              <div style={{ position: 'relative', width: 48, height: 26, background: form.is_active ? 'var(--admin-success)' : 'var(--admin-border-strong)', borderRadius: 13, transition: 'background 0.2s ease', cursor: 'pointer' }}
                 onClick={() => setForm({ ...form, is_active: !form.is_active })}>
                 <div style={{ 
                   position: 'absolute', 
@@ -420,8 +420,8 @@ export default function CouponsAdmin() {
               padding: '12px 16px', 
               borderRadius: 8, 
               background: '#1a0a0a', 
-              border: '1px solid #EF444440', 
-              color: '#EF4444', 
+              border: '1px solid var(--admin-danger)40', 
+              color: 'var(--admin-danger)', 
               fontSize: '0.82rem',
               display: 'flex',
               alignItems: 'center',
@@ -439,7 +439,7 @@ export default function CouponsAdmin() {
                 padding: '12px 28px', 
                 borderRadius: 8, 
                 border: 'none', 
-                background: 'linear-gradient(135deg, #8B5CF6, #EC4899)', 
+                background: 'linear-gradient(135deg, var(--admin-accent), var(--admin-accent))', 
                 color: '#fff', 
                 fontSize: '0.82rem', 
                 fontWeight: 700, 
@@ -451,7 +451,7 @@ export default function CouponsAdmin() {
                 e.currentTarget.style.boxShadow = '0 4px 12px rgba(139, 92, 246, 0.3)';
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.background = 'linear-gradient(135deg, #8B5CF6, #EC4899)';
+                e.currentTarget.style.background = 'linear-gradient(135deg, var(--admin-accent), var(--admin-accent))';
                 e.currentTarget.style.boxShadow = 'none';
               }}
             >
@@ -463,21 +463,21 @@ export default function CouponsAdmin() {
               style={{ 
                 padding: '12px 28px', 
                 borderRadius: 8, 
-                border: '1px solid #333', 
+                border: '1px solid var(--admin-border-strong)', 
                 background: 'transparent', 
-                color: '#888', 
+                color: 'var(--admin-text-muted)', 
                 fontSize: '0.82rem', 
                 fontWeight: 600, 
                 cursor: 'pointer',
                 transition: 'all 0.15s ease'
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.borderColor = '#555';
-                e.currentTarget.style.color = '#E8E8E8';
+                e.currentTarget.style.borderColor = 'var(--admin-text-dim)';
+                e.currentTarget.style.color = 'var(--admin-text)';
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.borderColor = '#333';
-                e.currentTarget.style.color = '#888';
+                e.currentTarget.style.borderColor = 'var(--admin-border-strong)';
+                e.currentTarget.style.color = 'var(--admin-text-muted)';
               }}
             >
               Cancel
@@ -488,8 +488,8 @@ export default function CouponsAdmin() {
 
       {/* Filters & Search */}
       <div style={{
-        background: '#0a0a0a',
-        border: '1px solid #1a1a1a',
+        background: 'var(--admin-surface)',
+        border: '1px solid var(--admin-border)',
         borderRadius: 12,
         padding: 20,
         marginBottom: 16,
@@ -507,16 +507,16 @@ export default function CouponsAdmin() {
             style={{
               width: '100%',
               padding: '10px 14px',
-              background: '#111',
-              border: '1px solid #1a1a1a',
+              background: 'var(--admin-surface-raised)',
+              border: '1px solid var(--admin-border)',
               borderRadius: 8,
-              color: '#E8E8E8',
+              color: 'var(--admin-text)',
               fontSize: '0.85rem',
               outline: 'none',
               transition: 'border-color 0.15s ease'
             }}
-            onFocus={e => e.target.style.borderColor = '#8B5CF6'}
-            onBlur={e => e.target.style.borderColor = '#1a1a1a'}
+            onFocus={e => e.target.style.borderColor = 'var(--admin-accent)'}
+            onBlur={e => e.target.style.borderColor = 'var(--admin-border)'}
           />
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
@@ -527,9 +527,9 @@ export default function CouponsAdmin() {
               style={{
                 padding: '10px 18px',
                 borderRadius: 8,
-                border: filter === f ? '1px solid #8B5CF6' : '1px solid #1a1a1a',
-                background: filter === f ? '#8B5CF610' : 'transparent',
-                color: filter === f ? '#8B5CF6' : '#888',
+                border: filter === f ? '1px solid var(--admin-accent)' : '1px solid var(--admin-border)',
+                background: filter === f ? 'var(--admin-accent)10' : 'transparent',
+                color: filter === f ? 'var(--admin-accent)' : 'var(--admin-text-muted)',
                 fontSize: '0.8rem',
                 fontWeight: 600,
                 cursor: 'pointer',
@@ -538,14 +538,14 @@ export default function CouponsAdmin() {
               }}
               onMouseEnter={e => {
                 if (filter !== f) {
-                  e.currentTarget.style.borderColor = '#333';
-                  e.currentTarget.style.color = '#E8E8E8';
+                  e.currentTarget.style.borderColor = 'var(--admin-border-strong)';
+                  e.currentTarget.style.color = 'var(--admin-text)';
                 }
               }}
               onMouseLeave={e => {
                 if (filter !== f) {
-                  e.currentTarget.style.borderColor = '#1a1a1a';
-                  e.currentTarget.style.color = '#888';
+                  e.currentTarget.style.borderColor = 'var(--admin-border)';
+                  e.currentTarget.style.color = 'var(--admin-text-muted)';
                 }
               }}
             >
@@ -557,8 +557,8 @@ export default function CouponsAdmin() {
 
       {/* Coupons Table */}
       <div style={{
-        background: '#0a0a0a',
-        border: '1px solid #1a1a1a',
+        background: 'var(--admin-surface)',
+        border: '1px solid var(--admin-border)',
         borderRadius: 12,
         overflow: 'hidden'
       }}>
@@ -568,17 +568,17 @@ export default function CouponsAdmin() {
               <div style={{ 
                 width: 24, 
                 height: 24, 
-                border: '3px solid #1a1a1a', 
-                borderTopColor: '#8B5CF6',
+                border: '3px solid var(--admin-border)', 
+                borderTopColor: 'var(--admin-accent)',
                 borderRadius: '50%',
                 animation: 'spin 0.8s linear infinite'
               }}></div>
               <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-              <span style={{ color: '#666', fontSize: '0.9rem' }}>Loading coupons...</span>
+              <span style={{ color: 'var(--admin-text-dim)', fontSize: '0.9rem' }}>Loading coupons...</span>
             </div>
           </div>
         ) : filteredCoupons.length === 0 ? (
-          <div style={{ padding: 60, textAlign: 'center', color: '#555' }}>
+          <div style={{ padding: 60, textAlign: 'center', color: 'var(--admin-text-dim)' }}>
             <div style={{ fontSize: '3rem', marginBottom: 16, opacity: 0.3 }}>🎟️</div>
             <p style={{ fontSize: '1rem', marginBottom: 8 }}>No coupons found</p>
             <p style={{ fontSize: '0.85rem', color: '#444' }}>
@@ -589,13 +589,13 @@ export default function CouponsAdmin() {
           <div className="admin-table-wrap">
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr style={{ borderBottom: '1px solid #1a1a1a', background: '#0a0a0a' }}>
+                <tr style={{ borderBottom: '1px solid var(--admin-border)', background: 'var(--admin-surface)' }}>
                   {['Code', 'Type', 'Discount', 'Usage', 'Min Order', 'Expires', 'Status', 'Actions'].map(h => (
                     <th key={h} style={{ 
                       padding: '16px 12px', 
                       textAlign: 'left', 
                       fontSize: '0.7rem', 
-                      color: '#666', 
+                      color: 'var(--admin-text-dim)', 
                       fontWeight: 600, 
                       letterSpacing: '0.1em', 
                       textTransform: 'uppercase',
@@ -610,10 +610,10 @@ export default function CouponsAdmin() {
                   const isMaxed = c.max_uses && c.used_count >= c.max_uses;
                   const status = !c.is_active ? 'inactive' : isExpired ? 'expired' : isMaxed ? 'maxed' : 'active';
                   const statusColors: Record<string, { bg: string; text: string }> = { 
-                    active: { bg: '#10B98120', text: '#10B981' }, 
-                    inactive: { bg: '#55555520', text: '#555' }, 
-                    expired: { bg: '#EF444420', text: '#EF4444' }, 
-                    maxed: { bg: '#F59E0B20', text: '#F59E0B' } 
+                    active: { bg: 'var(--admin-success)20', text: 'var(--admin-success)' }, 
+                    inactive: { bg: 'var(--admin-text-dim)20', text: 'var(--admin-text-dim)' }, 
+                    expired: { bg: 'var(--admin-danger)20', text: 'var(--admin-danger)' }, 
+                    maxed: { bg: 'var(--admin-warning)20', text: 'var(--admin-warning)' } 
                   };
                   const usagePercent = c.max_uses ? (c.used_count / c.max_uses) * 100 : 0;
                   
@@ -621,7 +621,7 @@ export default function CouponsAdmin() {
                     <tr 
                       key={c.id} 
                       style={{ 
-                        borderBottom: '1px solid #111',
+                        borderBottom: '1px solid var(--admin-surface-raised)',
                         transition: 'background 0.15s ease'
                       }}
                       onMouseEnter={e => e.currentTarget.style.background = '#0d0d0d'}
@@ -631,7 +631,7 @@ export default function CouponsAdmin() {
                         <div style={{ 
                           fontSize: '0.9rem', 
                           fontFamily: 'var(--font-mono, monospace)', 
-                          color: '#E8E8E8', 
+                          color: 'var(--admin-text)', 
                           fontWeight: 700, 
                           letterSpacing: '0.05em', 
                           whiteSpace: 'nowrap',
@@ -642,7 +642,7 @@ export default function CouponsAdmin() {
                         {c.description && (
                           <div style={{ 
                             fontSize: '0.72rem', 
-                            color: '#666', 
+                            color: 'var(--admin-text-dim)', 
                             fontWeight: 400,
                             maxWidth: 200,
                             overflow: 'hidden',
@@ -659,8 +659,8 @@ export default function CouponsAdmin() {
                           borderRadius: 6,
                           fontSize: '0.7rem',
                           fontWeight: 600,
-                          background: c.discount_type === 'percentage' ? '#8B5CF615' : '#10B98115',
-                          color: c.discount_type === 'percentage' ? '#8B5CF6' : '#10B981',
+                          background: c.discount_type === 'percentage' ? 'var(--admin-accent)15' : 'var(--admin-success)15',
+                          color: c.discount_type === 'percentage' ? 'var(--admin-accent)' : 'var(--admin-success)',
                           textTransform: 'uppercase',
                           whiteSpace: 'nowrap'
                         }}>
@@ -671,7 +671,7 @@ export default function CouponsAdmin() {
                         padding: '16px 12px', 
                         fontSize: '1rem', 
                         fontWeight: 700, 
-                        color: '#F59E0B',
+                        color: 'var(--admin-warning)',
                         fontFamily: 'var(--font-display)',
                         whiteSpace: 'nowrap'
                       }}>
@@ -685,14 +685,14 @@ export default function CouponsAdmin() {
                           <div style={{ 
                             width: 100, 
                             height: 6, 
-                            background: '#1a1a1a', 
+                            background: 'var(--admin-border)', 
                             borderRadius: 3,
                             overflow: 'hidden'
                           }}>
                             <div style={{ 
                               width: `${Math.min(usagePercent, 100)}%`, 
                               height: '100%', 
-                              background: usagePercent >= 100 ? '#EF4444' : usagePercent >= 75 ? '#F59E0B' : '#10B981',
+                              background: usagePercent >= 100 ? 'var(--admin-danger)' : usagePercent >= 75 ? 'var(--admin-warning)' : 'var(--admin-success)',
                               transition: 'width 0.3s ease'
                             }}></div>
                           </div>
@@ -701,7 +701,7 @@ export default function CouponsAdmin() {
                       <td style={{ padding: '16px 12px', fontSize: '0.82rem', color: '#999', whiteSpace: 'nowrap' }}>
                         {c.min_order > 0 ? `$${c.min_order}` : '—'}
                       </td>
-                      <td style={{ padding: '16px 12px', fontSize: '0.75rem', color: '#666', whiteSpace: 'nowrap' }}>
+                      <td style={{ padding: '16px 12px', fontSize: '0.75rem', color: 'var(--admin-text-dim)', whiteSpace: 'nowrap' }}>
                         {c.expires_at ? new Date(c.expires_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Never'}
                       </td>
                       <td style={{ padding: '16px 12px' }}>
@@ -727,7 +727,7 @@ export default function CouponsAdmin() {
                             style={{ 
                               padding: '6px 14px', 
                               borderRadius: 6, 
-                              border: '1px solid #333', 
+                              border: '1px solid var(--admin-border-strong)', 
                               background: 'transparent', 
                               color: '#ccc', 
                               fontSize: '0.72rem', 
@@ -737,11 +737,11 @@ export default function CouponsAdmin() {
                               transition: 'all 0.15s ease'
                             }}
                             onMouseEnter={e => {
-                              e.currentTarget.style.borderColor = '#8B5CF6';
-                              e.currentTarget.style.color = '#8B5CF6';
+                              e.currentTarget.style.borderColor = 'var(--admin-accent)';
+                              e.currentTarget.style.color = 'var(--admin-accent)';
                             }}
                             onMouseLeave={e => {
-                              e.currentTarget.style.borderColor = '#333';
+                              e.currentTarget.style.borderColor = 'var(--admin-border-strong)';
                               e.currentTarget.style.color = '#ccc';
                             }}
                           >
@@ -752,9 +752,9 @@ export default function CouponsAdmin() {
                             style={{ 
                               padding: '6px 14px', 
                               borderRadius: 6, 
-                              border: '1px solid #333', 
+                              border: '1px solid var(--admin-border-strong)', 
                               background: 'transparent', 
-                              color: c.is_active ? '#F59E0B' : '#10B981', 
+                              color: c.is_active ? 'var(--admin-warning)' : 'var(--admin-success)', 
                               fontSize: '0.72rem', 
                               fontWeight: 600, 
                               cursor: 'pointer', 
@@ -762,11 +762,11 @@ export default function CouponsAdmin() {
                               transition: 'all 0.15s ease'
                             }}
                             onMouseEnter={e => {
-                              e.currentTarget.style.borderColor = c.is_active ? '#F59E0B' : '#10B981';
-                              e.currentTarget.style.background = c.is_active ? '#F59E0B10' : '#10B98110';
+                              e.currentTarget.style.borderColor = c.is_active ? 'var(--admin-warning)' : 'var(--admin-success)';
+                              e.currentTarget.style.background = c.is_active ? 'var(--admin-warning)10' : 'var(--admin-success)10';
                             }}
                             onMouseLeave={e => {
-                              e.currentTarget.style.borderColor = '#333';
+                              e.currentTarget.style.borderColor = 'var(--admin-border-strong)';
                               e.currentTarget.style.background = 'transparent';
                             }}
                           >
@@ -777,9 +777,9 @@ export default function CouponsAdmin() {
                             style={{ 
                               padding: '6px 14px', 
                               borderRadius: 6, 
-                              border: '1px solid #333', 
+                              border: '1px solid var(--admin-border-strong)', 
                               background: 'transparent', 
-                              color: '#EF4444', 
+                              color: 'var(--admin-danger)', 
                               fontSize: '0.72rem', 
                               fontWeight: 600, 
                               cursor: 'pointer', 
@@ -787,11 +787,11 @@ export default function CouponsAdmin() {
                               transition: 'all 0.15s ease'
                             }}
                             onMouseEnter={e => {
-                              e.currentTarget.style.borderColor = '#EF4444';
-                              e.currentTarget.style.background = '#EF444410';
+                              e.currentTarget.style.borderColor = 'var(--admin-danger)';
+                              e.currentTarget.style.background = 'var(--admin-danger)10';
                             }}
                             onMouseLeave={e => {
-                              e.currentTarget.style.borderColor = '#333';
+                              e.currentTarget.style.borderColor = 'var(--admin-border-strong)';
                               e.currentTarget.style.background = 'transparent';
                             }}
                           >

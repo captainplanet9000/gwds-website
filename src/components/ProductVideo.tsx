@@ -22,7 +22,7 @@ export default function ProductVideo({ videoUrl, productName, accent = '#8B5CF6'
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
-  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const scheduleHide = useCallback(() => {
     if (hideTimer.current) clearTimeout(hideTimer.current);
@@ -141,10 +141,7 @@ export default function ProductVideo({ videoUrl, productName, accent = '#8B5CF6'
     border: 'none',
     color: '#fff',
     cursor: 'pointer',
-    // 44x44 hit area (WCAG 2.5.5) — the icon inside stays visually small.
     padding: 8,
-    minWidth: 44,
-    minHeight: 44,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

@@ -44,9 +44,9 @@ export default function AdminCustomers() {
           fontWeight: 800, 
           marginBottom: 8,
           letterSpacing: '-0.03em',
-          color: '#E8E8E8'
+          color: 'var(--admin-text)'
         }}>Customers</h1>
-        <p style={{ fontSize: '0.9rem', color: '#666' }}>
+        <p style={{ fontSize: '0.9rem', color: 'var(--admin-text-dim)' }}>
           Customer relationships and lifetime value
         </p>
       </div>
@@ -54,14 +54,14 @@ export default function AdminCustomers() {
       {/* Stats */}
       <div className="admin-stat-grid-4" style={{ marginBottom: 24 }}>
         {[
-          { label: 'Total Customers', value: customers.length, color: '#EC4899', icon: '👥' },
-          { label: 'Total LTV', value: `$${totalLTV.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`, color: '#10B981', icon: '💰' },
-          { label: 'Avg LTV', value: `$${avgLTV.toFixed(0)}`, color: '#8B5CF6', icon: '📊' },
-          { label: 'Repeat Customers', value: `${repeatCustomers} (${customers.length > 0 ? Math.round((repeatCustomers / customers.length) * 100) : 0}%)`, color: '#F59E0B', icon: '🔄' },
+          { label: 'Total Customers', value: customers.length, color: 'var(--admin-accent)', icon: '👥' },
+          { label: 'Total LTV', value: `$${totalLTV.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`, color: 'var(--admin-success)', icon: '💰' },
+          { label: 'Avg LTV', value: `$${avgLTV.toFixed(0)}`, color: 'var(--admin-accent)', icon: '📊' },
+          { label: 'Repeat Customers', value: `${repeatCustomers} (${customers.length > 0 ? Math.round((repeatCustomers / customers.length) * 100) : 0}%)`, color: 'var(--admin-warning)', icon: '🔄' },
         ].map(s => (
           <div key={s.label} style={{
-            background: '#0a0a0a',
-            border: '1px solid #1a1a1a',
+            background: 'var(--admin-surface)',
+            border: '1px solid var(--admin-border)',
             borderRadius: 12,
             padding: 20,
             position: 'relative',
@@ -77,7 +77,7 @@ export default function AdminCustomers() {
             }}></div>
             <div style={{ position: 'relative' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
-                <p style={{ fontSize: '0.72rem', color: '#666', letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 600 }}>{s.label}</p>
+                <p style={{ fontSize: '0.72rem', color: 'var(--admin-text-dim)', letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 600 }}>{s.label}</p>
                 <span style={{ fontSize: '1.3rem', opacity: 0.5 }}>{s.icon}</span>
               </div>
               <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 800, color: s.color, letterSpacing: '-0.02em' }}>{s.value}</p>
@@ -88,8 +88,8 @@ export default function AdminCustomers() {
 
       {/* Search & Sort */}
       <div style={{
-        background: '#0a0a0a',
-        border: '1px solid #1a1a1a',
+        background: 'var(--admin-surface)',
+        border: '1px solid var(--admin-border)',
         borderRadius: 12,
         padding: 20,
         marginBottom: 16,
@@ -107,20 +107,20 @@ export default function AdminCustomers() {
             style={{
               width: '100%',
               padding: '10px 14px',
-              background: '#111',
-              border: '1px solid #1a1a1a',
+              background: 'var(--admin-surface-raised)',
+              border: '1px solid var(--admin-border)',
               borderRadius: 8,
-              color: '#E8E8E8',
+              color: 'var(--admin-text)',
               fontSize: '0.85rem',
               outline: 'none',
               transition: 'border-color 0.15s ease'
             }}
-            onFocus={e => e.target.style.borderColor = '#8B5CF6'}
-            onBlur={e => e.target.style.borderColor = '#1a1a1a'}
+            onFocus={e => e.target.style.borderColor = 'var(--admin-accent)'}
+            onBlur={e => e.target.style.borderColor = 'var(--admin-border)'}
           />
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <span style={{ fontSize: '0.75rem', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Sort by:</span>
+          <span style={{ fontSize: '0.75rem', color: 'var(--admin-text-dim)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Sort by:</span>
           {[
             { key: 'spent', label: 'Total Spent' },
             { key: 'orders', label: 'Orders' },
@@ -132,9 +132,9 @@ export default function AdminCustomers() {
               style={{
                 padding: '10px 18px',
                 borderRadius: 8,
-                border: sortBy === s.key ? '1px solid #8B5CF6' : '1px solid #1a1a1a',
-                background: sortBy === s.key ? '#8B5CF610' : 'transparent',
-                color: sortBy === s.key ? '#8B5CF6' : '#888',
+                border: sortBy === s.key ? '1px solid var(--admin-accent)' : '1px solid var(--admin-border)',
+                background: sortBy === s.key ? 'var(--admin-accent)10' : 'transparent',
+                color: sortBy === s.key ? 'var(--admin-accent)' : 'var(--admin-text-muted)',
                 fontSize: '0.8rem',
                 fontWeight: 600,
                 cursor: 'pointer',
@@ -142,14 +142,14 @@ export default function AdminCustomers() {
               }}
               onMouseEnter={e => {
                 if (sortBy !== s.key) {
-                  e.currentTarget.style.borderColor = '#333';
-                  e.currentTarget.style.color = '#E8E8E8';
+                  e.currentTarget.style.borderColor = 'var(--admin-border-strong)';
+                  e.currentTarget.style.color = 'var(--admin-text)';
                 }
               }}
               onMouseLeave={e => {
                 if (sortBy !== s.key) {
-                  e.currentTarget.style.borderColor = '#1a1a1a';
-                  e.currentTarget.style.color = '#888';
+                  e.currentTarget.style.borderColor = 'var(--admin-border)';
+                  e.currentTarget.style.color = 'var(--admin-text-muted)';
                 }
               }}
             >
@@ -161,8 +161,8 @@ export default function AdminCustomers() {
 
       {/* Customers Table */}
       <div style={{
-        background: '#0a0a0a',
-        border: '1px solid #1a1a1a',
+        background: 'var(--admin-surface)',
+        border: '1px solid var(--admin-border)',
         borderRadius: 12,
         overflow: 'hidden'
       }}>
@@ -172,16 +172,16 @@ export default function AdminCustomers() {
               <div style={{ 
                 width: 24, 
                 height: 24, 
-                border: '3px solid #1a1a1a', 
-                borderTopColor: '#8B5CF6',
+                border: '3px solid var(--admin-border)', 
+                borderTopColor: 'var(--admin-accent)',
                 borderRadius: '50%',
                 animation: 'spin 0.8s linear infinite'
               }}></div>
-              <span style={{ color: '#666', fontSize: '0.9rem' }}>Loading customers...</span>
+              <span style={{ color: 'var(--admin-text-dim)', fontSize: '0.9rem' }}>Loading customers...</span>
             </div>
           </div>
         ) : sortedCustomers.length === 0 ? (
-          <div style={{ padding: 60, textAlign: 'center', color: '#555' }}>
+          <div style={{ padding: 60, textAlign: 'center', color: 'var(--admin-text-dim)' }}>
             <div style={{ fontSize: '3rem', marginBottom: 16, opacity: 0.3 }}>👥</div>
             <p style={{ fontSize: '1rem', marginBottom: 8 }}>No customers found</p>
             <p style={{ fontSize: '0.85rem', color: '#444' }}>
@@ -192,19 +192,19 @@ export default function AdminCustomers() {
           <div className="admin-table-wrap">
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr style={{ borderBottom: '1px solid #1a1a1a', background: '#0a0a0a' }}>
+                <tr style={{ borderBottom: '1px solid var(--admin-border)', background: 'var(--admin-surface)' }}>
                   {['Customer', 'Orders', 'Total Spent', 'Avg Order', 'Last Order'].map(h => (
                     <th key={h} style={{ 
                       padding: '16px', 
                       textAlign: 'left', 
                       fontSize: '0.7rem', 
-                      color: '#666', 
+                      color: 'var(--admin-text-dim)', 
                       fontWeight: 600, 
                       letterSpacing: '0.1em', 
                       textTransform: 'uppercase',
                       position: 'sticky',
                       top: 0,
-                      background: '#0a0a0a'
+                      background: 'var(--admin-surface)'
                     }}>{h}</th>
                   ))}
                 </tr>
@@ -218,7 +218,7 @@ export default function AdminCustomers() {
                     <tr 
                       key={c.id} 
                       style={{ 
-                        borderBottom: '1px solid #111',
+                        borderBottom: '1px solid var(--admin-surface-raised)',
                         transition: 'background 0.15s ease'
                       }}
                       onMouseEnter={e => e.currentTarget.style.background = '#0d0d0d'}
@@ -230,7 +230,7 @@ export default function AdminCustomers() {
                             width: 40,
                             height: 40,
                             borderRadius: '50%',
-                            background: 'linear-gradient(135deg, #8B5CF6, #EC4899)',
+                            background: 'linear-gradient(135deg, var(--admin-accent), var(--admin-accent))',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -243,7 +243,7 @@ export default function AdminCustomers() {
                           <div>
                             <div style={{ 
                               fontSize: '0.88rem', 
-                              color: '#E8E8E8', 
+                              color: 'var(--admin-text)', 
                               fontWeight: 500,
                               marginBottom: 2,
                               display: 'flex',
@@ -256,7 +256,7 @@ export default function AdminCustomers() {
                                   fontSize: '0.65rem',
                                   padding: '2px 6px',
                                   borderRadius: 4,
-                                  background: 'linear-gradient(135deg, #F59E0B, #EF4444)',
+                                  background: 'linear-gradient(135deg, var(--admin-warning), var(--admin-danger))',
                                   color: '#fff',
                                   fontWeight: 700,
                                   letterSpacing: '0.05em'
@@ -265,7 +265,7 @@ export default function AdminCustomers() {
                                 </span>
                               )}
                             </div>
-                            <div style={{ fontSize: '0.75rem', color: '#666' }}>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--admin-text-dim)' }}>
                               {c.email}
                             </div>
                           </div>
@@ -275,7 +275,7 @@ export default function AdminCustomers() {
                         <span style={{ 
                           fontSize: '0.9rem', 
                           fontWeight: 700, 
-                          color: '#8B5CF6',
+                          color: 'var(--admin-accent)',
                           fontFamily: 'var(--font-display)'
                         }}>
                           {c.order_count}
@@ -285,18 +285,18 @@ export default function AdminCustomers() {
                         <span style={{ 
                           fontSize: '0.95rem', 
                           fontWeight: 700, 
-                          color: '#10B981',
+                          color: 'var(--admin-success)',
                           fontFamily: 'var(--font-display)'
                         }}>
                           ${Number(c.total_spent || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                         </span>
                       </td>
                       <td style={{ padding: '16px' }}>
-                        <span style={{ fontSize: '0.85rem', color: '#888' }}>
+                        <span style={{ fontSize: '0.85rem', color: 'var(--admin-text-muted)' }}>
                           ${avgOrder.toFixed(2)}
                         </span>
                       </td>
-                      <td style={{ padding: '16px', fontSize: '0.82rem', color: '#666' }}>
+                      <td style={{ padding: '16px', fontSize: '0.82rem', color: 'var(--admin-text-dim)' }}>
                         {c.last_order_at ? new Date(c.last_order_at).toLocaleDateString('en-US', { 
                           month: 'short', 
                           day: 'numeric',

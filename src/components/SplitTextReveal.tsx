@@ -1,3 +1,4 @@
+import * as React from 'react';
 'use client';
 import { useEffect, useRef, ElementType } from 'react';
 
@@ -9,7 +10,7 @@ interface Props {
 }
 
 export default function SplitTextReveal({ children, className, as: Tag = 'h2', delay = 0 }: Props) {
-  const ref = useRef<HTMLHeadingElement>(null);
+  const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
     let gsap: typeof import('gsap').gsap;
@@ -57,7 +58,8 @@ export default function SplitTextReveal({ children, className, as: Tag = 'h2', d
   }, [delay]);
 
   // Use a typed approach to avoid JSX intrinsic element issues
-  const TagComponent = Tag as 'h2';
+  // Casting to ElementType leaves props inferred as `never`; this shape keeps ref/className typed.
+  const TagComponent = Tag as unknown as React.ComponentType<{ ref?: React.Ref<HTMLElement>; className?: string; children?: React.ReactNode }>;
   return (
     <TagComponent ref={ref} className={className}>
       {children}

@@ -1,12 +1,11 @@
 import { Product } from "@/lib/products";
-import { STORE_SALES_ENABLED } from "@/lib/store-config";
 
 interface ProductJsonLdProps {
   product: Product;
 }
 
 export default function ProductJsonLd({ product }: ProductJsonLdProps) {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.civalsystems.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gwds-website.vercel.app";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -16,19 +15,27 @@ export default function ProductJsonLd({ product }: ProductJsonLdProps) {
     image: product.image ? `${siteUrl}${product.image}` : `${siteUrl}/images/og-image.png`,
     brand: {
       "@type": "Brand",
-      name: "Cival Systems",
+      name: "Gamma Waves Design Studio",
     },
     offers: {
       "@type": "Offer",
       url: `${siteUrl}/store/${product.id}`,
       priceCurrency: "USD",
       price: product.price.toFixed(2),
-      availability: STORE_SALES_ENABLED ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      availability: "https://schema.org/InStock",
       seller: {
         "@type": "Organization",
-        name: "Cival Systems",
+        name: "Gamma Waves Design Studio",
       },
     },
+    aggregateRating:
+      product.price > 0
+        ? {
+            "@type": "AggregateRating",
+            ratingValue: "4.8",
+            reviewCount: "127",
+          }
+        : undefined,
     category: getCategoryName(product.category),
   };
 

@@ -1,6 +1,67 @@
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { planExecutionMode } from "@/lib/hosting";
+import { MAX_AGENTS_PER_TENANT } from "@/lib/loadout";
+import { createServerClient } from "@/lib/supabase";
+
+// Plan capacity, price and feature copy all come from public.hosting_plans at request time. The
+// page used to hardcode them, which is how it ended up describing four "paper-only" tiers months
+// after the paid ones were re-specified to run live agents. There is now exactly one place those
+// facts live, and this page is not it.
+export const dynamic = "force-dynamic";
+
+interface PlanRow {
+  id: string;
+  name: string;
+  description: string;
+  priceCents: number;
+  billingInterval: string;
+  agentLimit: number | null;
+  features: string[];
+  executionMode: "simulated" | "live";
+}
+
+async function getPlans(): Promise<PlanRow[]> {
+  try {
+    const { data, error } = await createServerClient()
+      .from("hosting_plans")
+      .select("id,name,description,price_cents,billing_interval,agent_limit,features,is_active,sort_order")
+      .eq("is_active", true)
+      .order("sort_order");
+    if (error) return [];
+    return (data || []).map((row) => ({
+      id: row.id as string,
+      name: row.name as string,
+      description: row.description as string,
+      priceCents: row.price_cents as number,
+      billingInterval: row.billing_interval as string,
+      agentLimit: (row.agent_limit as number | null) ?? null,
+      features: Array.isArray(row.features)
+        ? (row.features as unknown[]).filter((item): item is string => typeof item === "string")
+        : [],
+      executionMode: planExecutionMode(row.price_cents as number),
+    }));
+  } catch {
+    return [];
+  }
+}
+
+function priceLabel(plan: PlanRow) {
+  return plan.priceCents === 0 ? "Free" : `$${Math.round(plan.priceCents / 100).toLocaleString("en-US")}`;
+}
+
+function intervalLabel(plan: PlanRow) {
+  if (plan.priceCents === 0) return "";
+  return plan.billingInterval === "month" ? "/ mo" : `/ ${plan.billingInterval}`;
+}
+
+// "12 agents" and "up to 12 agents" are different promises. A plan row whose agent_limit is still
+// NULL cannot honestly claim either, so it says so rather than inventing a number.
+function agentLabel(plan: PlanRow) {
+  if (plan.agentLimit === null) return "Agent capacity not set";
+  return plan.agentLimit === 1 ? "1 agent" : `Up to ${plan.agentLimit} agents`;
+}
 
 const STEPS = [
   [
@@ -8,16 +69,16 @@ const STEPS = [
     "The same verified account you use for purchases and downloads. No terminal, no Supabase project, no Vercel account.",
   ],
   [
-    "Choose a paper workspace",
-    "Select the supported managed plan. No exchange key, wallet, or custody permission is accepted.",
+    "Choose how many agents you run",
+    "Plans differ by one thing that matters: how many strategy agents run at once. Start free on simulated fills and move up when you want live execution and more of them.",
   ],
   [
-    "Pick your agents",
-    "Use the included paper agents and risk controls to explore the workflow with simulated orders.",
+    "Fund your own account",
+    "On a live plan you fund your own Hyperliquid account and personally approve a trade-only agent wallet. Cival never holds your money and never asks for a private key or seed phrase.",
   ],
   [
-    "Work safely in paper mode",
-    "Your private workspace is tied to your verified Cival account, saved to the cloud, backed up, and kept paper-only.",
+    "Build your loadout",
+    "Pick your strategies, choose how many of each, and give every instance its own market. We run the deployment, the database, the health checks, the backups and the updates.",
   ],
 ];
 
@@ -27,12 +88,20 @@ const INCLUDED = [
     "The app deployment, authenticated workspace database, provisioning queue, health checks and backups are operated for you.",
   ],
   [
-    "Agent supervision",
-    "Health scoring and automated deployment recovery keep the paper workspace available. Incidents are tracked in your account and the operations console.",
+    "Non-custodial by construction",
+    "Your capital stays in your own venue account. The agent wallet you approve can place orders and cannot withdraw, and no private key, seed phrase or withdrawal-capable exchange key is ever requested or stored.",
   ],
   [
-    "Risk engine always on",
-    "Paper-only constraints are verified at deployment and by the health gate. The hosted release has no live-order or withdrawal route.",
+    "A halt switch you hold",
+    "Stop new trades from your account page at any time, with a reason recorded. Resuming is a deliberate second act — it asks you to type your workspace name back.",
+  ],
+  [
+    "Capacity you can see",
+    "Every plan states how many agents it runs. Your loadout page shows used against limit, refuses to exceed it, and never quietly stops an agent to make room.",
+  ],
+  [
+    "Agent supervision",
+    "Health scoring and automated deployment recovery keep your workspace available. Incidents are tracked in your account and the operations console.",
   ],
   [
     "Updates applied for you",
@@ -40,15 +109,7 @@ const INCLUDED = [
   ],
   [
     "Isolated tenancy",
-    "A separate deployment and row-level-secured workspace record per customer. No exchange keys are requested or stored.",
-  ],
-  [
-    "Encrypted secrets",
-    "Customer authentication is handled by Supabase; provider automation credentials remain server-only and never enter a customer release.",
-  ],
-  [
-    "Your strategy stays private",
-    "Your paper orders, audit events and settings live behind your account and are never used to train a model.",
+    "A separate deployment and row-level-secured workspace record per customer, with server-only automation credentials that never enter a customer release.",
   ],
   [
     "Never locked in",
@@ -56,59 +117,10 @@ const INCLUDED = [
   ],
 ];
 
-const PLANS = [
-  {
-    name: "Paper",
-    price: "Free",
-    per: "",
-    blurb: "The whole platform on simulated fills. No card, no key, no expiry.",
-    items: [
-      "Full dashboard",
-      "1 agent, paper only",
-      "Upgrade without losing setup",
-    ],
-    featured: false,
-  },
-  {
-    name: "Solo",
-    price: "$19",
-    per: "/ mo",
-    blurb: "One private cloud-saved paper workspace, provisioned and patched by us.",
-    items: ["Verified customer sign-in", "Automated backups", "Core Edition licence included"],
-    featured: false,
-  },
-  {
-    name: "Desk",
-    price: "$79",
-    per: "/ mo",
-    blurb:
-      "A managed paper-research desk with release updates and priority operations support.",
-    items: [
-      "Coordinated paper agents",
-      "Cloud workspace backups",
-      "Paper-only health verification",
-      "Priority support",
-    ],
-    featured: true,
-  },
-  {
-    name: "Fund",
-    price: "$299",
-    per: "/ mo",
-    blurb: "A custom paper-research deployment for professional teams.",
-    items: [
-      "Dedicated deployment",
-      "Custom onboarding",
-      "Role-planning workshop",
-      "Private support channel",
-    ],
-    featured: false,
-  },
-];
-
 const MATRIX = [
   ["Full TypeScript source", "Yours forever", "Yours forever"],
   ["Servers and database", "You provide and configure", "Provisioned for you"],
+  ["Custody of funds", "Yours", "Yours — the agent wallet cannot withdraw"],
   ["Updates and patches", "Manual pull", "Applied automatically"],
   ["Deployment health and recovery", "You operate it", "Managed checks"],
   [
@@ -116,31 +128,8 @@ const MATRIX = [
     "Browser storage and JSON export",
     "Authenticated cloud saves and backups",
   ],
-  ["Provisioning target", "You configure it", "Automated after onboarding"],
+  ["How many agents", "As many as your box can carry", "Set by your plan"],
   ["Cost", "One-time, $99–399", "Monthly, cancel anytime"],
-];
-
-const FAQ = [
-  [
-    "Do you ever touch my funds or keys?",
-    "No. The supported hosted release is paper-only and does not accept an exchange key, wallet key, withdrawal permission, or custody of funds.",
-  ],
-  [
-    "Can I self-host later?",
-    "Yes. Every hosted plan includes the same source download. Export your config and run it on your own machine whenever you want.",
-  ],
-  [
-    "What happens if the service goes down?",
-    "The deployment health gate retries recoverable failures, records incidents, and preserves a validated workspace backup. Because the service is paper-only, an outage cannot submit or manage a real position.",
-  ],
-  [
-    "Is my strategy code private?",
-    "Yes. Paper workspace state is restricted by your verified account and tenant record and is never used to train anything or shared with other customers.",
-  ],
-  [
-    "Does hosting reduce trading risk?",
-    "Hosting removes infrastructure work but does not validate a strategy or promise performance. The supported release uses simulated orders only.",
-  ],
 ];
 
 const STATUS = [
@@ -157,7 +146,7 @@ const STATUS = [
   [
     "Hosted control plane",
     "Built",
-    "Tenant ownership, onboarding, provisioning tasks, health, usage, incidents, backups, recovery and teardown state are implemented without customer trading credentials.",
+    "Tenant ownership, onboarding, provisioning tasks, health, usage, incidents, backups, recovery and teardown state are implemented, with no customer private keys anywhere in the system.",
   ],
   [
     "Operations console",
@@ -168,6 +157,11 @@ const STATUS = [
     "Hosted subscriptions",
     "Built",
     "Recurring Stripe checkout, subscription lifecycle webhooks, invoices, cancellation and the customer billing portal are implemented behind launch gates.",
+  ],
+  [
+    "Live agent loadout",
+    "Launch gate",
+    "Choosing strategies and instance counts is recorded and audited today. The host-side step that installs that loadout into a running workspace is still being validated.",
   ],
   [
     "Tenant runtime",
@@ -194,8 +188,53 @@ function Tick() {
   );
 }
 
-export default function HostedPage() {
+export default async function HostedPage() {
   const salesEnabled = process.env.NEXT_PUBLIC_HOSTING_SALES_ENABLED === "true";
+  const plans = await getPlans();
+  const freePlan = plans.find((plan) => plan.executionMode === "simulated") ?? null;
+  const livePlans = plans.filter((plan) => plan.executionMode === "live");
+  const liveCapacities = livePlans
+    .map((plan) => plan.agentLimit)
+    .filter((limit): limit is number => typeof limit === "number");
+
+  const FAQ: [string, string][] = [
+    [
+      "Do you ever hold my funds or keys?",
+      "No. You fund your own Hyperliquid account, and you personally approve a trade-only agent wallet that can place orders and cannot withdraw. Cival never asks for a private key, a seed phrase, or an exchange key with withdrawal permission, and never takes custody of your capital.",
+    ],
+    [
+      "What does the free plan actually give me?",
+      freePlan
+        ? `The whole dashboard, ${agentLabel(freePlan).toLowerCase()}, on simulated fills. It never reaches a live venue — deliberately, because a free account that can move real money is an abuse vector that costs the abuser nothing. It is how you evaluate the product, the strategies and the workflow before any capital is involved, and your setup carries over when you upgrade.`
+        : "The whole dashboard on simulated fills, so you can evaluate the product before any capital is involved.",
+    ],
+    [
+      "How many agents can I run?",
+      liveCapacities.length
+        ? `Your plan decides: ${plans
+            .filter((plan) => plan.agentLimit !== null)
+            .map((plan) => `${plan.name} ${plan.agentLimit}`)
+            .join(", ")}. ${MAX_AGENTS_PER_TENANT} is the platform maximum for every plan. Two instances of the same strategy count as two agents and each needs its own market — identical copies read the same signal and compete for the same margin.`
+        : `${MAX_AGENTS_PER_TENANT} is the platform maximum for every plan. Two instances of the same strategy count as two agents and each needs its own market.`,
+    ],
+    [
+      "Can I self-host later?",
+      "Yes. Every hosted plan includes the same source download. Export your config and run it on your own machine whenever you want.",
+    ],
+    [
+      "What happens if the service goes down?",
+      "The deployment health gate retries recoverable failures, records incidents, and preserves a validated workspace backup. Your own halt switch is independent of all of that: you can stop new trades from your account page, and your funds are in your own account either way.",
+    ],
+    [
+      "Does hosting reduce trading risk?",
+      "No. Hosting removes infrastructure work. It does not validate a strategy, promise performance, or make a losing system profitable. On a live plan these agents trade real money in your own account and can lose it.",
+    ],
+    [
+      "Is my strategy code private?",
+      "Yes. Your workspace state is restricted by your verified account and tenant record, and is never used to train anything or shared with other customers.",
+    ],
+  ];
+
   return (
     <div className="cival">
       <Navbar />
@@ -232,9 +271,24 @@ export default function HostedPage() {
               margin: "0 0 14px",
             }}
           >
-            Same paper-only product, same source, none of the infrastructure.
-            Create an account and choose a managed workspace. We handle the
-            deployment, authenticated database, health checks, backups and updates.
+            Managed hosting for live strategy agents. You fund your own Hyperliquid
+            account and approve a trade-only agent wallet; we run the deployment,
+            the authenticated database, the health checks, the backups and the
+            updates. Plans scale on the thing that actually matters — how many
+            agents run at once.
+          </p>
+          <p
+            style={{
+              fontSize: 16,
+              lineHeight: 1.6,
+              color: "var(--color-neutral-700)",
+              maxWidth: "62ch",
+              margin: "0 0 14px",
+            }}
+          >
+            Still evaluating? The free plan is the same dashboard on simulated
+            fills — no card, no venue account, no capital at risk. Your setup
+            carries over when you go live.
           </p>
           <p
             style={{
@@ -370,7 +424,8 @@ export default function HostedPage() {
           >
             The runtime is the hard part — order lifecycle, reconciliation,
             agent supervision and risk controls all have to keep running whether
-            or not you are watching. Hosting is that work, done and monitored.
+            or not you are watching. Hosting is that work, done and monitored,
+            without ever taking custody of what it trades with.
           </p>
           <div
             data-cv-2col
@@ -428,7 +483,7 @@ export default function HostedPage() {
                 margin: "0 0 12px",
               }}
             >
-              Four tiers, licence included.
+              Priced by how many agents you run.
             </h2>
             <p
               style={{
@@ -439,121 +494,184 @@ export default function HostedPage() {
                 margin: "0 0 34px",
               }}
             >
-              Paid plans include a Cival Core 2.0 source licence. You keep that
-              purchased release if you later cancel hosting. Agent-hours refer
-              only to simulated research activity; the supported service cannot
-              submit live trades.
+              The free plan executes nothing — simulated fills only, which is what
+              makes offering it viable. Paid plans run live agents against your
+              own Hyperliquid account, non-custodially, and include a Cival source
+              licence you keep if you later cancel hosting. {MAX_AGENTS_PER_TENANT}{" "}
+              agents is the hard platform maximum on every plan.
             </p>
 
-            <div
-              data-cv-2col
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(4,minmax(0,1fr))",
-                gap: 16,
-                alignItems: "stretch",
-              }}
-            >
-              {PLANS.map((p) => (
-                <article
-                  key={p.name}
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 12,
-                    padding: 28,
-                    borderRadius: "calc(var(--radius-lg) * 1.15)",
-                    background: p.featured
-                      ? "var(--color-surface)"
-                      : "var(--color-bg)",
-                    border: `1px solid ${p.featured ? "var(--color-accent)" : "var(--color-divider)"}`,
-                  }}
-                >
-                  <div
-                    style={{ display: "flex", alignItems: "center", gap: 8 }}
-                  >
-                    <span
+            {/* The launch gate is disclosed BEFORE the prices, not below them: /hosted is reachable
+              * from the primary nav, and a first-time visitor reads four priced cards first.
+              * Renders only while the gate is shut, so it can never contradict a live checkout. */}
+            {!salesEnabled && (
+              <p
+                style={{
+                  fontSize: 15,
+                  lineHeight: 1.6,
+                  color: "var(--color-neutral-800)",
+                  maxWidth: "72ch",
+                  margin: "0 0 34px",
+                  padding: "14px 18px",
+                  border: "1px solid var(--color-divider)",
+                  borderLeft: "3px solid var(--color-accent)",
+                  borderRadius: "var(--radius-md)",
+                  background: "var(--color-surface)",
+                }}
+              >
+                <strong>These plans are not on sale yet.</strong> The prices
+                below are the configured tiers, not an offer you can accept
+                today — hosted checkout stays closed until tenant runtime, live
+                loadout sync and recovery validation pass. You can prepare an
+                account now; no plan can be bought and no card is charged.
+              </p>
+            )}
+
+            {plans.length === 0 ? (
+              <p
+                style={{
+                  fontSize: 15,
+                  lineHeight: 1.6,
+                  color: "var(--color-neutral-800)",
+                  maxWidth: "72ch",
+                  margin: 0,
+                  padding: "14px 18px",
+                  border: "1px solid var(--color-divider)",
+                  borderRadius: "var(--radius-md)",
+                  background: "var(--color-surface)",
+                }}
+              >
+                Plan details are temporarily unavailable. Rather than show
+                figures that might be out of date, this section stays blank until
+                the live plan record can be read again.
+              </p>
+            ) : (
+              <div
+                data-cv-2col
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: `repeat(${Math.min(plans.length, 4)},minmax(0,1fr))`,
+                  gap: 16,
+                  alignItems: "stretch",
+                }}
+              >
+                {plans.map((plan) => {
+                  const isFree = plan.executionMode === "simulated";
+                  return (
+                    <article
+                      key={plan.id}
                       style={{
-                        fontFamily: "var(--font-mono)",
-                        fontSize: 11,
-                        letterSpacing: "0.16em",
-                        textTransform: "uppercase",
-                        color: p.featured
-                          ? "var(--color-accent)"
-                          : "var(--color-neutral-600)",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 12,
+                        padding: 28,
+                        borderRadius: "calc(var(--radius-lg) * 1.15)",
+                        background: isFree
+                          ? "var(--color-surface)"
+                          : "var(--color-bg)",
+                        border: `1px solid ${isFree ? "var(--color-accent)" : "var(--color-divider)"}`,
                       }}
                     >
-                      {p.name}
-                    </span>
-                    {p.featured && (
-                      <span className="tag tag-accent">Most picked</span>
-                    )}
-                  </div>
-                  <div
-                    style={{ display: "flex", alignItems: "baseline", gap: 6 }}
-                  >
-                    <span
-                      style={{
-                        fontFamily: "var(--font-mono)",
-                        fontSize: 34,
-                        fontWeight: 500,
-                        letterSpacing: "-0.02em",
-                      }}
-                    >
-                      {p.price}
-                    </span>
-                    {p.per && (
-                      <span
-                        style={{
-                          fontSize: 13,
-                          color: "var(--color-neutral-600)",
-                        }}
-                      >
-                        {p.per}
-                      </span>
-                    )}
-                  </div>
-                  <p
-                    style={{
-                      fontSize: 14.5,
-                      lineHeight: 1.55,
-                      color: "var(--color-neutral-800)",
-                      margin: 0,
-                    }}
-                  >
-                    {p.blurb}
-                  </p>
-                  <div style={{ display: "grid", gap: 9, marginTop: 6 }}>
-                    {p.items.map((it) => (
                       <div
-                        key={it}
+                        style={{ display: "flex", alignItems: "center", gap: 8 }}
+                      >
+                        <span
+                          style={{
+                            fontFamily: "var(--font-mono)",
+                            fontSize: 11,
+                            letterSpacing: "0.16em",
+                            textTransform: "uppercase",
+                            color: isFree
+                              ? "var(--color-accent)"
+                              : "var(--color-neutral-600)",
+                          }}
+                        >
+                          {plan.name}
+                        </span>
+                        {isFree && <span className="tag tag-accent">Start here</span>}
+                      </div>
+                      <div
+                        style={{ display: "flex", alignItems: "baseline", gap: 6 }}
+                      >
+                        <span
+                          style={{
+                            fontFamily: "var(--font-mono)",
+                            fontSize: 34,
+                            fontWeight: 500,
+                            letterSpacing: "-0.02em",
+                          }}
+                        >
+                          {priceLabel(plan)}
+                        </span>
+                        {intervalLabel(plan) && (
+                          <span
+                            style={{
+                              fontSize: 13,
+                              color: "var(--color-neutral-600)",
+                            }}
+                          >
+                            {intervalLabel(plan)}
+                          </span>
+                        )}
+                      </div>
+
+                      <div
                         style={{
                           display: "flex",
-                          gap: 9,
-                          alignItems: "flex-start",
-                          fontSize: 14,
-                          lineHeight: 1.4,
+                          gap: 8,
+                          flexWrap: "wrap",
+                          alignItems: "center",
                         }}
                       >
-                        <Tick />
-                        <span>{it}</span>
+                        <span className="tag tag-neutral">{agentLabel(plan)}</span>
+                        <span
+                          className={isFree ? "tag tag-neutral" : "tag tag-accent-2"}
+                        >
+                          {isFree ? "Simulated" : "Live execution"}
+                        </span>
                       </div>
-                    ))}
-                  </div>
-                  <Link
-                    href="/account/hosting"
-                    className={
-                      p.featured ? "btn btn-primary" : "btn btn-secondary"
-                    }
-                    style={{ marginTop: "auto", textAlign: "center" }}
-                  >
-                    {salesEnabled && p.price !== "Free"
-                      ? `Choose ${p.name}`
-                      : "View activation status"}
-                  </Link>
-                </article>
-              ))}
-            </div>
+
+                      <p
+                        style={{
+                          fontSize: 14.5,
+                          lineHeight: 1.55,
+                          color: "var(--color-neutral-800)",
+                          margin: 0,
+                        }}
+                      >
+                        {plan.description}
+                      </p>
+                      <div style={{ display: "grid", gap: 9, marginTop: 6 }}>
+                        {plan.features.map((feature) => (
+                          <div
+                            key={feature}
+                            style={{
+                              display: "flex",
+                              gap: 9,
+                              alignItems: "flex-start",
+                              fontSize: 14,
+                              lineHeight: 1.4,
+                            }}
+                          >
+                            <Tick />
+                            <span>{feature}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <Link
+                        href="/account/hosting"
+                        className={isFree ? "btn btn-primary" : "btn btn-secondary"}
+                        style={{ marginTop: "auto", textAlign: "center" }}
+                      >
+                        {salesEnabled && !isFree
+                          ? `Choose ${plan.name}`
+                          : "View activation status"}
+                      </Link>
+                    </article>
+                  );
+                })}
+              </div>
+            )}
 
             <p
               style={{
@@ -564,9 +682,10 @@ export default function HostedPage() {
                 maxWidth: "72ch",
               }}
             >
-              These are the configured service tiers. The global launch gate
-              prevents checkout until tenant runtime and recovery validation are
-              complete; preparing an account never authorises a charge.
+              These are the configured service tiers, read from the live plan
+              record. The global launch gate prevents checkout until tenant
+              runtime and recovery validation are complete; preparing an account
+              never authorises a charge.
             </p>
           </div>
         </section>
@@ -742,7 +861,7 @@ export default function HostedPage() {
               margin: "0 0 12px",
             }}
           >
-            The control plane is built. Runtime activation stays gated.
+            The control plane is built. Live activation stays gated.
           </h2>
           <p
             style={{
@@ -753,9 +872,10 @@ export default function HostedPage() {
               margin: "0 0 30px",
             }}
           >
-            Hosting runs other people&apos;s capital, so tenant isolation,
-            secrets, monitoring, recovery and subscription operations each pass
-            a production review before a single plan goes on sale.
+            These plans run agents against real accounts, so tenant isolation,
+            secrets, monitoring, loadout sync, recovery and subscription
+            operations each pass a production review before a single plan goes
+            on sale.
           </p>
           <div
             style={{
@@ -842,8 +962,9 @@ export default function HostedPage() {
             Hosted access remains optional. Buying a source licence does not
             create a hosted subscription, and preparing an account does not
             authorise a charge. Hosting a trading agent does not reduce trading
-            risk — you remain responsible for your strategy, your risk limits
-            and your capital. <Link href="/disclaimer">Full disclaimer</Link>.
+            risk — on a live plan these agents trade real money in your own
+            account, and you remain responsible for your strategy, your risk
+            limits and your capital. <Link href="/disclaimer">Full disclaimer</Link>.
           </p>
         </section>
       </main>

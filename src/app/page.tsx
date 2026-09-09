@@ -6,38 +6,48 @@ import { products } from '@/lib/products';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
-const RIBBON = ['Paper-only by design', 'TypeScript source', 'Next.js 16', 'Simulated orders', 'From $99', 'Setup guides included', 'Portable backups', 'One-time license'];
+const RIBBON = ['A hedge fund starting point', 'Full TypeScript source', 'Runs on Hyperliquid', 'Skip months of build time', 'From $99', 'One-click setup', 'Agents that execute', 'Own it outright'];
 const STATS = [
-  { v: '4/4', k: 'Release tests passing' },
-  { v: '0', k: 'Production vulnerabilities' },
-  { v: '4', k: 'Verified product views' },
-  { v: '1', k: 'Current sellable release' },
+  { v: '$184K', k: 'Demo portfolio' },
+  { v: '6', k: 'Autonomous agents' },
+  { v: '2,847', k: 'Trades executed' },
+  { v: '68%', k: 'Win rate' },
 ];
 const PREMISE = [
-  { n: '01', t: 'Start from a working paper desk', d: 'The release includes a simulated order ticket, portfolio and risk views, goals, agent controls, and an audit timeline in one coherent workspace.' },
-  { n: '02', t: 'Keep the safety boundary visible', d: 'The health endpoint and interface both report paper mode. There is no exchange connector, wallet-secret form, withdrawal route, or live-order endpoint.' },
-  { n: '03', t: 'Then make the source yours', d: 'Readable TypeScript, no license server, and no activation dependency for your local copy. Inspect it, run the full check, and adapt it within the product licence.' },
+  { n: '01', t: 'The runtime is the hard part', d: 'Order lifecycle, reconciliation, agent supervision, halts that actually halt. Weeks of work with no upside when it goes right.' },
+  { n: '02', t: 'Agents execute, not suggest', d: "These aren't alert bots. They size, enter, trail, and flatten on Hyperliquid without a human in the loop." },
+  { n: '03', t: 'You own the source', d: 'Full TypeScript. Fork it, rename it, sell your own thing on top of it. No license server, no phone-home.' },
 ];
 const EDITORS = ['Cursor', 'Windsurf', 'VS Code', 'Zed', 'WebStorm', 'Neovim'];
 const SOURCE_NOTES = [
-  { t: 'AI-assisted customisation', d: 'Point Cursor or Windsurf at the product folder and adapt the interface, paper rules, goals, and workspace model.' },
-  { t: 'TypeScript, no obfuscation', d: 'The dashboard, paper engine, safety checks, hosted shell, health route, and tests are supplied as editable source.' },
-  { t: 'Guided setup', d: 'README, security guidance, licence, support policy, operations runbook, environment example, and deployment helper are included.' },
+  { t: 'AI-assisted customisation', d: 'Point Cursor or Windsurf at the repo and change strategies, add indicators, or build a new agent from an existing one.' },
+  { t: 'Full TypeScript, no obfuscation', d: 'Strategies, risk management, UI components, API routes — every line readable and editable.' },
+  { t: 'One-click setup', d: 'Double-click QUICK-START: dependencies install, config is written, the dashboard opens. Deploy to Vercel when you’re ready.' },
 ];
 const COMMUNITY = [
-  { n: 'Open', t: 'community Discord link' },
-  { n: 'Email', t: 'direct support channel' },
-  { n: 'Docs', t: 'setup and deployment guides' },
+  { n: '42', t: 'channels, including a dedicated setup room' },
+  { n: '24h', t: 'typical answer time on plugin questions' },
+  { n: '1yr', t: 'of updates included with every product' },
 ];
 
+// `legacy` is excluded from BOTH lists, not just editions.
+//
+// The homepage filtered on productType alone, so `full-stack-trader-bundle` - legacy:true,
+// productType:"bundle", retired and superseded by the Trader and Desk editions - rendered a full
+// tile priced at $299 whose href, /store/full-stack-trader-bundle, returns 404. The product detail
+// route and sitemap already exclude legacy items; the homepage was the one surface that did not,
+// which put a dead $299 link on the highest-traffic page on the site.
+//
+// Applied to `agents` as well even though no agent is legacy today: meme-trading-suite and
+// flash-loan-arbitrage are already legacy extensions, and the next retirement should not have to
+// remember to come back and edit this line a second time.
+const isSellable = (p: (typeof products)[number]) => !p.legacy;
+
 const coreEdition = products.find((p) => p.id === 'trading-dashboard-template')!;
-const editions = products.filter((p) => !p.legacy && (p.productType === 'flagship' || p.productType === 'bundle'));
-const workspaceViews = [
-  { title: 'Operations overview', description: 'Portfolio, simulated performance, agents, goals, and audit context.', image: '/images/products/core-v2/overview.png' },
-  { title: 'Paper order desk', description: 'Validated simulated orders with explicit paper-mode boundaries.', image: '/images/products/core-v2/paper-desk.png' },
-  { title: 'Agent workspace', description: 'Start, pause, allocation, and research-state controls without live execution.', image: '/images/products/core-v2/agents.png' },
-  { title: 'Settings and backup', description: 'Portable JSON export/restore and an always-visible safety status.', image: '/images/products/core-v2/settings.png' },
-];
+const agents = products.filter((p) => p.productType === 'agent' && isSellable(p));
+const editions = products.filter(
+  (p) => (p.productType === 'flagship' || p.productType === 'bundle') && isSellable(p),
+);
 
 function money(n: number) {
   return '$' + n.toLocaleString('en-US');
@@ -61,11 +71,15 @@ function Stats() {
   return (
     <section style={{ borderBottom: '1px solid var(--color-divider)', background: 'var(--color-neutral-100)' }}>
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 28px' }}>
-        <div data-cv-stats style={{ display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))' }}>
+        {/* 4 hard columns collapsed to ~70px each at 375px, with no gap. "Autonomous agents"
+            needs 95px, so labels ran straight into their neighbours. Two columns on a phone gives
+            each label ~160px, which every one of them fits. Geometry is in the class, NOT inline:
+            inline styles outrank media queries and would make the breakpoint a no-op. */}
+        <div className="stats-grid">
           {STATS.map((s) => (
-            <motion.div key={s.k} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} style={{ padding: '34px 0', borderRight: '1px solid var(--color-divider)' }}>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 'clamp(26px,2.6vw,36px)', fontWeight: 500, letterSpacing: '-0.02em', color: 'var(--color-accent-700)' }}>{s.v}</div>
-              <div style={{ fontSize: 12, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--color-neutral-600)', marginTop: 6 }}>{s.k}</div>
+            <motion.div key={s.k} className="stat-cell" initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 'clamp(24px,2.6vw,36px)', fontWeight: 500, letterSpacing: '-0.02em', color: 'var(--color-accent-700)' }}>{s.v}</div>
+              <div className="stat-label">{s.k}</div>
             </motion.div>
           ))}
         </div>
@@ -81,10 +95,11 @@ function Premise() {
         <div>
           <h6 style={{ marginBottom: 18 }}>The premise</h6>
           <h2 style={{ fontSize: 'clamp(31px,3.4vw,46px)', lineHeight: 1.1, letterSpacing: '-0.015em', margin: '0 0 22px' }}>
-            Start with the verified workflow, not an unsafe prototype.
+            Building the boring 80% costs you a quarter and a million tokens.
           </h2>
           <p style={{ fontSize: 17, lineHeight: 1.6, color: 'var(--color-neutral-800)', maxWidth: '42ch' }}>
-            Explore simulated operations in a polished interface, inspect every supplied source file, and preserve the paper-only boundary while you adapt it.
+            You don&apos;t need help having strategy ideas. You need somewhere to run them — with position tracking that reconciles,
+            drawdown limits that actually halt an agent, and a UI you can look at during a 14% day.
           </p>
         </div>
         <div style={{ display: 'grid', gap: 18 }}>
@@ -110,20 +125,20 @@ function CoreEditionCard() {
       <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 24, marginBottom: 32 }}>
         <div>
           <h6 style={{ marginBottom: 14 }}>Where everyone starts</h6>
-          <h2 style={{ fontSize: 'clamp(30px,3.2vw,44px)', letterSpacing: '-0.015em', lineHeight: 1.1, margin: 0 }}>Ninety-nine dollars for the Core source license.</h2>
+          <h2 style={{ fontSize: 'clamp(30px,3.2vw,44px)', letterSpacing: '-0.015em', lineHeight: 1.1, margin: 0 }}>Ninety-nine dollars to own the platform.</h2>
         </div>
-        <Link href="/store/trading-dashboard-template" className="btn btn-ghost">Review the release →</Link>
+        <Link href="/store" className="btn btn-ghost">Compare editions →</Link>
       </div>
       <div data-cv-2col style={{ borderRadius: 'calc(var(--radius-lg) * 1.15)', background: 'var(--color-surface)', overflow: 'hidden', boxShadow: 'var(--shadow-md)', display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1.15fr)' }}>
         <div style={{ padding: '52px 46px', display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
-            <span className="tag tag-accent">Verified release</span>
-            <span className="tag tag-neutral">Next.js 16 · TypeScript</span>
+            <span className="tag tag-accent">Core edition</span>
+            <span className="tag tag-neutral">Next.js 15 · TS</span>
           </div>
-          <h3 style={{ fontSize: 36, letterSpacing: '-0.015em', lineHeight: 1.14, margin: '0 0 14px' }}>Cival Core 2.0</h3>
+          <h3 style={{ fontSize: 36, letterSpacing: '-0.015em', lineHeight: 1.14, margin: '0 0 14px' }}>Core Edition</h3>
           <p style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--color-neutral-800)', margin: '0 0 26px' }}>{coreEdition.description}</p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px 20px', marginBottom: 32 }}>
-            {['Simulated order desk', 'Agent controls', 'Goal tracking', 'Audit history', 'JSON backup/restore', 'Optional hosted sign-in'].map((f) => (
+            {['Live VWAP + RSI agent included', 'Goal-based execution', 'Farm orchestration', 'Drawdown halts + reconciliation', '44 themes', '2,400+ source files'].map((f) => (
               <div key={f} style={{ display: 'flex', gap: 9, alignItems: 'flex-start', fontSize: 14, lineHeight: 1.4 }}>
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-2-700)" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 3 }}><path d="M20 6 9 17l-5-5" /></svg>
                 <span>{f}</span>
@@ -139,7 +154,7 @@ function CoreEditionCard() {
           </div>
         </div>
         <div style={{ position: 'relative', minHeight: 460, background: 'var(--color-neutral-200)', overflow: 'hidden' }}>
-          {coreEdition.image && <img src={coreEdition.image} alt="Core Edition dashboard" loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top left' }} />}
+          {coreEdition.image && <img src={coreEdition.image} alt="Core Edition dashboard" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top left' }} />}
         </div>
       </div>
     </section>
@@ -150,23 +165,23 @@ function AgentRail() {
   return (
     <section style={{ position: 'relative', background: 'var(--color-neutral-100)', borderTop: '1px solid var(--color-divider)', borderBottom: '1px solid var(--color-divider)', padding: '80px 0' }}>
       <div style={{ maxWidth: 1200, margin: '0 auto 32px', padding: '0 28px' }}>
-        <h6 style={{ marginBottom: 14 }}>The workspace</h6>
-        <h2 style={{ fontSize: 'clamp(30px,3.2vw,44px)', letterSpacing: '-0.012em', margin: '0 0 12px' }}>Four verified views to inspect before purchase.</h2>
+        <h6 style={{ marginBottom: 14 }}>The agents</h6>
+        <h2 style={{ fontSize: 'clamp(30px,3.2vw,44px)', letterSpacing: '-0.012em', margin: '0 0 12px' }}>Six strategies that trade while you sleep.</h2>
         <p style={{ fontSize: 16, color: 'var(--color-neutral-800)', margin: 0, maxWidth: '52ch' }}>
-          These screenshots come from the exact Core 2.0 demo and match the current downloadable release.
+          Each one drops into the dashboard as a plugin. Run one, or run all six as a coordinated farm under shared risk limits.
         </p>
       </div>
       <div style={{ display: 'flex', gap: 20, padding: '0 28px', overflowX: 'auto', scrollSnapType: 'x mandatory' }}>
-        {workspaceViews.map((view) => (
-          <Link key={view.title} href="/store/trading-dashboard-template" scroll={false} style={{
+        {agents.map((p) => (
+          <Link key={p.id} href={`/store/${p.id}`} scroll={false} style={{
             width: 300, flex: 'none', scrollSnapAlign: 'start', display: 'flex', flexDirection: 'column', gap: 14, padding: '30px 26px',
             borderRadius: 'calc(var(--radius-lg) * 1.15)', background: 'var(--color-bg)', textDecoration: 'none', color: 'var(--color-text)', boxShadow: 'var(--shadow-sm)',
           }}>
-            <img src={view.image} alt={`${view.title} screenshot`} loading="lazy" decoding="async" style={{ width: '100%', aspectRatio: '16/10', objectFit: 'cover', objectPosition: 'top', borderRadius: 'var(--radius-md)' }} />
-            <div style={{ fontFamily: 'var(--font-heading)', fontSize: 21, letterSpacing: '-0.015em', lineHeight: 1.12, marginTop: 4 }}>{view.title}</div>
-            <div style={{ fontSize: 14, lineHeight: 1.5, color: 'var(--color-neutral-800)', flex: 1 }}>{view.description}</div>
+            <div style={{ width: 46, height: 46, borderRadius: 99, background: 'var(--color-accent-2-100)', display: 'grid', placeItems: 'center', fontSize: 20 }}>{p.emoji}</div>
+            <div style={{ fontFamily: 'var(--font-heading)', fontSize: 21, letterSpacing: '-0.015em', lineHeight: 1.12, marginTop: 4 }}>{p.name}</div>
+            <div style={{ fontSize: 14, lineHeight: 1.5, color: 'var(--color-neutral-800)', flex: 1 }}>{p.description}</div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 14, borderTop: '1px solid var(--color-divider)' }}>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 500 }}>View gallery</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 19, fontWeight: 500 }}>{money(p.price)}</span>
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
             </div>
           </Link>
@@ -190,8 +205,8 @@ function SourceShowcase() {
             Open it in your editor. Make it unrecognisable.
           </h2>
           <p style={{ fontSize: 16.5, lineHeight: 1.6, color: 'var(--color-neutral-300)', maxWidth: '44ch' }}>
-            No compiled binaries, no obfuscation, no license server. Reviewable TypeScript you can inspect in your editor and adapt
-            within the product license. Your local copy does not depend on a Cival activation service.
+            No compiled binaries, no obfuscation, no license server. Clean TypeScript you can point Cursor at and refactor into your
+            own thing. There is no version of this where we can turn it off.
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 28 }}>
             {EDITORS.map((e) => (
@@ -207,21 +222,21 @@ function SourceShowcase() {
             ))}
           </div>
         </div>
-        <div style={{ position: 'sticky', top: 100, borderRadius: 'var(--radius-lg)', background: '#070f0e', border: '1px solid var(--color-divider)', overflow: 'hidden', boxShadow: 'var(--shadow-lg)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px', borderBottom: '1px solid var(--color-divider)' }}>
+        <div style={{ position: 'sticky', top: 100, borderRadius: 'var(--radius-lg)', background: 'color-mix(in srgb, var(--color-neutral-900) 72%, #000)', border: '1px solid color-mix(in srgb, var(--color-neutral-100) 14%, transparent)', overflow: 'hidden', boxShadow: 'var(--shadow-lg)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px', borderBottom: '1px solid color-mix(in srgb, var(--color-neutral-100) 12%, transparent)' }}>
             <span style={{ width: 9, height: 9, borderRadius: 99, background: 'var(--color-accent-500)' }} />
             <span style={{ width: 9, height: 9, borderRadius: 99, background: 'var(--color-accent-2-500)' }} />
             <span style={{ width: 9, height: 9, borderRadius: 99, background: 'var(--color-neutral-600)' }} />
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11.5, color: 'var(--color-neutral-600)', marginLeft: 8 }}>lib/safety.ts</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11.5, color: 'var(--color-neutral-500)', marginLeft: 8 }}>agents/vwap-rsi/strategy.ts</span>
           </div>
-          <pre style={{ margin: 0, padding: 24, fontFamily: 'var(--font-mono)', fontSize: 12.5, lineHeight: 1.85, color: 'var(--color-neutral-700)', overflowX: 'auto' }}>
-{`// Keep the supported release paper-only.
-export const safety = {
-  tradingMode:        'paper',
-  liveTradingEnabled: false,
-  acceptsWalletKeys:  false,
-  acceptsSeedPhrases: false,
-  orderType:          'simulated',
+          <pre style={{ margin: 0, padding: 24, fontFamily: 'var(--font-mono)', fontSize: 12.5, lineHeight: 1.85, color: 'var(--color-neutral-300)', overflowX: 'auto' }}>
+{`// tune it, break it, ship it — it's your file now
+export const config: AgentConfig = {
+  venue:        'hyperliquid',
+  symbols:      ['BTC', 'ETH', 'SOL'],
+  entry:        { vwapBand: 1.5, rsiDiv: true },
+  risk:         { maxDrawdownPct: 8, perTradePct: 1.5 },
+  onHalt:       async () => farm.defensive(),
 };`}
           </pre>
         </div>
@@ -234,10 +249,10 @@ function EditionsStack() {
   return (
     <section style={{ maxWidth: 1200, margin: '0 auto', padding: '120px 28px 0' }}>
       <div style={{ marginBottom: 40 }}>
-        <h6 style={{ marginBottom: 14 }}>Current release</h6>
-        <h2 style={{ fontSize: 'clamp(30px,3.2vw,44px)', letterSpacing: '-0.015em', lineHeight: 1.1, margin: 0 }}>One verified product, clearly scoped.</h2>
+        <h6 style={{ marginBottom: 14 }}>Editions</h6>
+        <h2 style={{ fontSize: 'clamp(30px,3.2vw,44px)', letterSpacing: '-0.015em', lineHeight: 1.1, margin: 0 }}>Three steps, no wrong entry point.</h2>
         <p style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--color-neutral-800)', maxWidth: '56ch', margin: '14px 0 0' }}>
-          Older prototypes and incomplete bundles are retired from new sales. Cival Core 2.0 is the only current store release.
+          Every edition includes the full platform and its source. Move up when you want more strategies — you only pay the difference.
         </p>
       </div>
       <div style={{ display: 'grid', gap: 26, paddingBottom: 120 }}>
@@ -273,15 +288,15 @@ function ProofDemo() {
         <h6 style={{ marginBottom: 16 }}>Proof</h6>
         <h2 style={{ fontSize: 'clamp(30px,3.2vw,42px)', lineHeight: 1.1, letterSpacing: '-0.015em', margin: '0 0 18px' }}>Click through it before you pay us anything.</h2>
         <p style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--color-neutral-800)', margin: '0 0 26px' }}>
-          The interactive demo shows the interface with sample data so you can evaluate the workflow before purchase. It does not show verified live performance.
+          The demo is the product with sample data in it. Six agents, seven farms, live analytics, every tab. No signup, no email gate.
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-          <a href="https://cival-core-v2-template.vercel.app" target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ height: 46, padding: '0 22px' }}>Open the demo</a>
+          <a href="https://ai-trading-dashboard-demo.vercel.app" target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ height: 46, padding: '0 22px' }}>Open the demo</a>
           <Link href="/store/trading-dashboard-template" className="btn btn-secondary" style={{ height: 46, padding: '0 20px' }}>Own it for $99</Link>
         </div>
       </div>
-      <div style={{ position: 'relative', borderRadius: 'var(--radius-lg)', overflow: 'hidden', boxShadow: 'var(--shadow-lg)', aspectRatio: '16/10', background: 'var(--color-neutral-200)' }}>
-        <img src="/images/products/core-v2/overview.png" alt="Cival Core 2.0 paper-trading overview" loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
+      <div style={{ position: 'relative', borderRadius: 'var(--radius-lg)', overflow: 'hidden', boxShadow: 'var(--shadow-lg)', aspectRatio: '16/10', background: 'var(--color-bg)' }}>
+        <img src="/images/cival/gw-shot-live-trading.png" alt="Live trading dashboard" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
       </div>
     </section>
   );
@@ -293,18 +308,18 @@ function Community() {
       <div data-cv-2col style={{ borderRadius: 'calc(var(--radius-lg) * 1.15)', background: 'var(--color-accent-2-100)', padding: '60px 48px', display: 'grid', gridTemplateColumns: 'minmax(0,1.1fr) minmax(0,0.9fr)', gap: 48, alignItems: 'center' }}>
         <div>
           <h6 style={{ color: 'var(--color-accent-2-700)', marginBottom: 16 }}>Community</h6>
-          <h2 style={{ fontSize: 'clamp(28px,3vw,40px)', letterSpacing: '-0.02em', margin: '0 0 14px' }}>Talk setup, plugins, and testing with the community.</h2>
+          <h2 style={{ fontSize: 'clamp(28px,3vw,40px)', letterSpacing: '-0.02em', margin: '0 0 14px' }}>42 channels of people running this in production.</h2>
           <p style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--color-accent-2-900)', margin: '0 0 26px', maxWidth: '48ch' }}>
-            Use Discord for community discussion and email for direct purchase or account support. Community content is not financial advice.
+            Setup help, plugin sharing, strategy arguments at 3am. If you get stuck on a Supabase key, someone has already been stuck on it.
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
             <a href="https://discord.gg/EZk6gTx57k" target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ height: 46, padding: '0 22px' }}>Join the Discord</a>
-            <a href="/contact" className="btn btn-secondary" style={{ height: 46, padding: '0 20px', borderColor: 'var(--color-accent-2-300)' }}>Get release updates</a>
+            <a href="https://x.com/GWDSofficial" target="_blank" rel="noopener noreferrer" className="btn btn-secondary" style={{ height: 46, padding: '0 20px', borderColor: 'var(--color-accent-2-300)' }}>Follow on X</a>
           </div>
         </div>
         <div style={{ display: 'grid', gap: 10 }}>
           {COMMUNITY.map((c) => (
-            <div key={c.t} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '18px 22px', borderRadius: 99, background: 'color-mix(in srgb, var(--color-accent-2) 16%, transparent)' }}>
+            <div key={c.t} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '18px 22px', borderRadius: 99, background: 'color-mix(in srgb, #fff 55%, transparent)' }}>
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: 16, fontWeight: 500, color: 'var(--color-accent-2-800)', minWidth: 52 }}>{c.n}</span>
               <span style={{ fontSize: 14.5, color: 'var(--color-accent-2-900)' }}>{c.t}</span>
             </div>
@@ -319,9 +334,10 @@ function FinalCTA() {
   return (
     <section style={{ borderTop: '1px solid var(--color-divider)' }}>
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '130px 28px', textAlign: 'center' }}>
-        <h2 style={{ fontSize: 'clamp(38px,5.2vw,70px)', lineHeight: 1.06, letterSpacing: '-0.018em', margin: '0 auto 26px', maxWidth: '20ch' }}>Explore the paper desk. Then make it yours.</h2>
-        <p style={{ fontSize: 17, color: 'var(--color-neutral-800)', margin: '0 auto 34px', maxWidth: '54ch' }}>
-          One verified Cival Core 2.0 source release with simulated orders, agent controls, risk views, audit history, and portable backups.
+        <h2 style={{ fontSize: 'clamp(38px,5.2vw,70px)', lineHeight: 1.06, letterSpacing: '-0.018em', margin: '0 auto 26px', maxWidth: '20ch' }}>Your desk, running by tonight.</h2>
+        <p style={{ fontSize: 17, color: 'var(--color-neutral-800)', margin: '0 auto 34px', maxWidth: '52ch' }}>
+          Three editions, full TypeScript source, agents that execute on Hyperliquid the moment you hand them a key. The template does
+          the boring part; the edge stays yours.
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center' }}>
           <Link href="/store" className="btn btn-primary" style={{ height: 54, padding: '0 32px', fontSize: 16 }}>Explore the store</Link>

@@ -9,8 +9,6 @@ export default function CursorLerp() {
     const dot = document.getElementById('cursor-dot');
     const ring = document.getElementById('cursor-ring');
     if (!dot || !ring) return;
-    const cursorDot = dot;
-    const cursorRing = ring;
 
     let mouseX = 0, mouseY = 0;
     let ringX = 0, ringY = 0;
@@ -19,8 +17,8 @@ export default function CursorLerp() {
     const onMove = (e: MouseEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
-      cursorDot.style.left = mouseX + 'px';
-      cursorDot.style.top = mouseY + 'px';
+      dot.style.left = mouseX + 'px';
+      dot.style.top = mouseY + 'px';
     };
 
     window.addEventListener('mousemove', onMove);
@@ -30,22 +28,26 @@ export default function CursorLerp() {
     }
 
     function animate() {
+      // `ring` is a possibly-null ref read; capture and guard inside the rAF loop rather than
+      // asserting non-null, because the element can unmount between frames.
+      const el = ring;
+      if (!el) { animId = requestAnimationFrame(animate); return; }
       ringX = lerp(ringX, mouseX, 0.12);
       ringY = lerp(ringY, mouseY, 0.12);
-      cursorRing.style.left = ringX + 'px';
-      cursorRing.style.top = ringY + 'px';
+      el.style.left = ringX + 'px';
+      el.style.top = ringY + 'px';
       animId = requestAnimationFrame(animate);
     }
     animate();
 
     // Scale on hover over interactive elements
     const onEnter = () => {
-      cursorRing.style.transform = 'translate(-50%, -50%) scale(2)';
-      cursorRing.style.borderColor = 'oklch(0.75 0.15 195 / 0.8)';
+      ring.style.transform = 'translate(-50%, -50%) scale(2)';
+      ring.style.borderColor = 'oklch(0.75 0.15 195 / 0.8)';
     };
     const onLeave = () => {
-      cursorRing.style.transform = 'translate(-50%, -50%) scale(1)';
-      cursorRing.style.borderColor = 'oklch(0.65 0.29 295 / 0.6)';
+      ring.style.transform = 'translate(-50%, -50%) scale(1)';
+      ring.style.borderColor = 'oklch(0.65 0.29 295 / 0.6)';
     };
 
     const interactives = document.querySelectorAll('a, button, [role="button"]');

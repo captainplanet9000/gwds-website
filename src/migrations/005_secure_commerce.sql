@@ -518,10 +518,11 @@ set search_path = public, pg_temp
 as $$
 #variable_conflict use_column
 declare
+  v_order public.orders%rowtype;
   v_order_id uuid;
   v_claimed integer;
 begin
-  select id into v_order_id
+  select * into v_order
   from public.orders
   where (p_stripe_session_id is not null and stripe_session_id = p_stripe_session_id)
      or (p_payment_intent_id is not null and payment_intent_id = p_payment_intent_id)
@@ -529,9 +530,10 @@ begin
   limit 1
   for update;
 
-  if v_order_id is null then
+  if v_order.id is null then
     raise exception 'ORDER_NOT_FOUND';
   end if;
+  v_order_id := v_order.id;
 
   insert into public.stripe_events
     (stripe_event_id, event_type, livemode, payload_hash, status, order_id)
@@ -543,6 +545,18 @@ begin
   if v_claimed = 0 then
     return query select v_order_id, false;
     return;
+  end if;
+
+  -- Release the coupon-use reservation taken by create_store_checkout() (see
+  -- 006_atomic_checkout.sql) when the Stripe session expires unpaid. Guarded
+  -- on the pre-update status so this only fires on the order's first (and
+  -- only) transition out of 'checkout_pending' into 'expired' — an order
+  -- that already paid, or already failed/expired via another event, must
+  -- never have its reservation released a second time.
+  if p_status = 'expired' and v_order.status = 'checkout_pending' and v_order.coupon_code is not null then
+    update public.gwds_coupons
+    set used_count = greatest(coalesce(used_count, 0) - 1, 0), updated_at = now()
+    where code = v_order.coupon_code;
   end if;
 
   update public.orders

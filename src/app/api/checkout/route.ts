@@ -273,11 +273,14 @@ export async function POST(req: NextRequest) {
     if (createdOrderId) {
       const supabase = createServerClient();
       try {
-        await supabase.from('orders').update({
-          status: 'checkout_failed',
-          failure_reason: error instanceof CommerceError ? error.code : 'UNEXPECTED',
-          updated_at: new Date().toISOString(),
-        }).eq('id', createdOrderId);
+        // Marks the order checkout_failed and, atomically in the same locked
+        // transaction, releases any coupon-use reservation create_store_checkout
+        // took for it — otherwise a failed checkout would permanently consume
+        // one of the coupon's max_uses even though no payment ever happened.
+        await supabase.rpc('release_store_checkout_coupon', {
+          p_order_id: createdOrderId,
+          p_reason: error instanceof CommerceError ? error.code : 'UNEXPECTED',
+        });
       } catch {
         // The original failure is more useful than a cleanup failure.
       }

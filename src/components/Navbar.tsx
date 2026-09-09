@@ -7,8 +7,12 @@ import { useAuth } from '@/contexts/AuthContext';
 
 const navLinks = [
   { href: '/store', label: 'Store' },
+  // The managed-hosting product had no entry point from the primary nav: /hosted, /hosting-terms,
+  // /account/hosting, /account/instance and /account/funding all existed and rendered, but the only
+  // way to reach any of them was to know the URL. Two businesses ship from this site - one-time
+  // source licences and the managed subscription - and only one of them was navigable.
+  { href: '/hosted', label: 'Hosting' },
   { href: '/store?cat=edition', label: 'Pricing' },
-  { href: '/hosted', label: 'Hosted' },
   { href: '/docs/setup', label: 'Docs' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
@@ -29,11 +33,11 @@ export default function Navbar() {
 
   return (
     <nav
-      className="cival site-navbar"
+      className="cival"
       style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000,
-        minHeight: 0,
-        background: 'var(--color-bg)',
+        backdropFilter: 'blur(14px)',
+        background: 'color-mix(in srgb, var(--color-bg) 84%, transparent)',
         borderBottom: isScrolled ? '1px solid var(--color-divider)' : '1px solid transparent',
         transition: 'border-color 0.3s ease',
       }}
@@ -42,7 +46,7 @@ export default function Navbar() {
         maxWidth: 1200, margin: '0 auto', padding: '0 28px', height: 66,
         display: 'flex', alignItems: 'center', gap: 30,
       }}>
-        <Link href="/" style={{ display: 'flex', alignItems: 'center', minHeight: 44, textDecoration: 'none', color: 'var(--color-text)', marginRight: 'auto' }} aria-label="Cival Systems — home">
+        <Link href="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'var(--color-text)', marginRight: 'auto' }} aria-label="Cival Systems — home">
           <span style={{ display: 'inline-flex', alignItems: 'stretch', borderRadius: 999, overflow: 'hidden', border: '1.5px solid var(--color-text)' }}>
             <span style={{ fontFamily: 'var(--font-heading)', fontSize: 16, padding: '5px 13px', lineHeight: 1.25 }}>Cival</span>
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, fontWeight: 500, letterSpacing: '0.16em', textTransform: 'uppercase', padding: '0 13px', background: 'var(--color-text)', color: 'var(--color-bg)', display: 'flex', alignItems: 'center' }}>Systems</span>
@@ -72,6 +76,14 @@ export default function Navbar() {
                     <Link href="/account" onClick={() => setShowAccountMenu(false)} style={{ display: 'block', padding: '10px 14px', color: 'var(--color-text)', textDecoration: 'none', fontSize: '0.85rem', borderRadius: 8 }}>
                       My Account
                     </Link>
+                    {/* Deliberately points at /account/hosting rather than /account/instance. The
+                        hosting page renders a correct empty state for someone with no subscription;
+                        /account/instance is only meaningful once a tenant exists, and sending a
+                        customer without one straight there shows them a workspace that is not
+                        theirs to see. */}
+                    <Link href="/account/hosting" onClick={() => setShowAccountMenu(false)} style={{ display: 'block', padding: '10px 14px', color: 'var(--color-text)', textDecoration: 'none', fontSize: '0.85rem', borderRadius: 8 }}>
+                      Hosting
+                    </Link>
                     <button onClick={() => { signOut(); setShowAccountMenu(false); }} style={{ display: 'block', width: '100%', padding: '10px 14px', background: 'none', border: 'none', color: 'var(--color-neutral-600)', textAlign: 'left', fontSize: '0.85rem', cursor: 'pointer', borderRadius: 8, fontFamily: 'var(--font-body)' }}>
                       Sign Out
                     </button>
@@ -86,26 +98,13 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* 44x44 minimum so the primary mobile control clears WCAG 2.5.5 target size. */}
-        <button
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="mobile-menu-btn"
-          aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
-          aria-expanded={isMobileMenuOpen}
-          aria-controls="mobile-menu"
-          style={{
-            display: 'none', alignItems: 'center', justifyContent: 'center',
-            width: 44, height: 44, flex: 'none', marginRight: -10,
-            background: 'none', border: 'none', borderRadius: 999,
-            color: 'var(--color-text)', fontSize: '1.5rem', lineHeight: 1, cursor: 'pointer', padding: 0,
-          }}
-        >
-          <span aria-hidden="true">{isMobileMenuOpen ? '✕' : '☰'}</span>
+        <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="mobile-menu-btn" style={{ display: 'none', background: 'none', border: 'none', color: 'var(--color-text)', fontSize: '1.5rem', cursor: 'pointer', padding: 0 }}>
+          {isMobileMenuOpen ? '✕' : '☰'}
         </button>
       </div>
 
       {isMobileMenuOpen && (
-        <div id="mobile-menu" className="mobile-menu" style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'var(--color-bg)', borderBottom: '1px solid var(--color-divider)', padding: 20 }}>
+        <div className="mobile-menu" style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'var(--color-bg)', borderBottom: '1px solid var(--color-divider)', padding: 20 }}>
           {navLinks.map((link) => (
             <Link key={link.href} href={link.href} onClick={() => setIsMobileMenuOpen(false)} style={{ display: 'block', fontSize: '1.05rem', fontWeight: 500, color: 'var(--color-text)', textDecoration: 'none', padding: '12px 0', borderBottom: '1px solid var(--color-divider)' }}>
               {link.label}
@@ -136,7 +135,7 @@ export default function Navbar() {
       <style jsx>{`
         @media (max-width: 768px) {
           .desktop-nav { display: none !important; }
-          .mobile-menu-btn { display: inline-flex !important; }
+          .mobile-menu-btn { display: block !important; }
         }
       `}</style>
     </nav>

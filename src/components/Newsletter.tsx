@@ -152,7 +152,7 @@ export default function Newsletter() {
                   background: 'var(--color-accent)',
                   border: 'none',
                   borderRadius: 999,
-                  color: 'var(--color-bg)',
+                  color: '#fff',
                   fontFamily: 'var(--font-body)',
                   fontWeight: 600,
                   fontSize: '0.9rem',

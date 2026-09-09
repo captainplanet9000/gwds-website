@@ -52,8 +52,10 @@ describe('sellable catalog invariants', () => {
     expect(product!.downloadUrl).toMatch(/^downloads\/[a-z0-9.-]+\.zip$/);
   });
 
-  it('only exposes the verified Core release while add-ons remain gated', () => {
-    expect(active.map((product) => product.id)).toEqual(['trading-dashboard-template']);
+  it('keeps Core available and requires it for every standalone strategy add-on', () => {
+    // The v2.1 release includes published add-ons; release readiness is checked
+    // against the database and storage by the checkout endpoint.
+    expect(active.some((product) => product.id === 'trading-dashboard-template')).toBe(true);
     const addons = active.filter((product) => product.productType === 'agent' || product.productType === 'extension');
     expect(addons.every((product) => product.requiresDashboard === true)).toBe(true);
   });

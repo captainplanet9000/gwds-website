@@ -8,6 +8,7 @@ export const runtime = 'nodejs';
 
 export async function POST(req: NextRequest) {
   let pendingSubscriptionId: string | null = null;
+  let checkoutSessionId: string | null = null;
   try {
     if (!hostingSalesEnabled()) {
       throw new CommerceError('HOSTING_PAUSED', hostingLaunchMessage(), 503);
@@ -52,6 +53,9 @@ export async function POST(req: NextRequest) {
     });
     if (createError || !created?.[0]) {
       const message = createError?.message || '';
+      if (message.includes('HOSTING_CAPACITY_')) {
+        throw new CommerceError('HOSTING_CAPACITY_UNAVAILABLE', 'Hosted workspaces are currently at capacity. Please check back shortly.', 409);
+      }
       if (message.includes('OPEN_SUBSCRIPTION_EXISTS')) {
         throw new CommerceError('OPEN_SUBSCRIPTION_EXISTS', 'You already have an open hosting subscription. Manage it from your account.', 409);
       }
@@ -80,6 +84,7 @@ export async function POST(req: NextRequest) {
       allow_promotion_codes: true,
       billing_address_collection: 'auto',
     }, { idempotencyKey: `hosting-checkout-${pendingSubscriptionId}` });
+    checkoutSessionId = session.id;
     if (!session.url) throw new CommerceError('STRIPE_SESSION_FAILED', 'Billing could not be started. No payment was taken.', 503);
 
     const { error: bindError } = await supabase.from('hosting_subscriptions')
@@ -90,8 +95,22 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ stripeUrl: session.url, subscriptionId: pendingSubscriptionId });
   } catch (error) {
     if (pendingSubscriptionId) {
-      await createServerClient().from('hosting_subscriptions').delete()
-        .eq('id', pendingSubscriptionId).eq('status', 'pending_checkout');
+      // Do not free a reservation while Stripe can still accept its payment.
+      // If expiry fails, retain the row so a webhook can reconcile it safely.
+      let releasable = !checkoutSessionId;
+      if (checkoutSessionId) {
+        try {
+          const expired = await getStripe().checkout.sessions.expire(checkoutSessionId);
+          releasable = expired.status === 'expired';
+        } catch {
+          console.error('Hosting checkout cleanup requires reconciliation', { subscriptionId: pendingSubscriptionId });
+        }
+      }
+      if (releasable) {
+        await createServerClient().from('hosting_subscriptions')
+          .update({ status: 'incomplete_expired', updated_at: new Date().toISOString() })
+          .eq('id', pendingSubscriptionId).eq('status', 'pending_checkout');
+      }
     }
     const status = error instanceof CommerceError ? error.status : 500;
     if (error instanceof CommerceError) console.info('Hosting checkout rejected', { code: error.code });

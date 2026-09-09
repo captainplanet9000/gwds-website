@@ -129,11 +129,12 @@ begin
         marketing_consent = public.customers.marketing_consent or excluded.marketing_consent,
         updated_at = now();
 
-  if v_order.coupon_code is not null then
-    update public.gwds_coupons
-    set used_count = coalesce(used_count, 0) + 1, updated_at = now()
-    where code = v_order.coupon_code;
-  end if;
+  -- used_count is no longer incremented here: create_store_checkout() (see
+  -- 006_atomic_checkout.sql) now reserves the coupon use at checkout-creation
+  -- time, inside its own row-locked transaction, to close a TOCTOU race where
+  -- concurrent checkouts could all pass the max_uses check before any of them
+  -- paid. Incrementing it again here on payment would double-count every
+  -- completed order against the coupon's max_uses.
 
   if v_order.marketing_consent then
     insert into public.newsletter_subscribers (email, source, is_active, subscribed_at)

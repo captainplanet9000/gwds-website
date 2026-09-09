@@ -13,7 +13,7 @@ export interface OrderEmailData {
 export interface HostingEmailData {
   subscriptionId: string;
   planName: string;
-  template: 'hosting_started' | 'hosting_payment_failed' | 'hosting_canceled' | 'hosting_activated' | 'hosting_incident';
+  template: 'hosting_started' | 'hosting_payment_failed' | 'hosting_canceled' | 'hosting_activated' | 'hosting_incident' | 'hosting_provisioning_failed';
   title?: string;
   detail?: string;
 }
@@ -100,6 +100,7 @@ export async function sendHostingEmail(email: string, message: HostingEmailData)
     hosting_canceled: ['Your hosting cancellation is recorded', 'Your subscription has been canceled. Runtime teardown and credential deletion will follow the service lifecycle shown in your account.'],
     hosting_activated: ['Your managed workspace is active', 'Provisioning, health, backup and recovery checks passed. Open your account to review runtime status before enabling any live strategy.'],
     hosting_incident: [message.title || 'Managed hosting incident update', message.detail || 'An incident affecting your managed workspace has been published in your account.'],
+    hosting_provisioning_failed: [message.title || 'Provisioning failed after payment', message.detail || 'Payment succeeded but automated provisioning failed. Operations has been alerted and will resume this without further action from you.'],
   }[message.template];
   const subject = `Cival Systems — ${copy[0]}`;
   const html = `<!doctype html><html><body style="margin:0;background:#020806;color:#e8fff5;font-family:Arial,sans-serif"><div style="max-width:620px;margin:0 auto;padding:40px 20px"><div style="font-size:24px;font-weight:800;margin-bottom:24px;color:#4ade9f">Cival Systems</div><div style="background:#07120e;border:1px solid #1d4d3b;border-radius:22px;padding:32px"><div style="font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#4ade9f;font-weight:800">Managed hosting</div><h1 style="font-size:30px;line-height:1.15;margin:12px 0 14px">${escapeHtml(copy[0])}</h1><p style="font-size:16px;line-height:1.65;color:#b5d6c8">${escapeHtml(copy[1])}</p><a href="${accountUrl}" style="display:inline-block;margin-top:14px;background:#4ade9f;color:#03110b;text-decoration:none;font-weight:800;padding:14px 22px;border-radius:999px">Open hosting account</a><div style="margin-top:26px;padding-top:18px;border-top:1px solid #173a2e;font-size:12px;line-height:1.7;color:#7fa694">Subscription ${escapeHtml(message.subscriptionId)}</div></div><p style="font-size:12px;line-height:1.6;color:#76998a;margin:20px 6px">Managed hosting does not reduce market risk or guarantee results. Use a dedicated trade-only API wallet and keep withdrawals disabled. Need help? <a href="${siteUrl}/contact" style="color:#4ade9f">Contact support</a>.</p></div></body></html>`;

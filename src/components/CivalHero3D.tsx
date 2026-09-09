@@ -205,6 +205,7 @@ export default function CivalHero3D({
       mat.dispose();
       bars.dispose();
       renderer.dispose();
+      renderer.forceContextLoss(); // release the GL context, not just the JS objects
       if (renderer.domElement.parentNode === host) host.removeChild(renderer.domElement);
     };
   }, [baseCols, baseRows, low, mid, hi, hot, fog]);

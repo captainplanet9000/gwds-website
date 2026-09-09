@@ -5,7 +5,7 @@ import { createServerClient } from '@/lib/supabase';
 
 export const metadata: Metadata = {
   title: 'Service Status',
-  description: 'Current Cival Systems storefront and managed paper-workspace status.',
+  description: 'Current Cival Systems storefront and managed workspace status.',
 };
 
 export const dynamic = 'force-dynamic';
@@ -40,6 +40,9 @@ export default async function StatusPage() {
   const incidents = await getIncidents();
   const open = incidents.filter((incident) => incident.status !== 'resolved');
   const hostingSalesEnabled = process.env.NEXT_PUBLIC_HOSTING_SALES_ENABLED === 'true';
+  // Read-only. The paid tiers run live agents, so this page must not describe the service as
+  // paper-only; but while the gate is shut nothing executes live either. Both facts are stated
+  // against the gate rather than against the product, so neither becomes a lie when it opens.
 
   return (
     <div className="cival">
@@ -49,7 +52,7 @@ export default async function StatusPage() {
           <span className="tag tag-accent">Public status</span>
           <h1 style={{ fontSize: 'clamp(38px,6vw,64px)', margin: '18px 0 12px' }}>Cival Systems status</h1>
           <p style={{ color: 'var(--color-neutral-700)', lineHeight: 1.7, maxWidth: 700 }}>
-            Storefront access and paper-workspace availability. Managed workspaces cannot submit live orders and never accept exchange or wallet secrets.
+            Storefront access and managed-workspace availability. Cival never holds customer funds and never accepts exchange credentials, wallet secrets, seed phrases, or private keys: a live plan trades through a trade-only agent wallet the customer approves themselves, which cannot withdraw.
           </p>
 
           <div data-cv-2col style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 14, margin: '34px 0' }}>
@@ -59,10 +62,12 @@ export default async function StatusPage() {
               <p style={{ color: 'var(--color-neutral-700)', lineHeight: 1.6, marginBottom: 0 }}>Public pages, customer accounts, and support forms are available.</p>
             </section>
             <section className="card" style={{ padding: 24 }}>
-              <h2 style={{ fontSize: 20, margin: '0 0 8px' }}>Managed paper hosting</h2>
+              <h2 style={{ fontSize: 20, margin: '0 0 8px' }}>Managed hosting</h2>
               <span className="tag tag-neutral">{hostingSalesEnabled ? 'Available' : 'Launch gate closed'}</span>
               <p style={{ color: 'var(--color-neutral-700)', lineHeight: 1.6, marginBottom: 0 }}>
-                {hostingSalesEnabled ? 'New subscriptions are available.' : 'No new paid hosting subscriptions are being accepted.'}
+                {hostingSalesEnabled
+                  ? 'New subscriptions are available. The free Paper plan stays on simulated fills; paid plans run live agents against the exchange account you fund yourself.'
+                  : 'No hosting subscriptions are being accepted, and no managed workspace executes live orders, while the launch gate is closed.'}
               </p>
             </section>
           </div>

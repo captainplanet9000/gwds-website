@@ -62,7 +62,21 @@
   background: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-body);
+
+  /* min-height belongs on PAGE WRAPPERS. Navbar.tsx also carries className="cival" on a
+     `position: fixed; top/left/right: 0` element purely to pick up these theme tokens.
+     Inheriting 100vh there stretched the nav across the whole viewport, so an 84%-opaque
+     bar with backdrop-filter: blur(14px) at z-index 1000 covered the entire site: the page
+     rendered correctly underneath but looked blurred and swallowed every click.
+     The override below exempts out-of-flow chrome. */
   min-height: 100vh;
+}
+
+/* A .cival element taken out of normal flow is chrome (nav / overlay), never the page
+   wrapper, so it must size to its own content rather than the viewport. */
+nav.cival,
+.cival[data-chrome="true"] {
+  min-height: 0;
 }
 
 .cival h1, .cival h2, .cival h3, .cival h4, .cival h5, .cival .card-title {
@@ -209,5 +223,37 @@
     justify-content: center;
     gap: 6px;
     min-height: 44px;
+  }
+}
+
+/* ==========================================
+   GRID CHILDREN THAT REFUSE TO SHRINK
+   A grid item's automatic minimum size is min-content, not zero. Capping the
+   TRACK with minmax(0,1fr) is therefore only half the fix: the item itself
+   still reports min-content and overflows the track it was given. Every text
+   column in an inline-styled row needs min-width:0 as well.
+
+   Concretely: the edition rows on the homepage ran
+   `auto minmax(0,1fr) auto` with gap:32 and 44px padding. On a 414px phone the
+   two auto columns (mark + price) plus the gaps consumed everything but 76px,
+   and the description needed 97px — so it rendered as a 76px-wide, 442px-tall
+   ribbon of one-word lines.
+   ========================================== */
+.cival [data-cv-edition] > * { min-width: 0; }
+.cival [data-cv-edition] p,
+.cival [data-cv-edition] div { overflow-wrap: anywhere; }
+
+/* ==========================================
+   STICKY PANELS ON SHORT VIEWPORTS
+   The checkout order summary is `position: sticky; top: 100`. Once the two
+   column checkout collapses to one column the summary is no longer beside the
+   form, it is above it — and a sticky box taller than the viewport pins itself
+   over the payment fields and cannot be scrolled past. Release it on the same
+   breakpoint that collapses the layout.
+   ========================================== */
+@media (max-width: 900px) {
+  .cival [data-cv-sticky] {
+    position: static !important;
+    top: auto !important;
   }
 }

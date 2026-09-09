@@ -50,8 +50,8 @@ export default function AdminDashboard() {
   if (error || !stats) return <div role="alert" style={centerStyle}>{error || 'Operations data is unavailable.'}</div>;
 
   const cards = [
-    ['Verified revenue', `$${Number(stats.totalRevenue).toLocaleString(undefined, { minimumFractionDigits: 2 })}`, '#4ade9f'],
-    ['Completed orders', stats.totalOrders.toLocaleString(), '#9ae6c4'],
+    ['Paid order revenue', `$${Number(stats.totalRevenue).toLocaleString(undefined, { minimumFractionDigits: 2 })}`, '#4ade9f'],
+    ['Paid orders', stats.totalOrders.toLocaleString(), '#9ae6c4'],
     ['Customers', stats.totalCustomers.toLocaleString(), '#71cfa8'],
     ['Products', stats.totalProducts.toLocaleString(), '#b9efd8'],
   ] as const;
@@ -61,7 +61,7 @@ export default function AdminDashboard() {
     <header style={{ marginBottom: 28 }}>
       <div style={{ color: '#4ade9f', fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.15em' }}>Live database</div>
       <h1 style={{ margin: '8px 0', fontSize: 32 }}>Operations overview</h1>
-      <p style={{ color: '#799487', margin: 0 }}>Only settled store data is shown. No sample transactions or simulated revenue.</p>
+      <p style={{ color: '#799487', margin: 0 }}>Paid orders recorded by the store. Refunded and disputed orders are excluded.</p>
     </header>
 
     <section className="admin-stat-grid-4" style={{ marginBottom: 22 }}>
@@ -72,14 +72,14 @@ export default function AdminDashboard() {
     </section>
 
     <section className="admin-stat-grid-3" style={{ marginBottom: 22 }}>
-      <QuickLink href="/admin/subscribers" label="Active subscribers" value={stats.totalSubscribers} />
+      <QuickLink href="/admin/subscribers" label="Newsletter subscribers" value={stats.totalSubscribers} />
       <QuickLink href="/admin/messages" label="New support messages" value={stats.newMessages} />
       <QuickLink href="/admin/coupons" label="Active coupons" value={stats.activeCoupons} />
     </section>
 
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 420px), 1fr))', gap: 22, marginBottom: 22 }}>
       <section style={cardStyle}>
-        <h2 style={headingStyle}>Revenue by product</h2>
+        <h2 style={headingStyle}>Product sales before discounts</h2>
         {stats.revenueByProduct.length === 0 ? <Empty label="No settled product revenue yet." /> : stats.revenueByProduct.map((item) => <div key={item.productId} style={{ marginTop: 16 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, color: '#cce8dc', fontSize: 13 }}>
             <span>{item.productName}</span><strong>${item.revenue.toFixed(2)}</strong>
@@ -91,7 +91,7 @@ export default function AdminDashboard() {
       </section>
 
       <section style={cardStyle}>
-        <h2 style={headingStyle}>30-day settled revenue</h2>
+        <h2 style={headingStyle}>30-day paid order revenue</h2>
         {stats.revenueByDay.length === 0 ? <Empty label="No revenue history yet." /> : <div style={{ height: 170, display: 'flex', alignItems: 'end', gap: 3, paddingTop: 18 }}>
           {stats.revenueByDay.map((day, index) => {
             const maximum = Math.max(1, ...stats.revenueByDay.map((item) => item.value));

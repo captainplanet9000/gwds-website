@@ -542,3 +542,299 @@ body::before {
   z-index: 1;
   mix-blend-mode: overlay;
 }
+
+
+/* ─────────────────────────────────────────────────────────────────────────────────────────────
+   ADMIN DESIGN LAYER
+   The admin was built with ~800 hardcoded hex values (#1a1a1a, #888, #0a0a0a ...) that drifted
+   from the storefront palette. These tokens re-express those exact greys in terms of the same
+   brand variables the public site uses, so the admin inherits the storefront look and stays in
+   sync when the brand changes. The accent was already correct: #8B5CF6 IS --electric-purple.
+   ───────────────────────────────────────────────────────────────────────────────────────────── */
+:root {
+  --admin-bg:            #050505;                      /* page ground, matches --color-near-black */
+  --admin-surface:       #0A0A0C;                      /* sidebar / cards, one step above ground  */
+  --admin-surface-raised:#101014;                      /* hover + elevated rows                   */
+  --admin-border:        rgba(232, 232, 232, 0.08);
+  --admin-border-strong: rgba(232, 232, 232, 0.16);
+  --admin-text:          var(--color-text-primary);
+  --admin-text-muted:    var(--color-text-muted);
+  --admin-text-dim:      var(--color-text-dim);
+  --admin-accent:        var(--color-accent);
+  --admin-accent-soft:   color-mix(in oklch, var(--color-accent) 16%, transparent);
+  --admin-success:       oklch(0.70 0.18 145);
+  --admin-warning:       oklch(0.75 0.20 85);
+  --admin-danger:        oklch(0.63 0.24 27);
+  --admin-radius:        10px;
+  --admin-shadow:        0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+}
+
+/* Shell */
+.admin-shell     { background: var(--admin-bg); color: var(--admin-text); min-height: 100vh; }
+.admin-sidebar   { background: var(--admin-surface); border-right: 1px solid var(--admin-border); }
+.admin-nav-link  { color: var(--admin-text-muted); border-radius: var(--admin-radius);
+                   transition: background .15s ease, color .15s ease; }
+.admin-nav-link:hover  { background: var(--admin-surface-raised); color: var(--admin-text); }
+.admin-nav-link[data-active="true"] { background: var(--admin-accent-soft); color: var(--admin-text); }
+
+/* Surfaces */
+.admin-card      { background: var(--admin-surface); border: 1px solid var(--admin-border);
+                   border-radius: var(--admin-radius); box-shadow: var(--admin-shadow); }
+.admin-card:hover{ border-color: var(--admin-border-strong); }
+
+/* Tables — dense, scannable, sticky header */
+.admin-table              { width: 100%; border-collapse: separate; border-spacing: 0; font-size: .85rem; }
+.admin-table thead th     { position: sticky; top: 0; z-index: 1; background: var(--admin-surface);
+                            text-align: left; font-weight: 600; color: var(--admin-text-muted);
+                            font-size: .72rem; letter-spacing: .04em; text-transform: uppercase;
+                            padding: 10px 12px; border-bottom: 1px solid var(--admin-border); }
+.admin-table tbody td     { padding: 11px 12px; border-bottom: 1px solid var(--admin-border);
+                            color: var(--admin-text); }
+.admin-table tbody tr:hover td { background: var(--admin-surface-raised); }
+.admin-table .num         { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Status pills */
+.admin-pill      { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px;
+                   border-radius: 999px; font-size: .72rem; font-weight: 600; line-height: 1.5; }
+.admin-pill.ok   { background: color-mix(in oklch, var(--admin-success) 18%, transparent); color: var(--admin-success); }
+.admin-pill.warn { background: color-mix(in oklch, var(--admin-warning) 18%, transparent); color: var(--admin-warning); }
+.admin-pill.bad  { background: color-mix(in oklch, var(--admin-danger)  18%, transparent); color: var(--admin-danger); }
+.admin-pill.dim  { background: var(--admin-surface-raised); color: var(--admin-text-dim); }
+
+/* Buttons */
+.admin-btn       { padding: 8px 14px; border-radius: 8px; font-size: .82rem; font-weight: 600;
+                   border: 1px solid var(--admin-border-strong); background: transparent;
+                   color: var(--admin-text); cursor: pointer; transition: all .15s ease; }
+.admin-btn:hover { background: var(--admin-surface-raised); }
+.admin-btn.primary{ background: var(--admin-accent); border-color: transparent; color: #fff; }
+.admin-btn.primary:hover { filter: brightness(1.1); }
+.admin-btn.danger{ border-color: color-mix(in oklch, var(--admin-danger) 40%, transparent); color: var(--admin-danger); }
+.admin-btn:disabled { opacity: .45; cursor: not-allowed; }
+
+/* Metric tiles */
+.admin-metric        { background: var(--admin-surface); border: 1px solid var(--admin-border);
+                       border-radius: var(--admin-radius); padding: 16px 18px; }
+.admin-metric .label { font-size: .72rem; text-transform: uppercase; letter-spacing: .04em;
+                       color: var(--admin-text-muted); margin-bottom: 6px; }
+.admin-metric .value { font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums;
+                       color: var(--admin-text); line-height: 1.1; }
+
+.admin-input     { background: var(--admin-bg); border: 1px solid var(--admin-border-strong);
+                   border-radius: 8px; padding: 8px 12px; color: var(--admin-text); font-size: .85rem; }
+.admin-input:focus { outline: none; border-color: var(--admin-accent); }
+
+@media (max-width: 860px) {
+  .admin-table { font-size: .8rem; }
+  .admin-table thead th, .admin-table tbody td { padding: 8px 9px; }
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────────────────────
+   MOBILE ERGONOMICS  --- MOBILE ERGONOMICS ---
+   Measured on the live site at 375x812 and 760x1024:
+     - the hamburger toggle rendered 22x32
+     - 22 interactive elements were under the 40px box, most of them footer links at 22px tall
+     - the smallest text was 9px (logo badge) and 10.5px ("Drag or scroll")
+   WCAG 2.5.5 asks for 44x44 targets; iOS HIG says the same. These rules widen the HIT AREA
+   without changing the visual size, so nothing in the design shifts - the padding is invisible
+   but tappable, which is why a bare `min-height` on the link would not have been enough.
+   ───────────────────────────────────────────────────────────────────────────────────────────── */
+@media (hover: none), (max-width: 900px) {
+  /* Primary chrome: real 44px boxes. */
+  .mobile-menu-btn,
+  nav button,
+  nav a[aria-label] {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Footer / nav link lists: expand the tap box via padding, keep the type where it is. */
+  footer a,
+  nav .mobile-menu a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-block: 4px;
+  }
+
+  /* Buttons and inputs never below the thumb minimum. */
+  .btn,
+  button[type="submit"],
+  input,
+  select,
+  textarea {
+    min-height: 44px;
+  }
+
+  /* 16px inputs stop iOS Safari zooming the viewport on focus - a real usability bug, not polish. */
+  input,
+  select,
+  textarea {
+    font-size: max(16px, 1rem);
+  }
+
+  /* Nothing below 11px on a phone; the 9px badge became illegible at arm's length. */
+  /* React serialises inline styles without a space after the colon (font-size:9px), so the
+     earlier `[style*="font-size: 9"]` selector matched nothing. Match both spellings. */
+  .cival [style*="font-size:9"],
+  .cival [style*="font-size: 9"],
+  .cival [style*="font-size:10"],
+  .cival [style*="font-size: 10"] {
+    font-size: 11px !important;
+  }
+}
+
+/* Respect users who ask for less motion, site-wide rather than per-component. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────────────────────
+   HOMEPAGE STAT STRIP
+
+   THE FIRST BUG (fixed earlier): four hard columns at 375px gave each label ~70px when
+   "Autonomous agents" needs 95px, so labels collided. Two columns on a phone fixed that.
+
+   THE SPACING BUG THAT SURVIVED IT: the cells carried `padding: 34px 0` — no horizontal
+   padding at all — while each also drew a `border-right` hairline. Measured on the live
+   site, every figure's inset from its own cell edge was exactly 0px, so the text of cells
+   2/3/4 began at x = 350 / 636 / 922, which are precisely the x of the hairlines to their
+   left. The numbers were touching the rules. Three faults fell out of those two
+   declarations:
+
+     1. NO GUTTER — every figure and label sat flush against the divider beside it.
+     2. A PHANTOM COLUMN — `border-right` applied to every cell including the last, so a
+        rule was drawn at x=1208 with nothing to its right. Against a full-bleed band that
+        reads as a fifth, empty column.
+     3. A SEGMENTED RULE — on mobile the row divider was `border-bottom` on cells 1 and 2
+        while `column-gap: 20px` held those cells apart, so the "line" rendered as two
+        disconnected dashes with a 20px hole in the middle.
+
+   WHY THE RANGES ARE MUTUALLY EXCLUSIVE: edge cells are selected with nth-child
+   arithmetic that depends on the column count, and that arithmetic differs per layout —
+   `nth-child(4n)` means "last in its row" only while there are four columns. Written as
+   a base rule plus max-width overrides, cell 4 would keep `padding-right: 0` in the
+   two-column grid where it is no longer on an edge. Exclusive ranges make that leak
+   impossible, at the cost of restating a few declarations.
+
+   WHY THERE IS NO column-gap: the hairline IS the separator. A gap can only hold cells
+   far enough apart to break the horizontal rules — fault 3 above. The cells touch, and
+   the space around each rule comes from cell padding, which keeps every rule continuous
+   in both directions.
+   ───────────────────────────────────────────────────────────────────────────────────────────── */
+.stats-grid {
+  display: grid;
+}
+.stat-cell {
+  min-width: 0;                 /* let grid children actually shrink instead of forcing overflow */
+}
+.stat-label {
+  font-size: 12px;
+  /* DECLARED, not inherited. The two-line reserve in the 2-up block is computed from this
+     number. Left to inherit from body, someone retuning body leading would silently make
+     that reserve stop being exactly two lines, and the row-height defect would creep back
+     a few pixels at a time — far harder to spot than the 18.6px it started as. */
+  line-height: 1.6;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-neutral-600);
+  margin-top: 6px;
+  overflow-wrap: anywhere;      /* a long label wraps rather than spilling into its neighbour */
+}
+
+/* ── Four across ──────────────────────────────────────────────────────────────────────── */
+
+/* WHY 860 AND NOT 720: adding a gutter costs the labels width, so the width at which four
+   columns still work went UP. Measured intrinsic single-line label widths at 12px:
+   "AUTONOMOUS AGENTS" 151px, "TRADES EXECUTED" 126px, "DEMO PORTFOLIO" 118px, "WIN RATE"
+   64px. A column is (min(1200, vw) − 56) / 4, and the widest label needs
+   151 + 2 × gutter inside it, so four across needs vw ≥ 820 at a 20px gutter and vw ≥ 884
+   at 28px. Left at the old 720 threshold, TWO of the four labels wrapped to a second line
+   between 721px and 820px while the other two stayed on one — the exact ragged look this
+   whole change is meant to remove. 860 clears the 20px case with ~10px of headroom for
+   font-loading variance. */
+@media (min-width: 860px) {
+  .stats-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .stat-cell {
+    /* 20px here, 28px from 1024px up (below) — a 28px gutter does not fit until 884px. */
+    padding: 34px 20px;
+    border-right: 1px solid var(--color-divider);
+  }
+  /* The band is full-bleed but the figures are not: they must line up with every other
+     section on the page, which sits inside the container's 28px gutter. So the outer
+     cells drop their outside padding rather than the whole strip indenting inward. */
+  .stat-cell:nth-child(4n + 1) { padding-left: 0; }
+  .stat-cell:nth-child(4n) { padding-right: 0; border-right: 0; }
+}
+
+@media (min-width: 1024px) {
+  /* Columns are ~242px here, comfortably past the 884px a 28px gutter needs. The two edge
+     rules above are (0,2,0) and these are (0,1,0), so specificity keeps the outer cells
+     flush without restating them. */
+  .stat-cell { padding-left: 28px; padding-right: 28px; }
+}
+
+/* ── Two across ───────────────────────────────────────────────────────────────────────── */
+@media (min-width: 341px) and (max-width: 859px) {
+  .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stat-cell {
+    padding: 26px 20px;
+    border-right: 1px solid var(--color-divider);
+  }
+  .stat-cell:nth-child(2n + 1) { padding-left: 0; }
+  .stat-cell:nth-child(2n) { padding-right: 0; border-right: 0; }
+  /* The two cells in a row touch, so these borders meet end-to-end and read as one
+     line across the whole strip instead of two dashes. */
+  .stat-cell:nth-child(-n + 2) { border-bottom: 1px solid var(--color-divider); }
+
+  /* ROW EQUALISATION.
+     "AUTONOMOUS AGENTS" wraps to two lines at these widths and the other three labels do
+     not. Measured on the live site, that made row 1 stand 132.6px against row 2's 114px —
+     an 18.6px disagreement (one 17.6px label line plus the 1px rule) — so the divider
+     between the rows sat visibly off-centre and the 2x2 read as lopsided.
+
+     Reserving two lines in EVERY label makes a wrapping label cost nothing, so both rows
+     resolve to the same height. On its own that reserve would hang as dead space under
+     the three single-line labels and leave every cell bottom-heavy (26px above, 43.6px
+     below), which just trades a measured defect for an unmeasured one. So the cell hands
+     one label line back out of its bottom padding, and the strip's total height comes out
+     exactly where it is today: 26 + 35.2 + 8.4 === 26 + 17.6 + 26.
+
+     grid-auto-rows is the backstop for what the reserve cannot predict — a third line at
+     200% zoom, a longer string, a translation. It degrades that case to "the strip got
+     taller" rather than "the rows disagree again". */
+  .stats-grid { grid-auto-rows: 1fr; }
+  .stat-label {
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    min-height: calc(2 * 11px * 1.6);
+  }
+  /* max() guards a future edit that drops --stat-block below one line: a negative padding
+     is invalid and would drop the whole declaration, taking the top padding with it. */
+  .stat-cell { padding-bottom: max(0px, calc(26px - 11px * 1.6)); }
+}
+
+/* ── Single file ──────────────────────────────────────────────────────────────────────── */
+@media (max-width: 340px) {
+  /* Measured at 375px a 2-up grid gives 130px cells and every label fits, so only
+     genuinely tiny screens stack. Each cell is both first and last in its row, so it
+     carries no vertical rule and no side padding — figures stay on the page gutter. */
+  .stats-grid { grid-template-columns: 1fr; }
+  .stat-cell {
+    padding: 20px 0;
+    border-bottom: 1px solid var(--color-divider);
+  }
+  .stat-cell:last-child { border-bottom: 0; }
+  .stat-label { font-size: 11px; letter-spacing: 0.04em; }
+}

@@ -6,12 +6,18 @@ import { useAuth } from '@/contexts/AuthContext';
 
 const navItems = [
   { name: 'Dashboard', href: '/admin', icon: '📊' },
+  { name: 'Analytics', href: '/admin/analytics', icon: '📈' },
   { name: 'Orders', href: '/admin/orders', icon: '🛒' },
   { name: 'Customers', href: '/admin/customers', icon: '👥' },
   { name: 'Products', href: '/admin/products', icon: '📦' },
   { name: 'Coupons', href: '/admin/coupons', icon: '🎟️' },
   { name: 'Subscribers', href: '/admin/subscribers', icon: '📧' },
   { name: 'Messages', href: '/admin/messages', icon: '💬' },
+  { name: 'Artifacts', href: '/admin/artifacts', icon: '📀' },
+  { name: 'Entitlements', href: '/admin/entitlements', icon: '🔑' },
+  { name: 'Refunds', href: '/admin/refunds', icon: '↩️' },
+  { name: 'Audit Log', href: '/admin/audit', icon: '🧾' },
+  { name: 'Store Settings', href: '/admin/theme', icon: '🎨' },
   { name: 'Hosting Ops', href: '/admin/hosting', icon: '⚙️' },
 ];
 
@@ -43,7 +49,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, [authState, pathname]);
 
   if (authState === 'checking') {
-    return <div style={{ minHeight: '100vh', background: '#000', color: '#888', display: 'grid', placeItems: 'center' }}>Checking admin session...</div>;
+    return <div style={{ minHeight: '100vh', background: '#000', color: 'var(--admin-text-muted)', display: 'grid', placeItems: 'center' }}>Checking admin session...</div>;
   }
   if (authState === 'guest') return pathname === '/admin' ? <>{children}</> : null;
 
@@ -64,7 +70,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           0%, 100% { opacity: 0.3; }
           50% { opacity: 0.6; }
         }
-        .skeleton { animation: skeleton-pulse 1.5s ease-in-out infinite; background: #1a1a1a; border-radius: 6px; }
+        .skeleton { animation: skeleton-pulse 1.5s ease-in-out infinite; background: var(--admin-border); border-radius: 6px; }
         
         /* Mobile */
         @media (max-width: 768px) {
@@ -85,7 +91,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         }
       `}</style>
       
-      <div style={{ display: 'flex', minHeight: '100vh', background: '#000', color: '#E8E8E8' }}>
+      <div style={{ display: 'flex', minHeight: '100vh', background: '#000', color: 'var(--admin-text)' }}>
         {/* Mobile overlay */}
         {menuOpen && (
           <div 
@@ -95,13 +101,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         )}
         
         {/* Sidebar */}
-        <aside 
-          className={`admin-sidebar-wrap ${menuOpen ? 'mobile-open' : ''}`}
+        <aside
+          className={`admin-sidebar admin-sidebar-wrap ${menuOpen ? 'mobile-open' : ''}`}
           style={{
             width: 240,
             minWidth: 240,
-            background: '#0a0a0a',
-            borderRight: '1px solid #1a1a1a',
+            background: 'var(--admin-surface)',
+            borderRight: '1px solid var(--admin-border)',
             position: 'fixed',
             top: 0,
             left: 0,
@@ -115,9 +121,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           }}
         >
           {/* Brand */}
-          <div style={{ padding: '24px 20px', borderBottom: '1px solid #1a1a1a', flexShrink: 0 }}>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.1rem', fontWeight: 800, color: '#E8E8E8', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div style={{ width: 28, height: 28, background: 'linear-gradient(135deg, #8B5CF6, #EC4899)', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem' }}>🌊</div>
+          <div style={{ padding: '24px 20px', borderBottom: '1px solid var(--admin-border)', flexShrink: 0 }}>
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.1rem', fontWeight: 800, color: 'var(--admin-text)', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ width: 28, height: 28, background: 'linear-gradient(135deg, var(--admin-accent), var(--admin-accent))', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem' }}>🌊</div>
               <span>Cival</span>
             </div>
           </div>
@@ -130,6 +136,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <Link 
                   key={item.name}
                   href={item.href}
+                  className="admin-nav-link"
+                  data-active={isActive ? "true" : "false"}
                   onClick={() => setMenuOpen(false)}
                   style={{
                     display: 'flex',
@@ -138,7 +146,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     padding: '10px 12px',
                     borderRadius: 8,
                     fontSize: '0.85rem',
-                    color: isActive ? '#E8E8E8' : '#888',
+                    color: isActive ? 'var(--admin-text)' : 'var(--admin-text-muted)',
                     textDecoration: 'none',
                     marginBottom: 4,
                     fontFamily: 'var(--font-body)',
@@ -156,11 +164,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </nav>
           
           {/* User Pill */}
-          <div style={{ padding: 16, borderTop: '1px solid #1a1a1a', flexShrink: 0 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', background: '#111', borderRadius: 8, border: '1px solid #1a1a1a' }}>
+          <div style={{ padding: 16, borderTop: '1px solid var(--admin-border)', flexShrink: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', background: 'var(--admin-surface-raised)', borderRadius: 8, border: '1px solid var(--admin-border)' }}>
               <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, #4ade9f, #14b8a6)', color: '#03110b', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem', fontWeight: 700, flexShrink: 0 }}>{admin?.email?.slice(0, 1).toUpperCase() || 'A'}</div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: '0.82rem', fontWeight: 600, color: '#E8E8E8', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{admin?.email || 'Admin'}</div>
+                <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--admin-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{admin?.email || 'Admin'}</div>
                 <div style={{ fontSize: '0.7rem', color: '#6c8f80', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{admin?.role || 'admin'}</div>
               </div>
             </div>
@@ -175,17 +183,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {/* Top Bar */}
           <div 
             className="admin-topbar-inner"
-            style={{ background: '#0a0a0a', borderBottom: '1px solid #1a1a1a', padding: '12px 32px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', position: 'sticky', top: 0, zIndex: 50 }}
+            style={{ background: 'var(--admin-surface)', borderBottom: '1px solid var(--admin-border)', padding: '12px 32px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', position: 'sticky', top: 0, zIndex: 50 }}
           >
             <button 
               className="admin-hamburger-btn"
               onClick={() => setMenuOpen(!menuOpen)}
-              style={{ background: 'none', border: '1px solid #1a1a1a', borderRadius: 6, color: '#888', padding: '8px 12px', fontSize: '1.1rem', cursor: 'pointer', marginRight: 'auto', display: 'none', alignItems: 'center', justifyContent: 'center' }}
+              style={{ background: 'none', border: '1px solid var(--admin-border)', borderRadius: 6, color: 'var(--admin-text-muted)', padding: '8px 12px', fontSize: '1.1rem', cursor: 'pointer', marginRight: 'auto', display: 'none', alignItems: 'center', justifyContent: 'center' }}
             >
               {menuOpen ? '✕' : '☰'}
             </button>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <Link href="/" style={{ padding: '8px 16px', borderRadius: 6, border: '1px solid #1a1a1a', background: 'transparent', color: '#888', fontSize: '0.78rem', fontWeight: 600, textDecoration: 'none' }}>
+              <Link href="/" style={{ padding: '8px 16px', borderRadius: 6, border: '1px solid var(--admin-border)', background: 'transparent', color: 'var(--admin-text-muted)', fontSize: '0.78rem', fontWeight: 600, textDecoration: 'none' }}>
                 ← Store
               </Link>
               <button 
@@ -195,7 +203,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   router.replace('/admin');
                   router.refresh();
                 }}
-                style={{ padding: '8px 16px', borderRadius: 6, border: '1px solid #1a1a1a', background: 'transparent', color: '#888', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer' }}
+                style={{ padding: '8px 16px', borderRadius: 6, border: '1px solid var(--admin-border)', background: 'transparent', color: 'var(--admin-text-muted)', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer' }}
               >
                 Logout
               </button>
