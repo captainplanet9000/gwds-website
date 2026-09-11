@@ -354,7 +354,9 @@ export default function HostingAccountPage() {
                   gap: 14,
                 }}
               >
-                {data.plans.map((item) => (
+                {data.plans
+                  .filter((item) => item.slug !== "paper" && item.code !== "paper" && item.name?.toLowerCase() !== "paper")
+                  .map((item) => (
                   <article
                     key={item.id}
                     style={{

@@ -8,16 +8,16 @@ const STEPS = [
     "The same verified account you use for purchases and downloads. No terminal, no Supabase project, no Vercel account.",
   ],
   [
-    "Choose a paper workspace",
-    "Select the supported managed plan. No exchange key, wallet, or custody permission is accepted.",
+    "Choose a managed plan",
+    "Start with Solo for one agent, then move to Desk or Fund when you need more capacity.",
   ],
   [
     "Pick your agents",
-    "Use the included paper agents and risk controls to explore the workflow with simulated orders.",
+    "Choose the strategy agents included with your plan and configure their risk limits.",
   ],
   [
-    "Work safely in paper mode",
-    "Your private workspace is tied to your verified Cival account, saved to the cloud, backed up, and kept paper-only.",
+    "Connect and operate",
+    "Your private workspace is tied to your verified Cival account, saved to the cloud, backed up, and controlled from your account.",
   ],
 ];
 
@@ -58,22 +58,10 @@ const INCLUDED = [
 
 const PLANS = [
   {
-    name: "Paper",
-    price: "Free",
-    per: "",
-    blurb: "The whole platform on simulated fills. No card, no key, no expiry.",
-    items: [
-      "Full dashboard",
-      "1 agent, paper only",
-      "Upgrade without losing setup",
-    ],
-    featured: false,
-  },
-  {
     name: "Solo",
-    price: "$19",
+    price: "$29",
     per: "/ mo",
-    blurb: "One private cloud-saved paper workspace, provisioned and patched by us.",
+    blurb: "One agent in a private persistent cloud workspace, provisioned and patched by us.",
     items: ["Verified customer sign-in", "Automated backups", "Core Edition licence included"],
     featured: false,
   },
@@ -82,20 +70,20 @@ const PLANS = [
     price: "$79",
     per: "/ mo",
     blurb:
-      "A managed paper-research desk with release updates and priority operations support.",
+      "Up to three agents with shared risk controls and priority operations support.",
     items: [
-      "Coordinated paper agents",
+      "Up to 3 coordinated agents",
       "Cloud workspace backups",
-      "Paper-only health verification",
+      "Runtime health verification",
       "Priority support",
     ],
     featured: true,
   },
   {
     name: "Fund",
-    price: "$299",
+    price: "$199",
     per: "/ mo",
-    blurb: "A custom paper-research deployment for professional teams.",
+    blurb: "Up to ten agents in a managed deployment for a growing trading operation.",
     items: [
       "Dedicated deployment",
       "Custom onboarding",
