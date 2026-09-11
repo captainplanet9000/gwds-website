@@ -240,6 +240,24 @@ export default function HostingAccountPage() {
     }
   };
 
+  const openDashboard = async () => {
+    setBusy("dashboard");
+    setError("");
+    try {
+      const response = await fetch("/api/account/dashboard-link", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error || "The live dashboard is temporarily unavailable.");
+      window.open(body.url, "_blank", "noopener,noreferrer");
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Request failed");
+    } finally {
+      setBusy("");
+    }
+  };
+
   if (authLoading || !user || !data)
     return (
       <div className="cival">
@@ -345,7 +363,7 @@ export default function HostingAccountPage() {
 
           {!subscription ? (
             <section>
-              <h2>Choose your managed plan</h2>
+              <h2 style={{ fontSize: 20 }}>Choose your managed plan</h2>
               <div
                 data-cv-2col
                 style={{
@@ -514,7 +532,7 @@ export default function HostingAccountPage() {
                   }}
                 >
                   <div>
-                    <h2 style={{ margin: "0 0 6px" }}>
+                    <h2 style={{ margin: "0 0 6px", fontSize: 20 }}>
                       Subscription and service
                     </h2>
                     <div style={{ display: "flex", gap: 8 }}>
@@ -558,20 +576,35 @@ export default function HostingAccountPage() {
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
+                    gap: 10,
                   }}
                 >
-                  <h2 style={{ margin: 0 }}>Provisioning your dashboard</h2>
-                  {provision?.command && (
-                    <Status
-                      value={
-                        provision.command.status === "done"
-                          ? "active"
-                          : provision.command.status
-                      }
-                    />
-                  )}
+                  <h2 style={{ margin: 0, fontSize: 20 }}>Provisioning your dashboard</h2>
+                  <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                    {provision?.command && (
+                      <Status
+                        value={
+                          !onboarding?.account_address ? "awaiting wallet" : provision.command.status === "done"
+                            ? "active"
+                            : provision.command.status
+                        }
+                      />
+                    )}
+                    {provision?.tenant?.status === "active" && (
+                      <button
+                        className="btn btn-primary"
+                        disabled={!!busy}
+                        onClick={openDashboard}
+                      >
+                        {busy === "dashboard" ? "Opening..." : "Open dashboard"}
+                      </button>
+                    )}
+                  </div>
                 </div>
-                {!provision?.tenant ? (
+                {!onboarding?.account_address && ['active', 'trialing'].includes(subscription.status) && (
+                <p>Your plan is active. <Link href="/account/funding">Connect and verify your wallet</Link> to create your dashboard. Setup continues automatically after verification.</p>
+              )}
+              {!provision?.tenant ? (
                   <p style={{ color: "var(--color-neutral-700)" }}>
                     {subscription.status === "pending_checkout"
                       ? "Provisioning starts as soon as payment is confirmed."
@@ -622,7 +655,7 @@ export default function HostingAccountPage() {
                         </span>
                       </div>
                     ))}
-                    {provision.command?.status === "failed" && (
+                    {provision.command?.status === "failed" && onboarding?.account_address && (
                       <div
                         style={{
                           marginTop: 6,
@@ -634,15 +667,8 @@ export default function HostingAccountPage() {
                           fontSize: 13,
                         }}
                       >
-                        <strong>Provisioning failed.</strong>{" "}
-                        {provision.command.error ||
-                          "No further detail was recorded."}{" "}
-                        You were charged and this is being resolved — our
-                        operations team has been alerted and will resume
-                        provisioning without any further action from you. If
-                        this does not update within a business day,{" "}
-                        <Link href="/contact">contact support</Link> and
-                        reference subscription {subscription.id}.
+                        <strong>Dashboard setup needs attention.</strong>{" "}
+                        <Link href="/account/funding">Retry wallet verification</Link> to resume setup. If the problem continues, <Link href="/contact">contact support</Link> and reference subscription {subscription.id}.
                       </div>
                     )}
                   </div>
@@ -665,7 +691,7 @@ export default function HostingAccountPage() {
                       alignItems: "center",
                     }}
                   >
-                    <h2 style={{ margin: 0 }}>Workspace onboarding</h2>
+                    <h2 style={{ margin: 0, fontSize: 20 }}>Workspace onboarding</h2>
                     <Status value={onboarding.status} />
                   </div>
                   {/* Three distinct states, because one sentence cannot honestly cover them.
@@ -855,7 +881,7 @@ export default function HostingAccountPage() {
                     borderRadius: "var(--radius-lg)",
                   }}
                 >
-                  <h2 style={{ marginTop: 0 }}>Service health</h2>
+                  <h2 style={{ marginTop: 0, fontSize: 20 }}>Service health</h2>
                   {instance ? (
                     <div style={{ display: "grid", gap: 10 }}>
                       {[
@@ -911,7 +937,7 @@ export default function HostingAccountPage() {
                     borderRadius: "var(--radius-lg)",
                   }}
                 >
-                  <h2 style={{ marginTop: 0 }}>Customer-visible incidents</h2>
+                  <h2 style={{ marginTop: 0, fontSize: 20 }}>Customer-visible incidents</h2>
                   {data.incidents.length ? (
                     data.incidents.map((row) => (
                       <div
