@@ -187,10 +187,7 @@ export default function HostedPage() {
   return (
     <div className="cival">
       <Navbar />
-      <main
-        className="cival-fade"
-        style={{ minHeight: "100vh", paddingTop: 66 }}
-      >
+      <main style={{ minHeight: "100vh", paddingTop: 66 }}>
         {/* Hero */}
         <section
           style={{
