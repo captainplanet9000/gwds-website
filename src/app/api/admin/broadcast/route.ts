@@ -75,6 +75,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ sent, failed, total: recipients.length, errors: errors.slice(0, 5) });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    console.error('Admin broadcast failed', { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: 'The broadcast could not be sent.' }, { status: 500 });
   }
 }

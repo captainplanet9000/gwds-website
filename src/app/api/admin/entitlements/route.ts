@@ -153,7 +153,8 @@ export async function GET(req: NextRequest) {
     const view = await hydrate(sb, (entitlements || []) as EntitlementRow[]);
     return NextResponse.json({ entitlements: view, total: count || 0, page, limit }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message, entitlements: [] }, { status: 500 });
+    console.error('Admin entitlements GET failed', { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: 'Entitlements could not be loaded.', entitlements: [] }, { status: 500 });
   }
 }
 
@@ -277,6 +278,7 @@ export async function PATCH(req: NextRequest) {
       maxDownloads: DOWNLOAD_MAX_USES,
     });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    console.error('Admin entitlements PATCH failed', { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: 'The request could not be completed.' }, { status: 500 });
   }
 }

@@ -377,6 +377,7 @@ export async function GET(req: NextRequest) {
       },
     }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    console.error('Admin analytics failed', { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: 'Analytics could not be loaded.' }, { status: 500 });
   }
 }

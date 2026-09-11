@@ -8,7 +8,8 @@ export async function GET(req: NextRequest) {
     const coupons = await getAllCoupons();
     return NextResponse.json({ coupons });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('Admin coupons GET failed', { error: error instanceof Error ? error.message : String(error) });
+    return NextResponse.json({ error: 'Coupons could not be loaded.' }, { status: 500 });
   }
 }
 
@@ -46,6 +47,7 @@ export async function POST(req: NextRequest) {
     if (error.message?.includes('duplicate key') || error.message?.includes('unique')) {
       return NextResponse.json({ error: 'Coupon code already exists' }, { status: 409 });
     }
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('Admin coupons POST failed', { error: error instanceof Error ? error.message : String(error) });
+    return NextResponse.json({ error: 'The coupon could not be created.' }, { status: 500 });
   }
 }

@@ -18,7 +18,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     if (!data) return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     return NextResponse.json({ product: data });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    console.error('Admin product GET failed', { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: 'The product could not be loaded.' }, { status: 500 });
   }
 }
 
@@ -105,7 +106,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     if (err.message?.includes('duplicate key') || err.message?.includes('unique')) {
       return NextResponse.json({ error: 'A product with that Stripe price ID or ID already exists' }, { status: 409 });
     }
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    console.error('Admin product PATCH failed', { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: 'The product could not be updated.' }, { status: 500 });
   }
 }
 
@@ -146,6 +148,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
 
     return NextResponse.json({ ok: true });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    console.error('Admin product DELETE failed', { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: 'The product could not be deleted.' }, { status: 500 });
   }
 }

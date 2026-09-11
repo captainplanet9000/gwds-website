@@ -13,7 +13,8 @@ export async function GET(req: NextRequest) {
     if (error) throw error;
     return NextResponse.json({ products: data || [] });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    console.error('Admin products GET failed', { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: 'Products could not be loaded.' }, { status: 500 });
   }
 }
 
@@ -83,6 +84,7 @@ export async function POST(req: NextRequest) {
     if (err.message?.includes('duplicate key') || err.message?.includes('unique')) {
       return NextResponse.json({ error: 'A product with that ID already exists' }, { status: 409 });
     }
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    console.error('Admin products POST failed', { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: 'The product could not be created.' }, { status: 500 });
   }
 }

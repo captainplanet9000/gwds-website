@@ -80,6 +80,7 @@ export async function GET(req: NextRequest) {
       }
     });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    console.error('Admin audit log failed', { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: 'Audit log could not be loaded.' }, { status: 500 });
   }
 }

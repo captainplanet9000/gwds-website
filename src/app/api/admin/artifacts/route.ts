@@ -159,7 +159,8 @@ export async function GET(req: NextRequest) {
       orphans: orphans.map((o) => o.fullPath),
     });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    console.error('Admin artifacts GET failed', { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: 'Artifact inventory could not be loaded.' }, { status: 500 });
   }
 }
 
@@ -284,6 +285,7 @@ export async function POST(req: NextRequest) {
       sha_match: shaMatch,
     });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    console.error('Admin artifacts POST failed', { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: 'Artifact verification could not be completed.' }, { status: 500 });
   }
 }

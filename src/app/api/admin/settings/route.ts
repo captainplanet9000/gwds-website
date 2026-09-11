@@ -23,7 +23,8 @@ export async function GET(req: NextRequest) {
       }
     });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message, settings: null }, { status: 500 });
+    console.error('Admin settings failed', { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: 'Settings could not be loaded.', settings: null }, { status: 500 });
   }
 }
 
@@ -91,6 +92,7 @@ export async function PUT(req: NextRequest) {
       }
     });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message, settings: null }, { status: 500 });
+    console.error('Admin settings failed', { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: 'Settings could not be loaded.', settings: null }, { status: 500 });
   }
 }

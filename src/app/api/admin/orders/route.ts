@@ -13,6 +13,7 @@ export async function GET(req: NextRequest) {
     if (error) throw error;
     return NextResponse.json({ orders: data || [] });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message, orders: [] }, { status: 500 });
+    console.error('Admin orders failed', { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: 'Orders could not be loaded.', orders: [] }, { status: 500 });
   }
 }

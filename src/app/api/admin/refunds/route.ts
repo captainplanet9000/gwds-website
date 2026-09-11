@@ -110,7 +110,8 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ summary, orders: enrichedOrders, requests });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message, orders: [], requests: [] }, { status: 500 });
+    console.error('Admin refunds GET failed', { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: 'Refunds and disputes could not be loaded.', orders: [], requests: [] }, { status: 500 });
   }
 }
 
@@ -228,7 +229,8 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ error: 'Unknown action' }, { status: 400 });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    console.error('Admin refunds POST failed', { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: 'The request could not be completed.' }, { status: 500 });
   }
 }
 

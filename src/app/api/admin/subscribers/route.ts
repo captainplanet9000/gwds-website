@@ -12,6 +12,7 @@ export async function GET(req: NextRequest) {
     if (error) throw error;
     return NextResponse.json({ subscribers: data || [] });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    console.error('Admin subscribers failed', { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: 'Subscribers could not be loaded.' }, { status: 500 });
   }
 }

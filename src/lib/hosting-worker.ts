@@ -12,24 +12,19 @@ import {
 
 const CORE_RELEASE = '2.0.0';
 
+// This whole task pipeline (review -> create_project -> create_database -> configure_workspace ->
+// deploy) is the per-tenant Vercel automation path, gated off behind HOSTING_AUTOMATION_ENABLED --
+// real tenants provision through the self-hosted Docker/host-agent path (control.tenant_commands)
+// instead. The seeded workspace only ever needs to be a valid, empty starting record, not
+// invented agents/goals/P&L that read as a live account nobody actually configured.
 const INITIAL_WORKSPACE = {
   version: 1,
   cash: 100000,
-  agents: [
-    { id: 'agent-momentum', name: 'Momentum Sentinel', strategy: 'Trend confirmation', status: 'running', allocation: 28, pnl: 1840, winRate: 64 },
-    { id: 'agent-mean', name: 'Mean Reversion Lab', strategy: 'Deviation bands', status: 'running', allocation: 22, pnl: 960, winRate: 61 },
-    { id: 'agent-funding', name: 'Funding Scout', strategy: 'Funding dislocations', status: 'paused', allocation: 18, pnl: -210, winRate: 55 },
-    { id: 'agent-risk', name: 'Risk Governor', strategy: 'Portfolio guardrails', status: 'running', allocation: 32, pnl: 0, winRate: 100 },
-  ],
-  goals: [
-    { id: 'goal-risk', name: 'Stay below daily risk budget', target: '2% maximum simulated loss', progress: 78 },
-    { id: 'goal-process', name: 'Complete evaluation sample', target: '100 paper trades', progress: 46 },
-    { id: 'goal-review', name: 'Review losing simulations', target: 'Weekly audit complete', progress: 65 },
-  ],
+  agents: [],
+  goals: [],
   paperOrders: [],
   audit: [
     { id: 'event-ready', at: '2026-08-20T16:00:00.000Z', category: 'system', message: 'Paper-only workspace initialized. Live execution is unavailable.' },
-    { id: 'event-risk', at: '2026-08-20T16:02:00.000Z', category: 'agent', message: 'Risk Governor verified the 2% simulated daily-loss limit.' },
   ],
 };
 

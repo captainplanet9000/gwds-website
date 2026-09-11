@@ -10,7 +10,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     if (!coupon) return NextResponse.json({ error: 'Coupon not found' }, { status: 404 });
     return NextResponse.json({ coupon });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('Admin coupon GET failed', { error: error instanceof Error ? error.message : String(error) });
+    return NextResponse.json({ error: 'The coupon could not be loaded.' }, { status: 500 });
   }
 }
 
@@ -29,7 +30,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     if (error.message?.includes('duplicate key') || error.message?.includes('unique')) {
       return NextResponse.json({ error: 'Coupon code already exists' }, { status: 409 });
     }
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('Admin coupon PUT failed', { error: error instanceof Error ? error.message : String(error) });
+    return NextResponse.json({ error: 'The coupon could not be updated.' }, { status: 500 });
   }
 }
 
@@ -41,6 +43,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     if (!deleted) return NextResponse.json({ error: 'Coupon not found' }, { status: 404 });
     return NextResponse.json({ ok: true });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('Admin coupon DELETE failed', { error: error instanceof Error ? error.message : String(error) });
+    return NextResponse.json({ error: 'The coupon could not be deleted.' }, { status: 500 });
   }
 }

@@ -12,7 +12,8 @@ export async function GET(req: NextRequest) {
     if (error) throw error;
     return NextResponse.json({ contacts: data || [] });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    console.error('Admin messages GET failed', { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: 'Messages could not be loaded.' }, { status: 500 });
   }
 }
 
@@ -39,6 +40,7 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json({ ok: true });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    console.error('Admin messages PUT failed', { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: 'The message could not be updated.' }, { status: 500 });
   }
 }
