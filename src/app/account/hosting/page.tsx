@@ -796,7 +796,12 @@ export default function HostingAccountPage() {
                     </label>
                   </div>
                   <div style={{ marginTop: 16 }}>
-                    <strong>Requested agents</strong>
+                    <strong>
+                      Requested agents
+                      {typeof plan?.agent_limit === "number"
+                        ? ` (choose up to ${plan.agent_limit})`
+                        : ""}
+                    </strong>
                     <div
                       style={{
                         display: "flex",
@@ -805,32 +810,43 @@ export default function HostingAccountPage() {
                         marginTop: 8,
                       }}
                     >
-                      {HOSTING_AGENT_IDS.map((agent) => (
-                        <label
-                          key={agent}
-                          style={{
-                            padding: "8px 10px",
-                            border: "1px solid var(--color-divider)",
-                            borderRadius: 999,
-                          }}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={form.requestedAgents.includes(agent)}
-                            onChange={(e) =>
-                              setForm({
-                                ...form,
-                                requestedAgents: e.target.checked
-                                  ? [...form.requestedAgents, agent]
-                                  : form.requestedAgents.filter(
-                                      (item) => item !== agent,
-                                    ),
-                              })
-                            }
-                          />{" "}
-                          {agent}
-                        </label>
-                      ))}
+                      {HOSTING_AGENT_IDS.map((agent) => {
+                        const checked = form.requestedAgents.includes(agent);
+                        // Matches control.sync_tenant_loadout_from_onboarding's own cap: the
+                        // customer's plan buys a fixed number of installed agents, and letting the
+                        // form collect more than that just produces requests the backend refuses.
+                        const atLimit =
+                          typeof plan?.agent_limit === "number" &&
+                          form.requestedAgents.length >= plan.agent_limit;
+                        return (
+                          <label
+                            key={agent}
+                            style={{
+                              padding: "8px 10px",
+                              border: "1px solid var(--color-divider)",
+                              borderRadius: 999,
+                              opacity: !checked && atLimit ? 0.5 : 1,
+                            }}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              disabled={!checked && atLimit}
+                              onChange={(e) =>
+                                setForm({
+                                  ...form,
+                                  requestedAgents: e.target.checked
+                                    ? [...form.requestedAgents, agent]
+                                    : form.requestedAgents.filter(
+                                        (item) => item !== agent,
+                                      ),
+                                })
+                              }
+                            />{" "}
+                            {agent}
+                          </label>
+                        );
+                      })}
                     </div>
                   </div>
                   <label style={{ display: "block", marginTop: 16 }}>

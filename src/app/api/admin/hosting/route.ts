@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminUnauthorized, requireAdmin } from '@/lib/admin-auth';
+import { controlClient } from '@/lib/control-plane';
 import { normalizeHostingText } from '@/lib/hosting';
 import { deliverHostingNotification } from '@/lib/hosting-notifications';
 import { createServerClient } from '@/lib/supabase';
@@ -147,7 +148,23 @@ export async function PATCH(req: NextRequest) {
       const { data, error } = await supabase.from('hosting_onboarding').update(patch).eq('id', current.id).select().single();
       if (error) throw error;
       await audit('onboarding_updated', { user_id: current.user_id, subscription_id: current.subscription_id, metadata: { status: patch.status } }, admin.userId);
-      return NextResponse.json({ onboarding: data });
+      // Approving is the moment a customer's checked agent boxes are supposed to start meaning
+      // something. Nothing else in this codebase ever turns hosting_onboarding.requested_agents
+      // into a control.tenant_loadout row -- see db/migrations/0028_hosting_onboarding_loadout_sync
+      // .sql in the hosting repo for why that gap existed and why this call only ever ADDS agents,
+      // never removes them. A failure here must not roll back the approval itself: the operator's
+      // decision is recorded either way, and the next approval (or a manual re-run of the RPC) can
+      // still complete the sync.
+      let loadoutSync: unknown = null;
+      if (patch.status === 'approved' || patch.status === 'complete') {
+        const { data: syncResult, error: syncError } = await controlClient()
+          .rpc('sync_tenant_loadout_from_onboarding', {
+            p_hosting_subscription_id: current.subscription_id,
+            p_requested_by: `admin-approval:${admin.userId}`,
+          });
+        loadoutSync = syncError ? { error: syncError.message } : syncResult;
+      }
+      return NextResponse.json({ onboarding: data, loadoutSync });
     }
 
     if (action === 'update_task' && validUuid(body.taskId)) {
