@@ -121,17 +121,15 @@ export default function HostingAccountPage() {
     if (user && session) load().catch((reason) => setError(reason.message));
   }, [user, session, load]);
 
-  const subscription =
-    data?.subscriptions.find((row) =>
-      [
-        "trialing",
-        "active",
-        "past_due",
-        "paused",
-        "unpaid",
-        "pending_checkout",
-      ].includes(row.status),
-    ) || data?.subscriptions[0];
+  // A subscription row that never resulted in a live billing relationship (a checkout that
+  // expired before payment, or one the customer canceled) must not permanently occupy this
+  // account's one-subscription-at-a-time UI. Falling back to subscriptions[0] here — instead of
+  // treating "no live subscription" as "show the plan picker again" — is what previously trapped
+  // a customer whose only row was incomplete_expired: no Subscribe button, and no working "Manage
+  // billing" button either, since that dead row never got a Stripe customer id attached.
+  const subscription = data?.subscriptions.find(
+    (row) => !["incomplete_expired", "canceled"].includes(row.status),
+  );
 
   // Real provisioning progress — polled directly from control.tenant_commands via
   // /api/hosting/provision-status, never a spinner standing in for unknown state. Polls only while
