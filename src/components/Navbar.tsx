@@ -31,6 +31,7 @@ export default function Navbar() {
       className="cival"
       style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000,
+        minHeight: 0,
         backdropFilter: 'blur(14px)',
         background: 'color-mix(in srgb, var(--color-bg) 84%, transparent)',
         borderBottom: isScrolled ? '1px solid var(--color-divider)' : '1px solid transparent',
