@@ -350,11 +350,11 @@ export default function HostingAccountPage() {
                 data-cv-2col
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "repeat(4,minmax(0,1fr))",
+                  gridTemplateColumns: "repeat(3,minmax(0,1fr))",
                   gap: 14,
                 }}
               >
-                {data.plans.map((item) => (
+                {data.plans.filter((item) => item.is_active && Number(item.price_cents) > 0).map((item) => (
                   <article
                     key={item.id}
                     style={{
@@ -680,7 +680,7 @@ export default function HostingAccountPage() {
                     * withdraw, so there is still no secret for Cival to hold. */}
                   <p style={{ color: "var(--color-neutral-700)" }}>
                     {!planRunsLiveAgents
-                      ? "Your free plan runs on simulated fills and never reaches a live venue. That is permanent for this tier, not a temporary restriction: a free account that could move real money is an abuse vector that costs the abuser nothing. Upgrade to a paid plan for live execution."
+                      ? "This legacy workspace uses simulated fills only. Free hosting is no longer offered. Choose an available paid plan to begin the live-trading setup."
                       : recordedIsLive
                         ? "Your plan runs live agents against the exchange account you fund yourself. Real orders, real money, and real losses are possible."
                         : "Your plan is a live-execution plan, but this workspace is still recorded as simulated: live order routing has not been switched on yet. Until it is, nothing your agents do here reaches a venue and no order of yours can lose money."}{" "}
