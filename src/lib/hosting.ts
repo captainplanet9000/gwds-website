@@ -3,45 +3,11 @@ import { CommerceError } from '@/lib/commerce';
 
 export const HOSTING_SERVICE_TERMS_VERSION = '2026-08-20';
 
-export const HOSTING_PLAN_COPY = [
-  {
-    id: 'paper',
-    name: 'Paper',
-    priceCents: 0,
-    priceLabel: 'Free',
-    intervalLabel: '',
-    description: 'A private managed workspace for simulated execution and onboarding.',
-    features: ['Full hosted dashboard', 'One paper agent', 'No card required'],
-  },
-  {
-    id: 'solo',
-    name: 'Solo',
-    priceCents: 1900,
-    priceLabel: '$19',
-    intervalLabel: '/ month',
-    description: 'One private paper workspace with cloud saves and managed updates.',
-    features: ['Private paper workspace', 'Verified customer sign-in', 'Core Edition licence included'],
-  },
-  {
-    id: 'desk',
-    name: 'Desk',
-    priceCents: 7900,
-    priceLabel: '$79',
-    intervalLabel: '/ month',
-    description: 'A managed paper-research desk with priority operations support.',
-    features: ['Coordinated paper agents', 'Cloud workspace backups', 'Release updates', 'Priority support'],
-    featured: true,
-  },
-  {
-    id: 'fund',
-    name: 'Fund',
-    priceCents: 29900,
-    priceLabel: '$299',
-    intervalLabel: '/ month',
-    description: 'A custom paper-research deployment for professional teams.',
-    features: ['Dedicated deployment', 'Custom onboarding', 'Role-planning workshop', 'Private support channel'],
-  },
-] as const;
+// HOSTING_PLAN_COPY used to live here: a hardcoded second copy of the four plans' names, prices,
+// descriptions and features. Removed rather than corrected. Nothing rendered it (only a test read
+// it), and it had already drifted into describing all four tiers as paper-only long after the paid
+// ones were re-specified to run live agents. public.hosting_plans is the single source for plan
+// copy and capacity; /hosted and /account/hosting read it directly.
 
 export const HOSTING_AGENT_IDS = [
   'darvas-box',
@@ -52,6 +18,23 @@ export const HOSTING_AGENT_IDS = [
   'macro-sentiment',
   'regime-coordinator',
 ] as const;
+
+export type HostingExecutionMode = 'simulated' | 'live';
+
+/**
+ * Whether a hosting plan's agents place real orders or simulated ones.
+ *
+ * DERIVED FROM PRICE, NOT FROM THE PLAN'S NAME OR ID, because price is the actual reason: a free
+ * tenant consumes the same scarce Hyperliquid egress-IP request weight as a paying one, and a
+ * free account that can move real money is an abuse vector with no cost to the abuser. Keeping
+ * the free tier simulated is what makes offering a free tier defensible at all.
+ *
+ * So this is the invariant, not a label: a plan that costs nothing executes nothing. Any future
+ * free tier inherits the same rule automatically, and renaming "Paper" cannot accidentally arm it.
+ */
+export function planExecutionMode(priceCents: number): HostingExecutionMode {
+  return priceCents > 0 ? 'live' : 'simulated';
+}
 
 export function hostingSalesEnabled() {
   return process.env.NEXT_PUBLIC_HOSTING_SALES_ENABLED === 'true';

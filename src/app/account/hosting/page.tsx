@@ -63,10 +63,26 @@ export default function HostingAccountPage() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState("");
+  const [provision, setProvision] = useState<{
+    tenant: Row | null;
+    command: Row | null;
+  } | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  // `environment` is deliberately NOT in this form.
+  //
+  // It used to be, hardcoded to "paper", and it was spread into the PUT body below. The server
+  // (/api/hosting/onboarding) has always ignored it and written its own value, so the field never
+  // did anything except state a claim the page had no authority to make — and once the paid tiers
+  // became live-execution plans, the claim was wrong as well as inert.
+  //
+  // It is removed rather than corrected to the plan's execution mode. Sending the derived mode
+  // would post "simulated"/"live" into a column whose CHECK constraint is ('paper','live'), and,
+  // worse, would leave a browser-controlled field named `environment` sitting in the request body
+  // of the route that decides whether a workspace can route real orders. The next person to make
+  // the client and server "agree" would be one `body.environment` away from letting a customer
+  // arm live execution from devtools. The server is the only writer; the browser now says nothing.
   const [form, setForm] = useState({
     workspaceName: "",
-    environment: "paper",
     region: "iad1",
     riskProfile: "conservative",
     maxDrawdownPct: "5",
@@ -93,7 +109,6 @@ export default function HostingAccountPage() {
     if (current)
       setForm({
         workspaceName: current.workspace_name || "",
-        environment: "paper",
         region: current.region || "iad1",
         riskProfile: current.risk_profile || "conservative",
         maxDrawdownPct: current.max_drawdown_pct?.toString() || "5",
@@ -117,6 +132,46 @@ export default function HostingAccountPage() {
         "pending_checkout",
       ].includes(row.status),
     ) || data?.subscriptions[0];
+
+  // Real provisioning progress — polled directly from control.tenant_commands via
+  // /api/hosting/provision-status, never a spinner standing in for unknown state. Polls only while
+  // there is something that could still change (no tenant row yet, or a command that is queued or
+  // claimed); stops once the command lands on done/failed so a settled state doesn't keep hitting
+  // the network.
+  const subscriptionId = subscription?.id;
+  useEffect(() => {
+    if (!subscriptionId || !session?.access_token) {
+      setProvision(null);
+      return;
+    }
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const poll = async () => {
+      try {
+        const response = await fetch(
+          `/api/hosting/provision-status?subscriptionId=${encodeURIComponent(subscriptionId)}`,
+          {
+            headers: { Authorization: `Bearer ${session.access_token}` },
+            cache: "no-store",
+          },
+        );
+        const body = await response.json();
+        if (cancelled) return;
+        if (response.ok) setProvision(body);
+        const status = body?.command?.status;
+        if (!cancelled && (!body?.tenant || status === "queued" || status === "claimed")) {
+          timer = setTimeout(poll, 6000);
+        }
+      } catch {
+        if (!cancelled) timer = setTimeout(poll, 10000);
+      }
+    };
+    poll();
+    return () => {
+      cancelled = true;
+      if (timer) clearTimeout(timer);
+    };
+  }, [subscriptionId, session?.access_token]);
   const onboarding = data?.onboarding.find(
     (row) => row.subscription_id === subscription?.id,
   );
@@ -124,6 +179,26 @@ export default function HostingAccountPage() {
     (row) => row.subscription_id === subscription?.id,
   );
   const plan = data?.plans.find((row) => row.id === subscription?.plan_id);
+
+  // What the plan SELLS, derived from price and never from the plan's name or id — the same rule
+  // planExecutionMode() applies in src/lib/hosting.ts, which /hosted renders from. Restated here
+  // instead of imported because @/lib/hosting reaches @/lib/commerce -> @/lib/supabase, which
+  // reads SUPABASE_SERVICE_ROLE_KEY; that module must never be pulled into a "use client" bundle.
+  // Price is the reason, not a label: a plan that costs nothing executes nothing, so a renamed
+  // free tier can never accidentally read as live here.
+  const planRunsLiveAgents = Number(plan?.price_cents ?? 0) > 0;
+
+  // What the service actually RECORDED for this workspace. /api/hosting/onboarding writes this
+  // column server-side and discards whatever the browser sent, so the stored row is the only
+  // honest thing to show the customer. Reading it (rather than printing a constant) also means
+  // the field stops lying by itself on the day the server starts writing 'live' — the copy tracks
+  // the gate instead of having to be remembered and edited alongside it.
+  const recordedEnvironment: string = onboarding?.environment || "paper";
+  const recordedIsLive = recordedEnvironment === "live";
+  const environmentLabel = recordedIsLive
+    ? "Live execution"
+    : "Simulated execution";
+
   const usage = useMemo(
     () =>
       (data?.usage || [])
@@ -211,9 +286,14 @@ export default function HostingAccountPage() {
                 one place.
               </p>
             </div>
-            <Link className="btn btn-secondary" href="/account">
-              Source purchases
-            </Link>
+            <div style={{ display: "flex", gap: 10 }}>
+              <Link className="btn btn-primary" href="/account/funding">
+                Fund your agent
+              </Link>
+              <Link className="btn btn-secondary" href="/account">
+                Source purchases
+              </Link>
+            </div>
           </div>
           {!data.config.salesEnabled && (
             <div
@@ -465,6 +545,110 @@ export default function HostingAccountPage() {
                 </p>
               </section>
 
+              <section
+                style={{
+                  padding: 26,
+                  border: "1px solid var(--color-divider)",
+                  borderRadius: "var(--radius-lg)",
+                  marginBottom: 18,
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <h2 style={{ margin: 0 }}>Provisioning your dashboard</h2>
+                  {provision?.command && (
+                    <Status
+                      value={
+                        provision.command.status === "done"
+                          ? "active"
+                          : provision.command.status
+                      }
+                    />
+                  )}
+                </div>
+                {!provision?.tenant ? (
+                  <p style={{ color: "var(--color-neutral-700)" }}>
+                    {subscription.status === "pending_checkout"
+                      ? "Provisioning starts as soon as payment is confirmed."
+                      : "Waiting for your workspace to be queued. This updates automatically — no action is needed."}
+                  </p>
+                ) : (
+                  <div style={{ display: "grid", gap: 10 }}>
+                    {[
+                      ["Workspace", provision.tenant.slug],
+                      ["Runtime status", provision.tenant.status],
+                      [
+                        "Queued",
+                        provision.command?.requestedAt
+                          ? new Date(
+                              provision.command.requestedAt,
+                            ).toLocaleString()
+                          : "-",
+                      ],
+                      [
+                        "Claimed by host agent",
+                        provision.command?.claimedAt
+                          ? new Date(
+                              provision.command.claimedAt,
+                            ).toLocaleString()
+                          : "not yet",
+                      ],
+                      [
+                        "Finished",
+                        provision.command?.finishedAt
+                          ? new Date(
+                              provision.command.finishedAt,
+                            ).toLocaleString()
+                          : "in progress",
+                      ],
+                    ].map(([label, value]) => (
+                      <div
+                        key={label}
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          borderTop: "1px solid var(--color-divider)",
+                          paddingTop: 10,
+                        }}
+                      >
+                        <span>{label}</span>
+                        <span style={{ color: "var(--color-neutral-700)" }}>
+                          {value}
+                        </span>
+                      </div>
+                    ))}
+                    {provision.command?.status === "failed" && (
+                      <div
+                        style={{
+                          marginTop: 6,
+                          padding: 14,
+                          border: "1px solid #783333",
+                          background: "#240d0d",
+                          borderRadius: "var(--radius-md)",
+                          color: "#ffb4b4",
+                          fontSize: 13,
+                        }}
+                      >
+                        <strong>Provisioning failed.</strong>{" "}
+                        {provision.command.error ||
+                          "No further detail was recorded."}{" "}
+                        You were charged and this is being resolved — our
+                        operations team has been alerted and will resume
+                        provisioning without any further action from you. If
+                        this does not update within a business day,{" "}
+                        <Link href="/contact">contact support</Link> and
+                        reference subscription {subscription.id}.
+                      </div>
+                    )}
+                  </div>
+                )}
+              </section>
+
               {onboarding && (
                 <section
                   style={{
@@ -484,10 +668,26 @@ export default function HostingAccountPage() {
                     <h2 style={{ margin: 0 }}>Workspace onboarding</h2>
                     <Status value={onboarding.status} />
                   </div>
+                  {/* Three distinct states, because one sentence cannot honestly cover them.
+                    * A free plan is simulated permanently and by design; a paid plan sells live
+                    * agents but still provisions with environment='paper' while the server
+                    * hardcodes it in /api/hosting/onboarding; and once that changes the recorded
+                    * row reads 'live' and this says so. Each branch is written against what is
+                    * recorded, never ahead of it — the copy must never promise more execution than
+                    * the server has actually granted. The credential sentence is a standing
+                    * invariant and stays true on every branch: a live plan trades through a
+                    * trade-only agent wallet the customer approves themselves, which cannot
+                    * withdraw, so there is still no secret for Cival to hold. */}
                   <p style={{ color: "var(--color-neutral-700)" }}>
-                    This service supports paper research only. It never accepts
-                    exchange credentials, wallet secrets, seed phrases, or
-                    private keys.
+                    {!planRunsLiveAgents
+                      ? "Your free plan runs on simulated fills and never reaches a live venue. That is permanent for this tier, not a temporary restriction: a free account that could move real money is an abuse vector that costs the abuser nothing. Upgrade to a paid plan for live execution."
+                      : recordedIsLive
+                        ? "Your plan runs live agents against the exchange account you fund yourself. Real orders, real money, and real losses are possible."
+                        : "Your plan is a live-execution plan, but this workspace is still recorded as simulated: live order routing has not been switched on yet. Until it is, nothing your agents do here reaches a venue and no order of yours can lose money."}{" "}
+                    Cival never accepts exchange credentials, wallet secrets,
+                    seed phrases, or private keys on any plan — a live plan
+                    trades through a trade-only agent wallet you approve
+                    yourself, which cannot withdraw.
                   </p>
                   <div
                     data-cv-2col
@@ -521,9 +721,12 @@ export default function HostingAccountPage() {
                         ))}
                       </select>
                     </label>
+                    {/* Read-only because the customer does not choose this and never could: the
+                      * server sets it. It shows the recorded value so the field can never claim
+                      * more than the row behind it. */}
                     <label>
                       Environment
-                      <input style={field} value="Paper only" readOnly />
+                      <input style={field} value={environmentLabel} readOnly />
                     </label>
                     <label>
                       Risk profile

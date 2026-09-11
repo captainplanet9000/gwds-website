@@ -72,5 +72,3 @@ export async function DELETE(req: NextRequest) {
   await audit('admin_logout', req);
   return response;
 }
-
-export { ADMIN_COOKIE };

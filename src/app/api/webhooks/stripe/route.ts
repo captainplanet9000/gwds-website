@@ -185,7 +185,30 @@ async function activateHostingSession(event: Stripe.Event, session: Stripe.Check
 
   await createServerClient().from('customers').update({ stripe_customer_id: stripeCustomerId, updated_at: new Date().toISOString() })
     .eq('user_id', userId);
+
+  // Connects "billing activated" to "a tenant actually gets provisioned". Called on EVERY delivery
+  // of this event, not only the first time activate_hosting_checkout reports processed=true: if
+  // this call itself failed on a prior delivery (control plane unreachable, etc.), that prior
+  // delivery's activation was still idempotent and would otherwise never be retried, silently
+  // leaving a customer who paid with no tenant. provisionHostingTenant() is idempotent on
+  // hostingSubscriptionId, so repeating it here is a cheap no-op once it has already succeeded.
+  // Any throw here fails the whole webhook (see POST handler's catch), which is deliberate: Stripe
+  // retries a non-2xx delivery with backoff for days, and a failed delivery is visible in the
+  // Stripe dashboard — that is the alert. This must never be caught-and-swallowed.
+  await provisionHostingTenant(hostingSubscriptionId, planId, customerEmail, event.id);
+
   await deliverHostingNotification(hostingSubscriptionId);
+}
+
+async function provisionHostingTenant(hostingSubscriptionId: string, planId: string, customerEmail: string, eventId: string) {
+  const { error: provisionError } = await createServerClient().rpc('provision_hosting_tenant', {
+    p_hosting_subscription_id: hostingSubscriptionId,
+    p_plan: planId,
+    p_owner_email: customerEmail,
+    p_display_name: `${planId} — ${customerEmail}`,
+    p_requested_by: `stripe-webhook:${eventId}`,
+  });
+  if (provisionError) throw new Error(`HOSTING_PROVISION_ENQUEUE_FAILED:${provisionError.message}`);
 }
 
 async function syncHostingSubscription(event: Stripe.Event, subscription: Stripe.Subscription, payloadHash: string) {
@@ -222,8 +245,39 @@ async function syncHostingSubscription(event: Stripe.Event, subscription: Stripe
         payload: { stripe_event_id: event.id, subscription_status: subscription.status },
       }, { onConflict: 'idempotency_key', ignoreDuplicates: true });
     }
+
+    // THE FIX: the block above only ever touched the legacy public.hosting_provisioning_tasks
+    // queue, which nothing consumes for a real tenant (that pipeline is disabled behind
+    // HOSTING_AUTOMATION_ENABLED and per-project Vercel automation). Without this call, a customer
+    // whose card lapses keeps a fully running, fully trading tenant forever — a billing suspension
+    // that suspends nothing. This enqueues into control.tenant_commands, the ONLY queue the
+    // production host-agent/tenant-runner actually polls (see
+    // db/migrations/0017_hosting_subscription_lifecycle_commands.sql in C:/GWDS/hosting). It is
+    // itself idempotent (never queues a second suspend/resume while one is still pending) and
+    // no-ops if this subscription has no provisioned tenant yet, so it is safe to call on every
+    // delivery of every subscription/invoice event, including Stripe's retries of this one.
+    const lifecycleCommand = hostingLifecycleCommand(subscription.status);
+    if (lifecycleCommand) {
+      const { error: lifecycleError } = await supabase.rpc('sync_hosting_tenant_lifecycle_command', {
+        p_hosting_subscription_id: internalId,
+        p_command: lifecycleCommand,
+        p_reason: `stripe_subscription_${subscription.status}`,
+        p_requested_by: `stripe-webhook:${event.id}`,
+      });
+      if (lifecycleError) throw new Error(`HOSTING_LIFECYCLE_COMMAND_FAILED:${lifecycleError.message}`);
+    }
+
     await deliverHostingNotification(internalId);
   }
+}
+
+// Maps a Stripe subscription status onto the ONE thing the real tenant process cares about:
+// running or not. Everything else (queued, incomplete) is a transient billing state a lapse has
+// not yet been decided for, so it enqueues nothing here — see hostingLifecycleCommand's callers.
+function hostingLifecycleCommand(status: string): 'suspend' | 'resume' | null {
+  if (['past_due', 'unpaid', 'paused', 'canceled', 'incomplete_expired'].includes(status)) return 'suspend';
+  if (['active', 'trialing'].includes(status)) return 'resume';
+  return null;
 }
 
 function invoiceSubscriptionId(invoice: Stripe.Invoice): string | null {
@@ -329,7 +383,16 @@ export async function POST(req: NextRequest) {
         await applyStatusEvent({ event, payloadHash, sessionId: event.data.object.id, status: 'payment_failed', reason: event.type, revoke: false });
         break;
       case 'checkout.session.expired':
-        await applyStatusEvent({ event, payloadHash, sessionId: event.data.object.id, status: 'expired', reason: event.type, revoke: false });
+        if (event.data.object.metadata?.commerce_kind === 'hosting') {
+          const session = event.data.object;
+          const { error } = await createServerClient().from('hosting_subscriptions')
+            .update({ status: 'incomplete_expired', updated_at: new Date().toISOString() })
+            .eq('stripe_checkout_session_id', session.id)
+            .eq('status', 'pending_checkout');
+          if (error) throw new Error('HOSTING_CHECKOUT_EXPIRY_FAILED');
+        } else {
+          await applyStatusEvent({ event, payloadHash, sessionId: event.data.object.id, status: 'expired', reason: event.type, revoke: false });
+        }
         break;
       case 'payment_intent.payment_failed': {
         const intent = event.data.object;

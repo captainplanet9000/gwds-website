@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type Stripe from 'stripe';
 import {
-  HOSTING_PLAN_COPY,
   hostingSalesEnabled,
   normalizeHostingText,
   parsePeriod,
+  planExecutionMode,
 } from '@/lib/hosting';
 
 describe('managed hosting safety helpers', () => {
@@ -19,9 +19,12 @@ describe('managed hosting safety helpers', () => {
     else process.env.NEXT_PUBLIC_HOSTING_SALES_ENABLED = originalSales;
   });
 
-  it('keeps all public plans unique and nonnegative', () => {
-    expect(new Set(HOSTING_PLAN_COPY.map((plan) => plan.id)).size).toBe(HOSTING_PLAN_COPY.length);
-    expect(HOSTING_PLAN_COPY.every((plan) => plan.priceCents >= 0)).toBe(true);
+  // A free plan that could execute live orders is an abuse vector with no cost to the abuser, and
+  // it burns the same shared exchange request budget as a paying tenant. Price is what decides it.
+  it('never arms live execution on a free plan', () => {
+    expect(planExecutionMode(0)).toBe('simulated');
+    expect(planExecutionMode(-1)).toBe('simulated');
+    expect(planExecutionMode(1900)).toBe('live');
   });
 
   it('keeps hosting sales disabled unless explicitly enabled', () => {

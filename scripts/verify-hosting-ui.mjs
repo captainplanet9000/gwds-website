@@ -11,12 +11,24 @@ page.on('console', (message) => {
   }
 });
 
+// Verifies the PRE-LAUNCH state of /hosted: the sales gate is expected to be shut. When the owner
+// opens it, `gateDisclosed` below is the one assertion that must be revisited; every other check
+// here stays correct on both sides of the gate.
 await page.goto(`${baseUrl}/hosted`, { waitUntil: 'networkidle' });
 const hostedText = await page.locator('body').innerText();
 const publicCheck = {
   heading: await page.getByRole('heading', { name: "Don't want to run it? We'll run it." }).count(),
-  paperOnly: hostedText.toLowerCase().includes('paper-only'),
-  launchGate: hostedText.includes('Runtime activation stays gated'),
+  // Inverted on purpose, and this is the point of the check rather than an incidental detail.
+  // This script used to REQUIRE the words "paper-only" on /hosted, from when every tier was
+  // simulated. The paid tiers now sell live agents, so that same assertion had quietly become a
+  // guard holding the retired claim in place. It is now a guard against the claim coming back:
+  // "paper-only" describes the whole hosted service and is false on three of the four tiers.
+  paperOnlyClaim: /paper[-\s]?only/i.test(hostedText),
+  // The two halves of the current, true story. Both must be on the page: dropping the first
+  // oversells the free tier, dropping the second undersells the risk on the paid ones.
+  freeTierSimulated: /simulated fills/i.test(hostedText),
+  livePlansDisclosed: /run live agents/i.test(hostedText),
+  launchGate: hostedText.includes('These plans are not on sale yet.'),
   secretPrompt: /seed phrase|private key|api-wallet secret/i.test(hostedText),
   errorOverlay: await page.locator('[data-nextjs-dialog]').count(),
 };
@@ -49,7 +61,9 @@ const result = {
 console.log(JSON.stringify(result, null, 2));
 await browser.close();
 
-if (publicCheck.heading !== 1 || !publicCheck.paperOnly || !publicCheck.launchGate
+if (publicCheck.heading !== 1 || publicCheck.paperOnlyClaim
+  || !publicCheck.freeTierSimulated || !publicCheck.livePlansDisclosed
+  || !publicCheck.launchGate
   || publicCheck.secretPrompt || publicCheck.errorOverlay !== 0
   || !customerRedirect.includes('/account/login?next=/account/hosting')
   || !adminRedirect.includes('/admin') || !adminGate || adminApi.status() !== 401

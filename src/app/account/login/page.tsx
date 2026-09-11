@@ -171,6 +171,10 @@ function LoginForm() {
 
           <div style={{ marginTop: 24, textAlign: 'center', fontSize: 13.5, color: 'var(--color-neutral-700)' }}>
             Don&apos;t have an account?{' '}
+            <Link href="/forgot-password" style={{ fontWeight: 600 }}>
+              Forgot your password?
+            </Link>
+            {' · '}
             <Link href="/account/register" style={{ fontWeight: 600 }}>
               Create one
             </Link>
