@@ -28,15 +28,20 @@ export async function POST(req: NextRequest) {
 
     const supabase = createServerClient();
     const { data: plan, error: planError } = await supabase.from('hosting_plans')
-      .select('id,name,price_cents,currency,billing_interval,stripe_price_id,is_active,launch_ready')
+      .select('id,name,price_cents,currency,billing_interval,stripe_price_id_test,stripe_price_id_live,is_active,launch_ready')
       .eq('id', body.planId).maybeSingle();
     if (planError) throw new CommerceError('HOSTING_UNAVAILABLE', 'Hosting plans are temporarily unavailable.', 503);
-    if (!plan?.is_active || !plan.launch_ready || !plan.stripe_price_id || plan.price_cents < 50) {
+    // hosting_plans.stripe_price_id_test/_live exist because pilot and production share this table
+    // but use different-mode Stripe keys, and a Stripe price's mode can't change after creation --
+    // see 20260911140000_split_stripe_price_id_by_mode.sql. Pick the column matching this
+    // deployment's own key before this environment's price even exists there.
+    const live = process.env.STRIPE_SECRET_KEY?.startsWith('sk_live_') ?? false;
+    const stripePriceId = live ? plan?.stripe_price_id_live : plan?.stripe_price_id_test;
+    if (!plan?.is_active || !plan.launch_ready || !stripePriceId || plan.price_cents < 50) {
       throw new CommerceError('PLAN_NOT_READY', hostingLaunchMessage(), 503);
     }
 
-    const price = await getStripe().prices.retrieve(plan.stripe_price_id);
-    const live = process.env.STRIPE_SECRET_KEY?.startsWith('sk_live_') ?? false;
+    const price = await getStripe().prices.retrieve(stripePriceId);
     if (!price.active || price.livemode !== live || price.type !== 'recurring' || price.currency !== plan.currency
       || price.unit_amount !== plan.price_cents || price.recurring?.interval !== plan.billing_interval) {
       throw new CommerceError('HOSTING_PRICE_MISMATCH', 'This hosting plan is not configured for billing.', 503);
@@ -73,7 +78,7 @@ export async function POST(req: NextRequest) {
     };
     const sessionParamsFor = (stripeCustomerId: string | null) => ({
       mode: 'subscription' as const,
-      line_items: [{ price: plan.stripe_price_id, quantity: 1 }],
+      line_items: [{ price: stripePriceId, quantity: 1 }],
       success_url: `${siteUrl}/account/hosting?checkout=success`,
       cancel_url: `${siteUrl}/hosted?checkout=cancelled`,
       customer: stripeCustomerId || undefined,
