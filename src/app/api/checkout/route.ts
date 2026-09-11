@@ -214,12 +214,11 @@ export async function POST(req: NextRequest) {
 
     const siteUrl = getSiteUrl();
     const stripe = getStripe();
-    const customerId = typeof customer?.stripe_customer_id === 'string' ? customer.stripe_customer_id : null;
-    const sessionParams: Stripe.Checkout.SessionCreateParams = {
+    const sessionParamsFor = (stripeCustomerId: string | null): Stripe.Checkout.SessionCreateParams => ({
       mode: 'payment',
       line_items: lineItems(rows, order),
       client_reference_id: order.order_id,
-      ...(customerId ? { customer: customerId } : { customer_email: user.email!, customer_creation: 'always' as const }),
+      ...(stripeCustomerId ? { customer: stripeCustomerId } : { customer_email: user.email!, customer_creation: 'always' as const }),
       metadata: {
         order_id: order.order_id,
         user_id: user.id,
@@ -240,12 +239,35 @@ export async function POST(req: NextRequest) {
       success_url: `${siteUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${siteUrl}/checkout?canceled=1`,
       expires_at: Math.floor(Date.now() / 1000) + (30 * 60),
-    };
-
-    const session = await stripe.checkout.sessions.create(sessionParams, {
-      idempotencyKey: `cival-checkout-${order.order_id}`,
     });
+
+    // A stored stripe_customer_id from a DIFFERENT Stripe mode (e.g. a real purchase's live-mode
+    // customer, looked up against this environment's test-mode key) is not a checkout failure --
+    // it is stale data on our own row. Same fix as /api/hosting/checkout: retry once without the
+    // stored id, letting Stripe issue a fresh customer under the current key's mode, and correct
+    // the stored id so this account does not hit this on every future purchase.
+    let usedCustomerId = typeof customer?.stripe_customer_id === 'string' ? customer.stripe_customer_id : null;
+    let session;
+    try {
+      session = await stripe.checkout.sessions.create(sessionParamsFor(usedCustomerId), {
+        idempotencyKey: `cival-checkout-${order.order_id}`,
+      });
+    } catch (stripeError) {
+      const isStaleCustomer = usedCustomerId !== null
+        && typeof stripeError === 'object' && stripeError !== null
+        && (stripeError as { type?: string }).type === 'StripeInvalidRequestError'
+        && (stripeError as { param?: string }).param === 'customer';
+      if (!isStaleCustomer) throw stripeError;
+
+      usedCustomerId = null;
+      session = await stripe.checkout.sessions.create(sessionParamsFor(null), {
+        idempotencyKey: `cival-checkout-${order.order_id}-remapped`,
+      });
+    }
     createdSessionId = session.id;
+    if (usedCustomerId === null && session.customer && typeof session.customer === 'string') {
+      await supabase.from('customers').update({ stripe_customer_id: session.customer }).eq('user_id', user.id);
+    }
     if (!session.url) throw new Error('Stripe did not return a checkout URL');
 
     const { error: bindError } = await supabase
