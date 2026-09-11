@@ -1,502 +1,111 @@
-import { Resend } from "resend";
-import { getProduct } from "@/lib/products";
+import { Resend } from 'resend';
+import { getProduct } from '@/lib/products';
+import { getSiteUrl } from '@/lib/commerce';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://gwds-website.vercel.app";
-
-interface Order {
+export interface OrderEmailData {
   id: string;
   customer_name: string | null;
   total_cents: number;
   created_at: string;
+  items: Array<{ product_id: string; quantity: number }>;
 }
 
-interface DownloadLink {
-  productId: string;
-  productName: string;
-  downloadUrl: string;
+export interface HostingEmailData {
+  subscriptionId: string;
+  planName: string;
+  template: 'hosting_started' | 'hosting_payment_failed' | 'hosting_canceled' | 'hosting_activated' | 'hosting_incident' | 'hosting_provisioning_failed';
+  title?: string;
+  detail?: string;
 }
 
-// Product-specific taglines for emails
-const productTaglines: Record<string, string> = {
-  "ai-trading-dashboard": "Your AI-powered command center is ready.",
-  "meme-trading-suite": "9 tabs. Zero guesswork. Your meme trading edge.",
-  "flash-loan-arbitrage": "Zero-capital arbitrage across 4 DEXs. Let's find those spreads.",
-  "darvas-box-agent": "Nicolas Darvas made millions with boxes. Now you have the automated version.",
-  "elliott-wave-agent": "AI-powered wave counting. No more squinting at charts.",
-  "vwap-agent": "VWAP breakouts with volume confirmation. Institutional-grade entries.",
-  "heikin-ashi-agent": "Smoothed candles, cleaner signals. Ride trends without the noise.",
-  "mean-reversion-agent": "Buy the dip, sell the rip — systematically.",
-  "macro-sentiment-agent": "Fed policy, whale flows, social sentiment. The macro edge.",
-  "multi-strategy-bundle": "6 strategies running in parallel. One unified system.",
-  "full-stack-trader-bundle": "Dashboard + 2 agents. Everything you need to start.",
-  "everything-bundle": "The entire Cival Systems catalog. Every tool, every agent, every update.",
-};
-
-function getProductEmoji(productId: string): string {
-  const product = getProduct(productId);
-  return product?.emoji || "📦";
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>'"]/g, (character) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;',
+  })[character]!);
 }
 
-function getProductFeatures(productId: string): string[] {
-  const product = getProduct(productId);
-  return product?.features?.slice(0, 4) || [];
+export async function sendOrderReadyEmail(email: string, order: OrderEmailData) {
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.RESEND_FROM_EMAIL;
+  if (!apiKey || !from) throw new Error('Transactional email is not configured');
+
+  const resend = new Resend(apiKey);
+  const siteUrl = getSiteUrl();
+  const accountUrl = `${siteUrl}/account`;
+  const displayName = order.customer_name?.split(/\s+/)[0] || 'there';
+  const productNames = order.items.map((item) => getProduct(item.product_id)?.name || item.product_id);
+  const total = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(order.total_cents / 100);
+  const date = new Intl.DateTimeFormat('en-US', { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(order.created_at));
+  const list = productNames.map((name) => `<li style="margin:8px 0">${escapeHtml(name)}</li>`).join('');
+
+  const html = `<!doctype html>
+<html><body style="margin:0;background:#f5ead8;color:#29251f;font-family:Arial,sans-serif">
+  <div style="max-width:620px;margin:0 auto;padding:40px 20px">
+    <div style="font-size:24px;font-weight:800;margin-bottom:24px;color:#6a381f">Cival Systems</div>
+    <div style="background:#fffaf1;border:1px solid #dac9ac;border-radius:24px;padding:32px">
+      <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#7a8a5e;font-weight:700">Payment confirmed</div>
+      <h1 style="font-size:32px;line-height:1.1;margin:12px 0 14px">Your account is ready, ${escapeHtml(displayName)}.</h1>
+      <p style="font-size:16px;line-height:1.6;color:#5d554a">Your Cival Systems license is attached to the account used at checkout. Sign in to create a short-lived download link whenever you need the files.</p>
+      <ul style="padding-left:20px;line-height:1.5">${list}</ul>
+      <a href="${accountUrl}" style="display:inline-block;margin-top:16px;background:#c67139;color:#fff;text-decoration:none;font-weight:700;padding:14px 22px;border-radius:999px">Open my account</a>
+      <div style="margin-top:28px;padding-top:20px;border-top:1px solid #e8dbc5;font-size:13px;line-height:1.7;color:#6f665a">
+        Order ${escapeHtml(order.id)}<br>${escapeHtml(date)} · ${escapeHtml(total)}
+      </div>
+    </div>
+    <p style="font-size:12px;line-height:1.6;color:#756b5e;margin:22px 8px">Software source code only. Trading and digital assets involve substantial risk. Cival Systems does not provide financial advice or promise returns. Need help? Reply to this email or visit <a href="${siteUrl}/contact" style="color:#9d542d">support</a>.</p>
+  </div>
+</body></html>`;
+
+  const text = `Cival Systems — payment confirmed
+
+Hi ${displayName},
+
+Your license is attached to the account used at checkout.
+
+Products:
+${productNames.map((name) => `- ${name}`).join('\n')}
+
+Open your account to create a short-lived download link:
+${accountUrl}
+
+Order: ${order.id}
+Date: ${date}
+Total: ${total}
+
+Software source code only. Trading involves substantial risk. No returns are guaranteed.`;
+
+  const { data, error } = await resend.emails.send({
+    from,
+    to: email,
+    replyTo: process.env.SUPPORT_EMAIL || 'support@civalsystems.com',
+    subject: `Your Cival Systems order is ready (${order.id.slice(0, 8)})`,
+    html,
+    text,
+  }, { idempotencyKey: `order-confirmation-${order.id}` });
+
+  if (error) throw new Error(`Email delivery failed: ${error.message}`);
+  return data;
 }
 
-function getProductImage(productId: string): string {
-  const product = getProduct(productId);
-  if (product?.image) return `${SITE_URL}${product.image}`;
-  return `${SITE_URL}/images/products/shot-dashboard-stats.jpg`;
+export async function sendHostingEmail(email: string, message: HostingEmailData) {
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.RESEND_FROM_EMAIL;
+  if (!apiKey || !from) throw new Error('Transactional email is not configured');
+  const resend = new Resend(apiKey);
+  const siteUrl = getSiteUrl();
+  const accountUrl = `${siteUrl}/account/hosting`;
+  const copy = {
+    hosting_started: ['Your managed workspace is queued', `Your ${message.planName} subscription is confirmed. Complete onboarding so Cival Operations can review and provision the workspace.`],
+    hosting_payment_failed: ['Action needed: hosting payment failed', 'Stripe could not collect the latest hosting invoice. Update your payment method to avoid or resolve a service suspension.'],
+    hosting_canceled: ['Your hosting cancellation is recorded', 'Your subscription has been canceled. Runtime teardown and credential deletion will follow the service lifecycle shown in your account.'],
+    hosting_activated: ['Your managed workspace is active', 'Provisioning, health, backup and recovery checks passed. Open your account to review runtime status before enabling any live strategy.'],
+    hosting_incident: [message.title || 'Managed hosting incident update', message.detail || 'An incident affecting your managed workspace has been published in your account.'],
+    hosting_provisioning_failed: [message.title || 'Provisioning failed after payment', message.detail || 'Payment succeeded but automated provisioning failed. Operations has been alerted and will resume this without further action from you.'],
+  }[message.template];
+  const subject = `Cival Systems — ${copy[0]}`;
+  const html = `<!doctype html><html><body style="margin:0;background:#020806;color:#e8fff5;font-family:Arial,sans-serif"><div style="max-width:620px;margin:0 auto;padding:40px 20px"><div style="font-size:24px;font-weight:800;margin-bottom:24px;color:#4ade9f">Cival Systems</div><div style="background:#07120e;border:1px solid #1d4d3b;border-radius:22px;padding:32px"><div style="font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#4ade9f;font-weight:800">Managed hosting</div><h1 style="font-size:30px;line-height:1.15;margin:12px 0 14px">${escapeHtml(copy[0])}</h1><p style="font-size:16px;line-height:1.65;color:#b5d6c8">${escapeHtml(copy[1])}</p><a href="${accountUrl}" style="display:inline-block;margin-top:14px;background:#4ade9f;color:#03110b;text-decoration:none;font-weight:800;padding:14px 22px;border-radius:999px">Open hosting account</a><div style="margin-top:26px;padding-top:18px;border-top:1px solid #173a2e;font-size:12px;line-height:1.7;color:#7fa694">Subscription ${escapeHtml(message.subscriptionId)}</div></div><p style="font-size:12px;line-height:1.6;color:#76998a;margin:20px 6px">Managed hosting does not reduce market risk or guarantee results. Use a dedicated trade-only API wallet and keep withdrawals disabled. Need help? <a href="${siteUrl}/contact" style="color:#4ade9f">Contact support</a>.</p></div></body></html>`;
+  const text = `Cival Systems — Managed hosting\n\n${copy[0]}\n\n${copy[1]}\n\nOpen your hosting account: ${accountUrl}\n\nSubscription: ${message.subscriptionId}`;
+  const { data, error } = await resend.emails.send({ from, to: email, replyTo: process.env.SUPPORT_EMAIL || 'support@civalsystems.com', subject, html, text }, { idempotencyKey: `${message.template}-${message.subscriptionId}` });
+  if (error) throw new Error(`Email delivery failed: ${error.message}`);
+  return data;
 }
-
-function getProductPrice(productId: string): number {
-  const product = getProduct(productId);
-  return product?.price || 0;
-}
-
-function renderProductCard(link: DownloadLink, index: number): string {
-  const product = getProduct(link.productId);
-  const emoji = getProductEmoji(link.productId);
-  const features = getProductFeatures(link.productId);
-  const tagline = productTaglines[link.productId] || "Your new trading tool is ready.";
-  const imageUrl = getProductImage(link.productId);
-  const price = getProductPrice(link.productId);
-  const isBundle = product?.isBundle || false;
-  const requiresDashboard = product?.requiresDashboard || false;
-
-  return `
-    <!-- Product Card -->
-    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 24px;">
-      <tr>
-        <td style="background-color: #1A1A2E; border-radius: 12px; overflow: hidden; border: 1px solid #2D2D44;">
-          
-          <!-- Product Image -->
-          <table width="100%" cellpadding="0" cellspacing="0">
-            <tr>
-              <td style="padding: 0;">
-                <img src="${imageUrl}" alt="${link.productName}" width="520" style="display: block; width: 100%; max-width: 520px; height: auto; border-radius: 12px 12px 0 0;" />
-              </td>
-            </tr>
-          </table>
-
-          <!-- Product Info -->
-          <table width="100%" cellpadding="0" cellspacing="0">
-            <tr>
-              <td style="padding: 24px;">
-                <!-- Name + Emoji -->
-                <h3 style="margin: 0 0 6px; font-size: 20px; font-weight: 700; color: #F8FAFC; font-family: 'Space Grotesk', Inter, -apple-system, sans-serif;">
-                  ${emoji} ${link.productName}
-                </h3>
-                
-                <!-- Tagline -->
-                <p style="margin: 0 0 16px; font-size: 14px; color: #A78BFA; font-style: italic;">
-                  ${tagline}
-                </p>
-
-                ${isBundle ? `
-                <table cellpadding="0" cellspacing="0" style="margin-bottom: 16px;">
-                  <tr>
-                    <td style="background: linear-gradient(135deg, #8B5CF6, #6D28D9); padding: 4px 12px; border-radius: 20px;">
-                      <span style="font-size: 11px; font-weight: 700; color: #FFFFFF; text-transform: uppercase; letter-spacing: 0.08em;">Bundle — Save More</span>
-                    </td>
-                  </tr>
-                </table>` : ""}
-
-                ${requiresDashboard ? `
-                <table cellpadding="0" cellspacing="0" style="margin-bottom: 16px;">
-                  <tr>
-                    <td style="background-color: rgba(245, 158, 11, 0.15); padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(245, 158, 11, 0.3);">
-                      <span style="font-size: 11px; font-weight: 600; color: #F59E0B; letter-spacing: 0.03em;">⚡ Dashboard Plugin — Requires AI Trading Dashboard</span>
-                    </td>
-                  </tr>
-                </table>` : ""}
-                
-                <!-- Features Grid -->
-                ${features.length > 0 ? `
-                <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 20px;">
-                  ${features.map((f, i) => i % 2 === 0 ? `
-                  <tr>
-                    <td width="50%" style="padding: 4px 0;">
-                      <span style="font-size: 13px; color: #94A3B8;">✓ <span style="color: #CBD5E1;">${f}</span></span>
-                    </td>
-                    ${features[i + 1] ? `
-                    <td width="50%" style="padding: 4px 0;">
-                      <span style="font-size: 13px; color: #94A3B8;">✓ <span style="color: #CBD5E1;">${features[i + 1]}</span></span>
-                    </td>` : '<td width="50%"></td>'}
-                  </tr>` : '').join('')}
-                </table>` : ""}
-
-                <!-- Download Button -->
-                <table cellpadding="0" cellspacing="0" style="margin: 0;">
-                  <tr>
-                    <td style="background: linear-gradient(135deg, #8B5CF6, #7C3AED); border-radius: 8px; padding: 14px 32px;">
-                      <a href="${link.downloadUrl}" style="color: #FFFFFF; text-decoration: none; font-weight: 700; font-size: 15px; font-family: 'Space Grotesk', Inter, -apple-system, sans-serif; letter-spacing: 0.02em;">
-                        ↓&nbsp;&nbsp;Download ${product?.isBundle ? "Bundle" : "Now"}
-                      </a>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>`;
-}
-
-function renderQuickStart(productIds: string[]): string {
-  const hasPlugins = productIds.some(id => {
-    const p = getProduct(id);
-    return p?.requiresDashboard;
-  });
-  const hasDashboard = productIds.includes("ai-trading-dashboard");
-  const hasBundle = productIds.some(id => {
-    const p = getProduct(id);
-    return p?.isBundle;
-  });
-
-  let steps: string[] = [];
-
-  if (hasDashboard || hasBundle) {
-    steps = [
-      "Unzip to your project directory",
-      "Run <code style='background:#1A1A2E;padding:2px 6px;border-radius:4px;font-family:\"JetBrains Mono\",monospace;font-size:12px;color:#A78BFA;'>npm install</code>",
-      "Copy <code style='background:#1A1A2E;padding:2px 6px;border-radius:4px;font-family:\"JetBrains Mono\",monospace;font-size:12px;color:#A78BFA;'>.env.example</code> → <code style='background:#1A1A2E;padding:2px 6px;border-radius:4px;font-family:\"JetBrains Mono\",monospace;font-size:12px;color:#A78BFA;'>.env.local</code> and add your API keys",
-      "Run <code style='background:#1A1A2E;padding:2px 6px;border-radius:4px;font-family:\"JetBrains Mono\",monospace;font-size:12px;color:#A78BFA;'>npm run dev</code> and open <code style='background:#1A1A2E;padding:2px 6px;border-radius:4px;font-family:\"JetBrains Mono\",monospace;font-size:12px;color:#A78BFA;'>localhost:3000</code>",
-    ];
-  } else if (hasPlugins) {
-    steps = [
-      "Download the ZIP file above",
-      "Extract into your dashboard's <code style='background:#1A1A2E;padding:2px 6px;border-radius:4px;font-family:\"JetBrains Mono\",monospace;font-size:12px;color:#A78BFA;'>plugins/</code> folder",
-      "Restart your dashboard — the plugin auto-registers",
-      "Configure via the plugin's settings panel",
-    ];
-  } else {
-    steps = [
-      "Download the ZIP file above",
-      "Extract to your project directory",
-      "Read the included <code style='background:#1A1A2E;padding:2px 6px;border-radius:4px;font-family:\"JetBrains Mono\",monospace;font-size:12px;color:#A78BFA;'>README.md</code> for setup instructions",
-      "Check the docs at <a href='${SITE_URL}/docs' style='color:#8B5CF6;text-decoration:none;'>gwds-website.vercel.app/docs</a>",
-    ];
-  }
-
-  return `
-    <!-- Quick Start -->
-    <table width="100%" cellpadding="0" cellspacing="0" style="margin-top: 8px; margin-bottom: 32px;">
-      <tr>
-        <td style="background-color: #1A1A2E; border-radius: 12px; padding: 24px; border: 1px solid #2D2D44;">
-          <h3 style="margin: 0 0 16px; font-size: 16px; font-weight: 700; color: #F8FAFC; font-family: 'Space Grotesk', Inter, -apple-system, sans-serif;">
-            🚀 Quick Start
-          </h3>
-          <table width="100%" cellpadding="0" cellspacing="0">
-            ${steps.map((step, i) => `
-            <tr>
-              <td width="28" valign="top" style="padding: 6px 0;">
-                <div style="width: 22px; height: 22px; background: linear-gradient(135deg, #8B5CF6, #6D28D9); border-radius: 50%; text-align: center; line-height: 22px; font-size: 12px; font-weight: 700; color: #FFF;">
-                  ${i + 1}
-                </div>
-              </td>
-              <td style="padding: 6px 0 6px 12px; font-size: 14px; line-height: 1.5; color: #CBD5E1;">
-                ${step}
-              </td>
-            </tr>`).join("")}
-          </table>
-        </td>
-      </tr>
-    </table>`;
-}
-
-export async function sendOrderConfirmation(
-  email: string,
-  order: Order,
-  downloadLinks: DownloadLink[]
-) {
-  const totalDollars = (order.total_cents / 100).toFixed(2);
-  const orderDate = new Date(order.created_at).toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-  const productIds = downloadLinks.map(l => l.productId);
-  const isSingleProduct = downloadLinks.length === 1;
-  const firstProduct = downloadLinks[0];
-
-  // Build subject line based on product
-  const subject = isSingleProduct
-    ? `Your ${firstProduct.productName} is ready ↓`
-    : `Your ${downloadLinks.length} products are ready ↓`;
-
-  const html = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Order Confirmation - Cival Systems</title>
-        <!--[if mso]>
-        <style type="text/css">
-          body, table, td {font-family: Arial, sans-serif !important;}
-        </style>
-        <![endif]-->
-      </head>
-      <body style="margin: 0; padding: 0; font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background-color: #07070D; color: #F8FAFC; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">
-        <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background-color: #07070D;">
-          <tr>
-            <td align="center" style="padding: 32px 16px;">
-              <table width="560" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 560px; width: 100%;">
-                
-                <!-- Logo Bar -->
-                <tr>
-                  <td style="padding: 0 0 32px; text-align: center;">
-                    <a href="${SITE_URL}" style="text-decoration: none;">
-                      <span style="font-family: 'Space Grotesk', Inter, -apple-system, sans-serif; font-size: 28px; font-weight: 800; letter-spacing: -0.03em;">
-                        <span style="color: #8B5CF6;">G</span><span style="color: #A78BFA;">W</span><span style="color: #C4B5FD;">D</span><span style="color: #F8FAFC;">S</span>
-                      </span>
-                    </a>
-                  </td>
-                </tr>
-
-                <!-- Main Card -->
-                <tr>
-                  <td style="background-color: #0F0F1A; border-radius: 16px; overflow: hidden; border: 1px solid #1E1E35;">
-                    
-                    <!-- Gradient Header -->
-                    <table width="100%" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td style="padding: 40px 32px 32px; background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(6,182,212,0.1)); border-bottom: 1px solid #1E1E35;">
-                          <table width="100%" cellpadding="0" cellspacing="0">
-                            <tr>
-                              <td>
-                                <p style="margin: 0 0 4px; font-size: 13px; color: #8B5CF6; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;">Order Confirmed</p>
-                                <h1 style="margin: 0 0 8px; font-size: 26px; font-weight: 800; color: #F8FAFC; font-family: 'Space Grotesk', Inter, -apple-system, sans-serif; letter-spacing: -0.02em;">
-                                  ${order.customer_name ? `Hey ${order.customer_name.split(" ")[0]}` : "Hey"} — you're all set.
-                                </h1>
-                                <p style="margin: 0; font-size: 15px; color: #94A3B8; line-height: 1.5;">
-                                  ${isSingleProduct
-                                    ? productTaglines[firstProduct.productId] || "Your product is ready to download."
-                                    : `${downloadLinks.length} tools ready. Your trading stack just leveled up.`}
-                                </p>
-                              </td>
-                            </tr>
-                          </table>
-                        </td>
-                      </tr>
-                    </table>
-
-                    <!-- Order Summary -->
-                    <table width="100%" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td style="padding: 28px 32px 0;">
-                          <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #12122A; border-radius: 10px; border: 1px solid #1E1E35;">
-                            <tr>
-                              <td style="padding: 16px 20px;">
-                                <table width="100%" cellpadding="0" cellspacing="0">
-                                  <tr>
-                                    <td width="50%">
-                                      <p style="margin: 0 0 2px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #64748B;">Order ID</p>
-                                      <p style="margin: 0; font-size: 13px; font-family: 'JetBrains Mono', monospace; color: #CBD5E1;">${order.id}</p>
-                                    </td>
-                                    <td width="25%">
-                                      <p style="margin: 0 0 2px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #64748B;">Date</p>
-                                      <p style="margin: 0; font-size: 13px; color: #CBD5E1;">${orderDate}</p>
-                                    </td>
-                                    <td width="25%" style="text-align: right;">
-                                      <p style="margin: 0 0 2px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #64748B;">Total</p>
-                                      <p style="margin: 0; font-size: 20px; font-weight: 800; color: #10B981;">$${totalDollars}</p>
-                                    </td>
-                                  </tr>
-                                </table>
-                              </td>
-                            </tr>
-                          </table>
-                        </td>
-                      </tr>
-                    </table>
-
-                    <!-- Products Section -->
-                    <table width="100%" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td style="padding: 28px 32px 0;">
-                          <h2 style="margin: 0 0 20px; font-size: 18px; font-weight: 700; color: #F8FAFC; font-family: 'Space Grotesk', Inter, -apple-system, sans-serif;">
-                            ${isSingleProduct ? "Your Product" : "Your Products"}
-                          </h2>
-                          ${downloadLinks.map((link, i) => renderProductCard(link, i)).join("")}
-                        </td>
-                      </tr>
-                    </table>
-
-                    <!-- Quick Start Guide -->
-                    <table width="100%" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td style="padding: 0 32px;">
-                          ${renderQuickStart(productIds)}
-                        </td>
-                      </tr>
-                    </table>
-
-                    <!-- Disclaimer for dashboard plugins -->
-                    ${productIds.some(id => getProduct(id)?.requiresDashboard) ? `
-                    <table width="100%" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td style="padding: 0 32px 24px;">
-                          <table width="100%" cellpadding="0" cellspacing="0" style="background-color: rgba(245, 158, 11, 0.08); border-left: 3px solid #F59E0B; border-radius: 6px;">
-                            <tr>
-                              <td style="padding: 14px 16px;">
-                                <p style="margin: 0 0 4px; font-size: 13px; font-weight: 700; color: #F59E0B;">Dashboard Plugin Notice</p>
-                                <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #94A3B8;">
-                                  Products marked as plugins require the <strong style="color: #CBD5E1;">AI Trading Dashboard</strong> to function. These are source code templates and strategy architectures — not standalone applications.
-                                  <a href="${SITE_URL}/disclaimer" style="color: #F59E0B; text-decoration: none;">Full disclaimer →</a>
-                                </p>
-                              </td>
-                            </tr>
-                          </table>
-                        </td>
-                      </tr>
-                    </table>` : ""}
-
-                    <!-- Account CTA -->
-                    <table width="100%" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td style="padding: 0 32px 28px;">
-                          <table width="100%" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(6,182,212,0.08)); border-radius: 10px; border: 1px solid rgba(139,92,246,0.2);">
-                            <tr>
-                              <td style="padding: 20px 24px;">
-                                <table width="100%" cellpadding="0" cellspacing="0">
-                                  <tr>
-                                    <td>
-                                      <p style="margin: 0 0 4px; font-size: 15px; font-weight: 700; color: #F8FAFC;">Access your downloads anytime</p>
-                                      <p style="margin: 0 0 16px; font-size: 13px; color: #94A3B8;">Log in to your Cival Systems account to re-download your products and manage your purchases.</p>
-                                      <table cellpadding="0" cellspacing="0">
-                                        <tr>
-                                          <td style="background-color: #1A1A2E; border: 1px solid #2D2D44; border-radius: 8px; padding: 10px 24px;">
-                                            <a href="${SITE_URL}/account" style="color: #A78BFA; text-decoration: none; font-weight: 600; font-size: 14px;">
-                                              Go to My Account →
-                                            </a>
-                                          </td>
-                                        </tr>
-                                      </table>
-                                    </td>
-                                  </tr>
-                                </table>
-                              </td>
-                            </tr>
-                          </table>
-                        </td>
-                      </tr>
-                    </table>
-
-                    <!-- Support -->
-                    <table width="100%" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td style="padding: 0 32px 32px;">
-                          <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #64748B;">
-                            Questions? Reply to this email or reach us at
-                            <a href="mailto:gammawavesdesign@gmail.com" style="color: #8B5CF6; text-decoration: none;">gammawavesdesign@gmail.com</a>
-                          </p>
-                        </td>
-                      </tr>
-                    </table>
-
-                  </td>
-                </tr>
-
-                <!-- Footer -->
-                <tr>
-                  <td style="padding: 28px 16px; text-align: center;">
-                    <p style="margin: 0 0 12px; font-size: 12px; color: #475569;">
-                      © ${new Date().getFullYear()} Cival Systems. All rights reserved.
-                    </p>
-                    <table cellpadding="0" cellspacing="0" align="center">
-                      <tr>
-                        <td style="padding: 0 8px;">
-                          <a href="${SITE_URL}/store" style="font-size: 12px; color: #64748B; text-decoration: none;">Store</a>
-                        </td>
-                        <td style="color: #2D2D44; font-size: 12px;">·</td>
-                        <td style="padding: 0 8px;">
-                          <a href="${SITE_URL}/terms" style="font-size: 12px; color: #64748B; text-decoration: none;">Terms</a>
-                        </td>
-                        <td style="color: #2D2D44; font-size: 12px;">·</td>
-                        <td style="padding: 0 8px;">
-                          <a href="${SITE_URL}/privacy" style="font-size: 12px; color: #64748B; text-decoration: none;">Privacy</a>
-                        </td>
-                        <td style="color: #2D2D44; font-size: 12px;">·</td>
-                        <td style="padding: 0 8px;">
-                          <a href="${SITE_URL}/refunds" style="font-size: 12px; color: #64748B; text-decoration: none;">Refunds</a>
-                        </td>
-                      </tr>
-                    </table>
-                    <p style="margin: 16px 0 0; font-size: 11px; color: #334155;">
-                      You're receiving this because you made a purchase at gwds-website.vercel.app
-                    </p>
-                  </td>
-                </tr>
-
-              </table>
-            </td>
-          </tr>
-        </table>
-      </body>
-    </html>
-  `;
-
-  // Plain text version
-  const text = `
-Cival Systems — Order Confirmation
-${"=".repeat(40)}
-
-${order.customer_name ? `Hey ${order.customer_name.split(" ")[0]}` : "Hey"} — you're all set.
-
-Order ID: ${order.id}
-Date: ${orderDate}
-Total: $${totalDollars}
-
-YOUR PRODUCTS
-${"-".repeat(40)}
-${downloadLinks.map(link => {
-  const tagline = productTaglines[link.productId] || "";
-  return `${getProductEmoji(link.productId)} ${link.productName}${tagline ? `\n   ${tagline}` : ""}\n   Download: ${link.downloadUrl}`;
-}).join("\n\n")}
-
-QUICK START
-${"-".repeat(40)}
-1. Download the ZIP file(s) above
-2. Extract to your project directory
-3. Run npm install
-4. Check the README.md for configuration
-
-${productIds.some(id => getProduct(id)?.requiresDashboard)
-  ? "NOTE: Add-on products require Core Edition to function.\nThese are source code templates — not standalone applications.\n"
-  : ""}
-ACCESS YOUR ACCOUNT
-${"-".repeat(40)}
-Log in anytime to re-download: ${SITE_URL}/account
-
-Need help? Reply to this email or contact gammawavesdesign@gmail.com
-
----
-© ${new Date().getFullYear()} Cival Systems
-gwds-website.vercel.app
-  `.trim();
-
-  try {
-    const { data, error } = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL || "Cival Systems <onboarding@resend.dev>",
-      to: email,
-      subject,
-      html,
-      text,
-    });
-
-    if (error) {
-      console.error("Resend error:", error);
-      throw error;
-    }
-
-    return data;
-  } catch (error) {
-    console.error("Email send error:", error);
-    throw error;
-  }
-}
-

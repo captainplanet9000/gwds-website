@@ -1,9 +1,12 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { isPaidOrder, readReportRows } from '@/lib/reporting';
 import { products } from '@/lib/products';
 import { createServerClient } from '@/lib/supabase';
+import { adminUnauthorized, requireAdmin } from '@/lib/admin-auth';
 
-export async function GET() {
-  const sb = createServerClient();
+export async function GET(req: NextRequest) {
+  if (!await requireAdmin(req)) return adminUnauthorized();
+
   let totalRevenue = 0;
   let totalOrders = 0;
   let totalCustomers = 0;
@@ -15,13 +18,14 @@ export async function GET() {
   let revenueByProduct: any[] = [];
 
   try {
+    const sb = createServerClient();
     // Orders + Revenue
-    const { data: orders } = await sb.from('orders')
-      .select('*')
-      .order('created_at', { ascending: false });
+    const orders = await readReportRows((from, to) => sb.from('orders')
+      .select('*', { count: 'exact' })
+      .order('created_at', { ascending: false }).order('id').range(from, to));
     
     if (orders) {
-      const completed = orders.filter(o => o.status === 'completed');
+      const completed = orders.filter(isPaidOrder);
       totalOrders = completed.length;
       totalRevenue = completed.reduce((s: number, o: any) => s + ((o.total_cents || 0) / 100), 0);
       recentOrders = orders.slice(0, 10);
@@ -37,7 +41,7 @@ export async function GET() {
       }
 
       completed.forEach((order: any) => {
-        const date = new Date(order.created_at).toISOString().split('T')[0];
+        const date = new Date(order.paid_at || order.created_at).toISOString().split('T')[0];
         if (last30Days.hasOwnProperty(date)) {
           last30Days[date] += (order.total_cents || 0) / 100;
         }
@@ -50,12 +54,19 @@ export async function GET() {
       }));
 
       // Revenue by product
-      const { data: orderItems } = await sb.from('order_items')
-        .select('product_id, price_cents, quantity');
-      
+      const orderItems = await readReportRows((from, to) => sb.from('order_items')
+        .select('order_id, product_id, price_cents, quantity', { count: 'exact' })
+        .order('id').range(from, to));
+
       if (orderItems) {
+        // Items are scoped to the same `completed` orders behind the headline
+        // totals. Aggregating every item counted cancelled/refunded carts, so
+        // this panel could report revenue the headline said did not exist —
+        // two figures on one screen disagreeing about money.
+        const completedOrderIds = new Set(completed.map((o: any) => o.id));
         const productRevenue: any = {};
         orderItems.forEach((item: any) => {
+          if (!completedOrderIds.has(item.order_id)) return;
           if (!productRevenue[item.product_id]) {
             productRevenue[item.product_id] = 0;
           }
@@ -77,33 +88,39 @@ export async function GET() {
     }
 
     // Customers
-    const { count: custCount } = await sb.from('customers')
+    const { count: custCount, error: custCountError } = await sb.from('customers')
       .select('*', { count: 'exact', head: true });
+    if (custCountError) throw custCountError;
     totalCustomers = custCount || 0;
 
     // Subscribers
-    const { count: subCount } = await sb.from('newsletter_subscribers')
+    const { count: subCount, error: subCountError } = await sb.from('newsletter_subscribers')
       .select('*', { count: 'exact', head: true })
       .eq('is_active', true);
+    if (subCountError) throw subCountError;
     totalSubscribers = subCount || 0;
 
     // New messages
-    const { count: msgCount } = await sb.from('contact_submissions')
+    const { count: msgCount, error: msgCountError } = await sb.from('contact_submissions')
       .select('*', { count: 'exact', head: true })
       .eq('status', 'new');
+    if (msgCountError) throw msgCountError;
     newMessages = msgCount || 0;
 
     // Active coupons
-    const { count: couponCount } = await sb.from('gwds_coupons')
+    const { count: couponCount, error: couponCountError } = await sb.from('gwds_coupons')
       .select('*', { count: 'exact', head: true })
       .eq('is_active', true);
+    if (couponCountError) throw couponCountError;
     activeCoupons = couponCount || 0;
 
   } catch (e: any) {
-    console.error('Stats error:', e.message);
+    console.error('Stats query failed:', e instanceof Error ? e.message : 'Database query failed');
+    return NextResponse.json({ error: 'Operations data is unavailable. Retry shortly.' }, { status: 503, headers: { 'Cache-Control': 'no-store' } });
   }
 
   return NextResponse.json({
+    updatedAt: new Date().toISOString(),
     totalRevenue: totalRevenue.toFixed(2),
     totalOrders,
     totalProducts: products.length,
@@ -114,5 +131,5 @@ export async function GET() {
     recentOrders,
     revenueByDay,
     revenueByProduct,
-  });
+  }, { headers: { 'Cache-Control': 'no-store' } });
 }

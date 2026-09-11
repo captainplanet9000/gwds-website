@@ -1,305 +1,292 @@
 import { NextRequest, NextResponse } from 'next/server';
+import type Stripe from 'stripe';
 import { getProduct } from '@/lib/products';
-import { validateCoupon, incrementCouponUsage } from '@/lib/store-db';
+import { createServerClient } from '@/lib/supabase';
+import { getStripe } from '@/lib/stripe';
+import {
+  COMMERCE_VERSIONS,
+  CORE_BUNDLE_IDS,
+  CORE_PRODUCT_ID,
+  CommerceError,
+  commerceErrorMessage,
+  errorResponseBody,
+  getSiteUrl,
+  normalizeCoupon,
+  normalizeName,
+  requireVerifiedUser,
+  type CatalogProductRow,
+} from '@/lib/commerce';
 
-// Stripe import — works if STRIPE_SECRET_KEY is set
-let stripe: any = null;
-async function getStripe() {
-  if (stripe) return stripe;
-  const Stripe = (await import('stripe')).default;
-  const key = process.env.STRIPE_SECRET_KEY;
-  if (!key) return null;
-  stripe = new Stripe(key);
-  return stripe;
+export const runtime = 'nodejs';
+
+interface CheckoutItemInput {
+  productId: string;
+  quantity: number;
 }
 
-export async function POST(req: NextRequest) {
-  try {
-    const { items, email, name, couponCode } = await req.json();
+interface CheckoutBody {
+  items?: unknown;
+  name?: unknown;
+  couponCode?: unknown;
+  acceptedTerms?: unknown;
+  acceptedPluginRequirement?: unknown;
+  marketingConsent?: unknown;
+}
 
-    if (!items?.length || !email) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+interface CheckoutRpcResult {
+  order_id: string;
+  subtotal_cents: number;
+  discount_cents: number;
+  total_cents: number;
+  coupon_code: string | null;
+}
+
+function parseItems(value: unknown): CheckoutItemInput[] {
+  if (!Array.isArray(value) || value.length < 1 || value.length > 12) {
+    throw new CommerceError('INVALID_CART', 'Your cart must contain between 1 and 12 products.');
+  }
+
+  const items = value.map((entry) => {
+    if (!entry || typeof entry !== 'object') {
+      throw new CommerceError('INVALID_CART', 'Your cart contains an invalid item.');
     }
-
-    // Resolve products
-    const orderItems = items.map((item: { productId: string; quantity: number }) => {
-      const product = getProduct(item.productId);
-      return {
-        productId: item.productId,
-        productName: product?.name || item.productId,
-        quantity: item.quantity || 1,
-        price: product?.price || 0,
-        emoji: product?.emoji || '',
-        stripePriceId: product?.stripePriceId || null,
-      };
-    });
-
-    const subtotal = orderItems.reduce(
-      (sum: number, i: { price: number; quantity: number }) => sum + i.price * i.quantity,
-      0
-    );
-
-    // Validate coupon if provided
-    let discount = 0;
-    let validatedCoupon: string | undefined;
-    if (couponCode) {
-      const couponResult = await validateCoupon(couponCode, subtotal);
-      if (!couponResult.valid) {
-        return NextResponse.json({ error: couponResult.error || 'Invalid coupon' }, { status: 400 });
-      }
-      discount = couponResult.discount || 0;
-      validatedCoupon = couponResult.coupon?.code;
+    const productId = 'productId' in entry ? entry.productId : null;
+    const quantity = 'quantity' in entry ? entry.quantity : null;
+    if (typeof productId !== 'string' || !/^[a-z0-9-]{2,80}$/.test(productId) || quantity !== 1) {
+      throw new CommerceError('INVALID_CART', 'Products may only be purchased once per order.');
     }
+    return { productId, quantity: 1 };
+  });
 
-    const total = Math.max(0, Math.round((subtotal - discount) * 100) / 100);
-    const orderId = `GWDS-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+  if (new Set(items.map((item) => item.productId)).size !== items.length) {
+    throw new CommerceError('DUPLICATE_PRODUCT', 'Duplicate products are not allowed.');
+  }
+  return items;
+}
 
-    // If total is $0 (100% coupon or free items), complete order immediately
-    if (total === 0) {
-      await saveOrder({
-        orderId,
-        email,
-        name,
-        items: orderItems,
-        total: 0,
-        subtotal,
-        discount,
-        couponCode: validatedCoupon,
-        status: 'completed',
-        createdAt: new Date().toISOString(),
-      });
+async function requireCatalog(items: CheckoutItemInput[]): Promise<CatalogProductRow[]> {
+  const supabase = createServerClient();
+  const ids = items.map((item) => item.productId);
+  const { data, error } = await supabase
+    .from('products')
+    .select('id,name,price_cents,stripe_price_id,version,artifact_path,artifact_sha256,artifact_size_bytes,artifact_ready,is_active')
+    .in('id', ids);
 
-      // Increment coupon usage
-      if (validatedCoupon) await incrementCouponUsage(validatedCoupon);
+  if (error) throw new CommerceError('CATALOG_UNAVAILABLE', 'The product catalog is temporarily unavailable.', 503);
+  const rows = (data || []) as CatalogProductRow[];
+  if (rows.length !== ids.length) {
+    throw new CommerceError('PRODUCT_UNAVAILABLE', 'One or more products are not currently available.', 409);
+  }
 
-      // Create download tokens for free orders
-      try {
-        const { createServerClient } = await import('@/lib/supabase');
-        const sb = createServerClient();
-        
-        // Find the order we just created
-        const { data: order } = await sb.from('orders')
-          .select('id')
-          .eq('customer_email', email)
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .single();
-
-        if (order) {
-          const productIds = orderItems.map((i: any) => i.productId);
-          for (const productId of productIds) {
-            await sb.from('downloads').insert({
-              order_id: order.id,
-              product_id: productId,
-              download_token: crypto.randomUUID(),
-              max_downloads: 999999,
-              downloaded_count: 0,
-              expires_at: null,
-            });
-          }
-
-          // Send confirmation email
-          try {
-            const { sendOrderConfirmation } = await import('@/lib/email');
-            const { data: downloads } = await sb.from('downloads').select('*').eq('order_id', order.id);
-            const downloadLinks = (downloads || []).map((dl: any) => ({
-              productId: dl.product_id,
-              productName: orderItems.find((i: any) => i.productId === dl.product_id)?.productName || dl.product_id,
-              downloadUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/api/downloads/${order.id}/${dl.product_id}?token=${dl.download_token}`,
-            }));
-            await sendOrderConfirmation(email, { ...order, customer_name: name || null, total_cents: 0, created_at: new Date().toISOString() }, downloadLinks);
-          } catch (emailErr) {
-            console.error('Failed to send free order email:', emailErr);
-          }
-        }
-      } catch (e) {
-        console.error('Free order download token error:', e);
-      }
-
-      // Telegram notification for free order
-      try {
-        const botToken = process.env.TELEGRAM_BOT_TOKEN;
-        const chatId = process.env.TELEGRAM_CHAT_ID;
-        if (botToken && chatId) {
-          const products = orderItems.map((i: any) => i.productName).join(', ');
-          await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              chat_id: chatId,
-              text: `🎁 <b>FREE ORDER</b> (coupon: ${validatedCoupon})\n\n📧 ${email}\n📦 ${products}`,
-              parse_mode: 'HTML',
-            }),
-          });
-        }
-      } catch { /* best effort */ }
-
-      // Update customer record
-      try {
-        const { createServerClient: sc } = await import('@/lib/supabase');
-        const sbc = sc();
-        const { data: cust } = await sbc.from('customers').select('*').eq('email', email.toLowerCase()).single();
-        if (cust) {
-          await sbc.from('customers').update({
-            order_count: (cust.order_count || 0) + 1,
-            last_order_at: new Date().toISOString(),
-          }).eq('email', email.toLowerCase());
-        } else {
-          await sbc.from('customers').insert({
-            email: email.toLowerCase(), name: name || '', total_spent: 0,
-            order_count: 1, first_order_at: new Date().toISOString(), last_order_at: new Date().toISOString(),
-          });
-        }
-        // Auto-subscribe to newsletter
-        await sbc.from('newsletter_subscribers').upsert(
-          { email: email.toLowerCase(), source: 'purchase', is_active: true },
-          { onConflict: 'email' }
-        );
-      } catch { /* best effort */ }
-
-      return NextResponse.json({ orderId, total: 0, free: true });
+  for (const row of rows) {
+    const local = getProduct(row.id);
+    const configured = local && !local.legacy && local.stripePriceId === row.stripe_price_id
+      && Math.round(local.price * 100) === row.price_cents;
+    if (!configured || !row.is_active) {
+      throw new CommerceError('CATALOG_MISMATCH', 'A product is being updated. Please try again later.', 503);
     }
-
-    // Try Stripe Checkout for paid orders
-    const stripeClient = await getStripe();
-    if (stripeClient) {
-      // When coupon applies partial discount, use price_data with adjusted prices
-      const discountRatio = discount > 0 ? (subtotal - discount) / subtotal : 1;
-
-      const lineItems = orderItems
-        .filter((i: any) => i.price > 0)
-        .map((i: any) => {
-          const adjustedPrice = Math.round(i.price * discountRatio * 100);
-          // If coupon applied, use price_data with adjusted amount (can't mix with pre-created prices)
-          if (discount > 0) {
-            return {
-              price_data: {
-                currency: 'usd',
-                product_data: {
-                  name: `${i.emoji} ${i.productName}`,
-                  description: validatedCoupon ? `Coupon ${validatedCoupon} applied` : 'Cival Systems Digital Product',
-                },
-                unit_amount: adjustedPrice,
-              },
-              quantity: i.quantity,
-            };
-          }
-          // No discount — use Stripe price ID if available
-          if (i.stripePriceId) {
-            return { price: i.stripePriceId, quantity: i.quantity };
-          }
-          return {
-            price_data: {
-              currency: 'usd',
-              product_data: {
-                name: `${i.emoji} ${i.productName}`,
-                description: `Cival Systems Digital Product`,
-              },
-              unit_amount: Math.round(i.price * 100),
-            },
-            quantity: i.quantity,
-          };
-        });
-
-      const session = await stripeClient.checkout.sessions.create({
-        mode: 'payment',
-        line_items: lineItems,
-        customer_email: email,
-        metadata: {
-          orderId,
-          customerName: name || '',
-          items: JSON.stringify(items),
-          product_ids: items.map((i: any) => i.productId).join(','),
-          couponCode: validatedCoupon || '',
-          discount: discount.toString(),
-          subtotal: subtotal.toString(),
-        },
-        success_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3457'}/checkout/success?orderId=${orderId}&session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3457'}/checkout`,
-      });
-
-      // Save order as pending
-      await saveOrder({
-        orderId,
-        email,
-        name,
-        items: orderItems,
-        total,
-        subtotal,
-        discount,
-        couponCode: validatedCoupon,
-        status: 'pending',
-        stripeSessionId: session.id,
-        createdAt: new Date().toISOString(),
-      });
-
-      return NextResponse.json({ stripeUrl: session.url, orderId });
+    if (!row.artifact_ready || !row.artifact_path || !row.artifact_sha256 || !row.artifact_size_bytes) {
+      throw new CommerceError(
+        'RELEASE_NOT_READY',
+        `${row.name} is not on sale while its release archive is being verified. No payment was taken.`,
+        503,
+      );
     }
+  }
+  const storageChecks = await Promise.all(rows.map((row) =>
+    supabase.storage.from('downloads').createSignedUrl(row.artifact_path!, 30),
+  ));
+  if (storageChecks.some((result) => result.error || !result.data?.signedUrl)) {
+    throw new CommerceError('DOWNLOAD_SERVICE_UNAVAILABLE', 'Downloads are temporarily unavailable, so checkout is paused. No payment was taken.', 503);
+  }
+  return rows.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
+}
 
-    // No Stripe and not free
-    await saveOrder({
-      orderId,
-      email,
-      name,
-      items: orderItems,
-      total,
-      subtotal,
-      discount,
-      couponCode: validatedCoupon,
-      status: 'pending_payment',
-      createdAt: new Date().toISOString(),
-    });
+async function requireCoreDependency(userId: string, items: CheckoutItemInput[]) {
+  const localProducts = items.map((item) => getProduct(item.productId));
+  const needsCore = localProducts.some((product) => product?.requiresDashboard);
+  if (!needsCore) return;
 
-    return NextResponse.json({ orderId, total });
-  } catch (error: any) {
-    console.error('Checkout error:', error);
-    return NextResponse.json({ error: error.message || 'Checkout failed' }, { status: 500 });
+  const cartIds = new Set(items.map((item) => item.productId));
+  if (cartIds.has(CORE_PRODUCT_ID) || CORE_BUNDLE_IDS.some((id) => cartIds.has(id))) return;
+
+  const supabase = createServerClient();
+  const { data, error } = await supabase
+    .from('entitlements')
+    .select('id')
+    .eq('user_id', userId)
+    .eq('status', 'active')
+    .in('product_id', [CORE_PRODUCT_ID, ...CORE_BUNDLE_IDS])
+    .limit(1);
+
+  if (error) throw new CommerceError('ENTITLEMENT_CHECK_FAILED', 'We could not verify your Core Edition access.', 503);
+  if (!data?.length) {
+    throw new CommerceError('CORE_REQUIRED', 'This add-on requires Core Edition. Add Core Edition to your cart first.', 409);
   }
 }
 
-async function saveOrder(order: any) {
-  // Save to Supabase
-  try {
-    const { createServerClient } = await import('@/lib/supabase');
-    const sb = createServerClient();
+async function verifyStripePrices(rows: CatalogProductRow[]) {
+  const stripe = getStripe();
+  const prices = await Promise.all(rows.map((row) => stripe.prices.retrieve(row.stripe_price_id!)));
+  prices.forEach((price, index) => {
+    const row = rows[index];
+    if (!price.active || price.livemode !== (process.env.STRIPE_SECRET_KEY?.startsWith('sk_live_') ?? false)
+      || price.currency !== 'usd' || price.type !== 'one_time' || price.unit_amount !== row.price_cents) {
+      throw new CommerceError('STRIPE_PRICE_MISMATCH', `${row.name} is not configured for checkout.`, 503);
+    }
+  });
+}
 
-    // Insert order into our schema
-    const insertData: any = {
-      stripe_session_id: order.stripeSessionId || `local-${order.orderId}`,
-      customer_email: order.email,
-      customer_name: order.name,
-      total_cents: Math.round(order.total * 100),
-      status: order.status,
+function lineItems(rows: CatalogProductRow[], order: CheckoutRpcResult): Stripe.Checkout.SessionCreateParams.LineItem[] {
+  if (order.discount_cents === 0) {
+    return rows.map((row) => ({ price: row.stripe_price_id!, quantity: 1 }));
+  }
+  const names = rows.map((row) => row.name).join(', ').slice(0, 490);
+  return [{
+    price_data: {
+      currency: 'usd',
+      unit_amount: order.total_cents,
+      product_data: {
+        name: `Cival Systems order (${rows.length} ${rows.length === 1 ? 'product' : 'products'})`,
+        description: `${names}${order.coupon_code ? ` — ${order.coupon_code} applied` : ''}`,
+      },
+    },
+    quantity: 1,
+  }];
+}
+
+export async function POST(req: NextRequest) {
+  let createdOrderId: string | null = null;
+  let createdSessionId: string | null = null;
+
+  try {
+    if (process.env.NEXT_PUBLIC_STORE_SALES_ENABLED !== 'true') {
+      throw new CommerceError('STORE_PAUSED', 'Checkout is paused while releases are being verified. No payment was taken.', 503);
+    }
+
+    const contentLength = Number(req.headers.get('content-length') || '0');
+    if (contentLength > 16_384) throw new CommerceError('REQUEST_TOO_LARGE', 'Checkout request is too large.', 413);
+
+    const user = await requireVerifiedUser(req);
+    const body = await req.json() as CheckoutBody;
+    if (body.acceptedTerms !== true) {
+      throw new CommerceError('LEGAL_ACCEPTANCE_REQUIRED', 'Accept the Terms, Refund Policy, and Trading Disclaimer to continue.');
+    }
+
+    const items = parseItems(body.items);
+    const name = normalizeName(body.name);
+    const couponCode = normalizeCoupon(body.couponCode);
+    const marketingConsent = body.marketingConsent === true;
+    const hasPlugin = items.some((item) => getProduct(item.productId)?.requiresDashboard);
+    if (hasPlugin && body.acceptedPluginRequirement !== true) {
+      throw new CommerceError('PLUGIN_ACKNOWLEDGEMENT_REQUIRED', 'Acknowledge the Core Edition requirement to continue.');
+    }
+
+    const rows = await requireCatalog(items);
+    await requireCoreDependency(user.id, items);
+    await verifyStripePrices(rows);
+
+    const supabase = createServerClient();
+    const { data: checkoutData, error: checkoutError } = await supabase.rpc('create_store_checkout', {
+      p_user_id: user.id,
+      p_customer_email: user.email!,
+      p_customer_name: name,
+      p_coupon_code: couponCode,
+      p_terms_version: COMMERCE_VERSIONS.terms,
+      p_refund_policy_version: COMMERCE_VERSIONS.refunds,
+      p_disclaimer_version: COMMERCE_VERSIONS.disclaimer,
+      p_marketing_consent: marketingConsent,
+      p_items: items.map((item) => ({ product_id: item.productId, quantity: 1 })),
+    });
+
+    if (checkoutError) throw commerceErrorMessage(checkoutError.message);
+    const order = (checkoutData?.[0] || null) as CheckoutRpcResult | null;
+    if (!order?.order_id || order.total_cents < 50) {
+      throw new CommerceError('ORDER_CREATION_FAILED', 'Checkout could not be prepared. No payment was taken.', 503);
+    }
+    createdOrderId = order.order_id;
+
+    const { data: customer } = await supabase
+      .from('customers')
+      .select('stripe_customer_id')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    const siteUrl = getSiteUrl();
+    const stripe = getStripe();
+    const customerId = typeof customer?.stripe_customer_id === 'string' ? customer.stripe_customer_id : null;
+    const sessionParams: Stripe.Checkout.SessionCreateParams = {
+      mode: 'payment',
+      line_items: lineItems(rows, order),
+      client_reference_id: order.order_id,
+      ...(customerId ? { customer: customerId } : { customer_email: user.email!, customer_creation: 'always' as const }),
+      metadata: {
+        order_id: order.order_id,
+        user_id: user.id,
+        product_ids: rows.map((row) => row.id).join(','),
+        legal_version: COMMERCE_VERSIONS.terms,
+      },
+      payment_intent_data: {
+        metadata: { order_id: order.order_id, user_id: user.id },
+      },
+      automatic_tax: { enabled: process.env.STRIPE_AUTOMATIC_TAX === 'true' },
+      billing_address_collection: 'auto',
+      phone_number_collection: { enabled: false },
+      allow_promotion_codes: false,
+      submit_type: 'pay',
+      custom_text: {
+        submit: { message: 'Software source code only. Trading involves substantial risk; no returns are guaranteed.' },
+      },
+      success_url: `${siteUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${siteUrl}/checkout?canceled=1`,
+      expires_at: Math.floor(Date.now() / 1000) + (30 * 60),
     };
 
-    // Add coupon tracking if present
-    if (order.couponCode) insertData.coupon_code = order.couponCode;
-    if (order.discount) insertData.discount_cents = Math.round(order.discount * 100);
-    if (order.subtotal) insertData.subtotal_cents = Math.round(order.subtotal * 100);
+    const session = await stripe.checkout.sessions.create(sessionParams, {
+      idempotencyKey: `cival-checkout-${order.order_id}`,
+    });
+    createdSessionId = session.id;
+    if (!session.url) throw new Error('Stripe did not return a checkout URL');
 
-    const { data: orderRow, error } = await sb.from('orders').insert(insertData).select().single();
+    const { error: bindError } = await supabase
+      .from('orders')
+      .update({ stripe_session_id: session.id, updated_at: new Date().toISOString() })
+      .eq('id', order.order_id)
+      .eq('stripe_session_id', `pending:${order.order_id}`);
 
-    if (error) {
-      console.error('Supabase order insert error:', error.message);
-      return; // Don't crash checkout — Stripe session already created
+    if (bindError) {
+      await stripe.checkout.sessions.expire(session.id).catch(() => undefined);
+      throw new CommerceError('ORDER_BIND_FAILED', 'Checkout could not be finalized. No payment was taken.', 503);
     }
 
-    // Insert order items
-    if (orderRow && order.items?.length) {
-      const items = order.items.map((item: any) => ({
-        order_id: orderRow.id,
-        product_id: item.productId,
-        quantity: item.quantity || 1,
-        price_cents: Math.round((item.price || 0) * 100),
-      }));
+    return NextResponse.json({ stripeUrl: session.url, orderId: order.order_id });
+  } catch (error) {
+    const code = error instanceof CommerceError ? error.code : 'UNEXPECTED';
+    const context = {
+      code,
+      orderId: createdOrderId,
+      sessionId: createdSessionId,
+    };
+    if (error instanceof CommerceError) console.info('Checkout rejected', context);
+    else console.error('Checkout failed', context);
+
+    if (createdOrderId) {
+      const supabase = createServerClient();
       try {
-        await sb.from('order_items').insert(items);
-      } catch (e: any) {
-        console.error('Order items insert error:', e.message);
+        // Marks the order checkout_failed and, atomically in the same locked
+        // transaction, releases any coupon-use reservation create_store_checkout
+        // took for it — otherwise a failed checkout would permanently consume
+        // one of the coupon's max_uses even though no payment ever happened.
+        await supabase.rpc('release_store_checkout_coupon', {
+          p_order_id: createdOrderId,
+          p_reason: error instanceof CommerceError ? error.code : 'UNEXPECTED',
+        });
+      } catch {
+        // The original failure is more useful than a cleanup failure.
       }
     }
-  } catch (e: any) {
-    console.error('Save order error:', e.message);
-    // Don't crash — the Stripe session is already created
+
+    const status = error instanceof CommerceError ? error.status : 500;
+    return NextResponse.json(errorResponseBody(error), { status });
   }
 }
