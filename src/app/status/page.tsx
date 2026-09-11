@@ -52,7 +52,7 @@ export default async function StatusPage() {
           <span className="tag tag-accent">Public status</span>
           <h1 style={{ fontSize: 'clamp(38px,6vw,64px)', margin: '18px 0 12px' }}>Cival Systems status</h1>
           <p style={{ color: 'var(--color-neutral-700)', lineHeight: 1.7, maxWidth: 700 }}>
-            Storefront access and managed-workspace availability. Cival never holds customer funds and never accepts exchange credentials, wallet secrets, seed phrases, or private keys: a live plan trades through a trade-only agent wallet the customer approves themselves, which cannot withdraw.
+            Storefront access and managed-workspace availability. Your trading funds stay in your own Hyperliquid account. You approve a trade-only agent wallet; its key and your AI provider credentials are encrypted for runtime use. Never share your main wallet private key or seed phrase.
           </p>
 
           <div data-cv-2col style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 14, margin: '34px 0' }}>
@@ -66,7 +66,7 @@ export default async function StatusPage() {
               <span className="tag tag-neutral">{hostingSalesEnabled ? 'Available' : 'Launch gate closed'}</span>
               <p style={{ color: 'var(--color-neutral-700)', lineHeight: 1.6, marginBottom: 0 }}>
                 {hostingSalesEnabled
-                  ? 'New subscriptions are available. The free Paper plan stays on simulated fills; paid plans run live agents against the exchange account you fund yourself.'
+                  ? 'Paid monthly subscriptions are available. Each plan includes a private persistent dashboard, with agent capacity set by your tier. You supply your own AI keys and trading funds.'
                   : 'No hosting subscriptions are being accepted, and no managed workspace executes live orders, while the launch gate is closed.'}
               </p>
             </section>
