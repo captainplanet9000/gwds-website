@@ -162,18 +162,34 @@ export async function resolveOwnedTenant(
   // wildcard pattern against every other tenant's owner_email instead of compared for
   // equality, letting a customer's own email resolve to a stranger's tenant row and from
   // there mint a dashboard ticket, halt/unhalt trading, or approve funding on it.
-  let query = cp.from('tenants').select('id, slug, status').eq('owner_email', email);
-  if (!opts.includeArchived) query = query.neq('status', 'archived');
-  const { data, error } = await query;
+  const { data, error } = await cp.from('tenants').select('id, slug, status').eq('owner_email', email);
   if (error) throw error;
-  if (!data || data.length === 0) {
-    throw new TenantOwnershipError('NO_TENANT', 'No workspace is provisioned for this account yet.');
-  }
-  if (data.length > 1) {
+  const rows = (data || []) as OwnedTenant[];
+
+  // Archived history is not a live claim on this email: a customer who churned and later
+  // resubscribed has one archived tenant and one live one, and that is not ambiguous -- it is
+  // exactly one workspace to act on, plus history. Ambiguity is scoped to "more than one row in
+  // the SAME bucket" so it still fires for the cases that actually are unresolvable (two live
+  // tenants; or, when the caller wants archived-only visibility, two archived ones and no live).
+  const live = rows.filter((row) => row.status !== 'archived');
+  if (live.length > 1) {
     throw new TenantOwnershipError(
       'AMBIGUOUS_TENANT',
       'Multiple workspaces are linked to this account. Contact support.',
     );
   }
-  return data[0] as OwnedTenant;
+  if (live.length === 1) return live[0];
+
+  if (opts.includeArchived) {
+    const archived = rows.filter((row) => row.status === 'archived');
+    if (archived.length > 1) {
+      throw new TenantOwnershipError(
+        'AMBIGUOUS_TENANT',
+        'Multiple workspaces are linked to this account. Contact support.',
+      );
+    }
+    if (archived.length === 1) return archived[0];
+  }
+
+  throw new TenantOwnershipError('NO_TENANT', 'No workspace is provisioned for this account yet.');
 }
