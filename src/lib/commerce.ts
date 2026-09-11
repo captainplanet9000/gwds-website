@@ -30,6 +30,8 @@ export interface CatalogProductRow {
   name: string;
   price_cents: number;
   stripe_price_id: string | null;
+  stripe_price_id_test: string | null;
+  stripe_price_id_live: string | null;
   version: string | null;
   artifact_path: string | null;
   artifact_sha256: string | null;

@@ -69,7 +69,7 @@ async function requireCatalog(items: CheckoutItemInput[]): Promise<CatalogProduc
   const ids = items.map((item) => item.productId);
   const { data, error } = await supabase
     .from('products')
-    .select('id,name,price_cents,stripe_price_id,version,artifact_path,artifact_sha256,artifact_size_bytes,artifact_ready,is_active')
+    .select('id,name,price_cents,stripe_price_id,stripe_price_id_test,stripe_price_id_live,version,artifact_path,artifact_sha256,artifact_size_bytes,artifact_ready,is_active')
     .in('id', ids);
 
   if (error) throw new CommerceError('CATALOG_UNAVAILABLE', 'The product catalog is temporarily unavailable.', 503);
@@ -80,7 +80,11 @@ async function requireCatalog(items: CheckoutItemInput[]): Promise<CatalogProduc
 
   for (const row of rows) {
     const local = getProduct(row.id);
-    const configured = local && !local.legacy && local.stripePriceId === row.stripe_price_id
+    // The hardcoded catalog in @/lib/products always carries the LIVE-mode price id (that is what
+    // was hand-entered there); this integrity check is "does the DB agree with our source of
+    // truth," which is a livemode-independent question. Which id checkout actually charges against
+    // (stripe_price_id_test vs _live) is a separate concern, decided in verifyStripePrices/lineItems.
+    const configured = local && !local.legacy && local.stripePriceId === row.stripe_price_id_live
       && Math.round(local.price * 100) === row.price_cents;
     if (!configured || !row.is_active) {
       throw new CommerceError('CATALOG_MISMATCH', 'A product is being updated. Please try again later.', 503);
@@ -125,21 +129,38 @@ async function requireCoreDependency(userId: string, items: CheckoutItemInput[])
   }
 }
 
-async function verifyStripePrices(rows: CatalogProductRow[]) {
+// hosting_plans and products both carry stripe_price_id_test/_live rather than one shared column,
+// because this database is shared between pilot (test-mode key) and production (live-mode key) and
+// a Stripe price's mode is fixed at creation -- see 20260911140000/20260911150000. Resolves which
+// id this environment should charge against, and returns it per product id for lineItems() to use.
+async function verifyStripePrices(rows: CatalogProductRow[]): Promise<Map<string, string>> {
   const stripe = getStripe();
-  const prices = await Promise.all(rows.map((row) => stripe.prices.retrieve(row.stripe_price_id!)));
-  prices.forEach((price, index) => {
-    const row = rows[index];
-    if (!price.active || price.livemode !== (process.env.STRIPE_SECRET_KEY?.startsWith('sk_live_') ?? false)
-      || price.currency !== 'usd' || price.type !== 'one_time' || price.unit_amount !== row.price_cents) {
+  const live = process.env.STRIPE_SECRET_KEY?.startsWith('sk_live_') ?? false;
+  const resolved = new Map<string, string>();
+  for (const row of rows) {
+    const priceId = live ? row.stripe_price_id_live : row.stripe_price_id_test;
+    if (!priceId) throw new CommerceError('STRIPE_PRICE_MISMATCH', `${row.name} is not configured for checkout.`, 503);
+    let price;
+    try {
+      price = await stripe.prices.retrieve(priceId);
+    } catch {
+      // A price that doesn't exist at all under this key's mode (e.g. a live-mode id looked up
+      // with a test key) throws here rather than returning a livemode mismatch to check below --
+      // both are the same "not configured for this environment" fact from the customer's side.
       throw new CommerceError('STRIPE_PRICE_MISMATCH', `${row.name} is not configured for checkout.`, 503);
     }
-  });
+    if (!price.active || price.livemode !== live || price.currency !== 'usd' || price.type !== 'one_time'
+      || price.unit_amount !== row.price_cents) {
+      throw new CommerceError('STRIPE_PRICE_MISMATCH', `${row.name} is not configured for checkout.`, 503);
+    }
+    resolved.set(row.id, priceId);
+  }
+  return resolved;
 }
 
-function lineItems(rows: CatalogProductRow[], order: CheckoutRpcResult): Stripe.Checkout.SessionCreateParams.LineItem[] {
+function lineItems(rows: CatalogProductRow[], order: CheckoutRpcResult, priceIds: Map<string, string>): Stripe.Checkout.SessionCreateParams.LineItem[] {
   if (order.discount_cents === 0) {
-    return rows.map((row) => ({ price: row.stripe_price_id!, quantity: 1 }));
+    return rows.map((row) => ({ price: priceIds.get(row.id)!, quantity: 1 }));
   }
   const names = rows.map((row) => row.name).join(', ').slice(0, 490);
   return [{
@@ -184,7 +205,7 @@ export async function POST(req: NextRequest) {
 
     const rows = await requireCatalog(items);
     await requireCoreDependency(user.id, items);
-    await verifyStripePrices(rows);
+    const resolvedPriceIds = await verifyStripePrices(rows);
 
     const supabase = createServerClient();
     const { data: checkoutData, error: checkoutError } = await supabase.rpc('create_store_checkout', {
@@ -216,7 +237,7 @@ export async function POST(req: NextRequest) {
     const stripe = getStripe();
     const sessionParamsFor = (stripeCustomerId: string | null): Stripe.Checkout.SessionCreateParams => ({
       mode: 'payment',
-      line_items: lineItems(rows, order),
+      line_items: lineItems(rows, order, resolvedPriceIds),
       client_reference_id: order.order_id,
       ...(stripeCustomerId ? { customer: stripeCustomerId } : { customer_email: user.email!, customer_creation: 'always' as const }),
       metadata: {
