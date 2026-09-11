@@ -330,14 +330,34 @@ function Community() {
   );
 }
 
+function HostedPlans() {
+  return (
+    <section style={{ maxWidth: 1200, margin: '0 auto', padding: '70px 28px' }}>
+      <div className="card" style={{ padding: '40px 32px', background: 'var(--color-surface)' }}>
+        <span className="tag tag-accent">Managed cloud hosting</span>
+        <h2 style={{ fontSize: 'clamp(30px,3.2vw,44px)', margin: '18px 0 14px' }}>Your dashboard stays running in the cloud.</h2>
+        <p style={{ fontSize: 17, lineHeight: 1.6, maxWidth: '66ch', color: 'var(--color-neutral-800)' }}>
+          Start with Solo at $29/month for one strategy agent. Scale to Desk for up to three agents or Fund for up to ten.
+          Every plan includes one private persistent dashboard, managed updates, cloud saves and backups.
+        </p>
+        <p style={{ lineHeight: 1.6, maxWidth: '66ch', color: 'var(--color-neutral-700)' }}>
+          Bring your own AI provider keys and fund your own Hyperliquid account. AI usage, trading capital and exchange fees are separate.
+          Hosting is paid monthly; there is no free hosting tier.
+        </p>
+        <Link href="/hosted" className="btn btn-primary">View plans and launch availability</Link>
+      </div>
+    </section>
+  );
+}
+
 function FinalCTA() {
   return (
     <section style={{ borderTop: '1px solid var(--color-divider)' }}>
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '130px 28px', textAlign: 'center' }}>
-        <h2 style={{ fontSize: 'clamp(38px,5.2vw,70px)', lineHeight: 1.06, letterSpacing: '-0.018em', margin: '0 auto 26px', maxWidth: '20ch' }}>Your desk, running by tonight.</h2>
+        <h2 style={{ fontSize: 'clamp(38px,5.2vw,70px)', lineHeight: 1.06, letterSpacing: '-0.018em', margin: '0 auto 26px', maxWidth: '20ch' }}>Choose how you run your trading desk.</h2>
         <p style={{ fontSize: 17, color: 'var(--color-neutral-800)', margin: '0 auto 34px', maxWidth: '52ch' }}>
-          Three editions, full TypeScript source, agents that execute on Hyperliquid the moment you hand them a key. The template does
-          the boring part; the edge stays yours.
+          Choose a source edition to operate yourself, or a managed cloud plan for a persistent dashboard.
+          Connect your provider keys, approve your agent wallet and configure risk limits before enabling trading.
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center' }}>
           <Link href="/store" className="btn btn-primary" style={{ height: 54, padding: '0 32px', fontSize: 16 }}>Explore the store</Link>
@@ -353,6 +373,7 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero />
+        <HostedPlans />
         <Marquee />
         <Stats />
         <Premise />
