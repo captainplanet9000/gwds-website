@@ -2,7 +2,6 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { planExecutionMode } from "@/lib/hosting";
-import { MAX_AGENTS_PER_TENANT } from "@/lib/loadout";
 import { createServerClient } from "@/lib/supabase";
 
 // Plan capacity, price and feature copy all come from public.hosting_plans at request time. The
@@ -28,6 +27,7 @@ async function getPlans(): Promise<PlanRow[]> {
       .from("hosting_plans")
       .select("id,name,description,price_cents,billing_interval,agent_limit,features,is_active,sort_order")
       .eq("is_active", true)
+      .gt("price_cents", 0)
       .order("sort_order");
     if (error) return [];
     return (data || []).map((row) => ({
@@ -48,7 +48,7 @@ async function getPlans(): Promise<PlanRow[]> {
 }
 
 function priceLabel(plan: PlanRow) {
-  return plan.priceCents === 0 ? "Free" : `$${Math.round(plan.priceCents / 100).toLocaleString("en-US")}`;
+  return `$${Math.round(plan.priceCents / 100).toLocaleString("en-US")}`;
 }
 
 function intervalLabel(plan: PlanRow) {
@@ -70,11 +70,11 @@ const STEPS = [
   ],
   [
     "Choose how many agents you run",
-    "Plans differ by one thing that matters: how many strategy agents run at once. Start free on simulated fills and move up when you want live execution and more of them.",
+    "Choose a paid monthly plan for one agent or scale to a larger loadout. Every plan includes one persistent private cloud dashboard.",
   ],
   [
-    "Fund your own account",
-    "On a live plan you fund your own Hyperliquid account and personally approve a trade-only agent wallet. Cival never holds your money and never asks for a private key or seed phrase.",
+    "Connect keys and your wallet",
+    "Connect your AI provider keys, fund your own Hyperliquid account and personally approve a trade-only agent wallet. Never share your main wallet private key or seed phrase.",
   ],
   [
     "Build your loadout",
@@ -89,7 +89,7 @@ const INCLUDED = [
   ],
   [
     "Non-custodial by construction",
-    "Your capital stays in your own venue account. The agent wallet you approve can place orders and cannot withdraw, and no private key, seed phrase or withdrawal-capable exchange key is ever requested or stored.",
+    "Your capital stays in your own Hyperliquid account. You approve a trade-only agent wallet; provider credentials and the agent key are encrypted for runtime use. We never request your main wallet private key or seed phrase.",
   ],
   [
     "A halt switch you hold",
@@ -146,7 +146,7 @@ const STATUS = [
   [
     "Hosted control plane",
     "Built",
-    "Tenant ownership, onboarding, provisioning tasks, health, usage, incidents, backups, recovery and teardown state are implemented, with no customer private keys anywhere in the system.",
+    "Private workspaces, onboarding, health checks, backups and recovery are implemented. Provider credentials and generated agent keys are stored encrypted.",
   ],
   [
     "Operations console",
@@ -191,7 +191,6 @@ function Tick() {
 export default async function HostedPage() {
   const salesEnabled = process.env.NEXT_PUBLIC_HOSTING_SALES_ENABLED === "true";
   const plans = await getPlans();
-  const freePlan = plans.find((plan) => plan.executionMode === "simulated") ?? null;
   const livePlans = plans.filter((plan) => plan.executionMode === "live");
   const liveCapacities = livePlans
     .map((plan) => plan.agentLimit)
@@ -199,14 +198,12 @@ export default async function HostedPage() {
 
   const FAQ: [string, string][] = [
     [
-      "Do you ever hold my funds or keys?",
-      "No. You fund your own Hyperliquid account, and you personally approve a trade-only agent wallet that can place orders and cannot withdraw. Cival never asks for a private key, a seed phrase, or an exchange key with withdrawal permission, and never takes custody of your capital.",
+      "How are my funds and keys handled?",
+      "You fund your own Hyperliquid account and approve a trade-only agent wallet. Cival stores the generated agent key and your AI provider credentials encrypted so your cloud runtime can use them. Your main wallet private key and seed phrase stay with you; the agent wallet cannot withdraw your funds.",
     ],
     [
-      "What does the free plan actually give me?",
-      freePlan
-        ? `The whole dashboard, ${agentLabel(freePlan).toLowerCase()}, on simulated fills. It never reaches a live venue — deliberately, because a free account that can move real money is an abuse vector that costs the abuser nothing. It is how you evaluate the product, the strategies and the workflow before any capital is involved, and your setup carries over when you upgrade.`
-        : "The whole dashboard on simulated fills, so you can evaluate the product before any capital is involved.",
+      "What does the monthly subscription include?",
+      "One private persistent cloud dashboard, your plan’s agent capacity, managed updates, cloud saves and backups. There is no free hosting tier. AI provider usage, exchange fees and trading capital are separate; you bring your own keys and fund your own account.",
     ],
     [
       "How many agents can I run?",
@@ -214,8 +211,8 @@ export default async function HostedPage() {
         ? `Your plan decides: ${plans
             .filter((plan) => plan.agentLimit !== null)
             .map((plan) => `${plan.name} ${plan.agentLimit}`)
-            .join(", ")}. ${MAX_AGENTS_PER_TENANT} is the platform maximum for every plan. Two instances of the same strategy count as two agents and each needs its own market — identical copies read the same signal and compete for the same margin.`
-        : `${MAX_AGENTS_PER_TENANT} is the platform maximum for every plan. Two instances of the same strategy count as two agents and each needs its own market.`,
+            .join(", ")}. Two instances of the same strategy count as two agents and each needs its own market — identical copies read the same signal and compete for the same margin.`
+        : "Agent capacity is shown on each plan. Two instances of the same strategy count as two agents and each needs its own market.",
     ],
     [
       "Can I self-host later?",
@@ -286,9 +283,9 @@ export default async function HostedPage() {
               margin: "0 0 14px",
             }}
           >
-            Still evaluating? The free plan is the same dashboard on simulated
-            fills — no card, no venue account, no capital at risk. Your setup
-            carries over when you go live.
+            Start with one agent and expand as your strategy needs grow. Bring
+            your own AI provider keys and trading capital. Your dashboard and
+            saved configuration stay in the cloud when you close your browser.
           </p>
           <p
             style={{
@@ -494,11 +491,10 @@ export default async function HostedPage() {
                 margin: "0 0 34px",
               }}
             >
-              The free plan executes nothing — simulated fills only, which is what
-              makes offering it viable. Paid plans run live agents against your
-              own Hyperliquid account, non-custodially, and include a Cival source
-              licence you keep if you later cancel hosting. {MAX_AGENTS_PER_TENANT}{" "}
-              agents is the hard platform maximum on every plan.
+              Every plan includes one private cloud dashboard, persistent workspace
+              data and managed hosting. Choose your agent capacity below.
+              Connect your keys, approve your agent wallet and set your risk
+              limits before enabling trading.
             </p>
 
             {/* The launch gate is disclosed BEFORE the prices, not below them: /hosted is reachable
@@ -519,11 +515,9 @@ export default async function HostedPage() {
                   background: "var(--color-surface)",
                 }}
               >
-                <strong>These plans are not on sale yet.</strong> The prices
-                below are the configured tiers, not an offer you can accept
-                today — hosted checkout stays closed until tenant runtime, live
-                loadout sync and recovery validation pass. You can prepare an
-                account now; no plan can be bought and no card is charged.
+                <strong>Hosting is being prepared for launch.</strong> You can
+                create an account now. Subscriptions are not yet available,
+                and no payment will be taken.
               </p>
             )}
 
@@ -550,13 +544,13 @@ export default async function HostedPage() {
                 data-cv-2col
                 style={{
                   display: "grid",
-                  gridTemplateColumns: `repeat(${Math.min(plans.length, 4)},minmax(0,1fr))`,
+                  gridTemplateColumns: `repeat(${Math.min(plans.length, 3)},minmax(0,1fr))`,
                   gap: 16,
                   alignItems: "stretch",
                 }}
               >
                 {plans.map((plan) => {
-                  const isFree = plan.executionMode === "simulated";
+                  const isStarter = plan.id === "solo";
                   return (
                     <article
                       key={plan.id}
@@ -566,10 +560,10 @@ export default async function HostedPage() {
                         gap: 12,
                         padding: 28,
                         borderRadius: "calc(var(--radius-lg) * 1.15)",
-                        background: isFree
+                        background: isStarter
                           ? "var(--color-surface)"
                           : "var(--color-bg)",
-                        border: `1px solid ${isFree ? "var(--color-accent)" : "var(--color-divider)"}`,
+                        border: `1px solid ${isStarter ? "var(--color-accent)" : "var(--color-divider)"}`,
                       }}
                     >
                       <div
@@ -581,14 +575,14 @@ export default async function HostedPage() {
                             fontSize: 11,
                             letterSpacing: "0.16em",
                             textTransform: "uppercase",
-                            color: isFree
+                            color: isStarter
                               ? "var(--color-accent)"
                               : "var(--color-neutral-600)",
                           }}
                         >
                           {plan.name}
                         </span>
-                        {isFree && <span className="tag tag-accent">Start here</span>}
+                        {isStarter && <span className="tag tag-accent">Start here</span>}
                       </div>
                       <div
                         style={{ display: "flex", alignItems: "baseline", gap: 6 }}
@@ -625,9 +619,9 @@ export default async function HostedPage() {
                       >
                         <span className="tag tag-neutral">{agentLabel(plan)}</span>
                         <span
-                          className={isFree ? "tag tag-neutral" : "tag tag-accent-2"}
+                          className={isStarter ? "tag tag-neutral" : "tag tag-accent-2"}
                         >
-                          {isFree ? "Simulated" : "Live execution"}
+                          {salesEnabled ? "Cloud hosted" : "Coming soon"}
                         </span>
                       </div>
 
@@ -660,10 +654,10 @@ export default async function HostedPage() {
                       </div>
                       <Link
                         href="/account/hosting"
-                        className={isFree ? "btn btn-primary" : "btn btn-secondary"}
+                        className={isStarter ? "btn btn-primary" : "btn btn-secondary"}
                         style={{ marginTop: "auto", textAlign: "center" }}
                       >
-                        {salesEnabled && !isFree
+                        {salesEnabled
                           ? `Choose ${plan.name}`
                           : "View activation status"}
                       </Link>
@@ -682,10 +676,9 @@ export default async function HostedPage() {
                 maxWidth: "72ch",
               }}
             >
-              These are the configured service tiers, read from the live plan
-              record. The global launch gate prevents checkout until tenant
-              runtime and recovery validation are complete; preparing an account
-              never authorises a charge.
+              Prices are in USD per month, plus applicable tax. AI provider usage,
+              exchange fees and trading capital are not included. There is no
+              free hosting tier. Creating an account does not start a subscription.
             </p>
           </div>
         </section>
