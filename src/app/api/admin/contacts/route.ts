@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase';
+import { adminUnauthorized, requireAdmin } from '@/lib/admin-auth';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  if (!await requireAdmin(req)) return adminUnauthorized();
   try {
     const sb = createServerClient();
     const { data, error } = await sb.from('contact_submissions')
@@ -15,6 +17,7 @@ export async function GET() {
 }
 
 export async function PUT(req: NextRequest) {
+  if (!await requireAdmin(req, ['owner', 'operator', 'support'])) return adminUnauthorized();
   try {
     const { id, status } = await req.json();
     const sb = createServerClient();

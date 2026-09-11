@@ -1,0 +1,42 @@
+{
+  "$description": "Iconography guidelines. gwds.app doesn't ship a custom icon set today — this documents the intended system so a design tool can seed a library.",
+  "style": {
+    "stroke_width": "1.5",
+    "corner_radius": "rounded",
+    "cap": "round",
+    "join": "round",
+    "grid": "24px × 24px",
+    "keyline_padding": "2px",
+    "visual_weight": "consistent across icons — all look like siblings at 16px"
+  },
+  "size_scale": {
+    "xs": "12px",
+    "sm": "16px",
+    "md": "20px",
+    "lg": "24px",
+    "xl": "32px"
+  },
+  "color_usage": {
+    "default":  "{color.text.secondary}",
+    "strong":   "{color.text.primary}",
+    "muted":    "{color.text.muted}",
+    "accent":   "{color.brand.accent}",
+    "on_accent":"{color.text.inverse}"
+  },
+  "recommended_sources": [
+    { "name": "Lucide",      "url": "https://lucide.dev",           "notes": "Preferred — matches the stroke-based style exactly." },
+    { "name": "Tabler Icons","url": "https://tabler-icons.io",      "notes": "Drop-in alternative with a larger set." }
+  ],
+  "custom_icons": {
+    "GWDS_wave_mark": {
+      "component": "src/components/Logo.tsx",
+      "description": "Stylized gamma-wave mark — treat as the only icon that breaks the grid rules.",
+      "minimum_size": "20px",
+      "color": "accent or text.primary only"
+    }
+  },
+  "do_and_dont": {
+    "do":    ["Use the 24-px grid even at larger sizes.", "Pair icons with labels whenever meaning is non-obvious.", "Color with a single token; don't multicolor."],
+    "dont":  ["Mix two icon libraries in one surface.", "Hang icons outside their padding box.", "Animate them unless there's a clear affordance reason."]
+  }
+}

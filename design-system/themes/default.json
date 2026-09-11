@@ -1,0 +1,21 @@
+{
+  "name": "default",
+  "description": "Canonical GWDS theme - Raw Materials premium aesthetic. High contrast, editorial typography, deep black surfaces, electric-purple accent.",
+  "tokens": {
+    "gwds-color-brand-accent":        "oklch(0.65 0.29 295)",
+    "gwds-color-brand-accent-warm":   "#D4A574",
+    "gwds-color-surface-background":  "#000000",
+    "gwds-color-surface-near-black":  "#050505",
+    "gwds-color-surface-card":        "#12121A",
+    "gwds-color-surface-muted":       "#1A1A2E",
+    "gwds-color-border-default":      "rgba(232, 232, 232, 0.1)",
+    "gwds-color-border-hover":        "rgba(232, 232, 232, 0.3)",
+    "gwds-color-text-primary":        "#E8E8E8",
+    "gwds-color-text-secondary":      "#A8A8A8",
+    "gwds-color-text-muted":          "#666666",
+    "gwds-color-text-inverse":        "#000000",
+    "gwds-font-family-display":       "Syne, 'Space Grotesk', sans-serif",
+    "gwds-font-family-body":          "'DM Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+    "gwds-radius-md":                 "0.5rem"
+  }
+}

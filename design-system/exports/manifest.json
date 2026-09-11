@@ -1,0 +1,41 @@
+{
+  "$schema": "https://gwds.app/design-system/manifest.schema.json",
+  "name": "gwds-design-system",
+  "version": "1.0.0",
+  "display_name": "GWDS — Gamma Waves Design Studio",
+  "description": "Complete design system export bundle for gwds.app. Every file in this folder is import-ready for a downstream design tool. Start with tokens.w3c.json; everything else is a derived view for tools that prefer a different shape.",
+  "updated": "2026-04-22",
+  "source_of_truth": "../tokens.json",
+  "files": {
+    "tokens_w3c":          { "path": "tokens.w3c.json",        "shape": "W3C Design Tokens Community Group draft", "best_for": ["Figma Tokens Studio", "Style Dictionary", "Penpot", "Supernova", "any DTCG-aware importer"] },
+    "tokens_flat":         { "path": "tokens.flat.json",       "shape": "flat key-value object",                   "best_for": ["custom importers", "quick scripts", "AI-assisted code generators"] },
+    "tokens_figma":        { "path": "tokens.figma.json",      "shape": "Figma Tokens Studio (multi-set)",         "best_for": ["Figma + Tokens Studio plugin"] },
+    "tokens_scss":         { "path": "tokens.scss",            "shape": "SCSS variables",                          "best_for": ["legacy SCSS codebases"] },
+    "tokens_tailwind":     { "path": "tailwind.theme.ts",      "shape": "Tailwind theme extension",                "best_for": ["Tailwind v3/v4 projects"] },
+    "tokens_css_vars":     { "path": "../tokens.css",          "shape": "CSS custom properties",                   "best_for": ["drop-in for any framework"] },
+    "themes":              { "path": "themes.bundle.json",     "shape": "array of Theme objects (name, description, tokens)", "best_for": ["runtime theme switcher"] },
+    "brand":               { "path": "brand.manifest.json",    "shape": "brand assets index",                      "best_for": ["logo / favicon / font licensing"] },
+    "components":          { "path": "components.specs.json",  "shape": "component specs",                         "best_for": ["Figma auto-layout, Storybook, AI codegen"] },
+    "typography":          { "path": "typography.specimen.json","shape": "typography specimen",                    "best_for": ["type specimen tools, Google Fonts pickers"] },
+    "iconography":         { "path": "iconography.json",       "shape": "icon set metadata",                       "best_for": ["icon library importers"] }
+  },
+  "consumers": {
+    "claude_design": {
+      "how": "Upload this whole `design-system/exports/` folder as a ZIP. The importer reads manifest.json and maps each file to its internal concept.",
+      "minimum_files": ["tokens.w3c.json", "themes.bundle.json", "brand.manifest.json"]
+    },
+    "figma_tokens_studio": {
+      "how": "In Tokens Studio → 'Load from JSON' → tokens.figma.json"
+    },
+    "style_dictionary": {
+      "how": "Use tokens.w3c.json with @tokens-studio/sd-transforms preset"
+    },
+    "tailwind": {
+      "how": "Import tailwind.theme.ts and spread into theme.extend in tailwind config"
+    }
+  },
+  "fonts": {
+    "Syne":     { "license": "OFL", "source": "https://fonts.google.com/specimen/Syne",    "weights": [400, 500, 600, 700, 800] },
+    "DM Sans":  { "license": "OFL", "source": "https://fonts.google.com/specimen/DM+Sans", "weights": [300, 400, 500, 600, 700] }
+  }
+}

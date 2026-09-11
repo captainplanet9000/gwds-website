@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState, useMemo } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
 
 interface ImageDistortionProps {
@@ -102,7 +102,7 @@ function DisplacementPlane({ imageUrl, intensity = 0.4 }: { imageUrl: string; in
     material.uniforms.uIntensity.value = intensity;
   });
 
-  const handlePointerMove = (e: THREE.Event) => {
+  const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
     if (!meshRef.current) return;
     const mesh = meshRef.current;
     

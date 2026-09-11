@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 
+/* Retained in source history only; do not use the legacy promotional drafts.
 const EMAIL_TEMPLATES = {
   'product-launch': {
     subject: '🚀 New Product Launch - Check It Out!',
@@ -31,7 +32,7 @@ const EMAIL_TEMPLATES = {
   'newsletter': {
     subject: '📬 Your Monthly Newsletter',
     content: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #000; color: #E8E8E8; padding: 40px 20px;">
-  <h1 style="color: #8B5CF6; font-size: 28px; margin-bottom: 24px;">What's New at GWDS 📬</h1>
+  <h1 style="color: #4ade9f; font-size: 28px; margin-bottom: 24px;">What's New at Cival Systems 📬</h1>
   
   <div style="background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
     <h3 style="color: #EC4899; font-size: 18px; margin-bottom: 8px;">✨ This Month's Highlights</h3>
@@ -49,13 +50,13 @@ const EMAIL_TEMPLATES = {
   
   <a href="https://gwds-website.vercel.app/store" style="display: inline-block; padding: 16px 32px; background: linear-gradient(135deg, #8B5CF6, #EC4899); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px;">Browse Store →</a>
   
-  <p style="font-size: 14px; color: #666; margin-top: 40px; padding-top: 20px; border-top: 1px solid #1a1a1a;">Stay awesome,<br/>The GWDS Team</p>
+  <p style="font-size: 14px; color: #666; margin-top: 40px; padding-top: 20px; border-top: 1px solid #1a1a1a;">Stay sharp,<br/>The Cival Systems Team</p>
 </div>`
   },
   'update': {
-    subject: '📣 Important Update from GWDS',
+    subject: '📣 Important Update from Cival Systems',
     content: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #000; color: #E8E8E8; padding: 40px 20px;">
-  <h1 style="color: #3B82F6; font-size: 28px; margin-bottom: 16px;">Update from GWDS 📣</h1>
+  <h1 style="color: #4ade9f; font-size: 28px; margin-bottom: 16px;">Update from Cival Systems 📣</h1>
   <p style="font-size: 16px; line-height: 1.6; margin-bottom: 24px;">We wanted to share some important information with you...</p>
   
   <div style="background: #0a0a0a; border-left: 4px solid #8B5CF6; padding: 20px; margin-bottom: 24px;">
@@ -71,10 +72,28 @@ const EMAIL_TEMPLATES = {
 </div>`
   }
 };
+*/
+
+const EMAIL_TEMPLATES = {
+  'product-launch': {
+    subject: 'Cival Core 2.0 is available',
+    content: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#020806;color:#e8fff5;padding:36px 24px"><h1 style="color:#4ade9f;font-size:30px">Cival Core 2.0</h1><p style="font-size:17px;line-height:1.65;color:#b5d6c8">A clean, documented paper-trading dashboard template with simulated orders, agent workspaces, and a production build you can inspect before purchase.</p><p style="font-size:14px;line-height:1.6;color:#91b5a5">Software source code only. No live execution, financial advice, signals, or promised returns.</p><a href="https://www.civalsystems.com/store/trading-dashboard-template" style="display:inline-block;padding:14px 22px;background:#4ade9f;color:#03110b;text-decoration:none;border-radius:999px;font-weight:800">View Cival Core 2.0</a></div>`,
+  },
+  'availability': {
+    subject: 'Cival Systems availability update',
+    content: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#020806;color:#e8fff5;padding:36px 24px"><h1 style="color:#4ade9f;font-size:30px">Availability update</h1><p style="font-size:17px;line-height:1.65;color:#b5d6c8">Add the exact product or service availability change, effective date, affected customers, and any action required here.</p><a href="https://www.civalsystems.com/contact" style="display:inline-block;padding:14px 22px;background:#4ade9f;color:#03110b;text-decoration:none;border-radius:999px;font-weight:800">Contact support</a></div>`,
+  },
+  'newsletter': {
+    subject: 'Cival Systems product notes',
+    content: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#020806;color:#e8fff5;padding:36px 24px"><h1 style="color:#4ade9f;font-size:30px">Product notes</h1><p style="font-size:17px;line-height:1.65;color:#b5d6c8">Add verified release notes, documentation updates, and product availability here. Remove every unused section before sending.</p><a href="https://www.civalsystems.com/store" style="display:inline-block;padding:14px 22px;background:#4ade9f;color:#03110b;text-decoration:none;border-radius:999px;font-weight:800">Browse the store</a></div>`,
+  },
+  'service-update': {
+    subject: 'Important service update from Cival Systems',
+    content: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#020806;color:#e8fff5;padding:36px 24px"><h1 style="color:#4ade9f;font-size:30px">Service update</h1><p style="font-size:17px;line-height:1.65;color:#b5d6c8">State what changed, when it changed, which customers are affected, and whether any action is required. Include only confirmed information.</p><a href="https://www.civalsystems.com/contact" style="display:inline-block;padding:14px 22px;background:#4ade9f;color:#03110b;text-decoration:none;border-radius:999px;font-weight:800">Contact support</a></div>`,
+  },
+};
 
 export default function SubscribersAdmin() {
-  const [authed, setAuthed] = useState(false);
-  const [password, setPassword] = useState('');
   const [subscribers, setSubscribers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showBroadcast, setShowBroadcast] = useState(false);
@@ -86,37 +105,14 @@ export default function SubscribersAdmin() {
   const [search, setSearch] = useState('');
 
   useEffect(() => { 
-    if (sessionStorage.getItem('gwds-admin') === 'true') setAuthed(true); 
+    fetch('/api/admin/subscribers')
+      .then(r => r.json())
+      .then(d => {
+        setSubscribers(d.subscribers || []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, []);
-
-  const login = () => {
-    fetch('/api/admin/auth', { 
-      method: 'POST', 
-      headers: { 'Content-Type': 'application/json' }, 
-      body: JSON.stringify({ password }) 
-    })
-    .then(r => r.json())
-    .then(d => { 
-      if (d.ok) { 
-        setAuthed(true); 
-        sessionStorage.setItem('gwds-admin', 'true'); 
-      } else {
-        alert('Invalid password'); 
-      }
-    });
-  };
-
-  useEffect(() => { 
-    if (authed) {
-      fetch('/api/admin/subscribers')
-        .then(r => r.json())
-        .then(d => { 
-          setSubscribers(d.subscribers || []); 
-          setLoading(false); 
-        })
-        .catch(() => setLoading(false));
-    }
-  }, [authed]);
 
   const sendBroadcast = async (test: boolean) => {
     if (!bcSubject || !bcContent) return;
@@ -142,31 +138,18 @@ export default function SubscribersAdmin() {
     }
   };
 
-  if (!authed) return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
-      <div style={{ maxWidth: 360, width: '100%', padding: 24 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 800, color: '#E8E8E8', marginBottom: 24, textAlign: 'center' }}>GWDS Admin</h1>
-        <input 
-          type="password" 
-          value={password} 
-          onChange={e => setPassword(e.target.value)} 
-          onKeyDown={e => e.key === 'Enter' && login()} 
-          placeholder="Password"
-          style={{ width: '100%', padding: '14px 16px', background: '#111', border: '1px solid #222', borderRadius: 8, color: '#E8E8E8', fontSize: '0.88rem', outline: 'none', marginBottom: 12, boxSizing: 'border-box' }} 
-        />
-        <button onClick={login} style={{ width: '100%', padding: '14px', borderRadius: 8, border: 'none', background: '#8B5CF6', color: '#fff', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer', textTransform: 'uppercase' }}>Login</button>
-      </div>
-    </div>
-  );
-
   const active = subscribers.filter(s => s.is_active);
   const inactive = subscribers.filter(s => !s.is_active);
   
-  // Generate sample growth data (last 30 days)
-  const growthData = Array.from({ length: 30 }, (_, i) => ({
-    day: i + 1,
-    count: Math.floor(Math.random() * 5) + active.length - 20 + i
-  }));
+  const growthData = Array.from({ length: 30 }, (_, i) => {
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - (29 - i));
+    cutoff.setHours(23, 59, 59, 999);
+    return {
+      day: i + 1,
+      count: subscribers.filter((subscriber) => new Date(subscriber.subscribed_at || subscriber.created_at || 0) <= cutoff).length,
+    };
+  });
   
   const growthRate = active.length > 0 ? ((active.length / (active.length + inactive.length)) * 100).toFixed(1) : '0';
 
@@ -174,7 +157,7 @@ export default function SubscribersAdmin() {
     !search || s.email.toLowerCase().includes(search.toLowerCase())
   );
 
-  const GrowthChart = ({ data }: { data: any[] }) => {
+  const renderGrowthChart = (data: any[]) => {
     if (!data || data.length === 0) return null;
     
     const max = Math.max(...data.map(d => d.count));
@@ -304,7 +287,7 @@ export default function SubscribersAdmin() {
           }}>Subscriber Growth (Last 30 Days)</h2>
           <p style={{ fontSize: '0.8rem', color: '#666' }}>Daily subscriber count trend</p>
         </div>
-        <GrowthChart data={growthData} />
+        {renderGrowthChart(growthData)}
       </div>
 
       {/* Email Broadcast Section */}
@@ -371,9 +354,9 @@ export default function SubscribersAdmin() {
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {[
                 { key: 'product-launch', label: '🚀 Product Launch', color: '#8B5CF6' },
-                { key: 'sale', label: '🔥 Sale Announcement', color: '#F59E0B' },
+                { key: 'availability', label: 'Availability Update', color: '#F59E0B' },
                 { key: 'newsletter', label: '📬 Newsletter', color: '#3B82F6' },
-                { key: 'update', label: '📣 Update', color: '#10B981' }
+                { key: 'service-update', label: 'Service Update', color: '#10B981' }
               ].map(template => (
                 <button
                   key={template.key}
@@ -417,7 +400,7 @@ export default function SubscribersAdmin() {
             <input 
               value={bcSubject} 
               onChange={e => setBcSubject(e.target.value)} 
-              placeholder="New product launch!"
+              placeholder="Verified product or service update"
               style={{ 
                 width: '100%', 
                 padding: '12px 14px', 
@@ -449,7 +432,7 @@ export default function SubscribersAdmin() {
               value={bcContent} 
               onChange={e => setBcContent(e.target.value)} 
               rows={12}
-              placeholder='<h1 style="color:#8B5CF6;">Big News!</h1><p>We just launched something amazing...</p>'
+              placeholder='<h1>Verified update</h1><p>State exactly what changed and when.</p>'
               style={{ 
                 width: '100%', 
                 padding: '14px', 

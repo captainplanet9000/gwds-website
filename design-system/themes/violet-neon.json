@@ -1,0 +1,21 @@
+{
+  "name": "violet-neon",
+  "description": "Amplified brand theme - saturated electric purple, cyan lift, stronger glow. Seasonal drops and limited editions.",
+  "tokens": {
+    "gwds-color-brand-accent":        "oklch(0.72 0.33 295)",
+    "gwds-color-brand-accent-warm":   "#FFD580",
+    "gwds-color-surface-background":  "#050008",
+    "gwds-color-surface-near-black":  "#0C0618",
+    "gwds-color-surface-card":        "#160B2A",
+    "gwds-color-surface-muted":       "#1F1240",
+    "gwds-color-border-default":      "rgba(167, 139, 250, 0.18)",
+    "gwds-color-border-hover":        "rgba(167, 139, 250, 0.4)",
+    "gwds-color-text-primary":        "#F5EFFF",
+    "gwds-color-text-secondary":      "#B8AAD6",
+    "gwds-color-text-muted":          "#6E608A",
+    "gwds-color-text-inverse":        "#0B0414",
+    "gwds-shadow-glow-accent-sm":     "0 0 28px rgba(167, 139, 250, 0.28)",
+    "gwds-shadow-glow-accent-md":     "0 0 40px rgba(167, 139, 250, 0.42)",
+    "gwds-shadow-glow-accent-lg":     "0 0 56px rgba(167, 139, 250, 0.55)"
+  }
+}

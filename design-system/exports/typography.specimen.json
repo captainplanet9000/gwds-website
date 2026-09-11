@@ -1,0 +1,42 @@
+{
+  "$description": "Typography specimen — the exact type rules gwds.app renders, expressed so a design tool can reproduce them as a character style library.",
+  "display": {
+    "family": "Syne",
+    "fallback": ["Space Grotesk", "sans-serif"],
+    "weights": [400, 500, 600, 700, 800],
+    "scales": {
+      "h1": { "fluid": "10vw", "mobile": "14vw", "weight": 800, "lineHeight": 1.1, "letterSpacing": "-0.03em" },
+      "h2": { "fluid": "6vw",  "mobile": "10vw", "weight": 700, "lineHeight": 1.1, "letterSpacing": "-0.03em" },
+      "h3": { "fluid": "4vw",  "mobile": "7vw",  "weight": 600, "lineHeight": 1.15,"letterSpacing": "-0.02em" },
+      "h4": { "fluid": "2.5vw","mobile": "5vw",  "weight": 600, "lineHeight": 1.2 },
+      "h5": { "fluid": "1.8vw","mobile": "4vw",  "weight": 500, "lineHeight": 1.25 },
+      "h6": { "fluid": "1.5vw","mobile": "3.5vw","weight": 500, "lineHeight": 1.3 }
+    },
+    "rules": [
+      "Tight letter-spacing on all display type (-0.02em to -0.03em).",
+      "Never stack two display weights; let size + weight carry the hierarchy.",
+      "On dark surfaces use {color.text.primary}; avoid pure white."
+    ]
+  },
+  "body": {
+    "family": "DM Sans",
+    "fallback": ["Inter", "system-ui", "sans-serif"],
+    "weights": [300, 400, 500, 600, 700],
+    "scales": {
+      "paragraph": { "fluid": "1.2vw", "mobile": "4vw", "desktopClamp": "1.1vw @ >=1920px", "weight": 400, "lineHeight": 1.7, "color": "{color.text.secondary}" },
+      "lead":      { "static": "{font.size.static.lg}", "weight": 400, "lineHeight": 1.6 },
+      "small":     { "static": "{font.size.static.sm}", "weight": 400, "lineHeight": 1.5, "color": "{color.text.muted}" },
+      "label":     { "static": "{font.size.static.xs}", "weight": 500, "textTransform": "uppercase", "letterSpacing": "0.1em" }
+    }
+  },
+  "mono": {
+    "family": "JetBrains Mono",
+    "fallback": ["Fira Code", "Consolas", "monospace"],
+    "usage": ["code blocks", "number displays", "technical labels"]
+  },
+  "measure": {
+    "paragraph": "65ch recommended; never exceed 80ch",
+    "lead":      "55ch"
+  },
+  "scale_ratio": "Major Third — 1.250; stacks as 0.64, 0.80, 1.00, 1.25, 1.56, 1.95, 2.44, 3.05, 3.82, 4.77 rem."
+}

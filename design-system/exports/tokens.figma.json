@@ -1,0 +1,143 @@
+{
+  "$metadata": {
+    "tokenSetOrder": ["global", "themes/default", "themes/violet-neon", "themes/studio-light"],
+    "activeTheme": "themes/default"
+  },
+  "global": {
+    "color": {
+      "brand": {
+        "accent":         { "value": "oklch(0.65 0.29 295)", "type": "color" },
+        "accentWarm":     { "value": "#D4A574",              "type": "color" },
+        "electricPurple": { "value": "oklch(0.65 0.29 295)", "type": "color" },
+        "deepPurple":     { "value": "oklch(0.58 0.32 290)", "type": "color" },
+        "lightPurple":    { "value": "oklch(0.75 0.20 295)", "type": "color" },
+        "cyanBright":     { "value": "oklch(0.75 0.15 195)", "type": "color" },
+        "cyanDeep":       { "value": "oklch(0.65 0.18 195)", "type": "color" }
+      },
+      "semantic": {
+        "success": { "value": "oklch(0.70 0.18 145)", "type": "color" },
+        "warning": { "value": "oklch(0.75 0.20 85)",  "type": "color" },
+        "error":   { "value": "oklch(0.65 0.25 25)",  "type": "color" },
+        "info":    { "value": "oklch(0.70 0.15 235)", "type": "color" }
+      }
+    },
+    "font": {
+      "family": {
+        "display": { "value": "Syne, Space Grotesk, sans-serif", "type": "fontFamilies" },
+        "body":    { "value": "DM Sans, Inter, sans-serif",       "type": "fontFamilies" },
+        "mono":    { "value": "JetBrains Mono, Fira Code, monospace", "type": "fontFamilies" }
+      },
+      "weight": {
+        "normal":   { "value": 400, "type": "fontWeights" },
+        "medium":   { "value": 500, "type": "fontWeights" },
+        "semibold": { "value": 600, "type": "fontWeights" },
+        "bold":     { "value": 700, "type": "fontWeights" },
+        "black":    { "value": 800, "type": "fontWeights" }
+      },
+      "lineHeights": {
+        "tight":   { "value": 1.1,   "type": "lineHeights" },
+        "snug":    { "value": 1.375, "type": "lineHeights" },
+        "normal":  { "value": 1.5,   "type": "lineHeights" },
+        "relaxed": { "value": 1.7,   "type": "lineHeights" }
+      }
+    },
+    "spacing": {
+      "0":  { "value": "0",        "type": "spacing" },
+      "1":  { "value": "0.25rem",  "type": "spacing" },
+      "2":  { "value": "0.5rem",   "type": "spacing" },
+      "3":  { "value": "0.75rem",  "type": "spacing" },
+      "4":  { "value": "1rem",     "type": "spacing" },
+      "5":  { "value": "1.25rem",  "type": "spacing" },
+      "6":  { "value": "1.5rem",   "type": "spacing" },
+      "8":  { "value": "2rem",     "type": "spacing" },
+      "12": { "value": "3rem",     "type": "spacing" },
+      "16": { "value": "4rem",     "type": "spacing" },
+      "24": { "value": "6rem",     "type": "spacing" },
+      "32": { "value": "8rem",     "type": "spacing" }
+    },
+    "radius": {
+      "none": { "value": "0",        "type": "borderRadius" },
+      "sm":   { "value": "0.375rem", "type": "borderRadius" },
+      "md":   { "value": "0.5rem",   "type": "borderRadius" },
+      "lg":   { "value": "0.75rem",  "type": "borderRadius" },
+      "xl":   { "value": "1rem",     "type": "borderRadius" },
+      "2xl":  { "value": "1.5rem",   "type": "borderRadius" },
+      "full": { "value": "9999px",   "type": "borderRadius" }
+    },
+    "shadow": {
+      "sm": { "value": "0 1px 2px rgba(0,0,0,0.3)",   "type": "boxShadow" },
+      "md": { "value": "0 4px 6px rgba(0,0,0,0.4)",   "type": "boxShadow" },
+      "lg": { "value": "0 10px 15px rgba(0,0,0,0.5)", "type": "boxShadow" },
+      "xl": { "value": "0 20px 25px rgba(0,0,0,0.6)", "type": "boxShadow" }
+    }
+  },
+
+  "themes/default": {
+    "color": {
+      "surface": {
+        "bg":         { "value": "#000000", "type": "color" },
+        "bgElevated": { "value": "#050505", "type": "color" },
+        "card":       { "value": "#12121A", "type": "color" },
+        "muted":      { "value": "#1A1A2E", "type": "color" }
+      },
+      "border": {
+        "default":  { "value": "rgba(232,232,232,0.1)", "type": "color" },
+        "hover":    { "value": "rgba(232,232,232,0.3)", "type": "color" }
+      },
+      "text": {
+        "primary":   { "value": "#E8E8E8", "type": "color" },
+        "secondary": { "value": "#A8A8A8", "type": "color" },
+        "muted":     { "value": "#666666", "type": "color" },
+        "inverse":   { "value": "#000000", "type": "color" }
+      }
+    }
+  },
+
+  "themes/violet-neon": {
+    "color": {
+      "surface": {
+        "bg":         { "value": "#050008", "type": "color" },
+        "bgElevated": { "value": "#0C0618", "type": "color" },
+        "card":       { "value": "#160B2A", "type": "color" },
+        "muted":      { "value": "#1F1240", "type": "color" }
+      },
+      "border": {
+        "default":  { "value": "rgba(167,139,250,0.18)", "type": "color" },
+        "hover":    { "value": "rgba(167,139,250,0.4)",  "type": "color" }
+      },
+      "text": {
+        "primary":   { "value": "#F5EFFF", "type": "color" },
+        "secondary": { "value": "#B8AAD6", "type": "color" },
+        "muted":     { "value": "#6E608A", "type": "color" },
+        "inverse":   { "value": "#0B0414", "type": "color" }
+      },
+      "brand": {
+        "accent": { "value": "oklch(0.72 0.33 295)", "type": "color" }
+      }
+    }
+  },
+
+  "themes/studio-light": {
+    "color": {
+      "surface": {
+        "bg":         { "value": "#FAFAF8", "type": "color" },
+        "bgElevated": { "value": "#F1F0EC", "type": "color" },
+        "card":       { "value": "#FFFFFF", "type": "color" },
+        "muted":      { "value": "#EDEAE3", "type": "color" }
+      },
+      "border": {
+        "default":  { "value": "rgba(12,12,14,0.08)", "type": "color" },
+        "hover":    { "value": "rgba(12,12,14,0.22)", "type": "color" }
+      },
+      "text": {
+        "primary":   { "value": "#0C0C0E", "type": "color" },
+        "secondary": { "value": "#43434A", "type": "color" },
+        "muted":     { "value": "#7A7A82", "type": "color" },
+        "inverse":   { "value": "#FFFFFF", "type": "color" }
+      },
+      "brand": {
+        "accent": { "value": "oklch(0.52 0.25 295)", "type": "color" }
+      }
+    }
+  }
+}

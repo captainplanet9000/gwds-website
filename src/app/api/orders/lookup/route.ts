@@ -1,28 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { CommerceError, errorResponseBody, requireVerifiedUser } from '@/lib/commerce';
 import { createServerClient } from '@/lib/supabase';
 
 export async function GET(req: NextRequest) {
-  const sessionId = req.nextUrl.searchParams.get('session_id');
-
-  if (!sessionId) {
-    return NextResponse.json({ error: 'session_id required' }, { status: 400 });
-  }
-
   try {
-    const supabase = createServerClient();
-
-    const { data: order } = await supabase
-      .from('orders')
-      .select('id, status')
-      .eq('stripe_session_id', sessionId)
-      .single();
-
-    if (!order) {
-      return NextResponse.json({ error: 'Order not found' }, { status: 404 });
+    const user = await requireVerifiedUser(req);
+    const sessionId = req.nextUrl.searchParams.get('session_id');
+    if (!sessionId || !/^cs_(test_|live_)?[A-Za-z0-9_]+$/.test(sessionId)) {
+      throw new CommerceError('INVALID_SESSION_ID', 'A valid checkout session is required.');
     }
 
-    return NextResponse.json({ orderId: order.id, status: order.status });
-  } catch (err: any) {
-    return NextResponse.json({ error: 'Lookup failed' }, { status: 500 });
+    const supabase = createServerClient();
+    const { data: order } = await supabase
+      .from('orders')
+      .select('id,status,fulfillment_status')
+      .eq('stripe_session_id', sessionId)
+      .eq('user_id', user.id)
+      .maybeSingle();
+    if (!order) throw new CommerceError('ORDER_NOT_FOUND', 'This checkout was not found.', 404);
+
+    return NextResponse.json({
+      orderId: order.id,
+      status: order.status,
+      fulfillmentStatus: order.fulfillment_status,
+      paid: order.status === 'paid' && order.fulfillment_status === 'fulfilled',
+    }, { headers: { 'Cache-Control': 'private, no-store' } });
+  } catch (error) {
+    const status = error instanceof CommerceError ? error.status : 500;
+    return NextResponse.json(errorResponseBody(error), { status, headers: { 'Cache-Control': 'no-store' } });
   }
 }

@@ -59,7 +59,6 @@ export const LOADOUT_STRATEGIES: readonly StrategySpec[] = [
   { agentId: 'vwap-momentum-agent', tradesMarket: true, maxInstances: MAX_AGENTS_PER_TENANT },
   { agentId: 'heikin-ashi-agent', tradesMarket: true, maxInstances: MAX_AGENTS_PER_TENANT },
   { agentId: 'mean-reversion-agent', tradesMarket: true, maxInstances: MAX_AGENTS_PER_TENANT },
-  { agentId: 'strategy-pack', tradesMarket: true, maxInstances: MAX_AGENTS_PER_TENANT },
   { agentId: 'macro-sentiment-agent', tradesMarket: false, maxInstances: 1 },
 ] as const;
 

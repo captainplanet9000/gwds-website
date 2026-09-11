@@ -1,0 +1,22 @@
+{
+  "name": "studio-light",
+  "description": "Light studio theme - paper-white surfaces, ink-black text, same editorial type. Press kits, case studies, print-style storytelling.",
+  "tokens": {
+    "gwds-color-brand-accent":        "oklch(0.52 0.25 295)",
+    "gwds-color-brand-accent-warm":   "#9E7B4A",
+    "gwds-color-surface-background":  "#FAFAF8",
+    "gwds-color-surface-near-black":  "#F1F0EC",
+    "gwds-color-surface-card":        "#FFFFFF",
+    "gwds-color-surface-muted":       "#EDEAE3",
+    "gwds-color-border-default":      "rgba(12, 12, 14, 0.08)",
+    "gwds-color-border-hover":        "rgba(12, 12, 14, 0.22)",
+    "gwds-color-text-primary":        "#0C0C0E",
+    "gwds-color-text-secondary":      "#43434A",
+    "gwds-color-text-muted":          "#7A7A82",
+    "gwds-color-text-inverse":        "#FFFFFF",
+    "gwds-shadow-xs":                 "0 1px 2px rgba(12, 12, 14, 0.06)",
+    "gwds-shadow-sm":                 "0 1px 3px rgba(12, 12, 14, 0.08)",
+    "gwds-shadow-md":                 "0 6px 16px rgba(12, 12, 14, 0.10)",
+    "gwds-shadow-lg":                 "0 16px 36px rgba(12, 12, 14, 0.12)"
+  }
+}
