@@ -71,20 +71,49 @@ export async function POST(req: NextRequest) {
       hosting_plan_id: plan.id,
       user_id: user.id,
     };
-    const session = await getStripe().checkout.sessions.create({
-      mode: 'subscription',
+    const sessionParamsFor = (stripeCustomerId: string | null) => ({
+      mode: 'subscription' as const,
       line_items: [{ price: plan.stripe_price_id, quantity: 1 }],
       success_url: `${siteUrl}/account/hosting?checkout=success`,
       cancel_url: `${siteUrl}/hosted?checkout=cancelled`,
-      customer: customer?.stripe_customer_id || undefined,
-      customer_email: customer?.stripe_customer_id ? undefined : user.email!,
+      customer: stripeCustomerId || undefined,
+      customer_email: stripeCustomerId ? undefined : user.email!,
       client_reference_id: user.id,
       metadata,
       subscription_data: { metadata },
       allow_promotion_codes: true,
-      billing_address_collection: 'auto',
-    }, { idempotencyKey: `hosting-checkout-${pendingSubscriptionId}` });
+      billing_address_collection: 'auto' as const,
+    });
+
+    let usedCustomerId = customer?.stripe_customer_id ?? null;
+    let session;
+    try {
+      session = await getStripe().checkout.sessions.create(
+        sessionParamsFor(usedCustomerId),
+        { idempotencyKey: `hosting-checkout-${pendingSubscriptionId}` },
+      );
+    } catch (stripeError) {
+      // A stored stripe_customer_id from a DIFFERENT Stripe mode (e.g. a real purchase's live-mode
+      // customer, looked up against this environment's test-mode key) is not a checkout failure —
+      // it is stale data on our own row. Stripe reports it as invalid_request_error/resource_missing
+      // naming the "customer" param; retry once, letting Stripe create a fresh customer for this
+      // email under the CURRENT key's mode, and correct the stored id so this does not repeat.
+      const isStaleCustomer = usedCustomerId !== null
+        && typeof stripeError === 'object' && stripeError !== null
+        && (stripeError as { type?: string }).type === 'StripeInvalidRequestError'
+        && (stripeError as { param?: string }).param === 'customer';
+      if (!isStaleCustomer) throw stripeError;
+
+      usedCustomerId = null;
+      session = await getStripe().checkout.sessions.create(
+        sessionParamsFor(null),
+        { idempotencyKey: `hosting-checkout-${pendingSubscriptionId}-remapped` },
+      );
+    }
     checkoutSessionId = session.id;
+    if (usedCustomerId === null && session.customer && typeof session.customer === 'string') {
+      await supabase.from('customers').update({ stripe_customer_id: session.customer }).eq('user_id', user.id);
+    }
     if (!session.url) throw new CommerceError('STRIPE_SESSION_FAILED', 'Billing could not be started. No payment was taken.', 503);
 
     const { error: bindError } = await supabase.from('hosting_subscriptions')
