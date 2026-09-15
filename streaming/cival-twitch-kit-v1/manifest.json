@@ -1,0 +1,1176 @@
+{
+  "package": "Cival Systems Twitch Stream Kit",
+  "version": "1.0.0",
+  "generatedAt": "2026-09-03T04:21:28.295Z",
+  "brand": {
+    "black": "#06110e",
+    "deep": "#0b1f19",
+    "mint": "#4ade9f",
+    "signal": "#7fffc8",
+    "circuit": "#174d3b",
+    "gray": "#9eaaa5",
+    "white": "#effff7",
+    "amber": "#ffc857",
+    "red": "#ff6b6b"
+  },
+  "productionNotes": {
+    "canvas": "1920x1080 at 60fps recommended",
+    "safety": "All trading scenes identify the environment as paper/demo and avoid performance claims.",
+    "dynamicText": "Place the alert provider's dynamic display-name field over the safe area marked in each alert card.",
+    "editableSources": "Matching SVG sources live in editable-svg/."
+  },
+  "assets": [
+    {
+      "path": "scenes/01-starting-soon.png",
+      "width": 1920,
+      "height": 1080,
+      "format": "png",
+      "transparent": false,
+      "bytes": 966964,
+      "sha256": "975ec56d887ea4c80481dbdf73fd176cc20780ff7865e4dd11a943916a6c9ac0"
+    },
+    {
+      "path": "editable-svg/scenes/01-starting-soon.overlay.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 3737,
+      "sha256": "e51fc7452ba729a3ef0a7c93e2d1d382ef88746286141b03f7377294a99a37b7"
+    },
+    {
+      "path": "scenes/02-be-right-back.png",
+      "width": 1920,
+      "height": 1080,
+      "format": "png",
+      "transparent": false,
+      "bytes": 963377,
+      "sha256": "b1a26d0b87b88798ae1d09dcebcf21d677b0b087d197df746cba3f3f6fd67581"
+    },
+    {
+      "path": "editable-svg/scenes/02-be-right-back.overlay.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 3737,
+      "sha256": "75c592115b7b481476d409eaa58e12568abf8d0953728fa418d7669684921bd9"
+    },
+    {
+      "path": "scenes/03-stream-ending.png",
+      "width": 1920,
+      "height": 1080,
+      "format": "png",
+      "transparent": false,
+      "bytes": 966544,
+      "sha256": "77e00349346334460f88857cd689cf6a959523813aeb3cd4ce1fa9218247db91"
+    },
+    {
+      "path": "editable-svg/scenes/03-stream-ending.overlay.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 3734,
+      "sha256": "182a53d1867fc0f4c1f5a9d02d9ccba542215f319fe0b0d7e5ed10bb7fb5d474"
+    },
+    {
+      "path": "scenes/04-offline.png",
+      "width": 1920,
+      "height": 1080,
+      "format": "png",
+      "transparent": false,
+      "bytes": 961987,
+      "sha256": "6c2e72fecfba0b6e073332a970c75b9a57ef94a0988ee24322fb2c035f65f3df"
+    },
+    {
+      "path": "editable-svg/scenes/04-offline.overlay.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 3724,
+      "sha256": "1f7a76c0776557403c286a1c6e7ce3ceb5339693c76c99a032eb4d9a49cc16dc"
+    },
+    {
+      "path": "scenes/05-technical-difficulties.png",
+      "width": 1920,
+      "height": 1080,
+      "format": "png",
+      "transparent": false,
+      "bytes": 973168,
+      "sha256": "14e7f267c8a91dfbc907c087b5caa621a7028790a07ad1ad0d7ca545add45a60"
+    },
+    {
+      "path": "editable-svg/scenes/05-technical-difficulties.overlay.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 3752,
+      "sha256": "341794c09304e181921aa3b0e527cb62a8900468d934d01c8c96af17d6dbd22e"
+    },
+    {
+      "path": "scenes/06-intermission.png",
+      "width": 1920,
+      "height": 1080,
+      "format": "png",
+      "transparent": false,
+      "bytes": 974939,
+      "sha256": "b4d17a190cd40e60fa6050a282c7461932d6ad77eae4a39940b7cc0721fcf5c8"
+    },
+    {
+      "path": "editable-svg/scenes/06-intermission.overlay.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 3732,
+      "sha256": "3b0dc0d24b19ac8203ffbf9da75dcac6a0430566938dc784639bfdc87e33b3b6"
+    },
+    {
+      "path": "scenes/07-scene-transition.png",
+      "width": 1920,
+      "height": 1080,
+      "format": "png",
+      "transparent": false,
+      "bytes": 958359,
+      "sha256": "52321d3070a1d02eb0d71d708b460989e3b15c18a8d8d3af661305e9d5b9b3e3"
+    },
+    {
+      "path": "editable-svg/scenes/07-scene-transition.overlay.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 3690,
+      "sha256": "8862b47b78817d4f058696f05fab2aea9a8630ed4ccf68b59163700eb4f3b295"
+    },
+    {
+      "path": "profile/twitch-profile-banner-1200x480.png",
+      "width": 1200,
+      "height": 480,
+      "format": "png",
+      "transparent": false,
+      "bytes": 386791,
+      "sha256": "cfae2cdbfbc261ab3fc802e8ab15cebdf7eb4c50121789ea3b4a0c2d3cb704f9"
+    },
+    {
+      "path": "editable-svg/profile/twitch-profile-banner-1200x480.overlay.svg",
+      "width": 1200,
+      "height": 480,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 3700,
+      "sha256": "f15a263307d68c4c475e294c9b60b4fbcb199cc8270e3fc3ccd215ef4a9d776e"
+    },
+    {
+      "path": "social/going-live-1600x900.png",
+      "width": 1600,
+      "height": 900,
+      "format": "png",
+      "transparent": false,
+      "bytes": 767210,
+      "sha256": "890f315aa470fc5738a887c3b0ed5aa3ff34537192067c0a13877c323d9ea527"
+    },
+    {
+      "path": "editable-svg/social/going-live-1600x900.overlay.svg",
+      "width": 1600,
+      "height": 900,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 3726,
+      "sha256": "6ed4093b9f72f832cd9c1ae6d6080d7ea2f0d9ad8a74e70fce1e20daeef6bea6"
+    },
+    {
+      "path": "social/vertical-story-1080x1920.png",
+      "width": 1080,
+      "height": 1920,
+      "format": "png",
+      "transparent": false,
+      "bytes": 746041,
+      "sha256": "c437fbd67c6013a5950a41c1570bcbd9cf5b0080d8a84202237ab8f2a878e4d3"
+    },
+    {
+      "path": "editable-svg/social/vertical-story-1080x1920.overlay.svg",
+      "width": 1080,
+      "height": 1920,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 3864,
+      "sha256": "361fcd8830e163c6d434a7c9513db8c7fe0694c5e71b5acd20624c241c22fd60"
+    },
+    {
+      "path": "social/vod-thumbnail-1280x720.png",
+      "width": 1280,
+      "height": 720,
+      "format": "png",
+      "transparent": false,
+      "bytes": 537242,
+      "sha256": "94ae606bb4c042f5a45aae6a94124cbc5bb76a9249ab420220c9f2f118b8e53e"
+    },
+    {
+      "path": "editable-svg/social/vod-thumbnail-1280x720.overlay.svg",
+      "width": 1280,
+      "height": 720,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 3709,
+      "sha256": "f18a23af0b7921eee29a2c165a39e26bfee5b6a1f013e8a23c3abc849862d1b3"
+    },
+    {
+      "path": "social/schedule-card-1080x1350.png",
+      "width": 1080,
+      "height": 1350,
+      "format": "png",
+      "transparent": false,
+      "bytes": 639441,
+      "sha256": "bf1e506dfa9ca2aa4f4d51bbdca5c889ec959e7add966c7b13e10948955eed95"
+    },
+    {
+      "path": "editable-svg/social/schedule-card-1080x1350.overlay.svg",
+      "width": 1080,
+      "height": 1350,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 3716,
+      "sha256": "adb3b34ba8a14267ee4d340d596390dcf61b003c80c60cb3aa54670aef9f3891"
+    },
+    {
+      "path": "overlays/product-clean-1920x1080.png",
+      "width": 1920,
+      "height": 1080,
+      "format": "png",
+      "transparent": true,
+      "bytes": 23849,
+      "sha256": "25a4c81565008d73e4128d28556e65c32efdd83a7672bd93e3a7a36647dd1f96"
+    },
+    {
+      "path": "editable-svg/overlays/product-clean-1920x1080.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 2128,
+      "sha256": "6104820349380986ddc451208f593787c01003eb1da37bf72966338dff23564b"
+    },
+    {
+      "path": "overlays/product-webcam-1920x1080.png",
+      "width": 1920,
+      "height": 1080,
+      "format": "png",
+      "transparent": true,
+      "bytes": 35904,
+      "sha256": "01e1a1e9795bac7d23d5693605db8696a90521fe9337c378f09dc0acb312a586"
+    },
+    {
+      "path": "editable-svg/overlays/product-webcam-1920x1080.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 2676,
+      "sha256": "52c61a45ad8d473e141147113ffd5cd3961cab6f630ee9d812b6c85797a9f5ce"
+    },
+    {
+      "path": "overlays/product-chat-1920x1080.png",
+      "width": 1920,
+      "height": 1080,
+      "format": "png",
+      "transparent": true,
+      "bytes": 39190,
+      "sha256": "43024312c16fda4d7c1940a435ff85da95438a7e6ad7232f36c8564df89c2d75"
+    },
+    {
+      "path": "editable-svg/overlays/product-chat-1920x1080.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 2866,
+      "sha256": "0778b47efcfd0428faa07c4a02ac41a2ac6e4004f6757404dcadebb388583ede"
+    },
+    {
+      "path": "overlays/product-webcam-chat-1920x1080.png",
+      "width": 1920,
+      "height": 1080,
+      "format": "png",
+      "transparent": true,
+      "bytes": 50151,
+      "sha256": "31ef0d863110e087af3ca58513e0973895de40c3316231b05880bb9174115d80"
+    },
+    {
+      "path": "editable-svg/overlays/product-webcam-chat-1920x1080.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 3414,
+      "sha256": "0b70424889d08c3d442775ac5e3e2e7e603d3ae022ea72f36b90320c99229776"
+    },
+    {
+      "path": "overlays/just-chatting-1920x1080.png",
+      "width": 1920,
+      "height": 1080,
+      "format": "png",
+      "transparent": true,
+      "bytes": 62388,
+      "sha256": "80b58bd78ffd7bd034a1bcf7b7bf8c3f588504da97292a54ea7e55134a182daa"
+    },
+    {
+      "path": "editable-svg/overlays/just-chatting-1920x1080.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 4148,
+      "sha256": "e3869e6963cfdf6d4c1796229bb2f681051c0a2355bd49adee67e9e97e8d3f16"
+    },
+    {
+      "path": "frames/camera-landscape-1280x720.png",
+      "width": 1280,
+      "height": 720,
+      "format": "png",
+      "transparent": true,
+      "bytes": 10899,
+      "sha256": "cd7108044612f268425f70e606bd47e22b761ca1f02d0a34fa904cc916b9078a"
+    },
+    {
+      "path": "editable-svg/frames/camera-landscape-1280x720.svg",
+      "width": 1280,
+      "height": 720,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 1489,
+      "sha256": "4677dff6149948f77302fb77dbe3755c16dfe9d7fdd02a6de2e6537c4d6f95a1"
+    },
+    {
+      "path": "frames/camera-square-800x800.png",
+      "width": 800,
+      "height": 800,
+      "format": "png",
+      "transparent": true,
+      "bytes": 8995,
+      "sha256": "8668b31c998808c0b2d6d8ca5e9ed5fbdc63e3ce14180bccdafec0459f918b85"
+    },
+    {
+      "path": "editable-svg/frames/camera-square-800x800.svg",
+      "width": 800,
+      "height": 800,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 1478,
+      "sha256": "e5d2d9dbd3e51ced5d03766c0ef5b54940fc59ee4fa8afcbf8fec7919b115a1c"
+    },
+    {
+      "path": "frames/camera-portrait-720x1280.png",
+      "width": 720,
+      "height": 1280,
+      "format": "png",
+      "transparent": true,
+      "bytes": 10334,
+      "sha256": "a300bacb4b45c73fcca4cba7ee1a36d7480cd52cfd7460d27b1fe9b69c65d2c0"
+    },
+    {
+      "path": "editable-svg/frames/camera-portrait-720x1280.svg",
+      "width": 720,
+      "height": 1280,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 1486,
+      "sha256": "301ecd307ef70d40c2a83c482fb1ab15da53af8637a116776e7685ca28c5d79b"
+    },
+    {
+      "path": "frames/chat-480x920.png",
+      "width": 480,
+      "height": 920,
+      "format": "png",
+      "transparent": true,
+      "bytes": 9286,
+      "sha256": "0a5f9b7648135a8e2f32441363c2fdda0cd0d9f6b9cc88d8d968354a76d93618"
+    },
+    {
+      "path": "editable-svg/frames/chat-480x920.svg",
+      "width": 480,
+      "height": 920,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 1473,
+      "sha256": "34a50aa806eeb4f9b329a5ef8eeebf83be49cd30e82bf6aa6a8dcf14ad8c2c3d"
+    },
+    {
+      "path": "lower-thirds/host.png",
+      "width": 1080,
+      "height": 240,
+      "format": "png",
+      "transparent": true,
+      "bytes": 29931,
+      "sha256": "51f3de560782ff8dabebcf69520d456042464e99c9d4c6e7bf9739329a28bd3d"
+    },
+    {
+      "path": "editable-svg/lower-thirds/host.svg",
+      "width": 1080,
+      "height": 240,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 1612,
+      "sha256": "c40c52c69d1f658a944bbd2c3eec7f077f27808d1443477de2baaa5464a29f2b"
+    },
+    {
+      "path": "lower-thirds/topic.png",
+      "width": 1080,
+      "height": 240,
+      "format": "png",
+      "transparent": true,
+      "bytes": 28914,
+      "sha256": "ef515248ebc8550ce004f584cad060179c8fb32635e3bc9f01bbf02f3d00b89a"
+    },
+    {
+      "path": "editable-svg/lower-thirds/topic.svg",
+      "width": 1080,
+      "height": 240,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 1605,
+      "sha256": "fc893bbaca3e5fbc2500fc2c0d22159fd30fcab6c74b63ea9a25ec06be105731"
+    },
+    {
+      "path": "lower-thirds/paper-mode.png",
+      "width": 1080,
+      "height": 240,
+      "format": "png",
+      "transparent": true,
+      "bytes": 27165,
+      "sha256": "ffef724bce7ece8e278994ecb323b8a5b15367580fd19eca0773a44618d3f3e3"
+    },
+    {
+      "path": "editable-svg/lower-thirds/paper-mode.svg",
+      "width": 1080,
+      "height": 240,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 1600,
+      "sha256": "e1190a52a4eff985def553bd9e1d6776403d65b270e6a7ade3602ddff32ff30f"
+    },
+    {
+      "path": "lower-thirds/cta.png",
+      "width": 1080,
+      "height": 240,
+      "format": "png",
+      "transparent": true,
+      "bytes": 29080,
+      "sha256": "a83dee7355a9e3cee6a510959db356a79fb0019464841e7e8a18aabb03e7c799"
+    },
+    {
+      "path": "editable-svg/lower-thirds/cta.svg",
+      "width": 1080,
+      "height": 240,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 1603,
+      "sha256": "be3a6120a4c2c41dd5c56469412d5534a356dd7f1700fe7e906e0cee343126fb"
+    },
+    {
+      "path": "lower-thirds/disclaimer.png",
+      "width": 1080,
+      "height": 240,
+      "format": "png",
+      "transparent": true,
+      "bytes": 31161,
+      "sha256": "60db817efe2a524383411395ccf2ad64e8bd343e8458cdd5d6c6cf5c463be356"
+    },
+    {
+      "path": "editable-svg/lower-thirds/disclaimer.svg",
+      "width": 1080,
+      "height": 240,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 1617,
+      "sha256": "186e9815b548e129eb76b15d07de45da7254ff1c321ea96ce7a5df7f2d88d7aa"
+    },
+    {
+      "path": "alerts/follow.png",
+      "width": 740,
+      "height": 180,
+      "format": "png",
+      "transparent": true,
+      "bytes": 16556,
+      "sha256": "1a165419b728f348ccfb474b62542491e53fb01b11d9353e71ec53d5a902af92"
+    },
+    {
+      "path": "editable-svg/alerts/follow.svg",
+      "width": 740,
+      "height": 180,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 1642,
+      "sha256": "8f4cc999df2e346d67f82393e06c069b0fa0f2c5c7a965ba4125a38644274942"
+    },
+    {
+      "path": "alerts/subscriber.png",
+      "width": 740,
+      "height": 180,
+      "format": "png",
+      "transparent": true,
+      "bytes": 16899,
+      "sha256": "9fbfa8c3bc595ef3a0e0df1f1b3cb2b3e7b599a1c359d8eed45706d295e569c8"
+    },
+    {
+      "path": "editable-svg/alerts/subscriber.svg",
+      "width": 740,
+      "height": 180,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 1641,
+      "sha256": "a18795e4b83b088101d9555f7c16a841194c74c6cb922fe993d28f8a8493e18b"
+    },
+    {
+      "path": "alerts/raid.png",
+      "width": 740,
+      "height": 180,
+      "format": "png",
+      "transparent": true,
+      "bytes": 16286,
+      "sha256": "e516b3d0bd66d5404ac9771bddd3847cfa947153d36e22abf1583d9e2b7e1bb4"
+    },
+    {
+      "path": "editable-svg/alerts/raid.svg",
+      "width": 740,
+      "height": 180,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 1639,
+      "sha256": "a6b373a33f67c5836f7b9445486baed24455ee4411c457156a63037cb41539b5"
+    },
+    {
+      "path": "alerts/support.png",
+      "width": 740,
+      "height": 180,
+      "format": "png",
+      "transparent": true,
+      "bytes": 16950,
+      "sha256": "9132f13ed6450847d4311209b9e1f73335551b1b07ba4433581cf8848d4fa8d9"
+    },
+    {
+      "path": "editable-svg/alerts/support.svg",
+      "width": 740,
+      "height": 180,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 1643,
+      "sha256": "a0f78d5c4c43a7514a7b8f2ea1c5b6acf36e3188d8f5f33eaab2c4abb5fef09c"
+    },
+    {
+      "path": "alerts/member.png",
+      "width": 740,
+      "height": 180,
+      "format": "png",
+      "transparent": true,
+      "bytes": 17471,
+      "sha256": "11cdb41f12182056d5eb92fb79a3df29262591d730c92b6c36402c4ed997344c"
+    },
+    {
+      "path": "editable-svg/alerts/member.svg",
+      "width": 740,
+      "height": 180,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 1646,
+      "sha256": "7bac0f4f15bbed71b97fd0d9b2917c165b6d12ee38c4b06f11a5fcba4cc710ad"
+    },
+    {
+      "path": "panels/01-about.png",
+      "width": 320,
+      "height": 100,
+      "format": "png",
+      "transparent": true,
+      "bytes": 6254,
+      "sha256": "5c2a5dee4cdf4723395b71e8ab4352c85cc9570de42e61f39319bd1e7fe0ffad"
+    },
+    {
+      "path": "editable-svg/panels/01-about.svg",
+      "width": 320,
+      "height": 100,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 1514,
+      "sha256": "f92da21522d269ca3dde2e16836dd03122729ccaf1e455f5ce0f7a8c4637c5fc"
+    },
+    {
+      "path": "panels/02-schedule.png",
+      "width": 320,
+      "height": 100,
+      "format": "png",
+      "transparent": true,
+      "bytes": 6820,
+      "sha256": "8e6438e7442610d163d10f31b7fd281ee418d727a1de58f5fa5c08f4687c8ef6"
+    },
+    {
+      "path": "editable-svg/panels/02-schedule.svg",
+      "width": 320,
+      "height": 100,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 1517,
+      "sha256": "86ea976fd4d42d1dd70a27837b1d531efee06375b2edf0c7a1f366816c8eea0a"
+    },
+    {
+      "path": "panels/03-cival-core.png",
+      "width": 320,
+      "height": 100,
+      "format": "png",
+      "transparent": true,
+      "bytes": 7513,
+      "sha256": "0bdb6f1347d647637136594c8632a699abbca70552d2ae015ff1d0c4a9b07d89"
+    },
+    {
+      "path": "editable-svg/panels/03-cival-core.svg",
+      "width": 320,
+      "height": 100,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 1519,
+      "sha256": "61699041a4abf2966fa7fc3f5963480d5f3059f4d5ceea5ffc7cf61aea97a2c2"
+    },
+    {
+      "path": "panels/04-live-demo.png",
+      "width": 320,
+      "height": 100,
+      "format": "png",
+      "transparent": true,
+      "bytes": 6645,
+      "sha256": "b31d121d8d603deb497b9558788060d93a57a030093cad720fd36346c67719ec"
+    },
+    {
+      "path": "editable-svg/panels/04-live-demo.svg",
+      "width": 320,
+      "height": 100,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 1518,
+      "sha256": "85ec3275ce7165b20b702f622c69507528d2efd35f22597c37d950e1662c0420"
+    },
+    {
+      "path": "panels/05-store.png",
+      "width": 320,
+      "height": 100,
+      "format": "png",
+      "transparent": true,
+      "bytes": 6390,
+      "sha256": "efb6c62f8c240b880ba9df46e88bdac9d92c83b5f3aa0f2c50f00ada9a4f44b1"
+    },
+    {
+      "path": "editable-svg/panels/05-store.svg",
+      "width": 320,
+      "height": 100,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 1514,
+      "sha256": "45c32dc9f1261711087d1b42ea58f20eefe3f464e28982eeaadc9d444bc59057"
+    },
+    {
+      "path": "panels/06-community.png",
+      "width": 320,
+      "height": 100,
+      "format": "png",
+      "transparent": true,
+      "bytes": 7117,
+      "sha256": "c04414e22cadcf2e3ca638794d8a7593c45182f3d04e2047d97f01745965eab4"
+    },
+    {
+      "path": "editable-svg/panels/06-community.svg",
+      "width": 320,
+      "height": 100,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 1518,
+      "sha256": "df3f5b515de8e53228dfb7fd523dfe1b87e2f64edc8ba6af95c5d12ccb3bf3bc"
+    },
+    {
+      "path": "panels/07-socials.png",
+      "width": 320,
+      "height": 100,
+      "format": "png",
+      "transparent": true,
+      "bytes": 7092,
+      "sha256": "09aa9890ae246f821aa43652624e12ea88c9589624d02ab7fdaad86a50fb7632"
+    },
+    {
+      "path": "editable-svg/panels/07-socials.svg",
+      "width": 320,
+      "height": 100,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 1516,
+      "sha256": "220f1e713b4773b7701649d21f9401d7f3223793ed59177198f0254db3bc5098"
+    },
+    {
+      "path": "panels/08-setup-guide.png",
+      "width": 320,
+      "height": 100,
+      "format": "png",
+      "transparent": true,
+      "bytes": 7264,
+      "sha256": "41fc190bab70c3b1cfb1982c71b88438a085792db81b4206817230e4e79dc877"
+    },
+    {
+      "path": "editable-svg/panels/08-setup-guide.svg",
+      "width": 320,
+      "height": 100,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 1520,
+      "sha256": "2b93b3ffb923ac11027c75e525d77a941fc96ab6f61878896f7f3c1ae0634086"
+    },
+    {
+      "path": "panels/09-faq.png",
+      "width": 320,
+      "height": 100,
+      "format": "png",
+      "transparent": true,
+      "bytes": 5781,
+      "sha256": "2e56df0e958e9481c6d36a99f3d0f188d596ee1be2c20ccc4c457a643c7d2618"
+    },
+    {
+      "path": "editable-svg/panels/09-faq.svg",
+      "width": 320,
+      "height": 100,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 1512,
+      "sha256": "6e6e146883efb235e6be53ae612ebbea127ef56fdca09f0c499a0f90ba529321"
+    },
+    {
+      "path": "panels/10-support.png",
+      "width": 320,
+      "height": 100,
+      "format": "png",
+      "transparent": true,
+      "bytes": 6923,
+      "sha256": "720faafc067a8a05fe034c8730409ee22babd7142d2f5f6c62dbd73e2093bada"
+    },
+    {
+      "path": "editable-svg/panels/10-support.svg",
+      "width": 320,
+      "height": 100,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 1516,
+      "sha256": "4098c7a7f4c716bbdc47d06e2cf9232a758c731d942b5a7870a737d7c7472f3a"
+    },
+    {
+      "path": "panels/11-rules.png",
+      "width": 320,
+      "height": 100,
+      "format": "png",
+      "transparent": true,
+      "bytes": 6111,
+      "sha256": "e97df976ea33f5de835bff800924dadf99401133109609d88d7cb50a80519dac"
+    },
+    {
+      "path": "editable-svg/panels/11-rules.svg",
+      "width": 320,
+      "height": 100,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 1514,
+      "sha256": "3a958833e4bff8dc9a6e0ab84ac3c4eda9531ae7373a833d2cad2a607d89fdb7"
+    },
+    {
+      "path": "panels/12-disclaimer.png",
+      "width": 320,
+      "height": 100,
+      "format": "png",
+      "transparent": true,
+      "bytes": 7387,
+      "sha256": "824533c53de4e70b87e4941bae7934398875389b06cde2c9ca528cd1e847cc21"
+    },
+    {
+      "path": "editable-svg/panels/12-disclaimer.svg",
+      "width": 320,
+      "height": 100,
+      "format": "svg",
+      "transparent": true,
+      "bytes": 1519,
+      "sha256": "d3e1549e129540b5cf2efd134af3b18317590d0d336d7423827dbcf7826d82d9"
+    },
+    {
+      "path": "profile/twitch-profile-picture-256.png",
+      "width": 256,
+      "height": 256,
+      "format": "png",
+      "transparent": false,
+      "bytes": 10395,
+      "sha256": "9b4820d4c04d5de5befa6194abd2e9c0ee99d4ea543b7bec3917fdad6476a491"
+    },
+    {
+      "path": "profile/twitch-profile-picture-512.png",
+      "width": 512,
+      "height": 512,
+      "format": "png",
+      "transparent": false,
+      "bytes": 22470,
+      "sha256": "b8439f791a1c51fadf6c02cbe36bd523b048a2b49a8ed942a1686057b9ebcbc2"
+    },
+    {
+      "path": "emotes/core-master-512.png",
+      "width": 512,
+      "height": 512,
+      "format": "png",
+      "transparent": true,
+      "bytes": 251492,
+      "sha256": "df1a7f9fb2146c6b017ef23292a8926ac9eb363c35fa82752ecf58cf4ca78fa1"
+    },
+    {
+      "path": "emotes/core-112.png",
+      "width": 112,
+      "height": 112,
+      "format": "png",
+      "transparent": true,
+      "bytes": 6950,
+      "sha256": "63c1794a9c5ffb0189d8a617a457f2ad40fe7831631f285cf4200f5f7825e29b"
+    },
+    {
+      "path": "emotes/core-56.png",
+      "width": 56,
+      "height": 56,
+      "format": "png",
+      "transparent": true,
+      "bytes": 2975,
+      "sha256": "f57067e00287643ad533ee222a36e6aa606810dc6e7190e45d59afb9a5ab52f3"
+    },
+    {
+      "path": "emotes/core-28.png",
+      "width": 28,
+      "height": 28,
+      "format": "png",
+      "transparent": true,
+      "bytes": 1797,
+      "sha256": "b9a23b706e50e8e9239b2a4a1c3d4766a5981165a46592deaedd648fbddd755b"
+    },
+    {
+      "path": "emotes/nominal-master-512.png",
+      "width": 512,
+      "height": 512,
+      "format": "png",
+      "transparent": true,
+      "bytes": 229027,
+      "sha256": "cf153c31f43ca3c9be396aaf34ec73d34eb8226075bf64f7daeed530b3e03897"
+    },
+    {
+      "path": "emotes/nominal-112.png",
+      "width": 112,
+      "height": 112,
+      "format": "png",
+      "transparent": true,
+      "bytes": 6729,
+      "sha256": "84af0975f70e88319d47ba7315f623691762d93450d7820a2c5e7a752948e96e"
+    },
+    {
+      "path": "emotes/nominal-56.png",
+      "width": 56,
+      "height": 56,
+      "format": "png",
+      "transparent": true,
+      "bytes": 2960,
+      "sha256": "0e3e2c8da2416abf8e3bf25b8b500ada5fb67d024817e57b8cf91cf8d926ba7a"
+    },
+    {
+      "path": "emotes/nominal-28.png",
+      "width": 28,
+      "height": 28,
+      "format": "png",
+      "transparent": true,
+      "bytes": 1779,
+      "sha256": "15cb3c7f574cee477d8447f1999e5fcfa1e8c14db39fbd3dd5381e4342dc5ec0"
+    },
+    {
+      "path": "emotes/paper-master-512.png",
+      "width": 512,
+      "height": 512,
+      "format": "png",
+      "transparent": true,
+      "bytes": 227509,
+      "sha256": "aec8d2883174a51ab1bfd4ca026e6649a1acc6cdf830c14b923afe7474740b07"
+    },
+    {
+      "path": "emotes/paper-112.png",
+      "width": 112,
+      "height": 112,
+      "format": "png",
+      "transparent": true,
+      "bytes": 6730,
+      "sha256": "53f619a5ee081d51a2ae67aeafb09ecf041b427a1a5975e2bef6f84913d15bc1"
+    },
+    {
+      "path": "emotes/paper-56.png",
+      "width": 56,
+      "height": 56,
+      "format": "png",
+      "transparent": true,
+      "bytes": 2973,
+      "sha256": "614f1d7ec984730df3952260ed78c29073cd088924987259fc7f78b181f9d85b"
+    },
+    {
+      "path": "emotes/paper-28.png",
+      "width": 28,
+      "height": 28,
+      "format": "png",
+      "transparent": true,
+      "bytes": 1787,
+      "sha256": "44c5dc5c55306234700050b582983c21aef3d813560ae3ca064e2d5a1d27196e"
+    },
+    {
+      "path": "emotes/debug-master-512.png",
+      "width": 512,
+      "height": 512,
+      "format": "png",
+      "transparent": true,
+      "bytes": 228200,
+      "sha256": "1af43cbb1948f2161c8f75bc8f047a1c34560cc106a5424c84f137c4b5f3d245"
+    },
+    {
+      "path": "emotes/debug-112.png",
+      "width": 112,
+      "height": 112,
+      "format": "png",
+      "transparent": true,
+      "bytes": 6600,
+      "sha256": "19a2093801d321e18eead30b257ea91d4a0ed264e22e2ce99e61ba9172d83d40"
+    },
+    {
+      "path": "emotes/debug-56.png",
+      "width": 56,
+      "height": 56,
+      "format": "png",
+      "transparent": true,
+      "bytes": 2992,
+      "sha256": "b8746e01c226452586ccd743e8a8eba910a07742a9c19cd3e93a434eb2917478"
+    },
+    {
+      "path": "emotes/debug-28.png",
+      "width": 28,
+      "height": 28,
+      "format": "png",
+      "transparent": true,
+      "bytes": 1776,
+      "sha256": "9b027d5c88cf1683ed53ecbfd9f48e775a61ef3cf2d5b8487c8d5cbc46a5cb20"
+    },
+    {
+      "path": "emotes/ship-master-512.png",
+      "width": 512,
+      "height": 512,
+      "format": "png",
+      "transparent": true,
+      "bytes": 228025,
+      "sha256": "dcd05f5f6b4237f6b8c65371d0fd361ccf79f115abe0a34dc1dd433515117298"
+    },
+    {
+      "path": "emotes/ship-112.png",
+      "width": 112,
+      "height": 112,
+      "format": "png",
+      "transparent": true,
+      "bytes": 6673,
+      "sha256": "18d2f687aca2beac62d71b4b0aa0eeaaffbb944efa2169faecb9c694f8e67eda"
+    },
+    {
+      "path": "emotes/ship-56.png",
+      "width": 56,
+      "height": 56,
+      "format": "png",
+      "transparent": true,
+      "bytes": 2986,
+      "sha256": "88651fc05ddb2c4ae5e0dcc7d7910f4dfe619f975ef660cf1359bcc2be3d3089"
+    },
+    {
+      "path": "emotes/ship-28.png",
+      "width": 28,
+      "height": 28,
+      "format": "png",
+      "transparent": true,
+      "bytes": 1786,
+      "sha256": "da28ad7c1b278b81cea0d15d473b113179ab1b44635467c14fae8233eee50bcf"
+    },
+    {
+      "path": "subscriber-badges/01-node-72.png",
+      "width": 72,
+      "height": 72,
+      "format": "png",
+      "transparent": true,
+      "bytes": 2624,
+      "sha256": "9f21418d4e57e5930a31c633ba6224c9a309406774ca83969bcab863f60a4347"
+    },
+    {
+      "path": "subscriber-badges/01-node-36.png",
+      "width": 36,
+      "height": 36,
+      "format": "png",
+      "transparent": true,
+      "bytes": 1340,
+      "sha256": "dd20d8563d34a13d675eaf40a882c2e2bb0f9d01fa21a88a77eef84ea729e169"
+    },
+    {
+      "path": "subscriber-badges/01-node-18.png",
+      "width": 18,
+      "height": 18,
+      "format": "png",
+      "transparent": true,
+      "bytes": 547,
+      "sha256": "309c103b789dc0749be6c244036106288498784e70c7f7dd626eed9baad86e0c"
+    },
+    {
+      "path": "subscriber-badges/02-circuit-72.png",
+      "width": 72,
+      "height": 72,
+      "format": "png",
+      "transparent": true,
+      "bytes": 2972,
+      "sha256": "7410ef1c6588c0d99561b118fef6923961cff67f69d937492f9a4f290863d6e9"
+    },
+    {
+      "path": "subscriber-badges/02-circuit-36.png",
+      "width": 36,
+      "height": 36,
+      "format": "png",
+      "transparent": true,
+      "bytes": 1513,
+      "sha256": "d1cf021a2635ceffacb7cc6a2de2fdc18939cff7940ce0e5c45f9a1f33a4ba6f"
+    },
+    {
+      "path": "subscriber-badges/02-circuit-18.png",
+      "width": 18,
+      "height": 18,
+      "format": "png",
+      "transparent": true,
+      "bytes": 585,
+      "sha256": "54c34b600af291c17b7026c405a3204d877008ad2a2cd5f92f1f6146faa04e31"
+    },
+    {
+      "path": "subscriber-badges/03-mesh-72.png",
+      "width": 72,
+      "height": 72,
+      "format": "png",
+      "transparent": true,
+      "bytes": 3369,
+      "sha256": "7bc55e5c142ce5685246c6991bc630ef6839567b264fde9a0c7499e66b18889a"
+    },
+    {
+      "path": "subscriber-badges/03-mesh-36.png",
+      "width": 36,
+      "height": 36,
+      "format": "png",
+      "transparent": true,
+      "bytes": 1663,
+      "sha256": "99b5509ac805dfa2c5174c66dff35d8fff32caabe7cbde732ab8253607bc9f90"
+    },
+    {
+      "path": "subscriber-badges/03-mesh-18.png",
+      "width": 18,
+      "height": 18,
+      "format": "png",
+      "transparent": true,
+      "bytes": 600,
+      "sha256": "633852c31cf6ca00fbb6604de39724b658b83ed83a349075db1f14569f541cc2"
+    },
+    {
+      "path": "subscriber-badges/04-core-72.png",
+      "width": 72,
+      "height": 72,
+      "format": "png",
+      "transparent": true,
+      "bytes": 3699,
+      "sha256": "a3ce5f8986b7c7cb3dfef855cb66596c1273a9acec4b970f71d63e5c26f5fc7f"
+    },
+    {
+      "path": "subscriber-badges/04-core-36.png",
+      "width": 36,
+      "height": 36,
+      "format": "png",
+      "transparent": true,
+      "bytes": 1832,
+      "sha256": "a1cc904d08f16ec7403ec30d4004ae005ee58072d1744ef41708fa410f38f624"
+    },
+    {
+      "path": "subscriber-badges/04-core-18.png",
+      "width": 18,
+      "height": 18,
+      "format": "png",
+      "transparent": true,
+      "bytes": 632,
+      "sha256": "aca12aef66da9442c0f0f35018541dc623c2178239d26b4e209c2e3ee3179fa6"
+    },
+    {
+      "path": "subscriber-badges/05-prime-72.png",
+      "width": 72,
+      "height": 72,
+      "format": "png",
+      "transparent": true,
+      "bytes": 3871,
+      "sha256": "c40673899b565edc8fd14f0d493c1c1b5d6b08bd490aadbaf8cd94fd4471363a"
+    },
+    {
+      "path": "subscriber-badges/05-prime-36.png",
+      "width": 36,
+      "height": 36,
+      "format": "png",
+      "transparent": true,
+      "bytes": 1765,
+      "sha256": "5169bc457d9a36b19a0a2249f851c5ad4b46eb4960c488bcdeb1608c67077b08"
+    },
+    {
+      "path": "subscriber-badges/05-prime-18.png",
+      "width": 18,
+      "height": 18,
+      "format": "png",
+      "transparent": true,
+      "bytes": 649,
+      "sha256": "a7d08d3d8ecf7801c2e851b4f3bb4eec7be96bcfcc7ed5ec2d09dc6e2f7eed0c"
+    },
+    {
+      "path": "channel-points/cival-compute-112.png",
+      "width": 112,
+      "height": 112,
+      "format": "png",
+      "transparent": true,
+      "bytes": 6950,
+      "sha256": "63c1794a9c5ffb0189d8a617a457f2ad40fe7831631f285cf4200f5f7825e29b"
+    },
+    {
+      "path": "channel-points/cival-compute-56.png",
+      "width": 56,
+      "height": 56,
+      "format": "png",
+      "transparent": true,
+      "bytes": 2975,
+      "sha256": "f57067e00287643ad533ee222a36e6aa606810dc6e7190e45d59afb9a5ab52f3"
+    },
+    {
+      "path": "channel-points/cival-compute-28.png",
+      "width": 28,
+      "height": 28,
+      "format": "png",
+      "transparent": true,
+      "bytes": 1797,
+      "sha256": "b9a23b706e50e8e9239b2a4a1c3d4766a5981165a46592deaedd648fbddd755b"
+    },
+    {
+      "path": "previews/product-overlay-in-use.png",
+      "width": 1920,
+      "height": 1080,
+      "format": "png",
+      "transparent": false,
+      "bytes": 793360,
+      "sha256": "4c6d81ea5328d607782c841a2f1e41aa0502bd0ede7685511928a137aa0c797f"
+    },
+    {
+      "path": "previews/scene-contact-sheet.png",
+      "width": 1500,
+      "height": 912,
+      "format": "png",
+      "transparent": false,
+      "bytes": 424298,
+      "sha256": "bae43966c657d82b3b0eb1481ac2dd6afd03d75903a771879ad311e5a544d4b6"
+    }
+  ]
+}

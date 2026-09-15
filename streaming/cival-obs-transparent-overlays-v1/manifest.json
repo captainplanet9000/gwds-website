@@ -1,0 +1,249 @@
+{
+  "package": "Cival OBS Transparent Overlays",
+  "version": "1.0.0",
+  "assets": [
+    {
+      "path": "full-canvas/01-minimal-corners-1920x1080.png",
+      "editable": "editable-svg/full-canvas/01-minimal-corners-1920x1080.svg",
+      "width": 1920,
+      "height": 1080,
+      "transparent": true,
+      "bytes": 8577,
+      "sha256": "aa672234028ad5ef65d846ed28420d77cee1531b54891a1d5685443e2f12d35f"
+    },
+    {
+      "path": "full-canvas/02-status-footer-1920x1080.png",
+      "editable": "editable-svg/full-canvas/02-status-footer-1920x1080.svg",
+      "width": 1920,
+      "height": 1080,
+      "transparent": true,
+      "bytes": 22788,
+      "sha256": "db08531fc084a1e57923dec205de427726ac91008c3a1e67e7b7104d25de8654"
+    },
+    {
+      "path": "full-canvas/03-product-webcam-1920x1080.png",
+      "editable": "editable-svg/full-canvas/03-product-webcam-1920x1080.svg",
+      "width": 1920,
+      "height": 1080,
+      "transparent": true,
+      "bytes": 35014,
+      "sha256": "5cb9b0cc8b1ead474a020f5de2dd12b1f86de9b547a6f36f3e490156bd00dce6"
+    },
+    {
+      "path": "full-canvas/04-product-chat-1920x1080.png",
+      "editable": "editable-svg/full-canvas/04-product-chat-1920x1080.svg",
+      "width": 1920,
+      "height": 1080,
+      "transparent": true,
+      "bytes": 39896,
+      "sha256": "8cbf5aee2982380252fd8da4db4f6abcc2d2323db97cdcb3889d5195462ec9d6"
+    },
+    {
+      "path": "full-canvas/05-product-webcam-chat-1920x1080.png",
+      "editable": "editable-svg/full-canvas/05-product-webcam-chat-1920x1080.svg",
+      "width": 1920,
+      "height": 1080,
+      "transparent": true,
+      "bytes": 51680,
+      "sha256": "f2a604735a58736f987691072e656d38a8894fd37b7c427558163dabc460a875"
+    },
+    {
+      "path": "full-canvas/06-brand-clean-1920x1080.png",
+      "editable": "editable-svg/full-canvas/06-brand-clean-1920x1080.svg",
+      "width": 1920,
+      "height": 1080,
+      "transparent": true,
+      "bytes": 29724,
+      "sha256": "777ba3e90afad469f6bea3cb25c44026804718870448f09e60cc649aa3749f0a"
+    },
+    {
+      "path": "full-canvas/07-just-chatting-1920x1080.png",
+      "editable": "editable-svg/full-canvas/07-just-chatting-1920x1080.svg",
+      "width": 1920,
+      "height": 1080,
+      "transparent": true,
+      "bytes": 44400,
+      "sha256": "e99b30eb78a88f581aa56f66f0d86e1449482d3c1087d23e9d2ff2cffc572792"
+    },
+    {
+      "path": "full-canvas/08-vertical-camera-1080x1920.png",
+      "editable": "editable-svg/full-canvas/08-vertical-camera-1080x1920.svg",
+      "width": 1080,
+      "height": 1920,
+      "transparent": true,
+      "bytes": 45117,
+      "sha256": "42696309e50d479998d73b2077b815c9a4fb735b589f4bf9e5427c5b938b6a3a"
+    },
+    {
+      "path": "modules/brand-bug-480x96.png",
+      "editable": "editable-svg/modules/brand-bug-480x96.svg",
+      "width": 480,
+      "height": 96,
+      "transparent": true,
+      "bytes": 9852,
+      "sha256": "e134bc3c16ddf0a2e22aa347eb602ceb7eb6913504d8767ad14340bf63896073"
+    },
+    {
+      "path": "modules/corner-rails-1920x1080.png",
+      "editable": "editable-svg/modules/corner-rails-1920x1080.svg",
+      "width": 1920,
+      "height": 1080,
+      "transparent": true,
+      "bytes": 8577,
+      "sha256": "aa672234028ad5ef65d846ed28420d77cee1531b54891a1d5685443e2f12d35f"
+    },
+    {
+      "path": "modules/status-paper-live-340x50.png",
+      "editable": "editable-svg/modules/status-paper-live-340x50.svg",
+      "width": 340,
+      "height": 50,
+      "transparent": true,
+      "bytes": 5014,
+      "sha256": "0f54accae0abc3753cd2bf3806d0d6ce7dd75dd59ebe84d72b8679500e7bf1c1"
+    },
+    {
+      "path": "modules/status-paper-locked-340x50.png",
+      "editable": "editable-svg/modules/status-paper-locked-340x50.svg",
+      "width": 340,
+      "height": 50,
+      "transparent": true,
+      "bytes": 4886,
+      "sha256": "4d6688fe7b5df67ae47be5985194c86d5c5baaad065d65fdf43c44a7dca73e5b"
+    },
+    {
+      "path": "modules/status-blank-340x50.png",
+      "editable": "editable-svg/modules/status-blank-340x50.svg",
+      "width": 340,
+      "height": 50,
+      "transparent": true,
+      "bytes": 2612,
+      "sha256": "dd8bc1c046fc0422509d1c91e4c12eb353985b267e4f6d31d60e104b25552f61"
+    },
+    {
+      "path": "modules/footer-disclaimer-1920x60.png",
+      "editable": "editable-svg/modules/footer-disclaimer-1920x60.svg",
+      "width": 1920,
+      "height": 60,
+      "transparent": true,
+      "bytes": 8876,
+      "sha256": "11ca621b28c19379f6faccf3822e8cb6c3a9af036a39a2c74ffe5796b3757760"
+    },
+    {
+      "path": "modules/footer-blank-1920x60.png",
+      "editable": "editable-svg/modules/footer-blank-1920x60.svg",
+      "width": 1920,
+      "height": 60,
+      "transparent": true,
+      "bytes": 2197,
+      "sha256": "ffcdc05aaa165b9099da40168423fc7221800f22bd567da06367a47f8af27be8"
+    },
+    {
+      "path": "frames/webcam-16x9-640x360.png",
+      "editable": "editable-svg/frames/webcam-16x9-640x360.svg",
+      "width": 640,
+      "height": 360,
+      "transparent": true,
+      "bytes": 10787,
+      "sha256": "ed3138e1a3a95a4fef9af7621af9cffae882fb7f4c8f06517069c3f51156700c"
+    },
+    {
+      "path": "frames/webcam-16x9-960x540.png",
+      "editable": "editable-svg/frames/webcam-16x9-960x540.svg",
+      "width": 960,
+      "height": 540,
+      "transparent": true,
+      "bytes": 12320,
+      "sha256": "655163276d1dca299d5a0399549dc6b4bb58f53abafe8225394998fc8fa745ce"
+    },
+    {
+      "path": "frames/webcam-square-720x720.png",
+      "editable": "editable-svg/frames/webcam-square-720x720.svg",
+      "width": 720,
+      "height": 720,
+      "transparent": true,
+      "bytes": 12488,
+      "sha256": "1f58e37c5536df369076d8a13ca5fcaf8b884ae146a0aa7e4562258f8ddcaff4"
+    },
+    {
+      "path": "frames/webcam-portrait-608x1080.png",
+      "editable": "editable-svg/frames/webcam-portrait-608x1080.svg",
+      "width": 608,
+      "height": 1080,
+      "transparent": true,
+      "bytes": 13477,
+      "sha256": "07d1742de71847f9178fdad44e7e0eb98878640a3d2d66e6be4dccff55e63d81"
+    },
+    {
+      "path": "frames/chat-420x860.png",
+      "editable": "editable-svg/frames/chat-420x860.svg",
+      "width": 420,
+      "height": 860,
+      "transparent": true,
+      "bytes": 8938,
+      "sha256": "8d9600a62880fe43d5aa47404686fb8bf3095d263b9edad269527c75d9d85852"
+    },
+    {
+      "path": "lower-thirds/lower-third-blank-1000x200.png",
+      "editable": "editable-svg/lower-thirds/lower-third-blank-1000x200.svg",
+      "width": 1000,
+      "height": 200,
+      "transparent": true,
+      "bytes": 15814,
+      "sha256": "45ce53131a510edd3cd56b98a0860bd47dfaa1af0ec55c6e88119effd1bcab45"
+    },
+    {
+      "path": "lower-thirds/lower-third-cival-1000x200.png",
+      "editable": "editable-svg/lower-thirds/lower-third-cival-1000x200.svg",
+      "width": 1000,
+      "height": 200,
+      "transparent": true,
+      "bytes": 32005,
+      "sha256": "f11e6c5c9d3c5443b96f9c3aa9c1dd2d693d525984807c705d53c68d351eec7b"
+    },
+    {
+      "path": "alerts/alert-blank-740x180.png",
+      "editable": "editable-svg/alerts/alert-blank-740x180.svg",
+      "width": 740,
+      "height": 180,
+      "transparent": true,
+      "bytes": 14919,
+      "sha256": "c36fc7ee08e73ce8797e41b87dd1a1eec67fc11cb0147ad39dfce9f046973a90"
+    },
+    {
+      "path": "alerts/alert-follow-740x180.png",
+      "editable": "editable-svg/alerts/alert-follow-740x180.svg",
+      "width": 740,
+      "height": 180,
+      "transparent": true,
+      "bytes": 16618,
+      "sha256": "999ce5f380048b2a9cc1874ce88b2483d5c87fca0d5dbbc60b14ca30f0834c06"
+    },
+    {
+      "path": "alerts/alert-subscriber-740x180.png",
+      "editable": "editable-svg/alerts/alert-subscriber-740x180.svg",
+      "width": 740,
+      "height": 180,
+      "transparent": true,
+      "bytes": 17079,
+      "sha256": "52b79ea75c6efad6549ba46cb8ef4ec3e17677ef10c6e6343ff356a80a67478f"
+    },
+    {
+      "path": "alerts/alert-raid-740x180.png",
+      "editable": "editable-svg/alerts/alert-raid-740x180.svg",
+      "width": 740,
+      "height": 180,
+      "transparent": true,
+      "bytes": 16689,
+      "sha256": "fc89d16367e0c3a9b74cb3ec18016a61872e3df07be2f28de54e47030075f47e"
+    },
+    {
+      "path": "alerts/alert-support-740x180.png",
+      "editable": "editable-svg/alerts/alert-support-740x180.svg",
+      "width": 740,
+      "height": 180,
+      "transparent": true,
+      "bytes": 17195,
+      "sha256": "a24d5555b48e12e5eac7c747c438c7382935afa26ca978914db49ddb0dd67888"
+    }
+  ]
+}

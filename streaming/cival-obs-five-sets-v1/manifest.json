@@ -1,0 +1,648 @@
+{
+  "package": "Cival OBS Five Transparent Sets",
+  "version": "1.0.0",
+  "sets": [
+    {
+      "slug": "01-system-grid",
+      "name": "SYSTEM GRID",
+      "accent": "#4ade9f",
+      "second": "#7fffc8",
+      "edge": "#174d3b",
+      "style": "grid"
+    },
+    {
+      "slug": "02-agent-mesh",
+      "name": "AGENT MESH",
+      "accent": "#7fffc8",
+      "second": "#4ade9f",
+      "edge": "#215648",
+      "style": "mesh"
+    },
+    {
+      "slug": "03-terminal-ops",
+      "name": "TERMINAL OPS",
+      "accent": "#4ade9f",
+      "second": "#5eb0c9",
+      "edge": "#245046",
+      "style": "terminal"
+    },
+    {
+      "slug": "04-signal-glass",
+      "name": "SIGNAL GLASS",
+      "accent": "#50d2c1",
+      "second": "#7fffc8",
+      "edge": "#1b5b51",
+      "style": "glass"
+    },
+    {
+      "slug": "05-source-minimal",
+      "name": "SOURCE MINIMAL",
+      "accent": "#4ade9f",
+      "second": "#d5e1dc",
+      "edge": "#2a4840",
+      "style": "minimal"
+    }
+  ],
+  "assets": [
+    {
+      "set": "01-system-grid",
+      "group": "desktop-1920x1080",
+      "path": "01-system-grid/desktop-1920x1080/01-clean.png",
+      "editable": "editable-svg/01-system-grid/desktop-1920x1080/01-clean.svg",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 26078,
+      "sha256": "37e365c910157aec26cbbfa4d4ca7af31ed2a492a239eeb0d83c35e9b981723a"
+    },
+    {
+      "set": "01-system-grid",
+      "group": "desktop-1920x1080",
+      "path": "01-system-grid/desktop-1920x1080/02-product-webcam.png",
+      "editable": "editable-svg/01-system-grid/desktop-1920x1080/02-product-webcam.svg",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 38908,
+      "sha256": "5c8bd095eddfb8dceff80aaca9071437fd8b35034a5c9a61bdfcccfb6e5bec19"
+    },
+    {
+      "set": "01-system-grid",
+      "group": "desktop-1920x1080",
+      "path": "01-system-grid/desktop-1920x1080/03-product-chat.png",
+      "editable": "editable-svg/01-system-grid/desktop-1920x1080/03-product-chat.svg",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 48728,
+      "sha256": "f4237841a1c089c60d3692e5373a0b858bed746383c993d8e8f95fd50bcee282"
+    },
+    {
+      "set": "01-system-grid",
+      "group": "desktop-1920x1080",
+      "path": "01-system-grid/desktop-1920x1080/04-product-camera-chat.png",
+      "editable": "editable-svg/01-system-grid/desktop-1920x1080/04-product-camera-chat.svg",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 61613,
+      "sha256": "85b02da9dc0ead0202d0a1cbefaf9c43429f572785a5822cb04883f330d823dc"
+    },
+    {
+      "set": "01-system-grid",
+      "group": "desktop-1920x1080",
+      "path": "01-system-grid/desktop-1920x1080/05-just-chatting.png",
+      "editable": "editable-svg/01-system-grid/desktop-1920x1080/05-just-chatting.svg",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 48465,
+      "sha256": "43a8f389904939eaea901ce6545a06ba9f92781dcdf07d0df2b7a17e24327035"
+    },
+    {
+      "set": "01-system-grid",
+      "group": "mobile-1080x1920",
+      "path": "01-system-grid/mobile-1080x1920/01-clean.png",
+      "editable": "editable-svg/01-system-grid/mobile-1080x1920/01-clean.svg",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 24985,
+      "sha256": "683eb5f60a8b3073e3f61a227c376f4510661e264bdac8d03eb1325f23022847"
+    },
+    {
+      "set": "01-system-grid",
+      "group": "mobile-1080x1920",
+      "path": "01-system-grid/mobile-1080x1920/02-product-camera.png",
+      "editable": "editable-svg/01-system-grid/mobile-1080x1920/02-product-camera.svg",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 50915,
+      "sha256": "f899d40718b22b7fee0826de5bc9d472c88c0e3eb5fe32d3366121e864d7d6a7"
+    },
+    {
+      "set": "01-system-grid",
+      "group": "mobile-1080x1920",
+      "path": "01-system-grid/mobile-1080x1920/03-product-chat.png",
+      "editable": "editable-svg/01-system-grid/mobile-1080x1920/03-product-chat.svg",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 49323,
+      "sha256": "0944d6d786717ecd5c222577e7e969d50c61ccbfe40d6ba88a13ffc7d2a7324a"
+    },
+    {
+      "set": "01-system-grid",
+      "group": "mobile-1080x1920",
+      "path": "01-system-grid/mobile-1080x1920/04-product-camera-chat.png",
+      "editable": "editable-svg/01-system-grid/mobile-1080x1920/04-product-camera-chat.svg",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 61458,
+      "sha256": "a152efec6d0fd3cce10cd3cc1e453d93bfd5eb67eb1bbe41cc96a350bd21f27f"
+    },
+    {
+      "set": "01-system-grid",
+      "group": "mobile-1080x1920",
+      "path": "01-system-grid/mobile-1080x1920/05-just-chatting.png",
+      "editable": "editable-svg/01-system-grid/mobile-1080x1920/05-just-chatting.svg",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 48657,
+      "sha256": "d666049b4e14ddcb121d02eb0e313f5f796b8d8b6c59ead934f12969d4fddf2c"
+    },
+    {
+      "set": "01-system-grid",
+      "group": "modules",
+      "path": "01-system-grid/modules/lower-third-blank-1000x200.png",
+      "editable": "editable-svg/01-system-grid/modules/lower-third-blank-1000x200.svg",
+      "width": 1000,
+      "height": 200,
+      "bytes": 6757,
+      "sha256": "4d1efa2956167cbefbe54b43fe2854af7b7169c78e218dbbc6a8313bee82ee65"
+    },
+    {
+      "set": "01-system-grid",
+      "group": "modules",
+      "path": "01-system-grid/modules/alert-blank-740x180.png",
+      "editable": "editable-svg/01-system-grid/modules/alert-blank-740x180.svg",
+      "width": 740,
+      "height": 180,
+      "bytes": 10869,
+      "sha256": "9b97dd9c6af4ce6bf3d14ecffbbc9cfec9bfcb65d6ddf1428a19b7446a97c63f"
+    },
+    {
+      "set": "02-agent-mesh",
+      "group": "desktop-1920x1080",
+      "path": "02-agent-mesh/desktop-1920x1080/01-clean.png",
+      "editable": "editable-svg/02-agent-mesh/desktop-1920x1080/01-clean.svg",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 31735,
+      "sha256": "97fda16afe2aed884ebb596010ed12491b1dd9bca53cd7d5096ddeb389014b0a"
+    },
+    {
+      "set": "02-agent-mesh",
+      "group": "desktop-1920x1080",
+      "path": "02-agent-mesh/desktop-1920x1080/02-product-webcam.png",
+      "editable": "editable-svg/02-agent-mesh/desktop-1920x1080/02-product-webcam.svg",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 45572,
+      "sha256": "a00bf73bf27acfafba38a03ca492dbe1694927af8e4e5c4c04eb06955ff449eb"
+    },
+    {
+      "set": "02-agent-mesh",
+      "group": "desktop-1920x1080",
+      "path": "02-agent-mesh/desktop-1920x1080/03-product-chat.png",
+      "editable": "editable-svg/02-agent-mesh/desktop-1920x1080/03-product-chat.svg",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 55683,
+      "sha256": "11acd7c8772b7f7157c1d33775d5ea9561990738d7c844a792e58dd6d91ce3e8"
+    },
+    {
+      "set": "02-agent-mesh",
+      "group": "desktop-1920x1080",
+      "path": "02-agent-mesh/desktop-1920x1080/04-product-camera-chat.png",
+      "editable": "editable-svg/02-agent-mesh/desktop-1920x1080/04-product-camera-chat.svg",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 68622,
+      "sha256": "36b6e418f0c7396fb53dc1d59a18049825e44ea9338f81cfad6a271fcce873ea"
+    },
+    {
+      "set": "02-agent-mesh",
+      "group": "desktop-1920x1080",
+      "path": "02-agent-mesh/desktop-1920x1080/05-just-chatting.png",
+      "editable": "editable-svg/02-agent-mesh/desktop-1920x1080/05-just-chatting.svg",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 55830,
+      "sha256": "a068232a90ccd9bdaae420fd3c7e0ecfdaba7879f97b03c1d2b8314b0a9d9a39"
+    },
+    {
+      "set": "02-agent-mesh",
+      "group": "mobile-1080x1920",
+      "path": "02-agent-mesh/mobile-1080x1920/01-clean.png",
+      "editable": "editable-svg/02-agent-mesh/mobile-1080x1920/01-clean.svg",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 30635,
+      "sha256": "2ef7c5b3645be744b2ce89d34eef692336b60901e3cb94ac93985a0d2bc9abd4"
+    },
+    {
+      "set": "02-agent-mesh",
+      "group": "mobile-1080x1920",
+      "path": "02-agent-mesh/mobile-1080x1920/02-product-camera.png",
+      "editable": "editable-svg/02-agent-mesh/mobile-1080x1920/02-product-camera.svg",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 56738,
+      "sha256": "1648ddf0df1e638d97551ce826fb75368b2677902b2afbd3e943117af5a5fe3c"
+    },
+    {
+      "set": "02-agent-mesh",
+      "group": "mobile-1080x1920",
+      "path": "02-agent-mesh/mobile-1080x1920/03-product-chat.png",
+      "editable": "editable-svg/02-agent-mesh/mobile-1080x1920/03-product-chat.svg",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 55922,
+      "sha256": "0e09a57d525d2bbeb6cdfa33c9b9e1e5a7ef497cf8e45e6f0d1abb362b99bfce"
+    },
+    {
+      "set": "02-agent-mesh",
+      "group": "mobile-1080x1920",
+      "path": "02-agent-mesh/mobile-1080x1920/04-product-camera-chat.png",
+      "editable": "editable-svg/02-agent-mesh/mobile-1080x1920/04-product-camera-chat.svg",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 68323,
+      "sha256": "fda8b3e0166d9837665f2cafbcfc5540c48aa29577fc45aa00afdf6b23007797"
+    },
+    {
+      "set": "02-agent-mesh",
+      "group": "mobile-1080x1920",
+      "path": "02-agent-mesh/mobile-1080x1920/05-just-chatting.png",
+      "editable": "editable-svg/02-agent-mesh/mobile-1080x1920/05-just-chatting.svg",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 55398,
+      "sha256": "4bd0f42af5295798144c599d7a82c9a82708e0ae41197d6989da351db1edf73d"
+    },
+    {
+      "set": "02-agent-mesh",
+      "group": "modules",
+      "path": "02-agent-mesh/modules/lower-third-blank-1000x200.png",
+      "editable": "editable-svg/02-agent-mesh/modules/lower-third-blank-1000x200.svg",
+      "width": 1000,
+      "height": 200,
+      "bytes": 5949,
+      "sha256": "18727162d4ea46d0b0a1102b9946e1c964ee2484c1990894aca45ac08bc540ad"
+    },
+    {
+      "set": "02-agent-mesh",
+      "group": "modules",
+      "path": "02-agent-mesh/modules/alert-blank-740x180.png",
+      "editable": "editable-svg/02-agent-mesh/modules/alert-blank-740x180.svg",
+      "width": 740,
+      "height": 180,
+      "bytes": 12226,
+      "sha256": "671acb348e0d35057590bb734178289d199d1a512e0417a444ce9d555a92a9d8"
+    },
+    {
+      "set": "03-terminal-ops",
+      "group": "desktop-1920x1080",
+      "path": "03-terminal-ops/desktop-1920x1080/01-clean.png",
+      "editable": "editable-svg/03-terminal-ops/desktop-1920x1080/01-clean.svg",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 23703,
+      "sha256": "3333e8562f02f6b1c545735fe8e26bb5b8047dd14a0f9d656c6052fe72391fc6"
+    },
+    {
+      "set": "03-terminal-ops",
+      "group": "desktop-1920x1080",
+      "path": "03-terminal-ops/desktop-1920x1080/02-product-webcam.png",
+      "editable": "editable-svg/03-terminal-ops/desktop-1920x1080/02-product-webcam.svg",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 34943,
+      "sha256": "cd77c80d823de4950e5461a9a1a5d206313e114efc960b294c500b1abf1a63b1"
+    },
+    {
+      "set": "03-terminal-ops",
+      "group": "desktop-1920x1080",
+      "path": "03-terminal-ops/desktop-1920x1080/03-product-chat.png",
+      "editable": "editable-svg/03-terminal-ops/desktop-1920x1080/03-product-chat.svg",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 43102,
+      "sha256": "ad28578097ff4d1247c06b212a65dbacae0eba1b78d024999ee3ad290a9a85ff"
+    },
+    {
+      "set": "03-terminal-ops",
+      "group": "desktop-1920x1080",
+      "path": "03-terminal-ops/desktop-1920x1080/04-product-camera-chat.png",
+      "editable": "editable-svg/03-terminal-ops/desktop-1920x1080/04-product-camera-chat.svg",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 54347,
+      "sha256": "fb9f72b1cc9f6cf0f6d1ce01ed910b71e879e4e0046d02e3120d2c9c9daf3a8f"
+    },
+    {
+      "set": "03-terminal-ops",
+      "group": "desktop-1920x1080",
+      "path": "03-terminal-ops/desktop-1920x1080/05-just-chatting.png",
+      "editable": "editable-svg/03-terminal-ops/desktop-1920x1080/05-just-chatting.svg",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 42957,
+      "sha256": "3c6e853a677fd5cebadab8a3583ac3aab87dd24567c7257b2f36d5898ee75952"
+    },
+    {
+      "set": "03-terminal-ops",
+      "group": "mobile-1080x1920",
+      "path": "03-terminal-ops/mobile-1080x1920/01-clean.png",
+      "editable": "editable-svg/03-terminal-ops/mobile-1080x1920/01-clean.svg",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 22659,
+      "sha256": "912e6448111c4d68909c862350b5e0d1f168a4c85e799f9638ca9790e44c7f0d"
+    },
+    {
+      "set": "03-terminal-ops",
+      "group": "mobile-1080x1920",
+      "path": "03-terminal-ops/mobile-1080x1920/02-product-camera.png",
+      "editable": "editable-svg/03-terminal-ops/mobile-1080x1920/02-product-camera.svg",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 44839,
+      "sha256": "0b73f3aff82dfb96e9a97503e556c6eeba028bd3702e04ef8ecdbd269a5d9387"
+    },
+    {
+      "set": "03-terminal-ops",
+      "group": "mobile-1080x1920",
+      "path": "03-terminal-ops/mobile-1080x1920/03-product-chat.png",
+      "editable": "editable-svg/03-terminal-ops/mobile-1080x1920/03-product-chat.svg",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 43538,
+      "sha256": "4db5a7c3c800778258018c6ecae141d3a280679e0ff74138505546fbabd58d93"
+    },
+    {
+      "set": "03-terminal-ops",
+      "group": "mobile-1080x1920",
+      "path": "03-terminal-ops/mobile-1080x1920/04-product-camera-chat.png",
+      "editable": "editable-svg/03-terminal-ops/mobile-1080x1920/04-product-camera-chat.svg",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 54037,
+      "sha256": "f5534b6c01b696337bdb7bc42aa0f1dbd526eb3e564373dcbf14a9803fb7d9a3"
+    },
+    {
+      "set": "03-terminal-ops",
+      "group": "mobile-1080x1920",
+      "path": "03-terminal-ops/mobile-1080x1920/05-just-chatting.png",
+      "editable": "editable-svg/03-terminal-ops/mobile-1080x1920/05-just-chatting.svg",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 43225,
+      "sha256": "9a6e66549d21452e0c72aa4f11a7cb108ef40a8b39ee8a29c4efa54dbcc39e09"
+    },
+    {
+      "set": "03-terminal-ops",
+      "group": "modules",
+      "path": "03-terminal-ops/modules/lower-third-blank-1000x200.png",
+      "editable": "editable-svg/03-terminal-ops/modules/lower-third-blank-1000x200.svg",
+      "width": 1000,
+      "height": 200,
+      "bytes": 5404,
+      "sha256": "6dc7504723efc795792747a73e604da7b86b98a04ecb02e1187bfe09e5580a60"
+    },
+    {
+      "set": "03-terminal-ops",
+      "group": "modules",
+      "path": "03-terminal-ops/modules/alert-blank-740x180.png",
+      "editable": "editable-svg/03-terminal-ops/modules/alert-blank-740x180.svg",
+      "width": 740,
+      "height": 180,
+      "bytes": 10043,
+      "sha256": "ed05debaf2a4026c6eecec2ad83f9a1a61666b7ff5e37c14e49fc9527b0c24b7"
+    },
+    {
+      "set": "04-signal-glass",
+      "group": "desktop-1920x1080",
+      "path": "04-signal-glass/desktop-1920x1080/01-clean.png",
+      "editable": "editable-svg/04-signal-glass/desktop-1920x1080/01-clean.svg",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 36444,
+      "sha256": "a737b0555a4c782afc6f36e237fb70e41e9de65e63334a850b126bec3f540610"
+    },
+    {
+      "set": "04-signal-glass",
+      "group": "desktop-1920x1080",
+      "path": "04-signal-glass/desktop-1920x1080/02-product-webcam.png",
+      "editable": "editable-svg/04-signal-glass/desktop-1920x1080/02-product-webcam.svg",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 50041,
+      "sha256": "1a441f5f388c1e63a062b96e7116e3407e406886559e5162f91abb5310bd4bc4"
+    },
+    {
+      "set": "04-signal-glass",
+      "group": "desktop-1920x1080",
+      "path": "04-signal-glass/desktop-1920x1080/03-product-chat.png",
+      "editable": "editable-svg/04-signal-glass/desktop-1920x1080/03-product-chat.svg",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 62275,
+      "sha256": "0790dfce301c3d961627f4c0718bfd4957c32ef22f3efa076615a02f3c9a8db7"
+    },
+    {
+      "set": "04-signal-glass",
+      "group": "desktop-1920x1080",
+      "path": "04-signal-glass/desktop-1920x1080/04-product-camera-chat.png",
+      "editable": "editable-svg/04-signal-glass/desktop-1920x1080/04-product-camera-chat.svg",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 75596,
+      "sha256": "a4ed6550ddd377e65ab5ae07245c14b95b3b004fc587cb2e101acad3afa5804b"
+    },
+    {
+      "set": "04-signal-glass",
+      "group": "desktop-1920x1080",
+      "path": "04-signal-glass/desktop-1920x1080/05-just-chatting.png",
+      "editable": "editable-svg/04-signal-glass/desktop-1920x1080/05-just-chatting.svg",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 62055,
+      "sha256": "9cae85f0ff640f14d9ff68c57bd404a11ecbaff5c6a4b3ca60bdcf3e9edf9354"
+    },
+    {
+      "set": "04-signal-glass",
+      "group": "mobile-1080x1920",
+      "path": "04-signal-glass/mobile-1080x1920/01-clean.png",
+      "editable": "editable-svg/04-signal-glass/mobile-1080x1920/01-clean.svg",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 35268,
+      "sha256": "c2d6711dd6f5abc5bfe7e3fe966918bce006107f7a9a831161917c17ac8907f4"
+    },
+    {
+      "set": "04-signal-glass",
+      "group": "mobile-1080x1920",
+      "path": "04-signal-glass/mobile-1080x1920/02-product-camera.png",
+      "editable": "editable-svg/04-signal-glass/mobile-1080x1920/02-product-camera.svg",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 62702,
+      "sha256": "c8d1cef75a677df838a66f687fd29b60df59dd04689951f0c84668bcdceb6d91"
+    },
+    {
+      "set": "04-signal-glass",
+      "group": "mobile-1080x1920",
+      "path": "04-signal-glass/mobile-1080x1920/03-product-chat.png",
+      "editable": "editable-svg/04-signal-glass/mobile-1080x1920/03-product-chat.svg",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 62066,
+      "sha256": "a9720416b343fa05bb71bf05995da55a315ec74569285cfd1b347c96f7d4589b"
+    },
+    {
+      "set": "04-signal-glass",
+      "group": "mobile-1080x1920",
+      "path": "04-signal-glass/mobile-1080x1920/04-product-camera-chat.png",
+      "editable": "editable-svg/04-signal-glass/mobile-1080x1920/04-product-camera-chat.svg",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 74150,
+      "sha256": "d266b401c35bd35b2edbb188dec3fe73b30f9db226292132f2112ee324f16773"
+    },
+    {
+      "set": "04-signal-glass",
+      "group": "mobile-1080x1920",
+      "path": "04-signal-glass/mobile-1080x1920/05-just-chatting.png",
+      "editable": "editable-svg/04-signal-glass/mobile-1080x1920/05-just-chatting.svg",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 61642,
+      "sha256": "fd5da1175086e5a1fa8aeacaa54e8092f3f72cb665dc2e6eea41578f8abf2cf4"
+    },
+    {
+      "set": "04-signal-glass",
+      "group": "modules",
+      "path": "04-signal-glass/modules/lower-third-blank-1000x200.png",
+      "editable": "editable-svg/04-signal-glass/modules/lower-third-blank-1000x200.svg",
+      "width": 1000,
+      "height": 200,
+      "bytes": 7203,
+      "sha256": "02f0498f88335778aee1f50e599780415d268b1768919339ee4b271863846468"
+    },
+    {
+      "set": "04-signal-glass",
+      "group": "modules",
+      "path": "04-signal-glass/modules/alert-blank-740x180.png",
+      "editable": "editable-svg/04-signal-glass/modules/alert-blank-740x180.svg",
+      "width": 740,
+      "height": 180,
+      "bytes": 13100,
+      "sha256": "2a8e5cbc9dc2529d1c14b09350ee2f4caba9d813d1fa073d5c6ce14779556848"
+    },
+    {
+      "set": "05-source-minimal",
+      "group": "desktop-1920x1080",
+      "path": "05-source-minimal/desktop-1920x1080/01-clean.png",
+      "editable": "editable-svg/05-source-minimal/desktop-1920x1080/01-clean.svg",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 24878,
+      "sha256": "f153c95023ba924abc8a578de6337b2564b24e0c0d65cc39d40c4626c59e788b"
+    },
+    {
+      "set": "05-source-minimal",
+      "group": "desktop-1920x1080",
+      "path": "05-source-minimal/desktop-1920x1080/02-product-webcam.png",
+      "editable": "editable-svg/05-source-minimal/desktop-1920x1080/02-product-webcam.svg",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 35416,
+      "sha256": "e5943065d8c0f527430cf5030817f78c435023a0e0cc64d2ee71eaf5d85914eb"
+    },
+    {
+      "set": "05-source-minimal",
+      "group": "desktop-1920x1080",
+      "path": "05-source-minimal/desktop-1920x1080/03-product-chat.png",
+      "editable": "editable-svg/05-source-minimal/desktop-1920x1080/03-product-chat.svg",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 43608,
+      "sha256": "a5a4ad81068b417bcc7cfe0899dc9e53102b466f6bd3aab45cc71d804b202008"
+    },
+    {
+      "set": "05-source-minimal",
+      "group": "desktop-1920x1080",
+      "path": "05-source-minimal/desktop-1920x1080/04-product-camera-chat.png",
+      "editable": "editable-svg/05-source-minimal/desktop-1920x1080/04-product-camera-chat.svg",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 53982,
+      "sha256": "ebec939f87229d6ba78eed92abcaf1da6c52122b054a9527299a6e2eaa6111e8"
+    },
+    {
+      "set": "05-source-minimal",
+      "group": "desktop-1920x1080",
+      "path": "05-source-minimal/desktop-1920x1080/05-just-chatting.png",
+      "editable": "editable-svg/05-source-minimal/desktop-1920x1080/05-just-chatting.svg",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 43728,
+      "sha256": "410d13d5f17c11d87635e855e6f3be5d282bb753350acc7ad7f6199dd8ec0d5e"
+    },
+    {
+      "set": "05-source-minimal",
+      "group": "mobile-1080x1920",
+      "path": "05-source-minimal/mobile-1080x1920/01-clean.png",
+      "editable": "editable-svg/05-source-minimal/mobile-1080x1920/01-clean.svg",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 22702,
+      "sha256": "56816da21ddd69d04d6e12463891137269fb40adf967b9416b3aaf564b123df4"
+    },
+    {
+      "set": "05-source-minimal",
+      "group": "mobile-1080x1920",
+      "path": "05-source-minimal/mobile-1080x1920/02-product-camera.png",
+      "editable": "editable-svg/05-source-minimal/mobile-1080x1920/02-product-camera.svg",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 43837,
+      "sha256": "f2260469953a54d09121873988002ca167501c25e7760de83364e0659c262a96"
+    },
+    {
+      "set": "05-source-minimal",
+      "group": "mobile-1080x1920",
+      "path": "05-source-minimal/mobile-1080x1920/03-product-chat.png",
+      "editable": "editable-svg/05-source-minimal/mobile-1080x1920/03-product-chat.svg",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 43108,
+      "sha256": "d3a3aafd03c97b121e0294d78710180ca724157aaa26e8bbcd3f8a221e9a4f84"
+    },
+    {
+      "set": "05-source-minimal",
+      "group": "mobile-1080x1920",
+      "path": "05-source-minimal/mobile-1080x1920/04-product-camera-chat.png",
+      "editable": "editable-svg/05-source-minimal/mobile-1080x1920/04-product-camera-chat.svg",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 52926,
+      "sha256": "cfb80862cab4375fe4daccf3cc126e6bed848cbf5cd1ead6d32e6d34b65123e6"
+    },
+    {
+      "set": "05-source-minimal",
+      "group": "mobile-1080x1920",
+      "path": "05-source-minimal/mobile-1080x1920/05-just-chatting.png",
+      "editable": "editable-svg/05-source-minimal/mobile-1080x1920/05-just-chatting.svg",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 42783,
+      "sha256": "36585c4abf66b141fbc6bafa67c464cea9ff748ddd8b1497e978435309978583"
+    },
+    {
+      "set": "05-source-minimal",
+      "group": "modules",
+      "path": "05-source-minimal/modules/lower-third-blank-1000x200.png",
+      "editable": "editable-svg/05-source-minimal/modules/lower-third-blank-1000x200.svg",
+      "width": 1000,
+      "height": 200,
+      "bytes": 4318,
+      "sha256": "8e95a40fd0d0414deb37fe8844cb8ec29e10b52d93c801a103895ba9bf50d6e4"
+    },
+    {
+      "set": "05-source-minimal",
+      "group": "modules",
+      "path": "05-source-minimal/modules/alert-blank-740x180.png",
+      "editable": "editable-svg/05-source-minimal/modules/alert-blank-740x180.svg",
+      "width": 740,
+      "height": 180,
+      "bytes": 9652,
+      "sha256": "d8d2e939371d9a2f20508036836a625b4ea97c0523d09c71ccd5d2e6c857eac8"
+    }
+  ]
+}

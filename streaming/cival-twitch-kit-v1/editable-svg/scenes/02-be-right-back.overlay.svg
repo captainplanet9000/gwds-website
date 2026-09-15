@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <filter id="mintGlow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="12" stdDeviation="18" flood-color="#000000" flood-opacity="0.55"/></filter>
+    <linearGradient id="sceneShade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#06110e" stop-opacity="0.96"/><stop offset="0.52" stop-color="#06110e" stop-opacity="0.74"/><stop offset="1" stop-color="#06110e" stop-opacity="0.20"/></linearGradient>
+    <linearGradient id="panelFill" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b1f19" stop-opacity="0.98"/><stop offset="1" stop-color="#06110e" stop-opacity="0.93"/></linearGradient>
+    
+  </defs>
+  <rect width="1920" height="1080" fill="url(#sceneShade)"/>
+    <g fill="none" stroke="#4ade9f" stroke-width="2" opacity="0.9">
+    <path d="M52 144V52H144"/>
+    <path d="M1776 52H1868V144"/>
+    <path d="M52 936V1028H144"/>
+    <path d="M1776 1028H1868V936"/>
+  </g>
+    <g transform="translate(104 82)">
+    <rect width="58.24000000000001" height="58.24000000000001" rx="11.200000000000001" fill="#06110e" stroke="#174d3b" stroke-width="2"/>
+    <path d="M39.60320000000001 18.0544c-4.076800000000001-5.824000000000002-9.900800000000002-8.153600000000003-16.307200000000005-8.153600000000003-13.395200000000003 0-20.966400000000004 11.065600000000002-20.966400000000004 27.955200000000005s7.571200000000001 27.955200000000005 20.966400000000004 27.955200000000005c6.988800000000001 0 12.812800000000003-2.912000000000001 16.8896-8.736" fill="none" stroke="#4ade9f" stroke-width="6.406400000000001" stroke-linecap="round"/>
+    <text x="82.88000000000001" y="24.64" fill="#effff7" font-family="Arial, Helvetica, sans-serif" font-size="17.92" font-weight="700" letter-spacing="4.48">CIVAL SYSTEMS</text>
+    <text x="82.88000000000001" y="48.160000000000004" fill="#9eaaa5" font-family="Consolas, monospace" font-size="10.080000000000002" letter-spacing="2.688">TRADING SYSTEMS, SHIPPED AS SOURCE</text>
+  </g>
+    <g transform="translate(1490 86)">
+    <rect width="241" height="38" rx="19" fill="#06110e" fill-opacity="0.86" stroke="#4ade9f" stroke-opacity="0.55"/>
+    <circle cx="20" cy="19" r="4" fill="#4ade9f" filter="url(#mintGlow)"/>
+    <text x="36" y="24" fill="#4ade9f" font-family="Consolas, monospace" font-size="12" font-weight="700" letter-spacing="1.6">PAPER MODE / HOLD</text>
+  </g>
+    <text x="104" y="363" fill="#4ade9f" font-family="Consolas, monospace" font-size="15" font-weight="700" letter-spacing="4">SESSION PAUSED / 01</text>
+    <text x="104" y="445" fill="#effff7" font-family="Arial, Helvetica, sans-serif" font-size="94" font-weight="750" letter-spacing="-2">BE RIGHT</text>
+<text x="104" y="533.36" fill="#4ade9f" font-family="Arial, Helvetica, sans-serif" font-size="94" font-weight="750" letter-spacing="-2">BACK</text>
+    <rect x="104" y="569.36" width="84" height="3" rx="2" fill="#4ade9f"/>
+    <text x="104" y="625.36" fill="#9eaaa5" font-family="Arial, Helvetica, sans-serif" font-size="24" letter-spacing="0.4">The system is safe. The operator will return shortly.</text>
+    <g transform="translate(104 962)">
+      <text y="0" fill="#effff7" font-family="Consolas, monospace" font-size="14" font-weight="700" letter-spacing="2">NO LIVE ORDERS · DEMO ENVIRONMENT</text>
+      <text x="1712" y="0" text-anchor="end" fill="#9eaaa5" font-family="Consolas, monospace" font-size="12" letter-spacing="1.5">CIVALSYSTEMS.COM</text>
+    </g>
+</svg>

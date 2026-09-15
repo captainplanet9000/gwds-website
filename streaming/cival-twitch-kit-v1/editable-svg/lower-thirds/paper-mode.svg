@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="240" viewBox="0 0 1080 240">
+  <defs>
+    <filter id="mintGlow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="12" stdDeviation="18" flood-color="#000000" flood-opacity="0.55"/></filter>
+    <linearGradient id="sceneShade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#06110e" stop-opacity="0.96"/><stop offset="0.52" stop-color="#06110e" stop-opacity="0.74"/><stop offset="1" stop-color="#06110e" stop-opacity="0.20"/></linearGradient>
+    <linearGradient id="panelFill" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b1f19" stop-opacity="0.98"/><stop offset="1" stop-color="#06110e" stop-opacity="0.93"/></linearGradient>
+    
+  </defs>
+  <g transform="translate(34 34)" filter="url(#softShadow)"><path d="M0 0h880l92 86-92 86H0z" fill="url(#panelFill)" stroke="#174d3b" stroke-width="2"/><rect width="8" height="172" fill="#4ade9f"/><text x="42" y="60" fill="#4ade9f" font-family="Consolas, monospace" font-size="14" font-weight="700" letter-spacing="3">SAFETY STATE</text><text x="42" y="116" fill="#effff7" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="700" letter-spacing="0.8">PAPER MODE LOCKED</text><text x="42" y="148" fill="#9eaaa5" font-family="Consolas, monospace" font-size="10" letter-spacing="1.5">TRADING SYSTEMS, SHIPPED AS SOURCE</text></g>
+</svg>
