@@ -5,6 +5,10 @@
     {
       "path": "/api/cron/hosting-provision",
       "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/cron/hosting-provision-watch",
+      "schedule": "0 14 * * *"
     }
   ]
 }

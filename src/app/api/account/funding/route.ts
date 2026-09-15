@@ -75,7 +75,7 @@ export async function GET(req: NextRequest) {
       chainId: arbitrumChainId(),
       settlementAsset: 'USDC',
       usdcContract: usdcAddress(),
-      bridgeAddress: bridgeAddress(), // null when unconfigured — UI must render "not configured", never guess
+      bridgeAddress: bridgeAddress(), // verified Hyperliquid Bridge2 address for this network (env can override)
     };
 
     const subRow = await supabase.from('hosting_subscriptions').select('id,status,created_at').eq('user_id', user.id)

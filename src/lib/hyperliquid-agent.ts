@@ -15,10 +15,12 @@
 //                    { name: "nonce",            type: "uint64" } ] }
 //
 // approveAgent grants the named address permission to SIGN TRADES on behalf of the connected
-// wallet's Hyperliquid account. It can never withdraw or transfer funds — that asymmetry is
-// exactly why an "agent"/API wallet is safe for an automated trading service to hold, and is
-// the whole reason this flow exists: it lets Cival's tenant process trade without ever being
-// handed the customer's own wallet key.
+// wallet's Hyperliquid account. Hyperliquid does not let an agent withdraw, or send USDC to
+// another address (withdraw3 / usdSend must be signed by the account's own key). Be precise
+// about that limit: an agent CAN sign other L1 actions, including moving funds between the
+// account's own spot and perp balances and depositing into a vault (vaultTransfer). That
+// asymmetry is why an agent/API wallet is the right thing for an automated trading service to
+// hold: it lets Cival's tenant process trade without ever being handed the customer's own key.
 //
 // This file only builds data to sign and the request to submit an already-signed action. It
 // never touches a private key.
