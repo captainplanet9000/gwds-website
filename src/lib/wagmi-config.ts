@@ -1,5 +1,5 @@
-// wagmi configuration for the non-custodial funding flow (/account/funding). Only ever runs in
-// the browser. Two connector kinds are offered:
+// wagmi configuration for the non-custodial wallet flows (/account/funding and the hosting wallet
+// panel). Only ever runs in the browser. Two connector kinds are offered:
 //   - injected():      MetaMask, Rabby, Coinbase extension, etc. — whatever the browser exposes.
 //   - walletConnect():  any WalletConnect-compatible mobile/hardware wallet, QR-paired.
 // Neither connector, nor anything in this file, ever sees or stores a private key. Signing
@@ -11,7 +11,12 @@ import { arbitrum, arbitrumSepolia } from 'wagmi/chains';
 import { injected, walletConnect } from 'wagmi/connectors';
 import { arbitrumRpcUrl, isMainnet } from './hyperliquid-network';
 
-const chain = isMainnet() ? arbitrum : arbitrumSepolia;
+// Both chains are registered because the network belongs to each customer's tenant and is picked
+// at call time (switch to the tenant's chainId), not fixed by this build. The build-time network
+// is listed first only so it stays wagmi's default chain for callers that never switch.
+const chains = isMainnet()
+  ? ([arbitrum, arbitrumSepolia] as const)
+  : ([arbitrumSepolia, arbitrum] as const);
 const walletConnectProjectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
 
 const connectors = [injected({ shimDisconnect: true })];
@@ -40,16 +45,12 @@ let cachedConfig: ReturnType<typeof createConfig> | null = null;
 export function getWagmiConfig() {
   if (!cachedConfig) {
     cachedConfig = createConfig({
-      chains: [chain],
+      chains,
       connectors,
-      // `chain` is a union (arbitrum | arbitrumSepolia) chosen at runtime by isMainnet(), so
-      // `chain.id` alone types as `42161 | 421614` and wagmi's transports Record requires both
-      // literal keys present regardless of which one is actually selected. Only the transport for
-      // the runtime-selected `chain` is ever used; the other key is unreachable but keeps this
-      // buildable under strict typing.
+      // Each chain reads through its own network's RPC, never the other one's.
       transports: {
-        [arbitrum.id]: http(arbitrumRpcUrl()),
-        [arbitrumSepolia.id]: http(arbitrumRpcUrl()),
+        [arbitrum.id]: http(arbitrumRpcUrl('mainnet')),
+        [arbitrumSepolia.id]: http(arbitrumRpcUrl('testnet')),
       },
       ssr: true,
     });

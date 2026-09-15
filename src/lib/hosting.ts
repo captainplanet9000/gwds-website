@@ -1,5 +1,7 @@
 import type Stripe from 'stripe';
 import { CommerceError } from '@/lib/commerce';
+import { resolveAgentLimit } from '@/lib/loadout';
+import { getProduct } from '@/lib/products';
 
 export const HOSTING_SERVICE_TERMS_VERSION = '2026-08-20';
 
@@ -18,6 +20,73 @@ export const HOSTING_AGENT_IDS = [
   'macro-sentiment',
   'regime-coordinator',
 ] as const;
+
+/**
+ * Onboarding agent id -> the storefront product id control.tenant_loadout stores.
+ *
+ * MIRRORS the CASE in control.sync_tenant_loadout_from_onboarding (the live control-plane
+ * definition), which is what actually installs an approved request. 'regime-coordinator' has no
+ * product there, so it is deliberately absent here and a request naming it is never auto-approved.
+ */
+export const ONBOARDING_AGENT_PRODUCTS: Readonly<Record<string, string>> = {
+  'darvas-box': 'darvas-indicator',
+  'elliott-wave': 'elliott-wave-agent',
+  'vwap-momentum': 'vwap-momentum-agent',
+  'heikin-ashi': 'heikin-ashi-agent',
+  'mean-reversion': 'mean-reversion-agent',
+  'macro-sentiment': 'macro-sentiment-agent',
+};
+
+export type OnboardingDecision =
+  | { approved: true; mappedAgents: string[] }
+  | { approved: false; reason: string; mappedAgents: string[] };
+
+/**
+ * Whether a submitted onboarding request can be approved without an operator.
+ *
+ * Every condition must hold: billing is active or trialing, every requested agent maps to a
+ * product, the mapped count fits the plan's agent_limit, and the customer is entitled to every
+ * mapped product. Anything else is held for operator review WITH the reason, never silently
+ * dropped. Risk limits are validated by the route before this runs. The host agent re-checks
+ * entitlement and the cap before installing, so this is a gate on review, not the last line.
+ */
+export function decideOnboardingApproval(input: {
+  subscriptionStatus: string;
+  requestedAgents: readonly string[];
+  agentLimit: number | null | undefined;
+  entitledProductIds: ReadonlySet<string>;
+}): OnboardingDecision {
+  const mappedAgents: string[] = [];
+  const unmapped: string[] = [];
+  for (const agent of input.requestedAgents) {
+    const product = ONBOARDING_AGENT_PRODUCTS[agent];
+    if (product) mappedAgents.push(product);
+    else unmapped.push(agent);
+  }
+  const hold = (reason: string): OnboardingDecision => ({ approved: false, reason, mappedAgents });
+
+  if (!['active', 'trialing'].includes(input.subscriptionStatus)) {
+    return hold('Your subscription is not active, so an operator reviews these settings.');
+  }
+  if (unmapped.length) {
+    return hold(`${unmapped.join(', ')} is not available as a hosted agent yet, so an operator reviews this request.`);
+  }
+  // A NULL agent_limit is exactly what the loadout sync refuses to install against, so it cannot
+  // be approved automatically either.
+  if (typeof input.agentLimit !== 'number' || !Number.isFinite(input.agentLimit) || input.agentLimit < 1) {
+    return hold('Your plan has no agent capacity set yet, so an operator reviews this request.');
+  }
+  const limit = resolveAgentLimit(input.agentLimit);
+  if (mappedAgents.length > limit) {
+    return hold(`Your plan runs up to ${limit} agent${limit === 1 ? '' : 's'} and ${mappedAgents.length} were requested, so an operator reviews this request.`);
+  }
+  const notEntitled = mappedAgents.filter((id) => !input.entitledProductIds.has(id));
+  if (notEntitled.length) {
+    const names = notEntitled.map((id) => getProduct(id)?.name || id).join(', ');
+    return hold(`Your account does not include ${names}, so an operator reviews this request.`);
+  }
+  return { approved: true, mappedAgents };
+}
 
 export type HostingExecutionMode = 'simulated' | 'live';
 

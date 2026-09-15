@@ -1,4 +1,6 @@
 import { createServerClient } from '@/lib/supabase';
+import { CommerceError } from '@/lib/commerce';
+import { isFundingNetwork, type FundingNetwork } from '@/lib/hyperliquid-funding';
 
 // ─────────────────────────────────────────────────────────────────────────────────────────────
 // Shared helpers for the admin panel's view onto the hosting CONTROL PLANE (C:/GWDS/hosting).
@@ -127,7 +129,8 @@ export function isTenantCommand(value: unknown): value is TenantCommand {
 // ─────────────────────────────────────────────────────────────────────────────────────────────
 // CUSTOMER-OWNED TENANT RESOLUTION — shared by every route where the caller is the CUSTOMER
 // themselves, not an admin: src/app/api/account/dashboard-link (the original of this check),
-// src/app/api/account/instance, .../instance/command and .../instance/loadout.
+// src/app/api/account/instance, .../instance/command, .../instance/loadout and the
+// src/app/api/account/funding routes.
 //
 // "Ambiguous match refused, not guessed" is the load-bearing property here, restated from
 // dashboard-link/route.ts: a customer whose email happens to match more than one control.tenants
@@ -138,11 +141,14 @@ export interface OwnedTenant {
   id: string;
   slug: string;
   status: TenantStatus;
+  // Set only when resolved with opts.userId, the one case the column is read.
+  hostingSubscriptionId?: string | null;
 }
 
 export class TenantOwnershipError extends Error {
   constructor(
-    public readonly code: 'NO_TENANT' | 'AMBIGUOUS_TENANT',
+    // NOT_OWNER is produced only when opts.userId is passed.
+    public readonly code: 'NO_TENANT' | 'AMBIGUOUS_TENANT' | 'NOT_OWNER',
     message: string,
   ) {
     super(message);
@@ -150,10 +156,15 @@ export class TenantOwnershipError extends Error {
   }
 }
 
+// Billing states in which a subscription is still the customer's current one.
+const OPEN_SUBSCRIPTION_STATUSES = ['trialing', 'active', 'past_due', 'paused', 'unpaid'];
+
+type TenantCandidate = OwnedTenant & { hosting_subscription_id?: string | null };
+
 export async function resolveOwnedTenant(
   cp: ReturnType<typeof controlClient>,
   email: string,
-  opts: { includeArchived?: boolean } = {},
+  opts: { includeArchived?: boolean; userId?: string; subscriptionId?: string } = {},
 ): Promise<OwnedTenant> {
   // .eq(), not .ilike(): owner_email is a citext column, so .eq() already does a
   // case-insensitive EXACT match for free. ILIKE treats the pattern operand's '%' and '_'
@@ -162,18 +173,98 @@ export async function resolveOwnedTenant(
   // wildcard pattern against every other tenant's owner_email instead of compared for
   // equality, letting a customer's own email resolve to a stranger's tenant row and from
   // there mint a dashboard ticket, halt/unhalt trading, or approve funding on it.
-  let query = cp.from('tenants').select('id, slug, status').eq('owner_email', email);
+  let query = cp.from('tenants')
+    .select(opts.userId ? 'id, slug, status, hosting_subscription_id' : 'id, slug, status')
+    .eq('owner_email', email);
   if (!opts.includeArchived) query = query.neq('status', 'archived');
   const { data, error } = await query;
   if (error) throw error;
-  if (!data || data.length === 0) {
+  let candidates = (data || []) as unknown as TenantCandidate[];
+
+  if (opts.userId && candidates.length > 0) {
+    // The email match only proposes candidates; the purchase link decides. owner_email is
+    // operator-editable, while control.tenants.hosting_subscription_id -> hosting_subscriptions.user_id
+    // is the immutable link the host agent trusts for wallet proofs (see
+    // C:/GWDS/hosting/services/host-agent/src/wallet-proof.ts). A tenant this user bought outranks
+    // an operator-created one (no subscription), which outranks one somebody else bought.
+    const { data: subs, error: subsError } = await createServerClient()
+      .from('hosting_subscriptions').select('id, status').eq('user_id', opts.userId);
+    if (subsError) throw subsError;
+    const mine = new Map(((subs || []) as Array<{ id: string; status: string }>).map(s => [s.id, s.status]));
+    const rank = (t: TenantCandidate) => (!t.hosting_subscription_id ? 1 : mine.has(t.hosting_subscription_id) ? 2 : 0);
+    const best = Math.max(...candidates.map(rank));
+    if (best === 0) {
+      throw new TenantOwnershipError(
+        'NOT_OWNER',
+        'The workspace linked to this email belongs to a different account. Contact support.',
+      );
+    }
+    candidates = candidates.filter(t => rank(t) === best);
+    // Several tenants this user bought (e.g. an old suspended one plus a new one): the
+    // subscription the caller is looking at decides, else the one whose billing is still open.
+    if (candidates.length > 1 && opts.subscriptionId) {
+      const exact = candidates.filter(t => t.hosting_subscription_id === opts.subscriptionId);
+      if (exact.length === 1) candidates = exact;
+    }
+    if (candidates.length > 1 && best === 2) {
+      const open = candidates.filter(t => OPEN_SUBSCRIPTION_STATUSES.includes(mine.get(t.hosting_subscription_id!) ?? ''));
+      if (open.length === 1) candidates = open;
+    }
+  }
+
+  if (candidates.length === 0) {
     throw new TenantOwnershipError('NO_TENANT', 'No workspace is provisioned for this account yet.');
   }
-  if (data.length > 1) {
+  if (candidates.length > 1) {
     throw new TenantOwnershipError(
       'AMBIGUOUS_TENANT',
       'Multiple workspaces are linked to this account. Contact support.',
     );
   }
-  return data[0] as OwnedTenant;
+  const [tenant] = candidates;
+  if (!opts.userId) return tenant;
+  return { id: tenant.id, slug: tenant.slug, status: tenant.status, hostingSubscriptionId: tenant.hosting_subscription_id ?? null };
+}
+
+// The funding routes' shared mapping of an ownership failure to an HTTP error.
+export function tenantOwnershipCommerceError(err: TenantOwnershipError): CommerceError {
+  if (err.code === 'NOT_OWNER') return new CommerceError('TENANT_NOT_OWNED', err.message, 403);
+  return new CommerceError(err.code === 'AMBIGUOUS_TENANT' ? 'TENANT_AMBIGUOUS' : 'TENANT_NOT_PROVISIONED', err.message, 409);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────────────────────
+// TENANT NETWORK — which Hyperliquid network (and so which chain, token, bridge and signing chain
+// id) a tenant trades on. That is decided where the tenant process's env is rendered
+// (tenant-runner's renderTenantEnv): control.env_key_policy.default_value first, then the
+// tenant's own control.tenant_env override. This reads the same two sources with the same
+// precedence, and the same strict values the dashboard accepts ('mainnet' / 'testnet' exactly;
+// it refuses to boot on anything else). It never guesses: a guessed network sends a customer's
+// deposit to a bridge that will not credit it, or signs for a chain their account is not on.
+// ─────────────────────────────────────────────────────────────────────────────────────────────
+
+const NETWORK_ENV_KEY = 'HYPERLIQUID_NETWORK';
+
+export async function resolveTenantNetwork(
+  cp: ReturnType<typeof controlClient>,
+  tenantId: string,
+): Promise<FundingNetwork> {
+  const lookupFailed = () => new CommerceError('NETWORK_LOOKUP_FAILED', 'Your trading network could not be loaded.', 503);
+  const { data: override, error: overrideError } = await cp.from('tenant_env')
+    .select('value').eq('tenant_id', tenantId).eq('key', NETWORK_ENV_KEY).maybeSingle();
+  if (overrideError) throw lookupFailed();
+  let value: unknown = override?.value;
+  if (value === undefined || value === null) {
+    const { data: policy, error: policyError } = await cp.from('env_key_policy')
+      .select('default_value').eq('key', NETWORK_ENV_KEY).maybeSingle();
+    if (policyError) throw lookupFailed();
+    value = policy?.default_value;
+  }
+  if (!isFundingNetwork(value)) {
+    throw new CommerceError(
+      'NETWORK_UNKNOWN',
+      'We could not confirm which Hyperliquid network your workspace trades on, so nothing can be signed or deposited yet. Contact support.',
+      409,
+    );
+  }
+  return value;
 }

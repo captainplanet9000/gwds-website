@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
     const reason = requireReason(payload.reason);
 
     const cp = controlClient();
-    const tenant = await resolveOwnedTenant(cp, user.email!);
+    const tenant = await resolveOwnedTenant(cp, user.email!, { userId: user.id });
     if (tenant.status === 'archived') {
       throw new CommerceError('TENANT_ARCHIVED', 'This workspace has been retired.', 409);
     }
@@ -139,7 +139,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ command: created }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (error) {
     if (error instanceof TenantOwnershipError) {
-      const status = error.code === 'AMBIGUOUS_TENANT' ? 409 : 404;
+      const status = error.code === 'AMBIGUOUS_TENANT' ? 409 : error.code === 'NOT_OWNER' ? 403 : 404;
       return NextResponse.json(
         { error: error.message, code: error.code },
         { status, headers: { 'Cache-Control': 'no-store' } },

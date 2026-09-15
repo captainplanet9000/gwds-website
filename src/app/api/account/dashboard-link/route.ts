@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
     // "ambiguous match refused, not guessed" rule live -- keeping this route on it means a future
     // fix there (e.g. F1's ILIKE-wildcard fix) can never be silently bypassed by this file having
     // its own, possibly-stale copy of the same lookup.
-    const tenant = await resolveOwnedTenant(cp, user.email!);
+    const tenant = await resolveOwnedTenant(cp, user.email!, { userId: user.id });
     if (tenant.status !== 'active') {
       return NextResponse.json(
         { error: `Your workspace is currently ${tenant.status}.`, code: 'TENANT_NOT_ACTIVE' },
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
       // Same NO_TENANT/AMBIGUOUS_TENANT codes src/app/api/account/instance/route.ts returns for
       // the identical resolveOwnedTenant() failure modes, so callers of either route can share
       // one handling path.
-      const status = error.code === 'AMBIGUOUS_TENANT' ? 409 : 404;
+      const status = error.code === 'AMBIGUOUS_TENANT' ? 409 : error.code === 'NOT_OWNER' ? 403 : 404;
       return NextResponse.json(
         { error: error.message, code: error.code },
         { status, headers: { 'Cache-Control': 'no-store' } },

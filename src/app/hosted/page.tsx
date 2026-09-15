@@ -70,7 +70,7 @@ const STEPS = [
   ],
   [
     "Choose how many agents you run",
-    "Plans differ by one thing that matters: how many strategy agents run at once. Start free on simulated fills and move up when you want live execution and more of them.",
+    "Plans differ by one thing that matters: how many strategy agents run at once. A free plan on simulated fills is coming soon; paid plans add live execution and more agents.",
   ],
   [
     "Fund your own account",
@@ -188,8 +188,14 @@ function Tick() {
   );
 }
 
-export default async function HostedPage() {
+export default async function HostedPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
   const salesEnabled = process.env.NEXT_PUBLIC_HOSTING_SALES_ENABLED === "true";
+  // Stripe's cancel_url for hosting checkout (see /api/hosting/checkout).
+  const checkoutCancelled = (await searchParams).checkout === "cancelled";
   const plans = await getPlans();
   const freePlan = plans.find((plan) => plan.executionMode === "simulated") ?? null;
   const livePlans = plans.filter((plan) => plan.executionMode === "live");
@@ -205,8 +211,8 @@ export default async function HostedPage() {
     [
       "What does the free plan actually give me?",
       freePlan
-        ? `The whole dashboard, ${agentLabel(freePlan).toLowerCase()}, on simulated fills. It never reaches a live venue — deliberately, because a free account that can move real money is an abuse vector that costs the abuser nothing. It is how you evaluate the product, the strategies and the workflow before any capital is involved, and your setup carries over when you upgrade.`
-        : "The whole dashboard on simulated fills, so you can evaluate the product before any capital is involved.",
+        ? `It is coming soon and cannot be activated yet. It will be the whole dashboard, ${agentLabel(freePlan).toLowerCase()}, on simulated fills. It never reaches a live venue — deliberately, because a free account that can move real money is an abuse vector that costs the abuser nothing. It is how you evaluate the product, the strategies and the workflow before any capital is involved, and your setup carries over when you upgrade.`
+        : "It is coming soon and cannot be activated yet. It will be the whole dashboard on simulated fills, so you can evaluate the product before any capital is involved.",
     ],
     [
       "How many agents can I run?",
@@ -250,6 +256,27 @@ export default async function HostedPage() {
             padding: "100px 28px 64px",
           }}
         >
+          {checkoutCancelled && (
+            <p
+              role="status"
+              style={{
+                fontSize: 15,
+                lineHeight: 1.6,
+                color: "var(--color-neutral-800)",
+                maxWidth: "72ch",
+                margin: "0 0 28px",
+                padding: "14px 18px",
+                border: "1px solid var(--color-divider)",
+                borderLeft: "3px solid var(--color-accent)",
+                borderRadius: "var(--radius-md)",
+                background: "var(--color-surface)",
+              }}
+            >
+              <strong>Checkout canceled.</strong> No payment was taken. You can
+              pick up where you left off, or cancel that checkout, from your{" "}
+              <Link href="/account/hosting">hosting account</Link>.
+            </p>
+          )}
           <span className="tag tag-accent">Hosted by Cival</span>
           <h1
             style={{
@@ -286,9 +313,9 @@ export default async function HostedPage() {
               margin: "0 0 14px",
             }}
           >
-            Still evaluating? The free plan is the same dashboard on simulated
-            fills — no card, no venue account, no capital at risk. Your setup
-            carries over when you go live.
+            Still evaluating? A free plan — the same dashboard on simulated
+            fills — is coming soon. It is not open yet, so every plan you can
+            choose today is a paid, live-execution plan.
           </p>
           <p
             style={{
@@ -588,7 +615,7 @@ export default async function HostedPage() {
                         >
                           {plan.name}
                         </span>
-                        {isFree && <span className="tag tag-accent">Start here</span>}
+                        {isFree && <span className="tag tag-accent">Coming soon</span>}
                       </div>
                       <div
                         style={{ display: "flex", alignItems: "baseline", gap: 6 }}

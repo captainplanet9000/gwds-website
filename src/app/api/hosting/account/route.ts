@@ -1,9 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { CommerceError, errorResponseBody, requireVerifiedUser } from '@/lib/commerce';
+import { controlClient, resolveTenantNetwork } from '@/lib/control-plane';
 import { publicHostingConfig } from '@/lib/hosting';
+import { selectCurrentSubscription } from '@/lib/hosting-lifecycle';
 import { createServerClient } from '@/lib/supabase';
 
 export const runtime = 'nodejs';
+
+// The Hyperliquid network the current subscription's workspace actually runs on, so the page never
+// promises "real money" for a testnet workspace. null when there is no tenant yet or the network is
+// not configured (resolveTenantNetwork never guesses); the page then makes no network claim at all.
+async function currentTenantNetwork(subscriptionId: string): Promise<Awaited<ReturnType<typeof resolveTenantNetwork>> | null> {
+  try {
+    const cp = controlClient();
+    const { data: tenant, error } = await cp.from('tenants').select('id').eq('hosting_subscription_id', subscriptionId).maybeSingle();
+    if (error || !tenant) return null;
+    return await resolveTenantNetwork(cp, tenant.id as string);
+  } catch (error) {
+    if (!(error instanceof CommerceError && error.code === 'NETWORK_UNKNOWN')) {
+      console.error('Hosting network lookup failed', { error: error instanceof Error ? error.message : 'unknown' });
+    }
+    return null;
+  }
+}
 
 export async function GET(req: NextRequest) {
   try {
@@ -15,6 +34,8 @@ export async function GET(req: NextRequest) {
     if (error) throw new CommerceError('HOSTING_ACCOUNT_UNAVAILABLE', 'Your hosting account could not be loaded.', 503);
 
     const subscriptionIds = (subscriptions || []).map((row) => row.id);
+    const { current } = selectCurrentSubscription(subscriptions);
+    const networkLookup = current ? currentTenantNetwork(current.id) : Promise.resolve(null);
     const [{ data: plans }, { data: onboarding }, { data: instances }, { data: incidents }, { data: usage }, { data: audit }] = await Promise.all([
       supabase.from('hosting_plans').select('id,name,description,price_cents,billing_interval,agent_limit,agent_hours,workspace_limit,seat_limit,support_tier,features,is_active,launch_ready').order('sort_order'),
       subscriptionIds.length ? supabase.from('hosting_onboarding').select('subscription_id,workspace_name,environment,region,exchange,account_address,requested_agents,risk_profile,max_drawdown_pct,max_position_usd,status,customer_notes,submitted_at,reviewed_at,updated_at').eq('user_id', user.id) : Promise.resolve({ data: [] }),
@@ -27,7 +48,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       config: publicHostingConfig(), plans: plans || [], subscriptions: subscriptions || [],
       onboarding: onboarding || [], instances: instances || [], incidents: incidents || [],
-      usage: usage || [], audit: audit || [],
+      usage: usage || [], audit: audit || [], network: await networkLookup,
     }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (error) {
     const status = error instanceof CommerceError ? error.status : 500;

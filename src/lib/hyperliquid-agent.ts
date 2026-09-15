@@ -15,17 +15,24 @@
 //                    { name: "nonce",            type: "uint64" } ] }
 //
 // approveAgent grants the named address permission to SIGN TRADES on behalf of the connected
-// wallet's Hyperliquid account. It can never withdraw or transfer funds — that asymmetry is
-// exactly why an "agent"/API wallet is safe for an automated trading service to hold, and is
-// the whole reason this flow exists: it lets Cival's tenant process trade without ever being
-// handed the customer's own wallet key.
+// wallet's Hyperliquid account. Hyperliquid does not let an agent withdraw, or send USDC to
+// another address (withdraw3 / usdSend must be signed by the account's own key). Be precise
+// about that limit: an agent CAN sign other L1 actions, including moving funds between the
+// account's own spot and perp balances and depositing into a vault (vaultTransfer). That
+// asymmetry is why an agent/API wallet is the right thing for an automated trading service to
+// hold: it lets Cival's tenant process trade without ever being handed the customer's own key.
 //
 // This file only builds data to sign and the request to submit an already-signed action. It
 // never touches a private key.
-import { arbitrumChainId, hyperliquidChainName, hyperliquidSignatureChainId, hyperliquidApiUrl } from './hyperliquid-network';
+import {
+  currentNetwork, hyperliquidApiUrl, hyperliquidChainName, hyperliquidSignatureChainId,
+  type HyperliquidNetwork,
+} from './hyperliquid-network';
+
+export const APPROVE_AGENT_PRIMARY_TYPE = 'HyperliquidTransaction:ApproveAgent' as const;
 
 export const APPROVE_AGENT_TYPES = {
-  'HyperliquidTransaction:ApproveAgent': [
+  [APPROVE_AGENT_PRIMARY_TYPE]: [
     { name: 'hyperliquidChain', type: 'string' },
     { name: 'agentAddress', type: 'address' },
     { name: 'agentName', type: 'string' },
@@ -42,41 +49,51 @@ export interface ApproveAgentAction {
   nonce: number;
 }
 
-/** Builds the action object AND the exact typed-data payload wagmi's useSignTypedData needs to
- *  produce a signature Hyperliquid's /exchange endpoint will accept. Call this fresh right
- *  before signing — the nonce is a timestamp and Hyperliquid rejects stale/reused nonces. */
-export function buildApproveAgentRequest(agentAddress: `0x${string}`, agentName: string) {
-  const nonce = Date.now();
-  const action: ApproveAgentAction = {
-    type: 'approveAgent',
-    hyperliquidChain: hyperliquidChainName(),
-    signatureChainId: hyperliquidSignatureChainId(),
-    agentAddress,
-    agentName: agentName.slice(0, 50),
-    nonce,
-  };
-  const typedData = {
+/** The exact typed data an approveAgent action is signed as. The relay recovers the signer from
+ *  this same function, so what the browser signs and what the server verifies cannot drift. */
+export function approveAgentTypedData(action: ApproveAgentAction) {
+  return {
     domain: {
       name: 'HyperliquidSignTransaction',
       version: '1',
-      chainId: arbitrumChainId(),
+      chainId: parseInt(action.signatureChainId, 16),
       verifyingContract: '0x0000000000000000000000000000000000000000' as `0x${string}`,
     },
     types: APPROVE_AGENT_TYPES,
-    primaryType: 'HyperliquidTransaction:ApproveAgent' as const,
+    primaryType: APPROVE_AGENT_PRIMARY_TYPE,
     message: {
       hyperliquidChain: action.hyperliquidChain,
       agentAddress: action.agentAddress,
       agentName: action.agentName,
       // EIP-712 "uint64" must be signed as a bigint; the JSON action sent to Hyperliquid still
-      // carries `nonce` as a plain number (see `action` above) — only the typed-data message
-      // needs the bigint form.
-      nonce: BigInt(nonce),
+      // carries `nonce` as a plain number (see the action) — only the typed-data message needs
+      // the bigint form.
+      nonce: BigInt(action.nonce),
     },
   };
-  return { action, nonce, typedData };
 }
 
-export function exchangeEndpoint(): string {
-  return `${hyperliquidApiUrl()}/exchange`;
+/** Builds the action object AND the exact typed-data payload wagmi's useSignTypedData needs to
+ *  produce a signature Hyperliquid's /exchange endpoint will accept. Call this fresh right
+ *  before signing — the nonce is a timestamp and Hyperliquid rejects stale/reused nonces.
+ *  Pass the TENANT's network; the relay refuses an approval signed for any other one. */
+export function buildApproveAgentRequest(
+  agentAddress: `0x${string}`,
+  agentName: string,
+  network: HyperliquidNetwork = currentNetwork(),
+) {
+  const nonce = Date.now();
+  const action: ApproveAgentAction = {
+    type: 'approveAgent',
+    hyperliquidChain: hyperliquidChainName(network),
+    signatureChainId: hyperliquidSignatureChainId(network),
+    agentAddress,
+    agentName: agentName.slice(0, 50),
+    nonce,
+  };
+  return { action, nonce, typedData: approveAgentTypedData(action) };
+}
+
+export function exchangeEndpoint(network: HyperliquidNetwork = currentNetwork()): string {
+  return `${hyperliquidApiUrl(network)}/exchange`;
 }

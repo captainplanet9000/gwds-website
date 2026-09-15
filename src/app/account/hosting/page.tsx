@@ -2,10 +2,23 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
+import {
+  deriveProvisionState,
+  provisionPollDelayMs,
+  selectCurrentSubscription,
+} from "@/lib/hosting-lifecycle";
+
+// The wallet panel is the only part of this page that needs wagmi/viem and a browser wallet, so it
+// loads as its own chunk and only in the browser; the rest of the page never ships them.
+const HostingWalletPanel = dynamic(
+  () => import("@/components/account/HostingWalletPanel"),
+  { ssr: false },
+);
 
 const HOSTING_AGENT_IDS = [
   "darvas-box",
@@ -29,6 +42,8 @@ type AccountData = {
   incidents: Row[];
   usage: Row[];
   audit: Row[];
+  // The current subscription's workspace network; null until it is known. Never guessed.
+  network?: "mainnet" | "testnet" | null;
 };
 
 const field: React.CSSProperties = {
@@ -56,6 +71,28 @@ function Status({ value }: { value: string }) {
   );
 }
 
+// One line of history for a customer whose last subscription is closed, shown above the plan
+// picker so they can see what happened and subscribe again.
+function closedSubscriptionHistory(row: Row, plans: Row[]): string {
+  const name = plans.find((plan) => plan.id === row.plan_id)?.name || row.plan_id;
+  const when = row.updated_at
+    ? ` on ${new Date(row.updated_at).toLocaleDateString()}`
+    : "";
+  return row.status === "canceled"
+    ? `Your previous ${name} subscription was canceled${when}.`
+    : `Your previous ${name} checkout was not completed${when}.`;
+}
+
+// Reports what the server decided about the saved settings, not what the page hoped for.
+function onboardingNotice(result: Row): string {
+  if (result.decision?.status === "approved") {
+    return result.loadout?.synced
+      ? "Saved and approved. Your requested agents are recorded for your workspace."
+      : "Saved and approved. Once your workspace is ready, confirm your agents on your instance page.";
+  }
+  return `Saved. These settings are held for operator review: ${result.decision?.reason || "an operator will check them."}`;
+}
+
 export default function HostingAccountPage() {
   const router = useRouter();
   const { user, session, loading: authLoading } = useAuth();
@@ -68,6 +105,8 @@ export default function HostingAccountPage() {
     command: Row | null;
   } | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [checkoutSucceeded, setCheckoutSucceeded] = useState(false);
+  const [pollNonce, setPollNonce] = useState(0);
   // `environment` is deliberately NOT in this form.
   //
   // It used to be, hardcoded to "paper", and it was spread into the PUT body below. The server
@@ -95,6 +134,12 @@ export default function HostingAccountPage() {
     if (!authLoading && !user)
       router.replace("/account/login?next=/account/hosting");
   }, [authLoading, user, router]);
+  // Stripe returns here with ?checkout=success. Read once from the URL on mount rather than with
+  // useSearchParams, which would need a Suspense boundary around this whole client page.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("checkout") === "success")
+      setCheckoutSucceeded(true);
+  }, []);
   const load = useCallback(async () => {
     if (!session?.access_token) return;
     const response = await fetch("/api/hosting/account", {
@@ -120,27 +165,34 @@ export default function HostingAccountPage() {
   useEffect(() => {
     if (user && session) load().catch((reason) => setError(reason.message));
   }, [user, session, load]);
+  // Called by the wallet panel after it changes something: refresh the account and restart the
+  // provisioning poll straight away instead of waiting out its current delay.
+  const reload = useCallback(() => {
+    setPollNonce((value) => value + 1);
+    load().catch((reason) =>
+      setError(reason instanceof Error ? reason.message : "Hosting account could not be loaded"),
+    );
+  }, [load]);
 
-  const subscription =
-    data?.subscriptions.find((row) =>
-      [
-        "trialing",
-        "active",
-        "past_due",
-        "paused",
-        "unpaid",
-        "pending_checkout",
-      ].includes(row.status),
-    ) || data?.subscriptions[0];
+  // Only an OPEN subscription is "the" subscription. A canceled or abandoned one becomes history
+  // above the plan picker, so the customer can subscribe again.
+  const { current: subscription, lastClosed } = selectCurrentSubscription(
+    data?.subscriptions,
+  );
 
   // Real provisioning progress — polled directly from control.tenant_commands via
-  // /api/hosting/provision-status, never a spinner standing in for unknown state. Polls only while
-  // there is something that could still change (no tenant row yet, or a command that is queued or
-  // claimed); stops once the command lands on done/failed so a settled state doesn't keep hitting
-  // the network.
+  // /api/hosting/provision-status, never a spinner standing in for unknown state. The cadence comes
+  // from provisionPollDelayMs(): fast while the system is working, slow while it waits on the
+  // customer's wallet or an automatic retry, and stopped once the workspace is ready.
   const subscriptionId = subscription?.id;
+  const subscriptionStatus: string | undefined = subscription?.status;
   useEffect(() => {
-    if (!subscriptionId || !session?.access_token) {
+    if (
+      !subscriptionId ||
+      !session?.access_token ||
+      subscriptionStatus === "pending_checkout" ||
+      subscriptionStatus === "incomplete"
+    ) {
       setProvision(null);
       return;
     }
@@ -158,10 +210,14 @@ export default function HostingAccountPage() {
         const body = await response.json();
         if (cancelled) return;
         if (response.ok) setProvision(body);
-        const status = body?.command?.status;
-        if (!cancelled && (!body?.tenant || status === "queued" || status === "claimed")) {
-          timer = setTimeout(poll, 6000);
-        }
+        const delay = provisionPollDelayMs(
+          deriveProvisionState({
+            subscriptionStatus,
+            tenant: body?.tenant,
+            command: body?.command,
+          }),
+        );
+        if (delay !== null) timer = setTimeout(poll, delay);
       } catch {
         if (!cancelled) timer = setTimeout(poll, 10000);
       }
@@ -171,7 +227,33 @@ export default function HostingAccountPage() {
       cancelled = true;
       if (timer) clearTimeout(timer);
     };
-  }, [subscriptionId, session?.access_token]);
+  }, [subscriptionId, subscriptionStatus, session?.access_token, pollNonce]);
+  const provisionState = subscription
+    ? deriveProvisionState({
+        subscriptionStatus: subscription.status,
+        tenant: provision?.tenant,
+        command: provision?.command,
+      })
+    : null;
+  // The runtime and health cards come from the account payload, so refresh it once the workspace
+  // turns ready rather than leaving them a poll behind.
+  useEffect(() => {
+    if (provisionState === "ready") load().catch(() => {});
+  }, [provisionState, load]);
+  // Back from Stripe before its webhook has landed: the row still says pending_checkout. Re-read
+  // the account for up to two minutes until it moves.
+  const awaitingPaymentConfirmation =
+    checkoutSucceeded && subscription?.status === "pending_checkout";
+  useEffect(() => {
+    if (!awaitingPaymentConfirmation) return;
+    let attempts = 0;
+    const timer = setInterval(() => {
+      attempts += 1;
+      if (attempts > 24) clearInterval(timer);
+      else load().catch(() => {});
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [awaitingPaymentConfirmation, load]);
   const onboarding = data?.onboarding.find(
     (row) => row.subscription_id === subscription?.id,
   );
@@ -195,16 +277,25 @@ export default function HostingAccountPage() {
   // the gate instead of having to be remembered and edited alongside it.
   const recordedEnvironment: string = onboarding?.environment || "paper";
   const recordedIsLive = recordedEnvironment === "live";
+  // The network the workspace really trades on, from the control plane. "Live" on testnet moves
+  // test funds only, so no copy below may say "real money" unless this is mainnet.
+  const network = data?.network ?? null;
   const environmentLabel = recordedIsLive
-    ? "Live execution"
+    ? network === "testnet"
+      ? "Live execution — Hyperliquid testnet"
+      : "Live execution"
     : "Simulated execution";
 
-  const usage = useMemo(
+  const usageRows = useMemo(
     () =>
-      (data?.usage || [])
-        .filter((row) => row.subscription_id === subscription?.id)
-        .reduce((total, row) => total + Number(row.agent_hours || 0), 0),
+      (data?.usage || []).filter(
+        (row) => row.subscription_id === subscription?.id,
+      ),
     [data, subscription?.id],
+  );
+  const usage = usageRows.reduce(
+    (total, row) => total + Number(row.agent_hours || 0),
+    0,
   );
 
   const call = async (
@@ -212,6 +303,7 @@ export default function HostingAccountPage() {
     url: string,
     body?: Record<string, unknown>,
     method = "POST",
+    describe?: (result: Row) => string,
   ) => {
     setBusy(key);
     setError("");
@@ -226,13 +318,44 @@ export default function HostingAccountPage() {
         body: body ? JSON.stringify(body) : undefined,
       });
       const result = await response.json();
-      if (!response.ok) throw new Error(result.error || "Request failed");
+      if (!response.ok) {
+        // The server closed a checkout that can no longer be paid: reload so the plan picker it
+        // now allows is on screen beside the explanation.
+        if (result.code === "CHECKOUT_RESTART_REQUIRED")
+          await load().catch(() => {});
+        throw new Error(result.error || "Request failed");
+      }
       if (result.stripeUrl || result.url) {
         window.location.assign(result.stripeUrl || result.url);
         return;
       }
-      setNotice("Saved. Your operations status has been updated.");
+      setNotice(
+        describe
+          ? describe(result)
+          : "Saved. Your operations status has been updated.",
+      );
       await load();
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Request failed");
+    } finally {
+      setBusy("");
+    }
+  };
+
+  const openDashboard = async () => {
+    setBusy("dashboard");
+    setError("");
+    try {
+      const response = await fetch("/api/account/dashboard-link", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+      });
+      const body = await response.json();
+      if (!response.ok)
+        throw new Error(
+          body.error || "The live dashboard is temporarily unavailable.",
+        );
+      window.open(body.url, "_blank", "noopener,noreferrer");
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "Request failed");
     } finally {
@@ -252,6 +375,15 @@ export default function HostingAccountPage() {
         <Footer />
       </div>
     );
+
+  const provisionHeading =
+    provisionState === "ready"
+      ? "Your workspace is ready"
+      : provisionState === "checkout_pending"
+        ? "Finish checkout"
+        : provisionState === "inactive"
+          ? "Workspace status"
+          : "Setting up your workspace";
 
   return (
     <div className="cival">
@@ -287,9 +419,11 @@ export default function HostingAccountPage() {
               </p>
             </div>
             <div style={{ display: "flex", gap: 10 }}>
-              <Link className="btn btn-primary" href="/account/funding">
-                Fund your agent
-              </Link>
+              {subscription && (
+                <Link className="btn btn-primary" href="#wallet">
+                  Fund your agent
+                </Link>
+              )}
               <Link className="btn btn-secondary" href="/account">
                 Source purchases
               </Link>
@@ -312,6 +446,23 @@ export default function HostingAccountPage() {
                 payment or subscription can be created until every runtime
                 launch gate passes.
               </div>
+            </div>
+          )}
+          {checkoutSucceeded && (
+            <div
+              role="status"
+              style={{
+                padding: 16,
+                border: "1px solid var(--color-accent)",
+                background: "var(--color-surface)",
+                borderRadius: "var(--radius-md)",
+                color: "var(--color-accent)",
+                marginBottom: 16,
+              }}
+            >
+              <strong>
+                Payment received — we&apos;re setting up your workspace.
+              </strong>
             </div>
           )}
           {error && (
@@ -346,6 +497,17 @@ export default function HostingAccountPage() {
           {!subscription ? (
             <section>
               <h2>Choose your managed plan</h2>
+              {lastClosed && (
+                <p
+                  style={{
+                    color: "var(--color-neutral-700)",
+                    margin: "0 0 16px",
+                  }}
+                >
+                  {closedSubscriptionHistory(lastClosed, data.plans)} You can
+                  subscribe again below.
+                </p>
+              )}
               <div
                 data-cv-2col
                 style={{
@@ -532,6 +694,8 @@ export default function HostingAccountPage() {
                     Manage billing, invoices, or cancellation
                   </button>
                 </div>
+                {/* Usage is only mentioned once something has metered it; a permanent "0.0 hours"
+                  * reads as a fact about the workspace when it is really an absent meter. */}
                 <p
                   style={{ color: "var(--color-neutral-700)", marginBottom: 0 }}
                 >
@@ -541,7 +705,9 @@ export default function HostingAccountPage() {
                         subscription.current_period_end,
                       ).toLocaleDateString()
                     : "after activation"}
-                  . Agent usage this period: {usage.toFixed(1)} hours.
+                  .
+                  {usageRows.length > 0 &&
+                    ` Agent usage this period: ${usage.toFixed(1)} hours.`}
                 </p>
               </section>
 
@@ -560,22 +726,197 @@ export default function HostingAccountPage() {
                     alignItems: "center",
                   }}
                 >
-                  <h2 style={{ margin: 0 }}>Provisioning your dashboard</h2>
-                  {provision?.command && (
-                    <Status
-                      value={
-                        provision.command.status === "done"
-                          ? "active"
-                          : provision.command.status
-                      }
-                    />
+                  <h2 style={{ margin: 0 }}>{provisionHeading}</h2>
+                  {/* 'inactive' means the tenant is not currently active/provisioning (suspended,
+                    * degraded, maintenance, decommissioning, ...) or there is no tenant at all.
+                    * The provision command's status is from the LAST TIME provisioning ran, which
+                    * stays "done" forever once a tenant has ever finished setup, so it must never
+                    * drive this badge for that state — show the tenant's real status instead. */}
+                  {provisionState === "inactive" ? (
+                    provision?.tenant && <Status value={provision.tenant.status} />
+                  ) : (
+                    provision?.command && provisionState !== "wallet_needed" && (
+                      <Status
+                        value={
+                          provision.command.status === "done"
+                            ? "active"
+                            : provision.command.status
+                        }
+                      />
+                    )
                   )}
                 </div>
-                {!provision?.tenant ? (
+                {/* Each state says only what is true and what, if anything, the customer can do.
+                  * Waiting on the customer's wallet is their next step, never a red failure box,
+                  * and nothing here claims an operator action that no code performs. */}
+                {provisionState === "checkout_pending" ? (
+                  awaitingPaymentConfirmation ? (
+                    <p style={{ color: "var(--color-neutral-700)" }}>
+                      Confirming your payment with Stripe. This updates
+                      automatically.
+                    </p>
+                  ) : subscription.status === "incomplete" &&
+                    subscription.stripe_customer_id ? (
+                    <p style={{ color: "var(--color-neutral-700)" }}>
+                      Your first payment needs attention. Complete it from
+                      Manage billing above; setup starts once it succeeds.
+                    </p>
+                  ) : (
+                    <div style={{ display: "grid", gap: 12, marginTop: 12 }}>
+                      <p style={{ color: "var(--color-neutral-700)", margin: 0 }}>
+                        {subscription.status === "incomplete"
+                          ? "Your payment did not go through, so setup has not started."
+                          : "Your checkout is not finished. Setup starts as soon as payment is confirmed."}
+                      </p>
+                      <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                        <button
+                          className="btn btn-primary"
+                          disabled={!!busy}
+                          onClick={() =>
+                            call("resume-checkout", "/api/hosting/checkout", {
+                              planId: subscription.plan_id,
+                            })
+                          }
+                        >
+                          {busy === "resume-checkout"
+                            ? "Opening checkout..."
+                            : subscription.status === "incomplete"
+                              ? "Start checkout again"
+                              : "Resume checkout"}
+                        </button>
+                        {subscription.status === "pending_checkout" && (
+                          <button
+                            className="btn btn-secondary"
+                            disabled={!!busy}
+                            onClick={() =>
+                              call(
+                                "cancel-checkout",
+                                `/api/hosting/checkout?subscriptionId=${encodeURIComponent(subscription.id)}`,
+                                undefined,
+                                "DELETE",
+                                () => "Checkout canceled. No payment was taken.",
+                              )
+                            }
+                          >
+                            Cancel this checkout
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )
+                ) : provision === null ? (
                   <p style={{ color: "var(--color-neutral-700)" }}>
-                    {subscription.status === "pending_checkout"
-                      ? "Provisioning starts as soon as payment is confirmed."
-                      : "Waiting for your workspace to be queued. This updates automatically — no action is needed."}
+                    Checking your workspace status...
+                  </p>
+                ) : provisionState === "setting_up" ? (
+                  <p style={{ color: "var(--color-neutral-700)" }}>
+                    Your payment is confirmed and your workspace is being
+                    created. This page updates automatically.
+                  </p>
+                ) : provisionState === "wallet_needed" ? (
+                  <div
+                    style={{
+                      marginTop: 14,
+                      padding: 16,
+                      border: "1px solid var(--color-accent)",
+                      background: "var(--color-surface)",
+                      borderRadius: "var(--radius-md)",
+                      display: "grid",
+                      gap: 10,
+                    }}
+                  >
+                    <strong>
+                      Verify your funding wallet below to finish setup.
+                    </strong>
+                    <span
+                      style={{
+                        color: "var(--color-neutral-700)",
+                        fontSize: 14,
+                        lineHeight: 1.55,
+                      }}
+                    >
+                      Your workspace is waiting on one step from you: connect
+                      the wallet that holds your funds on Hyperliquid and sign a
+                      message proving you control it. Signing moves no funds.
+                      This page updates on its own once setup continues.
+                    </span>
+                    <div>
+                      <a className="btn btn-primary" href="#wallet">
+                        Verify your funding wallet
+                      </a>
+                    </div>
+                  </div>
+                ) : provisionState === "ready" && provision.tenant ? (
+                  <div style={{ display: "grid", gap: 14, marginTop: 14 }}>
+                    <p style={{ color: "var(--color-neutral-700)", margin: 0 }}>
+                      Workspace <strong>{provision.tenant.slug}</strong> is set
+                      up. Every workspace starts with trading paused. To start
+                      trading:
+                    </p>
+                    <ol
+                      style={{
+                        margin: 0,
+                        paddingLeft: 20,
+                        color: "var(--color-neutral-700)",
+                        lineHeight: 1.7,
+                      }}
+                    >
+                      <li>
+                        Approve your trading key and fund your Hyperliquid
+                        account in <a href="#wallet">your funding wallet</a>{" "}
+                        below.
+                      </li>
+                      <li>
+                        Resume trading from your{" "}
+                        <Link href="/account/instance">instance page</Link>,
+                        where the trading controls live.
+                      </li>
+                    </ol>
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: 10,
+                        flexWrap: "wrap",
+                        alignItems: "center",
+                      }}
+                    >
+                      <button
+                        className="btn btn-primary"
+                        disabled={!!busy}
+                        onClick={openDashboard}
+                      >
+                        {busy === "dashboard" ? "Opening..." : "Open dashboard"}
+                      </button>
+                      <Link className="btn btn-secondary" href="/account/instance">
+                        Trading controls
+                      </Link>
+                    </div>
+                    <p
+                      style={{
+                        color: "var(--color-neutral-600)",
+                        fontSize: 13,
+                        margin: 0,
+                      }}
+                    >
+                      The dashboard opens in a new tab and asks for its own
+                      sign-in, which is separate from your Cival Systems
+                      account.
+                    </p>
+                  </div>
+                ) : provisionState === "inactive" && provision.tenant ? (
+                  <p style={{ color: "var(--color-neutral-700)" }}>
+                    Your workspace is{" "}
+                    <strong>{provision.tenant.status}</strong>, not active.
+                    {["past_due", "paused", "unpaid"].includes(
+                      subscription.status,
+                    )
+                      ? " Resolve your payment with Manage billing above to resume it."
+                      : " Contact support to have it brought back."}
+                  </p>
+                ) : !provision.tenant ? (
+                  <p style={{ color: "var(--color-neutral-700)" }}>
+                    Setup starts once your subscription is active. If a payment
+                    failed, update your card with Manage billing above.
                   </p>
                 ) : (
                   <div style={{ display: "grid", gap: 10 }}>
@@ -622,32 +963,48 @@ export default function HostingAccountPage() {
                         </span>
                       </div>
                     ))}
-                    {provision.command?.status === "failed" && (
+                    {provisionState === "failed" && (
                       <div
                         style={{
                           marginTop: 6,
                           padding: 14,
-                          border: "1px solid #783333",
-                          background: "#240d0d",
+                          border: "1px solid #8a762d",
+                          background: "#1d1909",
                           borderRadius: "var(--radius-md)",
-                          color: "#ffb4b4",
+                          color: "#e7d991",
                           fontSize: 13,
+                          lineHeight: 1.55,
                         }}
                       >
-                        <strong>Provisioning failed.</strong>{" "}
-                        {provision.command.error ||
-                          "No further detail was recorded."}{" "}
-                        You were charged and this is being resolved — our
-                        operations team has been alerted and will resume
-                        provisioning without any further action from you. If
-                        this does not update within a business day,{" "}
+                        <strong>Setup hit a problem.</strong> Setup is retried
+                        automatically where that is safe, and our team is
+                        notified automatically and reviews failed setups. If
+                        this has not updated within one business day,{" "}
                         <Link href="/contact">contact support</Link> and
                         reference subscription {subscription.id}.
+                        {provision.command?.error && (
+                          <div style={{ marginTop: 6, opacity: 0.8 }}>
+                            Technical detail: {provision.command.error}
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
                 )}
               </section>
+
+              {session?.access_token && (
+                <section
+                  id="wallet"
+                  style={{ marginBottom: 18, scrollMarginTop: 110 }}
+                >
+                  <HostingWalletPanel
+                    accessToken={session.access_token}
+                    subscriptionId={subscription.id}
+                    onChanged={reload}
+                  />
+                </section>
+              )}
 
               {onboarding && (
                 <section
@@ -668,22 +1025,28 @@ export default function HostingAccountPage() {
                     <h2 style={{ margin: 0 }}>Workspace onboarding</h2>
                     <Status value={onboarding.status} />
                   </div>
-                  {/* Three distinct states, because one sentence cannot honestly cover them.
+                  {/* Distinct states, because one sentence cannot honestly cover them.
                     * A free plan is simulated permanently and by design; a paid plan sells live
                     * agents but still provisions with environment='paper' while the server
                     * hardcodes it in /api/hosting/onboarding; and once that changes the recorded
-                    * row reads 'live' and this says so. Each branch is written against what is
-                    * recorded, never ahead of it — the copy must never promise more execution than
-                    * the server has actually granted. The credential sentence is a standing
-                    * invariant and stays true on every branch: a live plan trades through a
-                    * trade-only agent wallet the customer approves themselves, which cannot
+                    * row reads 'live' and this says so. On top of that, a live workspace on
+                    * Hyperliquid TESTNET moves test funds only, so "real money" is said only for a
+                    * workspace the control plane reports as mainnet. Each branch is written against
+                    * what is recorded, never ahead of it — the copy must never promise more
+                    * execution than the server has actually granted. The credential sentence is a
+                    * standing invariant and stays true on every branch: a live plan trades through
+                    * a trade-only agent wallet the customer approves themselves, which cannot
                     * withdraw, so there is still no secret for Cival to hold. */}
                   <p style={{ color: "var(--color-neutral-700)" }}>
                     {!planRunsLiveAgents
                       ? "Your free plan runs on simulated fills and never reaches a live venue. That is permanent for this tier, not a temporary restriction: a free account that could move real money is an abuse vector that costs the abuser nothing. Upgrade to a paid plan for live execution."
-                      : recordedIsLive
-                        ? "Your plan runs live agents against the exchange account you fund yourself. Real orders, real money, and real losses are possible."
-                        : "Your plan is a live-execution plan, but this workspace is still recorded as simulated: live order routing has not been switched on yet. Until it is, nothing your agents do here reaches a venue and no order of yours can lose money."}{" "}
+                      : network === "testnet"
+                        ? "Your plan runs live agents, and this workspace runs on Hyperliquid testnet — test funds only, no real money."
+                        : recordedIsLive && network === "mainnet"
+                          ? "Your plan runs live agents against the exchange account you fund yourself. Real orders, real money, and real losses are possible."
+                          : recordedIsLive
+                            ? "Your plan runs live agents against the Hyperliquid account you fund yourself. Whether this workspace trades on testnet or mainnet is confirmed once it is set up."
+                            : "Your plan is a live-execution plan, but this workspace is still recorded as simulated: live order routing has not been switched on yet. Until it is, nothing your agents do here reaches a venue and no order of yours can lose money."}{" "}
                     Cival never accepts exchange credentials, wallet secrets,
                     seed phrases, or private keys on any plan — a live plan
                     trades through a trade-only agent wallet you approve
@@ -832,10 +1195,11 @@ export default function HostingAccountPage() {
                           maxPositionUsd: Number(form.maxPositionUsd) || null,
                         },
                         "PUT",
+                        onboardingNotice,
                       )
                     }
                   >
-                    Submit for operator review
+                    Save workspace settings
                   </button>
                 </section>
               )}
@@ -858,30 +1222,36 @@ export default function HostingAccountPage() {
                   <h2 style={{ marginTop: 0 }}>Service health</h2>
                   {instance ? (
                     <div style={{ display: "grid", gap: 10 }}>
-                      {[
-                        ["Runtime", instance.health_status],
-                        ["Backups", instance.backup_status],
+                      {/* Backups, recovery tests and releases have no writer for control-plane
+                        * workspaces yet, so a row is shown only once something has recorded it. */}
+                      {(
                         [
-                          "Last heartbeat",
-                          instance.last_heartbeat_at
-                            ? new Date(
-                                instance.last_heartbeat_at,
-                              ).toLocaleString()
-                            : "not yet",
-                        ],
-                        [
-                          "Recovery test",
+                          ["Runtime", instance.health_status],
+                          instance.backup_status &&
+                          instance.backup_status !== "not_configured"
+                            ? ["Backups", instance.backup_status]
+                            : null,
+                          [
+                            "Last heartbeat",
+                            instance.last_heartbeat_at
+                              ? new Date(
+                                  instance.last_heartbeat_at,
+                                ).toLocaleString()
+                              : "not yet",
+                          ],
                           instance.last_recovery_test_at
-                            ? new Date(
-                                instance.last_recovery_test_at,
-                              ).toLocaleDateString()
-                            : "not yet",
-                        ],
-                        [
-                          "Release",
-                          instance.release_version || "awaiting deployment",
-                        ],
-                      ].map(([label, value]) => (
+                            ? [
+                                "Recovery test",
+                                new Date(
+                                  instance.last_recovery_test_at,
+                                ).toLocaleDateString(),
+                              ]
+                            : null,
+                          instance.release_version
+                            ? ["Release", instance.release_version]
+                            : null,
+                        ].filter(Boolean) as string[][]
+                      ).map(([label, value]) => (
                         <div
                           key={label}
                           style={{

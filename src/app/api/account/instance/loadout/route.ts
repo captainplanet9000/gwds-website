@@ -6,6 +6,7 @@ import {
   LOADOUT_STRATEGIES,
   MAX_AGENTS_PER_TENANT,
   UNRESOLVED_PLAN_AGENT_LIMIT,
+  entitledStrategyIds,
   getStrategySpec,
   normalizeSubmittedLoadout,
   readStoredEntry,
@@ -161,47 +162,9 @@ async function nextPlanAbove(sb: ReturnType<typeof createServerClient>, agentLim
   };
 }
 
-/**
- * Every strategy the user may select, from purchases AND from what their plan includes.
- *
- * Bundle expansion goes through public.product_includes (migration 0019) rather than the
- * storefront's own EDITION_INCLUDES table, so the host and the storefront answer "what does this
- * bundle contain" from the same row set instead of two copies that can drift apart.
- *
- * The plan's own included_product_id counts while the plan is resolved, because that is what the
- * monthly price buys -- a Desk subscriber has the Everything bundle for as long as they are on
- * Desk. It is not written into public.entitlements, and deliberately not: an entitlement is a
- * permanent grant from a purchase, and a subscription inclusion ends with the subscription.
- *
- * One level of expansion only. Bundles contain agents; they do not contain other bundles.
- */
-async function entitledStrategyIds(
-  sb: ReturnType<typeof createServerClient>,
-  userId: string,
-  planIncludedProductId: string | null,
-): Promise<Set<string>> {
-  const { data, error } = await sb
-    .from('entitlements')
-    .select('product_id')
-    .eq('user_id', userId)
-    .eq('status', 'active');
-  if (error) throw error;
-
-  const roots = new Set<string>();
-  for (const row of data || []) roots.add(row.product_id as string);
-  if (planIncludedProductId) roots.add(planIncludedProductId);
-  if (roots.size === 0) return new Set();
-
-  const { data: includes, error: includesError } = await sb
-    .from('product_includes')
-    .select('included_product_id')
-    .in('bundle_product_id', [...roots]);
-  if (includesError) throw includesError;
-
-  const owned = new Set(roots);
-  for (const row of includes || []) owned.add(row.included_product_id as string);
-  return new Set([...owned].filter((id) => getStrategySpec(id)));
-}
+// entitledStrategyIds() moved to @/lib/loadout (shared with onboarding auto-approval in
+// src/app/api/hosting/onboarding, so both surfaces apply identical entitlement rules from one
+// definition instead of two copies that can drift apart).
 
 type RuntimeState =
   | 'not_installed'
@@ -378,7 +341,7 @@ export async function GET(req: NextRequest) {
   try {
     const user = await requireVerifiedUser(req);
     const cp = controlClient();
-    const tenant = await resolveOwnedTenant(cp, user.email!, { includeArchived: true });
+    const tenant = await resolveOwnedTenant(cp, user.email!, { includeArchived: true, userId: user.id });
     const sb = createServerClient();
 
     const [planRow, loadout, runtimeFor] = await Promise.all([
@@ -451,7 +414,7 @@ export async function GET(req: NextRequest) {
     );
   } catch (error) {
     if (error instanceof TenantOwnershipError) {
-      const status = error.code === 'AMBIGUOUS_TENANT' ? 409 : 404;
+      const status = error.code === 'AMBIGUOUS_TENANT' ? 409 : error.code === 'NOT_OWNER' ? 403 : 404;
       return NextResponse.json(
         { error: error.message, code: error.code },
         { status, headers: { 'Cache-Control': 'no-store' } },
@@ -487,7 +450,7 @@ export async function POST(req: NextRequest) {
     const submitted = normalizeSubmittedLoadout((body as Record<string, unknown>).loadout);
 
     const cp = controlClient();
-    const tenant = await resolveOwnedTenant(cp, user.email!);
+    const tenant = await resolveOwnedTenant(cp, user.email!, { userId: user.id });
     if (tenant.status === 'archived') {
       throw new CommerceError('TENANT_ARCHIVED', 'This workspace has been retired.', 409);
     }
@@ -603,7 +566,7 @@ export async function POST(req: NextRequest) {
     );
   } catch (error) {
     if (error instanceof TenantOwnershipError) {
-      const status = error.code === 'AMBIGUOUS_TENANT' ? 409 : 404;
+      const status = error.code === 'AMBIGUOUS_TENANT' ? 409 : error.code === 'NOT_OWNER' ? 403 : 404;
       return NextResponse.json(
         { error: error.message, code: error.code },
         { status, headers: { 'Cache-Control': 'no-store' } },

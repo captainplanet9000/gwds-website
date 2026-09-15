@@ -144,6 +144,10 @@ async function fulfillSession(event: Stripe.Event, session: Stripe.Checkout.Sess
 
 async function activateHostingSession(event: Stripe.Event, session: Stripe.Checkout.Session, payloadHash: string) {
   if (session.mode !== 'subscription') throw new Error('HOSTING_SESSION_MODE_MISMATCH');
+  // Same gate as fulfillSession: an asynchronous payment method completes checkout before the money
+  // arrives. Activation (and with it provisioning) waits for checkout.session.async_payment_succeeded,
+  // which routes back here with payment_status 'paid'.
+  if (session.payment_status !== 'paid' && session.payment_status !== 'no_payment_required') return;
   const hostingSubscriptionId = requireMetadataId(session.metadata?.hosting_subscription_id, 'HOSTING_SUBSCRIPTION_ID');
   const userId = requireMetadataId(session.metadata?.user_id, 'USER_ID');
   const planId = session.metadata?.hosting_plan_id;
@@ -201,7 +205,7 @@ async function activateHostingSession(event: Stripe.Event, session: Stripe.Check
 }
 
 async function provisionHostingTenant(hostingSubscriptionId: string, planId: string, customerEmail: string, eventId: string) {
-  const { error: provisionError } = await createServerClient().rpc('provision_hosting_tenant', {
+  const { data: provisionResult, error: provisionError } = await createServerClient().rpc('provision_hosting_tenant', {
     p_hosting_subscription_id: hostingSubscriptionId,
     p_plan: planId,
     p_owner_email: customerEmail,
@@ -209,6 +213,25 @@ async function provisionHostingTenant(hostingSubscriptionId: string, planId: str
     p_requested_by: `stripe-webhook:${eventId}`,
   });
   if (provisionError) throw new Error(`HOSTING_PROVISION_ENQUEUE_FAILED:${provisionError.message}`);
+
+  // provision_hosting_tenant's wallet gate (C:/GWDS/hosting db) returns state:'awaiting_wallet' and
+  // queues NO command at all when the customer has not yet proven their funding wallet -- so the
+  // DB trigger that emails hosting_wallet_needed (0031_hosting_customer_lifecycle.sql) never fires
+  // for a brand-new signup, only for a tenant whose provision command already FAILED. Queue the
+  // same email directly here, using the identical dedup_key the trigger uses, so a new signup is
+  // never left without this email and an existing one is never sent twice.
+  if ((provisionResult as { state?: string } | null)?.state === 'awaiting_wallet') {
+    const { error: notifyError } = await createServerClient().from('hosting_notifications').insert({
+      subscription_id: hostingSubscriptionId,
+      template: 'hosting_wallet_needed',
+      recipient_email: customerEmail,
+      dedup_key: `wallet_needed:${hostingSubscriptionId}`,
+      payload: { tenantSlug: (provisionResult as { slug?: string }).slug },
+    });
+    // 23505 = unique_violation on dedup_key: already queued by a prior delivery of this event, or
+    // by the DB trigger. Anything else is a real failure and must surface like the RPC error above.
+    if (notifyError && notifyError.code !== '23505') throw new Error(`HOSTING_WALLET_NOTIFY_FAILED:${notifyError.message}`);
+  }
 }
 
 async function syncHostingSubscription(event: Stripe.Event, subscription: Stripe.Subscription, payloadHash: string) {
@@ -380,7 +403,18 @@ export async function POST(req: NextRequest) {
         break;
       }
       case 'checkout.session.async_payment_failed':
-        await applyStatusEvent({ event, payloadHash, sessionId: event.data.object.id, status: 'payment_failed', reason: event.type, revoke: false });
+        if (event.data.object.metadata?.commerce_kind === 'hosting') {
+          // The checkout was never activated (activation waits for payment), so this only records
+          // that it cannot be paid. /api/hosting/checkout closes such a row when the customer
+          // starts again.
+          const { error } = await createServerClient().from('hosting_subscriptions')
+            .update({ status: 'incomplete', updated_at: new Date().toISOString() })
+            .eq('stripe_checkout_session_id', event.data.object.id)
+            .eq('status', 'pending_checkout');
+          if (error) throw new Error('HOSTING_ASYNC_PAYMENT_FAILURE_UPDATE_FAILED');
+        } else {
+          await applyStatusEvent({ event, payloadHash, sessionId: event.data.object.id, status: 'payment_failed', reason: event.type, revoke: false });
+        }
         break;
       case 'checkout.session.expired':
         if (event.data.object.metadata?.commerce_kind === 'hosting') {

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import FundingWeb3Providers from './providers';
+import Web3Providers from '@/components/web3/Web3Providers';
 
 export default function FundingLayout({ children }: { children: ReactNode }) {
-  return <FundingWeb3Providers>{children}</FundingWeb3Providers>;
+  return <Web3Providers>{children}</Web3Providers>;
 }

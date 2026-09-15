@@ -11,9 +11,11 @@ export interface OrderEmailData {
 }
 
 export interface HostingEmailData {
+  /** public.hosting_notifications.id — also the Resend idempotency key, one per queued message. */
+  notificationId: string;
   subscriptionId: string;
   planName: string;
-  template: 'hosting_started' | 'hosting_payment_failed' | 'hosting_canceled' | 'hosting_activated' | 'hosting_incident' | 'hosting_provisioning_failed';
+  template: 'hosting_started' | 'hosting_payment_failed' | 'hosting_canceled' | 'hosting_activated' | 'hosting_incident' | 'hosting_provisioning_failed' | 'hosting_wallet_needed' | 'hosting_resumed';
   title?: string;
   detail?: string;
 }
@@ -94,18 +96,28 @@ export async function sendHostingEmail(email: string, message: HostingEmailData)
   const resend = new Resend(apiKey);
   const siteUrl = getSiteUrl();
   const accountUrl = `${siteUrl}/account/hosting`;
+  // Each line says only what the service actually does. Nothing here promises teardown, deletion,
+  // an operator action or a timeline that no code performs.
   const copy = {
-    hosting_started: ['Your managed workspace is queued', `Your ${message.planName} subscription is confirmed. Complete onboarding so Cival Operations can review and provision the workspace.`],
-    hosting_payment_failed: ['Action needed: hosting payment failed', 'Stripe could not collect the latest hosting invoice. Update your payment method to avoid or resolve a service suspension.'],
-    hosting_canceled: ['Your hosting cancellation is recorded', 'Your subscription has been canceled. Runtime teardown and credential deletion will follow the service lifecycle shown in your account.'],
-    hosting_activated: ['Your managed workspace is active', 'Provisioning, health, backup and recovery checks passed. Open your account to review runtime status before enabling any live strategy.'],
+    hosting_started: ['Payment received — one step left', `Your ${message.planName} subscription is confirmed. Next step: verify your funding wallet in your hosting account so we can finish setting up your workspace.`],
+    hosting_payment_failed: ['Action needed: hosting payment failed', 'Stripe could not collect your latest hosting invoice. Your workspace is paused until payment succeeds. Update your card with Manage billing in your hosting account.'],
+    hosting_canceled: ['Your hosting cancellation is recorded', 'Your workspace stops at the end of the billing period. Your funds stay in your own Hyperliquid account and you can withdraw them at any time. Workspace data is retained as described in our Privacy Policy.'],
+    hosting_activated: ['Your managed workspace is ready', 'Your workspace is set up and starts with trading paused. Next: approve your trading key and fund your Hyperliquid account from your hosting account, then resume trading from your instance page.'],
     hosting_incident: [message.title || 'Managed hosting incident update', message.detail || 'An incident affecting your managed workspace has been published in your account.'],
     hosting_provisioning_failed: [message.title || 'Provisioning failed after payment', message.detail || 'Payment succeeded but automated provisioning failed. Operations has been alerted and will resume this without further action from you.'],
+    hosting_wallet_needed: ['Action needed: verify your funding wallet', 'Your workspace is waiting on one step from you. Verify your funding wallet in your hosting account to finish setup.'],
+    hosting_resumed: ['Your managed workspace service is restored', 'Your payment went through and your workspace service is restored. Trading stays paused until you resume it on your instance page.'],
   }[message.template];
+  // The two "your move" messages land on the wallet step itself rather than the top of the page.
+  const actionUrl = message.template === 'hosting_started' || message.template === 'hosting_wallet_needed'
+    ? `${accountUrl}#wallet`
+    : accountUrl;
   const subject = `Cival Systems — ${copy[0]}`;
-  const html = `<!doctype html><html><body style="margin:0;background:#020806;color:#e8fff5;font-family:Arial,sans-serif"><div style="max-width:620px;margin:0 auto;padding:40px 20px"><div style="font-size:24px;font-weight:800;margin-bottom:24px;color:#4ade9f">Cival Systems</div><div style="background:#07120e;border:1px solid #1d4d3b;border-radius:22px;padding:32px"><div style="font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#4ade9f;font-weight:800">Managed hosting</div><h1 style="font-size:30px;line-height:1.15;margin:12px 0 14px">${escapeHtml(copy[0])}</h1><p style="font-size:16px;line-height:1.65;color:#b5d6c8">${escapeHtml(copy[1])}</p><a href="${accountUrl}" style="display:inline-block;margin-top:14px;background:#4ade9f;color:#03110b;text-decoration:none;font-weight:800;padding:14px 22px;border-radius:999px">Open hosting account</a><div style="margin-top:26px;padding-top:18px;border-top:1px solid #173a2e;font-size:12px;line-height:1.7;color:#7fa694">Subscription ${escapeHtml(message.subscriptionId)}</div></div><p style="font-size:12px;line-height:1.6;color:#76998a;margin:20px 6px">Managed hosting does not reduce market risk or guarantee results. Use a dedicated trade-only API wallet and keep withdrawals disabled. Need help? <a href="${siteUrl}/contact" style="color:#4ade9f">Contact support</a>.</p></div></body></html>`;
-  const text = `Cival Systems — Managed hosting\n\n${copy[0]}\n\n${copy[1]}\n\nOpen your hosting account: ${accountUrl}\n\nSubscription: ${message.subscriptionId}`;
-  const { data, error } = await resend.emails.send({ from, to: email, replyTo: process.env.SUPPORT_EMAIL || 'support@civalsystems.com', subject, html, text }, { idempotencyKey: `${message.template}-${message.subscriptionId}` });
+  const html = `<!doctype html><html><body style="margin:0;background:#020806;color:#e8fff5;font-family:Arial,sans-serif"><div style="max-width:620px;margin:0 auto;padding:40px 20px"><div style="font-size:24px;font-weight:800;margin-bottom:24px;color:#4ade9f">Cival Systems</div><div style="background:#07120e;border:1px solid #1d4d3b;border-radius:22px;padding:32px"><div style="font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#4ade9f;font-weight:800">Managed hosting</div><h1 style="font-size:30px;line-height:1.15;margin:12px 0 14px">${escapeHtml(copy[0])}</h1><p style="font-size:16px;line-height:1.65;color:#b5d6c8">${escapeHtml(copy[1])}</p><a href="${actionUrl}" style="display:inline-block;margin-top:14px;background:#4ade9f;color:#03110b;text-decoration:none;font-weight:800;padding:14px 22px;border-radius:999px">Open hosting account</a><div style="margin-top:26px;padding-top:18px;border-top:1px solid #173a2e;font-size:12px;line-height:1.7;color:#7fa694">Subscription ${escapeHtml(message.subscriptionId)}</div></div><p style="font-size:12px;line-height:1.6;color:#76998a;margin:20px 6px">Managed hosting does not reduce market risk or guarantee results. Use a dedicated trade-only API wallet and keep withdrawals disabled. Need help? <a href="${siteUrl}/contact" style="color:#4ade9f">Contact support</a>.</p></div></body></html>`;
+  const text = `Cival Systems — Managed hosting\n\n${copy[0]}\n\n${copy[1]}\n\nOpen your hosting account: ${actionUrl}\n\nSubscription: ${message.subscriptionId}`;
+  // Keyed by the notification row, not template+subscription: a second payment-failed or incident
+  // email for the same subscription is a different message and must not be deduplicated away.
+  const { data, error } = await resend.emails.send({ from, to: email, replyTo: process.env.SUPPORT_EMAIL || 'support@civalsystems.com', subject, html, text }, { idempotencyKey: `hosting-notification-${message.notificationId}` });
   if (error) throw new Error(`Email delivery failed: ${error.message}`);
   return data;
 }

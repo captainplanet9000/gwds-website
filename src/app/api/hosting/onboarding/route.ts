@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { CommerceError, errorResponseBody, requireVerifiedUser } from '@/lib/commerce';
-import { HOSTING_AGENT_IDS, normalizeHostingText, planExecutionMode } from '@/lib/hosting';
+import { controlClient } from '@/lib/control-plane';
+import { HOSTING_AGENT_IDS, decideOnboardingApproval, normalizeHostingText, planExecutionMode, type OnboardingDecision } from '@/lib/hosting';
+import { entitledStrategyIds } from '@/lib/loadout';
 import { createServerClient } from '@/lib/supabase';
 
 export const runtime = 'nodejs';
@@ -46,10 +48,29 @@ export async function PUT(req: NextRequest) {
     // yield 'paper' — the safe value — rather than defaulting a workspace to live execution on
     // incomplete information.
     const { data: plan } = subscription.plan_id
-      ? await supabase.from('hosting_plans').select('price_cents').eq('id', subscription.plan_id).maybeSingle()
+      ? await supabase.from('hosting_plans').select('price_cents,agent_limit,included_product_id').eq('id', subscription.plan_id).maybeSingle()
       : { data: null };
     const priceCents = typeof plan?.price_cents === 'number' ? plan.price_cents : 0;
     const environment = planExecutionMode(priceCents) === 'live' ? 'live' : 'paper';
+
+    // Status is decided HERE, never taken from the browser. A request inside the plan's cap and the
+    // customer's entitlements is approved without waiting on an operator; anything else is held
+    // for review with the reason. An entitlement read that fails holds the request rather than
+    // failing the save.
+    let decision: OnboardingDecision;
+    try {
+      const entitled = await entitledStrategyIds(supabase, user.id, (plan?.included_product_id as string | null) ?? null);
+      decision = decideOnboardingApproval({
+        subscriptionStatus: subscription.status,
+        requestedAgents,
+        agentLimit: plan?.agent_limit as number | null | undefined,
+        entitledProductIds: entitled,
+      });
+    } catch {
+      decision = { approved: false, reason: 'Your agent access could not be checked automatically, so an operator reviews this request.', mappedAgents: [] };
+    }
+    const status = decision.approved ? 'approved' : 'operator_review';
+
     const now = new Date().toISOString();
     const { data, error } = await supabase.from('hosting_onboarding').update({
       // Wallet designation belongs to the signature-verification flow. Editing
@@ -58,11 +79,30 @@ export async function PUT(req: NextRequest) {
       requested_agents: requestedAgents, risk_profile: riskProfile,
       max_drawdown_pct: drawdown, max_position_usd: position,
       customer_notes: normalizeHostingText(body.customerNotes, 2000),
-      status: 'operator_review', submitted_at: now, updated_at: now,
+      status, submitted_at: now, updated_at: now,
+      ...(decision.approved ? { reviewed_at: now } : {}),
     }).eq('subscription_id', subscriptionId).eq('user_id', user.id).select('id,status,submitted_at').maybeSingle();
     if (error || !data) throw new CommerceError('ONBOARDING_UPDATE_FAILED', 'Onboarding could not be submitted.', 503);
-    await supabase.from('hosting_audit').insert({ user_id: user.id, subscription_id: subscriptionId, actor_type: 'customer', actor_id: user.id, action: 'onboarding_submitted' });
-    return NextResponse.json({ onboarding: data });
+    await supabase.from('hosting_audit').insert({ user_id: user.id, subscription_id: subscriptionId, actor_type: 'customer', actor_id: user.id, action: 'onboarding_submitted', metadata: { status, reason: decision.approved ? null : decision.reason } });
+
+    // Approval is what control.sync_tenant_loadout_from_onboarding installs from. It is a no-op
+    // that says so ('no tenant for this subscription yet') until the workspace exists.
+    let loadout: unknown = null;
+    if (decision.approved) {
+      await supabase.from('hosting_audit').insert({ user_id: user.id, subscription_id: subscriptionId, actor_type: 'system', actor_id: 'system:auto-approve', action: 'onboarding_auto_approved', metadata: { agents: decision.mappedAgents } });
+      const { data: synced, error: syncError } = await controlClient().rpc('sync_tenant_loadout_from_onboarding', {
+        p_hosting_subscription_id: subscriptionId,
+        p_requested_by: 'system:onboarding-auto-approve',
+      });
+      if (syncError) console.error('Onboarding loadout sync failed', { subscriptionId, error: syncError.message });
+      loadout = syncError ? { synced: false, reason: 'Your agents could not be recorded automatically. Choose them from your instance page.' } : synced;
+    }
+
+    return NextResponse.json({
+      onboarding: data,
+      decision: { status, reason: decision.approved ? null : decision.reason },
+      loadout,
+    }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (error) {
     const status = error instanceof CommerceError ? error.status : 500;
     return NextResponse.json(errorResponseBody(error), { status, headers: { 'Cache-Control': 'no-store' } });

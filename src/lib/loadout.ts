@@ -1,5 +1,6 @@
 import { CommerceError } from '@/lib/commerce';
 import { getProduct, products } from '@/lib/products';
+import type { createServerClient } from '@/lib/supabase';
 
 // ─────────────────────────────────────────────────────────────────────────────────────────────
 // LOADOUT RULES — shared by the customer API (src/app/api/account/instance/loadout/route.ts) and
@@ -252,4 +253,51 @@ export function resolveAgentLimit(agentLimit: number | null | undefined): number
   const floored = Math.trunc(agentLimit);
   if (floored < 1) return UNRESOLVED_PLAN_AGENT_LIMIT;
   return Math.min(floored, MAX_AGENTS_PER_TENANT);
+}
+
+/**
+ * Every strategy the user may select, from purchases AND from what their plan includes.
+ *
+ * The one exception to "pure" in this file: it reads through the service-role client it is handed
+ * (the supabase import above is type-only, so nothing server-side reaches a browser bundle). It is
+ * the same gate as entitledStrategyIds() in src/app/api/account/instance/loadout/route.ts, shared
+ * here so onboarding auto-approval (src/app/api/hosting/onboarding) applies identical rules:
+ *
+ * Bundle expansion goes through public.product_includes (migration 0019) rather than the
+ * storefront's own EDITION_INCLUDES table, so the host and the storefront answer "what does this
+ * bundle contain" from the same row set instead of two copies that can drift apart.
+ *
+ * The plan's own included_product_id counts while the plan is resolved, because that is what the
+ * monthly price buys. It is not written into public.entitlements, and deliberately not: an
+ * entitlement is a permanent grant from a purchase, and a subscription inclusion ends with the
+ * subscription.
+ *
+ * One level of expansion only. Bundles contain agents; they do not contain other bundles.
+ */
+export async function entitledStrategyIds(
+  sb: ReturnType<typeof createServerClient>,
+  userId: string,
+  planIncludedProductId: string | null,
+): Promise<Set<string>> {
+  const { data, error } = await sb
+    .from('entitlements')
+    .select('product_id')
+    .eq('user_id', userId)
+    .eq('status', 'active');
+  if (error) throw error;
+
+  const roots = new Set<string>();
+  for (const row of data || []) roots.add(row.product_id as string);
+  if (planIncludedProductId) roots.add(planIncludedProductId);
+  if (roots.size === 0) return new Set();
+
+  const { data: includes, error: includesError } = await sb
+    .from('product_includes')
+    .select('included_product_id')
+    .in('bundle_product_id', [...roots]);
+  if (includesError) throw includesError;
+
+  const owned = new Set(roots);
+  for (const row of includes || []) owned.add(row.included_product_id as string);
+  return new Set([...owned].filter((id) => getStrategySpec(id)));
 }

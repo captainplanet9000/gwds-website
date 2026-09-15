@@ -1,14 +1,19 @@
-// Hyperliquid / Arbitrum network configuration shared by server routes and the browser funding
-// UI. This mirrors the SAME constants the live trading dashboard uses (Cival-Dashboard-v9's
-// src/lib/hyperliquid/network-config.ts and src/lib/treasury/wallet.ts), verified from that
-// code rather than guessed — see NEXT_PUBLIC_HYPERLIQUID_NETWORK below.
+// Hyperliquid / Arbitrum network helpers shared by server routes and the browser funding UI.
+//
+// The per-network constants (chain ids, token, bridge, API hosts) live in ./hyperliquid-funding
+// (FUNDING_NETWORKS), ported from the dashboard's on-chain-checked funding config. Every helper
+// here takes the network explicitly: a hosted customer's network is a property of THEIR tenant
+// (resolveTenantNetwork in src/lib/control-plane.ts), not of this deployment, so server routes
+// must always pass it. The no-argument form falls back to this deployment's build-time
+// NEXT_PUBLIC_HYPERLIQUID_NETWORK and remains only for callers that predate per-tenant networks.
 //
 // Nothing here ever holds a private key or moves funds. It only names public, well-known
-// identifiers: chain ids, the native-USDC contract address on Arbitrum One, and Hyperliquid's
-// public REST endpoints. The one address this deliberately does NOT hardcode is the Hyperliquid
-// bridge contract — see bridgeAddress() below.
+// identifiers.
+import { FUNDING_NETWORKS, type FundingNetwork } from './hyperliquid-funding';
 
-export type HyperliquidNetwork = 'mainnet' | 'testnet';
+export { USDC_DECIMALS } from './hyperliquid-funding';
+
+export type HyperliquidNetwork = FundingNetwork;
 
 /** Defaults to testnet, same fail-safe default the live dashboard uses. */
 export function currentNetwork(): HyperliquidNetwork {
@@ -16,63 +21,58 @@ export function currentNetwork(): HyperliquidNetwork {
   return raw === 'mainnet' ? 'mainnet' : 'testnet';
 }
 
-export function isMainnet(): boolean {
-  return currentNetwork() === 'mainnet';
+export function isMainnet(network: HyperliquidNetwork = currentNetwork()): boolean {
+  return network === 'mainnet';
 }
 
-/** Hyperliquid's public REST base URL for the active network. */
-export function hyperliquidApiUrl(): string {
-  return isMainnet() ? 'https://api.hyperliquid.xyz' : 'https://api.hyperliquid-testnet.xyz';
+/** Hyperliquid's public REST base URL for the network. */
+export function hyperliquidApiUrl(network: HyperliquidNetwork = currentNetwork()): string {
+  return FUNDING_NETWORKS[network].hyperliquidApi;
 }
 
 /** Arbitrum EVM chain id — 42161 mainnet (One), 421614 testnet (Sepolia). Also the EIP-712
  *  domain chainId Hyperliquid's own SDK uses for user-signed actions (verified from the
  *  `hyperliquid` npm package's signUserSignedAction, which hardcodes 42161 / 421614). */
-export function arbitrumChainId(): number {
-  return isMainnet() ? 42161 : 421614;
+export function arbitrumChainId(network: HyperliquidNetwork = currentNetwork()): number {
+  return FUNDING_NETWORKS[network].chainId;
 }
 
 /** The same chain id, hex-encoded, as Hyperliquid's `signatureChainId` action field expects. */
-export function hyperliquidSignatureChainId(): `0x${string}` {
-  return isMainnet() ? '0xa4b1' : '0x66eee';
+export function hyperliquidSignatureChainId(network: HyperliquidNetwork = currentNetwork()): `0x${string}` {
+  return FUNDING_NETWORKS[network].signatureChainId;
 }
 
 /** "Mainnet" / "Testnet" — the exact capitalization Hyperliquid's action schema requires. */
-export function hyperliquidChainName(): 'Mainnet' | 'Testnet' {
-  return isMainnet() ? 'Mainnet' : 'Testnet';
+export function hyperliquidChainName(network: HyperliquidNetwork = currentNetwork()): 'Mainnet' | 'Testnet' {
+  return FUNDING_NETWORKS[network].hyperliquidChain;
 }
 
-/** Native USDC on Arbitrum One, 6 decimals. Hyperliquid deposits/withdraws settle in this token.
- *  Verified against Cival-Dashboard-v9's src/lib/treasury/wallet.ts ARBITRUM_USDC constant. */
-export const ARBITRUM_USDC_MAINNET = '0xaf88d065e77c8cC2239327C5EDb3A432268e5831' as const;
-/** Circle's testnet USDC on Arbitrum Sepolia. Used only when NEXT_PUBLIC_HYPERLIQUID_NETWORK=testnet. */
-export const ARBITRUM_USDC_TESTNET = '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d' as const;
-export const USDC_DECIMALS = 6;
+/** Native USDC on Arbitrum One, 6 decimals. Hyperliquid mainnet deposits/withdraws settle in this token. */
+export const ARBITRUM_USDC_MAINNET = FUNDING_NETWORKS.mainnet.usdc;
+/** Hyperliquid's own test token (USDC2) on Arbitrum Sepolia. The testnet bridge credits this, not
+ *  Circle's Sepolia USDC. */
+export const ARBITRUM_USDC_TESTNET = FUNDING_NETWORKS.testnet.usdc;
 
-export function usdcAddress(): `0x${string}` {
-  return isMainnet() ? ARBITRUM_USDC_MAINNET : ARBITRUM_USDC_TESTNET;
+export function usdcAddress(network: HyperliquidNetwork = currentNetwork()): `0x${string}` {
+  return FUNDING_NETWORKS[network].usdc;
 }
 
 /**
- * The Hyperliquid Arbitrum bridge contract — the address a plain USDC transfer credits to the
- * SENDER's own Hyperliquid account. Deliberately NOT hardcoded: the live dashboard's own
- * deposit route (src/app/api/hyperliquid/treasury/deposit/route.ts) refuses to guess this
- * address too, reading it only from HYPERLIQUID_BRIDGE_ADDRESS, because a USDC transfer to the
- * wrong Arbitrum address is unrecoverable. This file follows the identical rule.
- *
- * Returns null when unconfigured — callers must render "not configured" rather than fabricate
- * a value.
+ * The Hyperliquid Bridge2 contract on Arbitrum — the address a plain token transfer credits to the
+ * SENDER's own Hyperliquid account. Taken from the verified per-network constants rather than an
+ * env var: one global HYPERLIQUID_BRIDGE_ADDRESS cannot be right for tenants on both networks, and
+ * a transfer to the wrong Arbitrum address is unrecoverable.
  */
-export function bridgeAddress(): `0x${string}` | null {
-  const raw = String(process.env.HYPERLIQUID_BRIDGE_ADDRESS || '').trim();
-  if (!/^0x[a-fA-F0-9]{40}$/.test(raw)) return null;
-  return raw as `0x${string}`;
+export function bridgeAddress(network: HyperliquidNetwork = currentNetwork()): `0x${string}` {
+  return FUNDING_NETWORKS[network].bridge;
 }
 
-/** A public Arbitrum RPC endpoint for read-only balance checks. Override with ARBITRUM_RPC_URL
- *  for a paid/rate-limited-friendlier provider. */
-export function arbitrumRpcUrl(): string {
+/** A public Arbitrum RPC endpoint for read-only balance checks. ARBITRUM_RPC_URL names ONE endpoint,
+ *  for the chain this deployment was configured for, so it is honoured only for that network:
+ *  pointing a testnet tenant's balance read at a mainnet RPC would return a confident wrong number
+ *  rather than an error. */
+export function arbitrumRpcUrl(network: HyperliquidNetwork = currentNetwork()): string {
   const configured = String(process.env.ARBITRUM_RPC_URL || '').trim();
-  if (configured) return configured;
-  return isMainnet() ? 'https://arb1.arbitrum.io/rpc' : 'https://sepolia-rollup.arbitrum.io/rpc';
+  if (configured && network === currentNetwork()) return configured;
+  return FUNDING_NETWORKS[network].rpcUrl;
 }

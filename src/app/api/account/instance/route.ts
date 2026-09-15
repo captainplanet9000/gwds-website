@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
     const cp = controlClient();
     // includeArchived: a retired workspace should still render (as "archived"), not 404 --
     // 404/NO_TENANT is reserved for "nothing was ever provisioned for this account".
-    const owned = await resolveOwnedTenant(cp, user.email!, { includeArchived: true });
+    const owned = await resolveOwnedTenant(cp, user.email!, { includeArchived: true, userId: user.id });
 
     const [tenantResult, stateResult, runtimeResult, scheduleResult, cyclesResult] = await Promise.all([
       cp.from('tenants')
@@ -107,7 +107,7 @@ export async function GET(req: NextRequest) {
     );
   } catch (error) {
     if (error instanceof TenantOwnershipError) {
-      const status = error.code === 'AMBIGUOUS_TENANT' ? 409 : 404;
+      const status = error.code === 'AMBIGUOUS_TENANT' ? 409 : error.code === 'NOT_OWNER' ? 403 : 404;
       return NextResponse.json(
         { error: error.message, code: error.code },
         { status, headers: { 'Cache-Control': 'no-store' } },

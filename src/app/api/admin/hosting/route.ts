@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminUnauthorized, requireAdmin } from '@/lib/admin-auth';
+import { controlClient } from '@/lib/control-plane';
 import { normalizeHostingText } from '@/lib/hosting';
 import { deliverHostingNotification } from '@/lib/hosting-notifications';
 import { createServerClient } from '@/lib/supabase';
@@ -147,7 +148,18 @@ export async function PATCH(req: NextRequest) {
       const { data, error } = await supabase.from('hosting_onboarding').update(patch).eq('id', current.id).select().single();
       if (error) throw error;
       await audit('onboarding_updated', { user_id: current.user_id, subscription_id: current.subscription_id, metadata: { status: patch.status } }, admin.userId);
-      return NextResponse.json({ onboarding: data });
+      // An operator approval is what installs the requested agents; without this call the
+      // selection never reaches control.tenant_loadout. The result (installed, capped_out,
+      // unmapped, or why nothing synced) is returned for the operator to read.
+      let loadout: unknown = null;
+      if (patch.status === 'approved') {
+        const { data: synced, error: syncError } = await controlClient().rpc('sync_tenant_loadout_from_onboarding', {
+          p_hosting_subscription_id: current.subscription_id,
+          p_requested_by: `admin:${admin.email}`,
+        });
+        loadout = syncError ? { synced: false, reason: syncError.message } : synced;
+      }
+      return NextResponse.json({ onboarding: data, loadout });
     }
 
     if (action === 'update_task' && validUuid(body.taskId)) {
