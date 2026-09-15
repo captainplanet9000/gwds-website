@@ -165,7 +165,16 @@ function WalletConnectPanel({
         agentAddress as `0x${string}`,
         fundingData.tenant?.displayName || fundingData.tenant?.slug || 'cival-agent',
       );
-      const signature = await signTypedDataAsync(typedData);
+      const signatureHex = await signTypedDataAsync(typedData);
+      // Hyperliquid's /exchange endpoint takes the signature as {r, s, v}, not the 65-byte hex
+      // string wagmi returns. Sending the hex string made every approval fail.
+      if (!/^0x[0-9a-fA-F]{130}$/.test(signatureHex)) throw new Error('Your wallet returned an unexpected signature format.');
+      const vRaw = parseInt(signatureHex.slice(130, 132), 16);
+      const signature = {
+        r: `0x${signatureHex.slice(2, 66)}`,
+        s: `0x${signatureHex.slice(66, 130)}`,
+        v: vRaw < 27 ? vRaw + 27 : vRaw,
+      };
       const relayRes = await fetch('/api/account/funding/approve-agent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
@@ -244,16 +253,17 @@ function WalletConnectPanel({
       </div>
 
       <div style={card}>
-        <div style={label}>Step 3 — approve your trading agent (trade-only, no withdrawal)</div>
+        <div style={label}>Step 3 — approve your trading agent (it can trade, not withdraw)</div>
         <p style={{ color: 'var(--color-neutral-700)', fontSize: 14, marginTop: 8 }}>
           Signs Hyperliquid&apos;s <code>approveAgent</code> action, authorizing agent wallet{' '}
           <span style={mono}>{short(fundingData.tenant?.apiWalletAddress)}</span> to place and manage
-          orders for your account. This agent can never withdraw or transfer funds — Hyperliquid
-          enforces that at the protocol level, not this app.
+          orders for your account. Hyperliquid does not let an agent withdraw or send your funds to
+          another wallet; only your own wallet can. You can revoke the agent at any time on
+          Hyperliquid, which stops all trading.
         </p>
         <button
           className="btn btn-primary"
-          disabled={!account.isConnected || !fundingData.tenant?.apiWalletAddress || approveState === 'busy'}
+          disabled={!account.isConnected || wrongChain || !fundingData.tenant?.apiWalletAddress || approveState === 'busy'}
           onClick={approveAgent}
         >
           {approveState === 'busy' ? 'Waiting for signature…' : approveState === 'done' ? 'Agent approved ✓' : 'Sign to approve trading agent'}
@@ -363,7 +373,10 @@ export default function FundingPage() {
                   <p style={{ color: 'var(--color-neutral-700)', fontSize: 13, marginTop: 12, lineHeight: 1.5 }}>
                     Send USDC on {data.network?.chain} to this address, then bridge it into Hyperliquid
                     (deposit destination above). Only USDC on the exact network shown will be credited —
-                    anything else, or the wrong network, is unrecoverable.
+                    anything else, or the wrong network, is unrecoverable. Each bridge deposit must be at
+                    least 5 USDC: Hyperliquid never credits smaller deposits, and they are lost. Once your
+                    dashboard is live, its Deposit &amp; Withdraw page does all of this in one step from
+                    your wallet, and blocks amounts under the minimum.
                   </p>
                 </div>
                 {data.tenant.mainWalletAddress && <QrCode value={data.tenant.mainWalletAddress} />}

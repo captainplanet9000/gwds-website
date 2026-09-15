@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { recoverTypedDataAddress } from 'viem';
 import { CommerceError, errorResponseBody, requireVerifiedUser } from '@/lib/commerce';
 import { createServerClient } from '@/lib/supabase';
 import { controlClient, resolveOwnedTenant, TenantOwnershipError } from '@/lib/control-plane';
-import { exchangeEndpoint } from '@/lib/hyperliquid-agent';
+import { APPROVE_AGENT_TYPES, exchangeEndpoint } from '@/lib/hyperliquid-agent';
+import { hyperliquidChainName, hyperliquidSignatureChainId } from '@/lib/hyperliquid-network';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+
+const HEX32 = /^0x[0-9a-fA-F]{64}$/;
 
 // ─────────────────────────────────────────────────────────────────────────────────────────────
 // A PURE RELAY for an action the customer's own wallet has ALREADY signed, client-side, via
@@ -19,6 +23,11 @@ export const dynamic = 'force-dynamic';
 // owner_email correspondence dashboard-link and the instance page use) — so even a compromised/
 // malicious client
 // cannot repurpose this into a generic signed-message proxy to Hyperliquid.
+//
+// It also recovers the signer and requires it to be the tenant's verified main wallet.
+// Hyperliquid applies an approval to whichever account signed it, so without this check a
+// customer who connected a different wallet would approve the agent on the wrong account and
+// their tenant would silently be unable to trade.
 // ─────────────────────────────────────────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
@@ -30,11 +39,21 @@ export async function POST(req: NextRequest) {
     if (!action || action.type !== 'approveAgent') {
       throw new CommerceError('INVALID_ACTION', 'Only a signed approveAgent action may be relayed here.');
     }
-    if (!signature || typeof signature !== 'object' || !('r' in signature) || !('s' in signature)) {
-      throw new CommerceError('INVALID_SIGNATURE', 'Missing signature.');
+    if (
+      !signature || typeof signature !== 'object'
+      || !HEX32.test(String(signature.r)) || !HEX32.test(String(signature.s))
+      || (signature.v !== 27 && signature.v !== 28)
+    ) {
+      throw new CommerceError('INVALID_SIGNATURE', 'Missing or malformed signature.');
     }
     if (!Number.isFinite(nonce) || nonce !== action.nonce) {
       throw new CommerceError('INVALID_NONCE', 'Nonce mismatch between action and request.');
+    }
+    if (action.hyperliquidChain !== hyperliquidChainName() || action.signatureChainId !== hyperliquidSignatureChainId()) {
+      throw new CommerceError('WRONG_NETWORK', 'That approval was signed for a different Hyperliquid network than this account uses.');
+    }
+    if (typeof action.agentName !== 'string') {
+      throw new CommerceError('INVALID_ACTION', 'Missing agent name.');
     }
 
     const subscriptionId = body.subscriptionId ?? null;
@@ -60,13 +79,46 @@ export async function POST(req: NextRequest) {
       throw err;
     }
     const { data: tenant, error: tenantError } = await cp.from('tenants')
-      .select('slug, api_wallet_address').eq('id', owned.id).single();
+      .select('slug, api_wallet_address, main_wallet_address').eq('id', owned.id).single();
     if (tenantError || !tenant) throw new CommerceError('TENANT_LOOKUP_FAILED', 'Your tenant status could not be loaded.', 503);
     if (!tenant.api_wallet_address) {
       throw new CommerceError('AGENT_WALLET_NOT_PROVISIONED', 'Your tenant does not have an agent wallet to approve yet.', 409);
     }
     if (String(action.agentAddress).toLowerCase() !== String(tenant.api_wallet_address).toLowerCase()) {
       throw new CommerceError('AGENT_ADDRESS_MISMATCH', "That agent address does not match your tenant's provisioned agent wallet — refusing to relay.", 403);
+    }
+    if (!tenant.main_wallet_address) {
+      throw new CommerceError('MAIN_WALLET_NOT_VERIFIED', 'Verify your wallet (step 2) before approving the trading agent.', 409);
+    }
+
+    let signer: string;
+    try {
+      signer = await recoverTypedDataAddress({
+        domain: {
+          name: 'HyperliquidSignTransaction',
+          version: '1',
+          chainId: parseInt(action.signatureChainId, 16),
+          verifyingContract: '0x0000000000000000000000000000000000000000',
+        },
+        types: APPROVE_AGENT_TYPES,
+        primaryType: 'HyperliquidTransaction:ApproveAgent',
+        message: {
+          hyperliquidChain: action.hyperliquidChain,
+          agentAddress: action.agentAddress,
+          agentName: action.agentName,
+          nonce: BigInt(action.nonce),
+        },
+        signature: { r: signature.r, s: signature.s, v: BigInt(signature.v) },
+      });
+    } catch {
+      throw new CommerceError('INVALID_SIGNATURE', 'That signature could not be verified.');
+    }
+    if (signer.toLowerCase() !== String(tenant.main_wallet_address).toLowerCase()) {
+      throw new CommerceError(
+        'SIGNER_MISMATCH',
+        `That approval was signed by ${signer}, but your trading account is ${tenant.main_wallet_address}. Switch to that wallet and sign again.`,
+        403,
+      );
     }
 
     const hlRes = await fetch(exchangeEndpoint(), {

@@ -45,8 +45,12 @@ export function hyperliquidChainName(): 'Mainnet' | 'Testnet' {
 /** Native USDC on Arbitrum One, 6 decimals. Hyperliquid deposits/withdraws settle in this token.
  *  Verified against Cival-Dashboard-v9's src/lib/treasury/wallet.ts ARBITRUM_USDC constant. */
 export const ARBITRUM_USDC_MAINNET = '0xaf88d065e77c8cC2239327C5EDb3A432268e5831' as const;
-/** Circle's testnet USDC on Arbitrum Sepolia. Used only when NEXT_PUBLIC_HYPERLIQUID_NETWORK=testnet. */
-export const ARBITRUM_USDC_TESTNET = '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d' as const;
+/** Hyperliquid's own testnet bridge token, "USDC2", on Arbitrum Sepolia. The testnet bridge only
+ *  credits this token, not Circle's Arbitrum Sepolia USDC (0x75faf114…), so sending Circle's
+ *  token would not reach the customer's testnet account. Source:
+ *  https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/usdc (checked on-chain:
+ *  6 decimals). Used only when NEXT_PUBLIC_HYPERLIQUID_NETWORK=testnet. */
+export const ARBITRUM_USDC_TESTNET = '0x1baAbB04529D43a73232B713C0FE471f7c7334d5' as const;
 export const USDC_DECIMALS = 6;
 
 export function usdcAddress(): `0x${string}` {
@@ -54,19 +58,23 @@ export function usdcAddress(): `0x${string}` {
 }
 
 /**
- * The Hyperliquid Arbitrum bridge contract — the address a plain USDC transfer credits to the
- * SENDER's own Hyperliquid account. Deliberately NOT hardcoded: the live dashboard's own
- * deposit route (src/app/api/hyperliquid/treasury/deposit/route.ts) refuses to guess this
- * address too, reading it only from HYPERLIQUID_BRIDGE_ADDRESS, because a USDC transfer to the
- * wrong Arbitrum address is unrecoverable. This file follows the identical rule.
- *
- * Returns null when unconfigured — callers must render "not configured" rather than fabricate
- * a value.
+ * Hyperliquid's Arbitrum bridge (Bridge2): a plain USDC transfer to it credits the SENDER's own
+ * Hyperliquid account within about a minute. Deposits under 5 USDC are never credited and are
+ * lost. A transfer to the wrong address is unrecoverable, so these are not guessed: both come
+ * from Hyperliquid's docs (https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/usdc)
+ * and were checked on-chain (deployed contract code at each; valid EIP-55 checksums). This used
+ * to return null unless HYPERLIQUID_BRIDGE_ADDRESS was set, and it was set in no environment,
+ * so the funding page always said "not configured". The env var still overrides, for the day
+ * Hyperliquid moves the bridge.
  */
-export function bridgeAddress(): `0x${string}` | null {
+export const HYPERLIQUID_BRIDGE_MAINNET = '0x2Df1c51E09aECF9cacB7bc98cB1742757f163dF7' as const;
+export const HYPERLIQUID_BRIDGE_TESTNET = '0x08cfc1B6b2dCF36A1480b99353A354AA8AC56f89' as const;
+export const MIN_DEPOSIT_USDC = 5;
+
+export function bridgeAddress(): `0x${string}` {
   const raw = String(process.env.HYPERLIQUID_BRIDGE_ADDRESS || '').trim();
-  if (!/^0x[a-fA-F0-9]{40}$/.test(raw)) return null;
-  return raw as `0x${string}`;
+  if (/^0x[a-fA-F0-9]{40}$/.test(raw)) return raw as `0x${string}`;
+  return isMainnet() ? HYPERLIQUID_BRIDGE_MAINNET : HYPERLIQUID_BRIDGE_TESTNET;
 }
 
 /** A public Arbitrum RPC endpoint for read-only balance checks. Override with ARBITRUM_RPC_URL
