@@ -9,10 +9,16 @@ export async function POST(req: NextRequest) {
   try {
     const user = await requireVerifiedUser(req);
     const { data: subscription, error } = await createServerClient().from('hosting_subscriptions')
-      .select('stripe_customer_id').eq('user_id', user.id)
+      .select('stripe_customer_id, livemode').eq('user_id', user.id)
       .not('stripe_customer_id', 'is', null).order('created_at', { ascending: false }).limit(1).maybeSingle();
     if (error || !subscription?.stripe_customer_id) throw new CommerceError('BILLING_ACCOUNT_NOT_FOUND', 'No hosting billing account was found.', 404);
-    const session = await getStripe().billingPortal.sessions.create({ customer: subscription.stripe_customer_id, return_url: `${getSiteUrl()}/account/hosting` });
+    // livemode is recorded per subscription (from the Stripe event that created it) precisely
+    // because this database now serves both the live site and the test-mode pilot -- a live-mode
+    // Stripe key cannot open a portal session for a test-mode customer, or vice versa.
+    const session = await getStripe(subscription.livemode !== false).billingPortal.sessions.create({
+      customer: subscription.stripe_customer_id,
+      return_url: `${getSiteUrl()}/account/hosting`,
+    });
     return NextResponse.json({ url: session.url });
   } catch (error) {
     const status = error instanceof CommerceError ? error.status : 500;
