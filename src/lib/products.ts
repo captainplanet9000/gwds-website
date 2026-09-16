@@ -391,6 +391,11 @@ The farm ships pre-configured — sensible correlation caps, per-agent allocatio
   },
   {
     id: "everything-bundle",
+    // PULLED FROM SALE 2026-09-16: this bundle's own feature list advertises "Meme Trading Suite"
+    // and "Flash Loan Arbitrage Engine" -- the same two components already hidden above
+    // (legacy:true, 2026-08-28) as unable to build. Un-pull by deleting this legacy flag once the
+    // archive's actual contents are verified. No customer has ever purchased this SKU.
+    legacy: true,
     stripePriceId: "price_1U09vfLLyk0oaesN5dTydx9a",
     isBundle: true,
     name: "Desk Edition",
