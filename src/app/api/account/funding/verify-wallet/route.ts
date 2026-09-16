@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyMessage, getAddress } from 'viem';
 import { CommerceError, errorResponseBody, requireVerifiedUser } from '@/lib/commerce';
 import { createServerClient } from '@/lib/supabase';
+import { controlClient } from '@/lib/control-plane';
 import { verifyChallengeToken } from '../challenge/route';
 
 export const runtime = 'nodejs';
@@ -20,6 +21,15 @@ export const dynamic = 'force-dynamic';
 // self-serve subscription, in hosting_onboarding.account_address too. If the verified address
 // does not match what the control plane already has provisioned as the tenant's main wallet, the
 // caller is told so plainly — reconciling that requires support, not this page.
+//
+// It DOES read control.tenants (never writes) to reject a wallet another, still-active tenant
+// already uses — control.tenants.tenants_main_wallet_unique is a partial unique index on
+// lower(main_wallet_address) WHERE status <> 'archived', which provisioning hits AFTER this route
+// already said "verified": the customer gets a false-positive checkmark on a wallet that can
+// never activate, then retries forever. This is a same-project PostgREST query, not a
+// cross-system call — the control plane lives in the `control` schema of the same Supabase
+// project (see src/lib/control-plane.ts), so nothing here is more "architecturally undesirable"
+// than every other route that already calls controlClient().
 // ─────────────────────────────────────────────────────────────────────────────────────────────
 
 function parseExpiry(message: string): number | null {
@@ -71,6 +81,32 @@ export async function POST(req: NextRequest) {
 
     const supabase = createServerClient();
     const now = new Date().toISOString();
+
+    // 4. Refuse a wallet already bound to a DIFFERENT, still-active tenant before ever returning
+    // {verified:true} — see file header. `address` is checksummed (getAddress() above) and has no
+    // '%'/'_' characters, so ilike() here is a safe case-insensitive equality check, not a wildcard
+    // match (unlike the owner_email caution documented in src/lib/control-plane.ts).
+    const cp = controlClient();
+    const { data: collisions, error: collisionError } = await cp.from('tenants')
+      .select('id, hosting_subscription_id')
+      .neq('status', 'archived')
+      .ilike('main_wallet_address', address);
+    if (collisionError) throw new CommerceError('WALLET_CHECK_FAILED', 'Could not check wallet availability. Please retry.', 503);
+    if (collisions && collisions.length > 0) {
+      const ownSubscriptionIds = new Set<string>(subscriptionId ? [subscriptionId] : []);
+      const { data: mySubs, error: mySubsError } = await supabase.from('hosting_subscriptions').select('id').eq('user_id', user.id);
+      if (mySubsError) throw new CommerceError('WALLET_CHECK_FAILED', 'Could not check wallet availability. Please retry.', 503);
+      for (const sub of (mySubs || []) as Array<{ id: string }>) ownSubscriptionIds.add(sub.id);
+      const isForeign = (collisions as Array<{ hosting_subscription_id: string | null }>)
+        .some(t => !t.hosting_subscription_id || !ownSubscriptionIds.has(t.hosting_subscription_id));
+      if (isForeign) {
+        throw new CommerceError(
+          'WALLET_ALREADY_IN_USE',
+          'This wallet already runs a different Cival workspace and cannot be linked here. Verify a different wallet, or contact support if you believe this is a mistake.',
+          409,
+        );
+      }
+    }
 
     // A successful response must mean the host agent can read the durable proof.
     // Refuse foreign subscriptions before writing either half of the proof.

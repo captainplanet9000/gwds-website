@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { isPaidOrder } from '@/lib/reporting';
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState<any[]>([]);
@@ -19,14 +20,14 @@ export default function AdminOrders() {
   }, []);
 
   const filteredOrders = orders.filter(o => {
-    if (filter === 'completed' && o.status !== 'completed') return false;
-    if (filter === 'pending' && o.status === 'completed') return false;
+    if (filter === 'completed' && !isPaidOrder(o)) return false;
+    if (filter === 'pending' && isPaidOrder(o)) return false;
     if (search && !o.customer_email?.toLowerCase().includes(search.toLowerCase()) && !o.id?.toLowerCase().includes(search.toLowerCase())) return false;
     return true;
   });
 
-  const completed = filteredOrders.filter(o => o.status === 'completed');
-  const pending = filteredOrders.filter(o => o.status !== 'completed');
+  const completed = filteredOrders.filter(o => isPaidOrder(o));
+  const pending = filteredOrders.filter(o => !isPaidOrder(o));
   const totalRev = completed.reduce((s, o) => s + ((o.total_cents || 0) / 100), 0);
   const avgOrder = completed.length > 0 ? totalRev / completed.length : 0;
 
@@ -274,8 +275,8 @@ export default function AdminOrders() {
                           borderRadius: 6, 
                           fontSize: '0.72rem', 
                           fontWeight: 600,
-                          background: o.status === 'completed' ? 'var(--admin-success)15' : o.status === 'pending' ? 'var(--admin-warning)15' : 'var(--admin-danger)15',
-                          color: o.status === 'completed' ? 'var(--admin-success)' : o.status === 'pending' ? 'var(--admin-warning)' : 'var(--admin-danger)',
+                          background: isPaidOrder(o) ? 'var(--admin-success)15' : o.status === 'pending' ? 'var(--admin-warning)15' : 'var(--admin-danger)15',
+                          color: isPaidOrder(o) ? 'var(--admin-success)' : o.status === 'pending' ? 'var(--admin-warning)' : 'var(--admin-danger)',
                           textTransform: 'capitalize',
                           letterSpacing: '0.03em'
                         }}>
