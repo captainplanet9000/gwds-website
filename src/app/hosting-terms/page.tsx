@@ -15,11 +15,11 @@ const sections = [
   ],
   [
     "2. Eligibility and account security",
-    "You must provide accurate account information and keep your login secure. The supported service is paper-only and does not accept exchange API keys, wallet secrets, seed phrases, private keys, or authority to submit live orders. You are responsible for the research settings and simulated risk limits submitted through your account.",
+    "You must provide accurate account information and keep your login secure. The supported service executes live orders on your behalf through a trade-only agent wallet you approve — it can place and cancel orders and cannot withdraw or transfer funds. Cival never requests or accepts your exchange account password, wallet seed phrase, private key, or any credential capable of withdrawal. You are responsible for the risk settings and limits submitted through your account.",
   ],
   [
     "3. Activation and operator review",
-    "Payment does not place a strategy live. Cival may require onboarding information and operator approval. Every supported workspace remains paper-only. Cival may reject or suspend unsafe, unlawful, abusive, unsupported or technically incompatible configurations.",
+    "Payment does not place a strategy live. Cival may require onboarding information, a signed wallet-ownership proof, and operator approval before a workspace begins trading. Cival may reject or suspend unsafe, unlawful, abusive, unsupported or technically incompatible configurations.",
   ],
   [
     "4. Billing and cancellation",
@@ -31,7 +31,7 @@ const sections = [
   ],
   [
     "6. Credentials and customer data",
-    "Cival does not request or store exchange, wallet, or third-party provider secrets for the supported paper service. Customer workspace state is isolated by verified account and tenant access controls. Cival may retain billing, security and audit records as described in the Privacy Policy and may delete runtime data after service termination.",
+    "Cival does not request or store your exchange account password, wallet seed phrase, or private key. The trade-only agent wallet approved for a workspace is generated and held by Cival's infrastructure solely to sign orders on Hyperliquid; it has no withdrawal capability at the protocol level. Customer workspace state is isolated by verified account and tenant access controls. Cival may retain billing, security and audit records as described in the Privacy Policy and may delete runtime data after service termination.",
   ],
   [
     "7. Availability, maintenance and incidents",
@@ -60,7 +60,7 @@ export default function HostingTermsPage() {
         style={{ minHeight: "100vh", padding: "130px 24px 90px" }}
       >
         <article style={{ maxWidth: 820, margin: "0 auto" }}>
-          <span className="tag tag-accent">Version 2026-08-20</span>
+          <span className="tag tag-accent">Version 2026-09-16</span>
           <h1 style={{ fontSize: "clamp(38px,6vw,64px)", margin: "18px 0" }}>
             Managed Hosting Service Terms
           </h1>
@@ -71,8 +71,7 @@ export default function HostingTermsPage() {
             <Link href="/refunds">Refund Policy</Link>, and{" "}
             <Link href="/disclaimer">Trading Disclaimer</Link>. If there is a
             conflict about Managed Hosting, these service-specific terms
-            control. This operational draft should receive business/legal review
-            before the hosting sales gate is opened.
+            control.
           </p>
           <div style={{ display: "grid", gap: 14, marginTop: 32 }}>
             {sections.map(([title, body]) => (
