@@ -3,7 +3,10 @@
    Scoped under .cival so the rest of the site (admin, account, docs)
    keeps its existing look untouched.
    ========================================== */
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600;700&display=swap');
+/* IBM Plex Mono + Instrument Serif + Instrument Sans are loaded via a <link> in
+   src/app/layout.tsx's <head>, not @import here -- an @import here loaded silently nothing,
+   because Next.js concatenates globals.css (imported first) before this file, and an @import is
+   only valid as the very first rule of the stylesheet it appears in. */
 
 .cival {
   --font-heading: 'Instrument Serif', 'Times New Roman', serif;

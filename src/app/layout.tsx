@@ -145,6 +145,19 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&display=swap"
           rel="stylesheet"
         />
+        {/* Syne/DM Sans (globals.css) and IBM Plex Mono/Instrument Serif/Instrument Sans
+            (cival-theme.css) as <link> tags, not CSS @import: Next.js concatenates every
+            globally-imported stylesheet into one file in import order, and an `@import` is only
+            valid when it precedes every other rule in ITS OWN stylesheet -- once cival-theme.css's
+            rules land after globals.css's in the bundle, its @import becomes invalid per spec and
+            browsers silently drop it. That took out IBM Plex Mono / Instrument Serif / Instrument
+            Sans on every .cival-scoped page (28 files: home, hosted, every account/checkout page)
+            with no error, just a fallback to Times New Roman / Helvetica. A <link> in <head> has no
+            such ordering dependency. */}
+        <link
+          href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

@@ -630,7 +630,14 @@ export default function HostingAccountPage() {
                 {[
                   ["Plan", plan?.name || subscription.plan_id],
                   ["Billing", subscription.status],
-                  ["Runtime", instance?.status || "awaiting setup"],
+                  // Prefer the live control-plane tenant status over the legacy
+                  // public.hosting_instances mirror: the mirror is only resynced by
+                  // control.sync_hosting_instance() on certain lifecycle transitions, and a
+                  // tenant that is still working through provisioning (never yet reached a
+                  // running container) can sit on a stale "queued" here while the detail section
+                  // below -- reading the tenant row directly -- correctly shows "provisioning".
+                  // Two different words for the same thing on one page is confusing, not honest.
+                  ["Runtime", provision?.tenant?.status || instance?.status || "awaiting setup"],
                   ["Health", instance?.health_status || "unknown"],
                 ].map(([label, value]) => (
                   <div
@@ -963,32 +970,59 @@ export default function HostingAccountPage() {
                         </span>
                       </div>
                     ))}
-                    {provisionState === "failed" && (
-                      <div
-                        style={{
-                          marginTop: 6,
-                          padding: 14,
-                          border: "1px solid #8a762d",
-                          background: "#1d1909",
-                          borderRadius: "var(--radius-md)",
-                          color: "#e7d991",
-                          fontSize: 13,
-                          lineHeight: 1.55,
-                        }}
-                      >
-                        <strong>Setup hit a problem.</strong> Setup is retried
-                        automatically where that is safe, and our team is
-                        notified automatically and reviews failed setups. If
-                        this has not updated within one business day,{" "}
-                        <Link href="/contact">contact support</Link> and
-                        reference subscription {subscription.id}.
-                        {provision.command?.error && (
-                          <div style={{ marginTop: 6, opacity: 0.8 }}>
-                            Technical detail: {provision.command.error}
-                          </div>
-                        )}
-                      </div>
-                    )}
+                    {provisionState === "failed" && (() => {
+                      // One specific, detectable failure gets its own honest copy instead of the
+                      // generic "retried automatically" claim: a wallet that already funds a
+                      // DIFFERENT Cival workspace can never succeed by retrying, because
+                      // control.tenants.main_wallet_address is unique on purpose -- two hosted
+                      // tenants trading the same real Hyperliquid account at once would place
+                      // conflicting, uncoordinated orders against it. Detected by the database's
+                      // own constraint name so this stays accurate even if the wording around it
+                      // changes; the raw error is not shown for this case, since it names a
+                      // Postgres constraint, not something a customer needs to read.
+                      const walletAlreadyInUse = (provision.command?.error || "").includes(
+                        "tenants_main_wallet_unique",
+                      );
+                      return (
+                        <div
+                          style={{
+                            marginTop: 6,
+                            padding: 14,
+                            border: "1px solid #8a762d",
+                            background: "#1d1909",
+                            borderRadius: "var(--radius-md)",
+                            color: "#e7d991",
+                            fontSize: 13,
+                            lineHeight: 1.55,
+                          }}
+                        >
+                          {walletAlreadyInUse ? (
+                            <>
+                              <strong>That wallet already runs a different Cival workspace.</strong>{" "}
+                              One wallet can only power one hosted workspace at a time -- running two
+                              would place conflicting orders against the same Hyperliquid account.
+                              Verify a different wallet in Deposit &amp; withdraw below to continue,
+                              or <Link href="/contact">contact support</Link> if you believe this is a
+                              mistake (reference subscription {subscription.id}).
+                            </>
+                          ) : (
+                            <>
+                              <strong>Setup hit a problem.</strong> Setup is retried
+                              automatically where that is safe, and our team is
+                              notified automatically and reviews failed setups. If
+                              this has not updated within one business day,{" "}
+                              <Link href="/contact">contact support</Link> and
+                              reference subscription {subscription.id}.
+                              {provision.command?.error && (
+                                <div style={{ marginTop: 6, opacity: 0.8 }}>
+                                  Technical detail: {provision.command.error}
+                                </div>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
                 )}
               </section>
