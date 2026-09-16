@@ -496,7 +496,7 @@ export default function HostingAccountPage() {
 
           {!subscription ? (
             <section>
-              <h2>Choose your managed plan</h2>
+              <h2 style={{ fontSize: "1.3rem" }}>Choose your managed plan</h2>
               {lastClosed && (
                 <p
                   style={{
@@ -683,7 +683,7 @@ export default function HostingAccountPage() {
                   }}
                 >
                   <div>
-                    <h2 style={{ margin: "0 0 6px" }}>
+                    <h2 style={{ fontSize: "1.3rem", margin: "0 0 6px" }}>
                       Subscription and service
                     </h2>
                     <div style={{ display: "flex", gap: 8 }}>
@@ -733,7 +733,7 @@ export default function HostingAccountPage() {
                     alignItems: "center",
                   }}
                 >
-                  <h2 style={{ margin: 0 }}>{provisionHeading}</h2>
+                  <h2 style={{ fontSize: "1.3rem", margin: 0 }}>{provisionHeading}</h2>
                   {/* 'inactive' means the tenant is not currently active/provisioning (suspended,
                     * degraded, maintenance, decommissioning, ...) or there is no tenant at all.
                     * The provision command's status is from the LAST TIME provisioning ran, which
@@ -1056,7 +1056,7 @@ export default function HostingAccountPage() {
                       alignItems: "center",
                     }}
                   >
-                    <h2 style={{ margin: 0 }}>Workspace onboarding</h2>
+                    <h2 style={{ fontSize: "1.3rem", margin: 0 }}>Workspace onboarding</h2>
                     <Status value={onboarding.status} />
                   </div>
                   {/* Distinct states, because one sentence cannot honestly cover them.
@@ -1253,7 +1253,7 @@ export default function HostingAccountPage() {
                     borderRadius: "var(--radius-lg)",
                   }}
                 >
-                  <h2 style={{ marginTop: 0 }}>Service health</h2>
+                  <h2 style={{ fontSize: "1.3rem", marginTop: 0 }}>Service health</h2>
                   {instance ? (
                     <div style={{ display: "grid", gap: 10 }}>
                       {/* Backups, recovery tests and releases have no writer for control-plane
@@ -1315,7 +1315,7 @@ export default function HostingAccountPage() {
                     borderRadius: "var(--radius-lg)",
                   }}
                 >
-                  <h2 style={{ marginTop: 0 }}>Customer-visible incidents</h2>
+                  <h2 style={{ fontSize: "1.3rem", marginTop: 0 }}>Customer-visible incidents</h2>
                   {data.incidents.length ? (
                     data.incidents.map((row) => (
                       <div

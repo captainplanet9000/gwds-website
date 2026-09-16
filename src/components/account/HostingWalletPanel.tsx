@@ -168,7 +168,7 @@ function WalletPanel({ accessToken, subscriptionId, onChanged }: Props) {
     <div ref={rootRef} style={root}>
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 14, flexWrap: 'wrap', alignItems: 'flex-start' }}>
         <div style={{ minWidth: 0 }}>
-          <h2 style={{ margin: '0 0 6px' }}>Deposit &amp; withdraw</h2>
+          <h2 style={{ fontSize: "1.3rem", margin: '0 0 6px' }}>Deposit &amp; withdraw</h2>
           <p style={{ ...muted, margin: 0 }}>
             Your funds stay in your own wallet&apos;s Hyperliquid account. Every deposit and withdrawal is signed by you.
           </p>

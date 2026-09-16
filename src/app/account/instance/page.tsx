@@ -443,7 +443,7 @@ export default function InstancePage() {
                 background: "var(--color-surface)",
               }}
             >
-              <h2 style={{ marginTop: 0 }}>No live workspace yet</h2>
+              <h2 style={{ fontSize: "1.3rem", marginTop: 0 }}>No live workspace yet</h2>
               <p style={{ color: "var(--color-neutral-700)", lineHeight: 1.6 }}>
                 {notFound.code === "AMBIGUOUS_TENANT"
                   ? notFound.message
@@ -525,7 +525,7 @@ export default function InstancePage() {
                   }}
                 >
                   <div>
-                    <h2 style={{ margin: "0 0 6px" }}>Your dashboard</h2>
+                    <h2 style={{ fontSize: "1.3rem", margin: "0 0 6px" }}>Your dashboard</h2>
                     {/* This used to end "signed in as you", which it is not. The button mints a
                       * one-time gateway ticket (/api/account/dashboard-link) that proves to the
                       * reverse proxy which tenant you own and opens a gateway session; that is
@@ -588,7 +588,7 @@ export default function InstancePage() {
               >
                 <div style={{ display: "flex", justifyContent: "space-between", gap: 14, flexWrap: "wrap" }}>
                   <div>
-                    <h2 style={{ margin: "0 0 6px", color: data.halt.active ? "#e7d991" : undefined }}>
+                    <h2 style={{ fontSize: "1.3rem", margin: "0 0 6px", color: data.halt.active ? "#e7d991" : undefined }}>
                       {data.halt.active ? "Trading is halted" : "Trading is live"}
                     </h2>
                     <p style={{ color: data.halt.active ? "#e7d991" : "var(--color-neutral-700)", margin: 0 }}>
@@ -672,7 +672,7 @@ export default function InstancePage() {
                   background: "var(--color-surface)",
                 }}
               >
-                <h2 style={{ marginTop: 0 }}>Recent cycle outcomes</h2>
+                <h2 style={{ fontSize: "1.3rem", marginTop: 0 }}>Recent cycle outcomes</h2>
                 {data.recentCycles.length ? (
                   <div style={{ display: "grid", gap: 8 }}>
                     {data.recentCycles.map((cycle) => (
@@ -712,7 +712,7 @@ export default function InstancePage() {
               >
                 {!loadout ? (
                   <>
-                    <h2 style={{ marginTop: 0 }}>Strategy-agent loadout</h2>
+                    <h2 style={{ fontSize: "1.3rem", marginTop: 0 }}>Strategy-agent loadout</h2>
                     <p style={{ color: "var(--color-neutral-700)", margin: 0 }}>Loading your loadout...</p>
                   </>
                 ) : (
@@ -746,7 +746,7 @@ export default function InstancePage() {
                           }}
                         >
                           <div>
-                            <h2 style={{ margin: "0 0 6px" }}>Strategy-agent loadout</h2>
+                            <h2 style={{ fontSize: "1.3rem", margin: "0 0 6px" }}>Strategy-agent loadout</h2>
                             <p style={{ color: "var(--color-neutral-700)", margin: 0, maxWidth: "62ch" }}>
                               Choose which strategies run in your workspace and how many of each. Two
                               instances of one strategy only add capacity if they trade different
