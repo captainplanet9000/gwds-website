@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { createServerClient } from '@/lib/supabase';
+import { currentNetwork } from '@/lib/hyperliquid-network';
 
 export const metadata: Metadata = {
   title: 'Service Status',
@@ -40,6 +41,7 @@ export default async function StatusPage() {
   const incidents = await getIncidents();
   const open = incidents.filter((incident) => incident.status !== 'resolved');
   const hostingSalesEnabled = process.env.NEXT_PUBLIC_HOSTING_SALES_ENABLED === 'true';
+  const deploymentNetwork = currentNetwork();
   // Read-only. The paid tiers run live agents, so this page must not describe the service as
   // paper-only; but while the gate is shut nothing executes live either. Both facts are stated
   // against the gate rather than against the product, so neither becomes a lie when it opens.
@@ -66,7 +68,9 @@ export default async function StatusPage() {
               <span className="tag tag-neutral">{hostingSalesEnabled ? 'Available' : 'Launch gate closed'}</span>
               <p style={{ color: 'var(--color-neutral-700)', lineHeight: 1.6, marginBottom: 0 }}>
                 {hostingSalesEnabled
-                  ? 'New subscriptions are available. The free Paper plan stays on simulated fills; paid plans run live agents against the exchange account you fund yourself.'
+                  ? deploymentNetwork === 'testnet'
+                    ? 'New subscriptions are available. Paid workspaces run automated agents on Hyperliquid testnet with test funds; real-money mainnet execution is not enabled in this release.'
+                    : 'New subscriptions are available. The free Paper plan stays on simulated fills; paid plans run live agents against the exchange account you fund yourself.'
                   : 'No hosting subscriptions are being accepted, and no managed workspace executes live orders, while the launch gate is closed.'}
               </p>
             </section>
