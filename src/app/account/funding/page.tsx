@@ -42,6 +42,8 @@ type FundingData = {
     arbitrumUsdc: number | null; arbitrumUsdcKnown: boolean;
     arbitrumGasEth: number | null; arbitrumGasEthKnown: boolean;
     hyperliquidAccountValueUsd: number | null; hyperliquidAccountValueKnown: boolean;
+    hyperliquidAvailableUsd: number | null; hyperliquidMarginUsedUsd: number | null;
+    hyperliquidAccountMode: string | null;
     fundsArrived: boolean;
   };
   message?: string;
@@ -400,6 +402,11 @@ export default function FundingPage() {
                   <div style={{ fontSize: 22, marginTop: 8, fontFamily: 'var(--font-mono)' }}>
                     {balances?.hyperliquidAccountValueKnown ? `$${balances.hyperliquidAccountValueUsd!.toFixed(2)}` : 'Unknown'}
                   </div>
+                  {balances?.hyperliquidAvailableUsd !== null && balances?.hyperliquidAvailableUsd !== undefined && (
+                    <div style={{ color: 'var(--color-neutral-600)', fontSize: 12, marginTop: 5 }}>
+                      ${balances.hyperliquidAvailableUsd.toFixed(2)} available · ${Number(balances.hyperliquidMarginUsedUsd || 0).toFixed(2)} in margin
+                    </div>
+                  )}
                   {balances?.fundsArrived && <span className="tag tag-accent-2" style={{ marginTop: 8, display: 'inline-block' }}>Funds confirmed</span>}
                 </div>
               </div>

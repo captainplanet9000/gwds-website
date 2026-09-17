@@ -551,6 +551,9 @@ export default function InstancePage() {
                   >
                     {busy === "dashboard" ? "Opening..." : "Open dashboard"}
                   </button>
+                  <Link className="btn btn-secondary" href="/account/funding">
+                    Fund or withdraw
+                  </Link>
                 </div>
                 <div
                   style={{

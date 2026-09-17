@@ -8,6 +8,7 @@ import {
   arbitrumChainId, arbitrumRpcUrl, bridgeAddress, currentNetwork, hyperliquidApiUrl,
   usdcAddress, USDC_DECIMALS,
 } from '@/lib/hyperliquid-network';
+import { readHyperliquidAccount } from '@/lib/hyperliquid-account';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -43,24 +44,6 @@ async function readArbitrumBalances(address: `0x${string}`) {
   } catch {
     // An unreadable balance is UNKNOWN, never zero — the RPC could be down, rate-limited, etc.
     return { usdc: null as number | null, gasEth: null as number | null };
-  }
-}
-
-async function readHyperliquidEquity(address: `0x${string}`) {
-  try {
-    const res = await fetch(`${hyperliquidApiUrl()}/info`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'clearinghouseState', user: address }),
-      cache: 'no-store',
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    const value = data?.marginSummary?.accountValue;
-    const n = Number(value);
-    return Number.isFinite(n) ? n : null;
-  } catch {
-    return null;
   }
 }
 
@@ -128,9 +111,9 @@ export async function GET(req: NextRequest) {
     const apiWallet = tenant.api_wallet_address && /^0x[a-fA-F0-9]{40}$/.test(tenant.api_wallet_address)
       ? getAddress(tenant.api_wallet_address) : null;
 
-    const [arb, hlEquity] = await Promise.all([
+    const [arb, hlAccount] = await Promise.all([
       mainWallet ? readArbitrumBalances(mainWallet) : Promise.resolve({ usdc: null, gasEth: null }),
-      mainWallet ? readHyperliquidEquity(mainWallet) : Promise.resolve(null),
+      mainWallet ? readHyperliquidAccount(hyperliquidApiUrl(), mainWallet) : Promise.resolve(null),
     ]);
 
     return NextResponse.json({
@@ -152,9 +135,12 @@ export async function GET(req: NextRequest) {
         arbitrumUsdcKnown: arb.usdc !== null,
         arbitrumGasEth: arb.gasEth,
         arbitrumGasEthKnown: arb.gasEth !== null,
-        hyperliquidAccountValueUsd: hlEquity,
-        hyperliquidAccountValueKnown: hlEquity !== null,
-        fundsArrived: hlEquity !== null && hlEquity > 0,
+        hyperliquidAccountValueUsd: hlAccount?.accountValueUsd ?? null,
+        hyperliquidAccountValueKnown: hlAccount !== null,
+        hyperliquidAvailableUsd: hlAccount?.availableUsd ?? null,
+        hyperliquidMarginUsedUsd: hlAccount?.marginUsedUsd ?? null,
+        hyperliquidAccountMode: hlAccount?.abstraction ?? null,
+        fundsArrived: hlAccount !== null && hlAccount.accountValueUsd > 0,
       },
     }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (error) {
