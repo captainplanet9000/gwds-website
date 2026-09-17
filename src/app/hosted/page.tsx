@@ -2,6 +2,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { planExecutionMode } from "@/lib/hosting";
+import { currentNetwork } from "@/lib/hyperliquid-network";
 import { MAX_AGENTS_PER_TENANT } from "@/lib/loadout";
 import { createServerClient } from "@/lib/supabase";
 
@@ -156,7 +157,7 @@ const STATUS = [
   [
     "Hosted subscriptions",
     "Built",
-    "Recurring Stripe checkout, subscription lifecycle webhooks, invoices, cancellation and the customer billing portal are implemented behind launch gates.",
+    "Recurring Stripe checkout, subscription lifecycle webhooks, invoices, cancellation and the customer billing portal are implemented.",
   ],
   [
     "Live agent loadout",
@@ -194,6 +195,8 @@ export default async function HostedPage({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const salesEnabled = process.env.NEXT_PUBLIC_HOSTING_SALES_ENABLED === "true";
+  const deploymentNetwork = currentNetwork();
+  const isTestnetPilot = deploymentNetwork === "testnet";
   // Stripe's cancel_url for hosting checkout (see /api/hosting/checkout).
   const checkoutCancelled = (await searchParams).checkout === "cancelled";
   const plans = await getPlans();
@@ -233,7 +236,9 @@ export default async function HostedPage({
     ],
     [
       "Does hosting reduce trading risk?",
-      "No. Hosting removes infrastructure work. It does not validate a strategy, promise performance, or make a losing system profitable. On a live plan these agents trade real money in your own account and can lose it.",
+      isTestnetPilot
+        ? "No. Hosting removes infrastructure work. The current service runs on Hyperliquid testnet with test funds, so it lets you validate the workflow without real capital. It does not validate a strategy or promise performance."
+        : "No. Hosting removes infrastructure work. It does not validate a strategy, promise performance, or make a losing system profitable. On a live plan these agents trade real money in your own account and can lose it.",
     ],
     [
       "Is my strategy code private?",
@@ -298,12 +303,34 @@ export default async function HostedPage({
               margin: "0 0 14px",
             }}
           >
-            Managed hosting for live strategy agents. You fund your own Hyperliquid
+            Managed hosting for automated strategy agents. You fund your own Hyperliquid
             account and approve a trade-only agent wallet; we run the deployment,
             the authenticated database, the health checks, the backups and the
             updates. Plans scale on the thing that actually matters — how many
             agents run at once.
           </p>
+          {isTestnetPilot && (
+            <p
+              role="status"
+              style={{
+                fontSize: 15,
+                lineHeight: 1.6,
+                color: "var(--color-neutral-800)",
+                maxWidth: "72ch",
+                margin: "20px 0",
+                padding: "14px 18px",
+                border: "1px solid var(--color-divider)",
+                borderLeft: "3px solid var(--color-accent)",
+                borderRadius: "var(--radius-md)",
+                background: "var(--color-surface)",
+              }}
+            >
+              <strong>Automated testnet launch.</strong> New workspaces execute on Hyperliquid
+              testnet with test funds. Checkout, provisioning, wallet verification, strategy
+              loadouts, scheduling, dashboards and customer controls are available; real-money
+              mainnet execution is not enabled in this release.
+            </p>
+          )}
           <p
             style={{
               fontSize: 16,
@@ -315,7 +342,7 @@ export default async function HostedPage({
           >
             Still evaluating? A free plan — the same dashboard on simulated
             fills — is coming soon. It is not open yet, so every plan you can
-            choose today is a paid, live-execution plan.
+            choose today is a paid, automated-execution plan.
           </p>
           <p
             style={{
@@ -418,7 +445,11 @@ export default async function HostedPage({
                       margin: 0,
                     }}
                   >
-                    {body}
+                    {isTestnetPilot && title === "Choose how many agents you run"
+                      ? "Plans differ by how many strategy agents run at once. Paid plans automate execution on Hyperliquid testnet for this release."
+                      : isTestnetPilot && title === "Fund your own account"
+                        ? "Fund your own Hyperliquid testnet account with test funds and personally approve a trade-only agent wallet. Cival never holds your funds or asks for a private key or seed phrase."
+                        : body}
                   </p>
                 </article>
               ))}
@@ -522,10 +553,11 @@ export default async function HostedPage({
               }}
             >
               The free plan executes nothing — simulated fills only, which is what
-              makes offering it viable. Paid plans run live agents against your
+              makes offering it viable. Paid plans run automated agents against your
               own Hyperliquid account, non-custodially, and include a Cival source
               licence you keep if you later cancel hosting. {MAX_AGENTS_PER_TENANT}{" "}
-              agents is the hard platform maximum on every plan.
+              agents is the hard platform maximum on every plan. {isTestnetPilot &&
+                "This release uses Hyperliquid testnet and test funds only."}
             </p>
 
             {/* The launch gate is disclosed BEFORE the prices, not below them: /hosted is reachable
@@ -654,7 +686,11 @@ export default async function HostedPage({
                         <span
                           className={isFree ? "tag tag-neutral" : "tag tag-accent-2"}
                         >
-                          {isFree ? "Simulated" : "Live execution"}
+                          {isFree
+                            ? "Simulated"
+                            : isTestnetPilot
+                              ? "Automated testnet"
+                              : "Live mainnet execution"}
                         </span>
                       </div>
 
@@ -710,9 +746,9 @@ export default async function HostedPage({
               }}
             >
               These are the configured service tiers, read from the live plan
-              record. The global launch gate prevents checkout until tenant
-              runtime and recovery validation are complete; preparing an account
-              never authorises a charge.
+              record. {salesEnabled
+                ? `Checkout is open. ${isTestnetPilot ? "New workspaces use Hyperliquid testnet and test funds." : "New workspaces use Hyperliquid mainnet."}`
+                : "The global launch gate prevents checkout until tenant runtime and recovery validation are complete; preparing an account never authorises a charge."}
             </p>
           </div>
         </section>
@@ -888,7 +924,7 @@ export default async function HostedPage({
               margin: "0 0 12px",
             }}
           >
-            The control plane is built. Live activation stays gated.
+            {salesEnabled ? "Managed hosting is operational." : "The control plane is built. Activation stays gated."}
           </h2>
           <p
             style={{
@@ -899,10 +935,11 @@ export default async function HostedPage({
               margin: "0 0 30px",
             }}
           >
-            These plans run agents against real accounts, so tenant isolation,
-            secrets, monitoring, loadout sync, recovery and subscription
-            operations each pass a production review before a single plan goes
-            on sale.
+            {salesEnabled
+              ? isTestnetPilot
+                ? "Customer checkout, isolated provisioning, funding controls, automated testnet execution, monitoring, backups and recovery are available. Every new workspace starts halted and requires the customer to resume it deliberately."
+                : "Customer checkout, isolated provisioning, funding controls, live execution, monitoring, backups and recovery are available. Every new workspace starts halted and requires the customer to resume it deliberately."
+              : "Tenant isolation, secrets, monitoring, loadout sync, recovery and subscription operations must each pass production review before a plan goes on sale."}
           </p>
           <div
             style={{
@@ -914,7 +951,14 @@ export default async function HostedPage({
               overflow: "hidden",
             }}
           >
-            {STATUS.map(([title, state, description]) => (
+            {STATUS.map(([title, state, description]) => {
+              const displayedState = salesEnabled && state === "Launch gate" ? "Operational" : state;
+              const displayedDescription = salesEnabled && state === "Launch gate"
+                ? title === "Live agent loadout"
+                  ? "Strategy choices and instance counts are validated, audited, installed into the isolated workspace and enforced against plan capacity."
+                  : "Automated isolated deployment, authenticated dashboard access, monitoring, backups and recovery validation are operating on the production host."
+                : description;
+              return (
               <div
                 key={title}
                 data-cv-rows
@@ -933,10 +977,10 @@ export default async function HostedPage({
                 </strong>
                 <span
                   className={
-                    state === "Built" ? "tag tag-accent-2" : "tag tag-neutral"
+                    displayedState === "Built" || displayedState === "Operational" ? "tag tag-accent-2" : "tag tag-neutral"
                   }
                 >
-                  {state}
+                  {displayedState}
                 </span>
                 <span
                   style={{
@@ -945,10 +989,11 @@ export default async function HostedPage({
                     fontSize: 14.5,
                   }}
                 >
-                  {description}
+                  {displayedDescription}
                 </span>
               </div>
-            ))}
+              );
+            })}
           </div>
 
           <div
@@ -987,11 +1032,11 @@ export default async function HostedPage({
             }}
           >
             Hosted access remains optional. Buying a source licence does not
-            create a hosted subscription, and preparing an account does not
-            authorise a charge. Hosting a trading agent does not reduce trading
-            risk — on a live plan these agents trade real money in your own
-            account, and you remain responsible for your strategy, your risk
-            limits and your capital. <Link href="/disclaimer">Full disclaimer</Link>.
+            create a hosted subscription. Hosting a trading agent does not reduce trading
+            risk. {isTestnetPilot
+              ? "This release uses test funds only; results do not predict mainnet performance."
+              : "On a live plan these agents trade real money in your own account, and you remain responsible for your strategy, your risk limits and your capital."}{" "}
+            <Link href="/disclaimer">Full disclaimer</Link>.
           </p>
         </section>
       </main>

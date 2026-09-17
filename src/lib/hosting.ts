@@ -2,6 +2,7 @@ import type Stripe from 'stripe';
 import { CommerceError } from '@/lib/commerce';
 import { resolveAgentLimit } from '@/lib/loadout';
 import { getProduct } from '@/lib/products';
+import { currentNetwork } from '@/lib/hyperliquid-network';
 
 export const HOSTING_SERVICE_TERMS_VERSION = '2026-08-20';
 
@@ -145,5 +146,6 @@ export function publicHostingConfig() {
   return {
     salesEnabled: hostingSalesEnabled(),
     serviceTermsVersion: HOSTING_SERVICE_TERMS_VERSION,
+    deploymentNetwork: currentNetwork(),
   };
 }

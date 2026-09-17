@@ -34,7 +34,7 @@ const HOSTING_AGENT_IDS = [
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = Record<string, any>;
 type AccountData = {
-  config: { salesEnabled: boolean; serviceTermsVersion: string };
+  config: { salesEnabled: boolean; serviceTermsVersion: string; deploymentNetwork: "mainnet" | "testnet" };
   plans: Row[];
   subscriptions: Row[];
   onboarding: Row[];
@@ -497,6 +497,11 @@ export default function HostingAccountPage() {
           {!subscription ? (
             <section>
               <h2 style={{ fontSize: "1.3rem" }}>Choose your managed plan</h2>
+              <p style={{ color: "var(--color-neutral-700)", lineHeight: 1.6 }}>
+                {data.config.deploymentNetwork === "testnet"
+                  ? "New workspaces run on Hyperliquid testnet with test funds. You get the complete automated workflow without putting real capital at risk."
+                  : "New workspaces run on Hyperliquid mainnet against the account you fund yourself."}
+              </p>
               {lastClosed && (
                 <p
                   style={{
@@ -561,6 +566,13 @@ export default function HostingAccountPage() {
                       {item.description}
                     </p>
                     <div style={{ display: "grid", gap: 7, fontSize: 13 }}>
+                      <span>
+                        ✓ {item.price_cents === 0
+                          ? "Simulated fills"
+                          : data.config.deploymentNetwork === "testnet"
+                            ? "Automated testnet execution"
+                            : "Live mainnet execution"}
+                      </span>
                       {(item.features || []).map((feature: string) => (
                         <span key={feature}>✓ {feature}</span>
                       ))}
