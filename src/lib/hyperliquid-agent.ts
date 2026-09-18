@@ -54,7 +54,9 @@ export function buildApproveAgentRequest(agentAddress: `0x${string}`, agentName:
     hyperliquidChain: hyperliquidChainName(),
     signatureChainId: hyperliquidSignatureChainId(),
     agentAddress,
-    agentName: agentName.slice(0, 50),
+    // Hyperliquid enforces a 1–16 character agent name. Keeping the exact exchange limit
+    // here prevents the UI from collecting a valid signature for an action the venue rejects.
+    agentName: agentName.trim().slice(0, 16) || 'cival-agent',
     nonce,
   };
   const typedData = {
