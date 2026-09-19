@@ -314,6 +314,7 @@ export default function HostingAccountPage() {
               <Link className="btn btn-secondary" href="/account">
                 Source purchases
               </Link>
+              {!subscription && data.subscriptions.some(row => row.stripe_customer_id) && <button className="btn btn-secondary" disabled={!!busy} onClick={() => call("portal", "/api/hosting/portal")}>Past invoices & billing</button>}
             </div>
           </div>
           {!data.config.salesEnabled && (
@@ -589,6 +590,8 @@ export default function HostingAccountPage() {
                   </button>
                 </div>
                 {subscription.livemode === false && <p>This subscription uses Stripe test billing. Its invoices do not charge real money. Billing mode is separate from the trading network; verify that network inside your dashboard.</p>}
+                {["past_due", "unpaid", "incomplete"].includes(subscription.status) && <p role="alert">Billing needs attention. Open Manage billing to review the invoice and update your payment method. Dashboard access may be restricted until payment is resolved.</p>}
+                {subscription.cancel_at_period_end && <p>Service is scheduled to end at the date below. Review your open positions before access ends; canceling hosting does not close exchange positions.</p>}
                 <p
                   style={{ color: "var(--color-neutral-700)", marginBottom: 0 }}
                 >
