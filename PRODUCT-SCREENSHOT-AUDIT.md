@@ -26,3 +26,7 @@ Demo code is in the isolated worktree C:\GWDS\demo-product-galleries, based on t
 - Source installation and execution acceptance remains pending. This gallery release does not remove any product readiness gates or replace downloadable artifacts.
 
 The caption catalog is src/lib/product-media.ts. Raw dimensions are recorded in src/lib/product-capture-dimensions.json. Tests verify all eight products have galleries, six standalone heroes differ, referenced JPEGs exist, and dimensions match the image metadata.
+
+## Live verification
+
+Storefront deployment dpl_FVT6PzZNgv6535VXXDbYzPnjwnW7 was promoted to www.civalsystems.com. All eight product pages returned HTTP 200 with galleries (Core: 6 views; Trader: 14; each standalone: 5), and all 24 raw JPEGs returned 200 with image content types. Live-browser gallery navigation and captions passed. The public demo deployment is dpl_AXA8uUyHrvABHvdB8augxhCqb7b1 (commit cffa7ca); its changes are preserved in ai-trading-dashboard PR #2. Store changes are in gwds-website PR #8.
