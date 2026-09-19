@@ -1,5 +1,7 @@
 # Product galleries — September 19, 2026
 
+Resolution follow-up: all 24 assets were recaptured at a 3840×2160 browser viewport and verified at 3832px content width (the scrollbar occupies the remaining 8px). Full-detail captures retain natural page heights up to 3457px. Every published original was fetched and decoded at that width. The full-size gallery uses the original JPEG, and responsive previews use quality 95. See HOSTING-TRIAL-RELEASE.md for the accompanying hosting release.
+
 User-selected sources: the public demo at ai-trading-dashboard-demo.vercel.app and the operational customer testnet at cival-5215d0a6023745c4a9a3.dash.civalsystems.com. Captures are real browser screenshots, not generated UI or composited trading results. Raw JPEGs are retained. No trading, funding, withdrawal, or network-switch action was performed for photography.
 
 The eight-product lineup remains Core with Darvas, Trader with Core and all six strategies, and six standalone plugins. Product-specific galleries include the matching agent, its full detail view, shared workflow screens, and separate hosted examples for editions. Source labels and captions distinguish the broader demo and managed runtime from the downloadable 2.1 archives. Hosted Renko is explicitly not represented as a plugin bundled with Trader.
