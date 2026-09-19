@@ -47,10 +47,10 @@ interface ArtifactsData {
 }
 
 const STATUS_META: Record<ProductArtifact['status'], { label: string; bg: string; fg: string }> = {
-  ok: { label: 'Verified', bg: '#0e3b2b', fg: '#6ee7b7' },
-  missing: { label: 'Object missing', bg: '#441b22', fg: '#fda4af' },
-  size_mismatch: { label: 'Size mismatch', bg: '#441b22', fg: '#fda4af' },
-  unverified: { label: 'Unverified', bg: '#2a2410', fg: '#f5d67c' },
+  ok: { label: 'Verified', bg: '#edf6f1', fg: 'var(--admin-success)' },
+  missing: { label: 'Object missing', bg: '#e8bdc0', fg: 'var(--admin-danger)' },
+  size_mismatch: { label: 'Size mismatch', bg: '#e8bdc0', fg: 'var(--admin-danger)' },
+  unverified: { label: 'Unverified', bg: '#fff8eb', fg: 'var(--admin-warning)' },
   no_path: { label: 'No artifact path', bg: 'var(--admin-border)', fg: 'var(--admin-text-muted)' },
 };
 
@@ -152,7 +152,7 @@ export default function ArtifactsAdmin() {
     <>
       <div style={{ marginBottom: 32 }}>
         <h1 style={{
-          fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 800, marginBottom: 8,
+          fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 600, marginBottom: 8,
           letterSpacing: '-0.03em', color: 'var(--admin-text)',
         }}>Artifacts</h1>
         <p style={{ fontSize: '0.9rem', color: 'var(--admin-text-dim)' }}>
@@ -161,7 +161,7 @@ export default function ArtifactsAdmin() {
       </div>
 
       {error && (
-        <div style={{ background: '#441b22', border: '1px solid #7f1d1d', borderRadius: 10, padding: '12px 16px', color: '#fda4af', fontSize: '0.85rem', marginBottom: 20 }}>
+        <div style={{ background: '#e8bdc0', border: '1px solid #e8bdc0', borderRadius: 10, padding: '12px 16px', color: 'var(--admin-danger)', fontSize: '0.85rem', marginBottom: 20 }}>
           {error}
         </div>
       )}
@@ -172,16 +172,16 @@ export default function ArtifactsAdmin() {
           <div style={{
             ...card,
             marginBottom: 24,
-            background: data.summary.store_safe ? '#0e3b2b' : '#441b22',
-            border: `1px solid ${data.summary.store_safe ? '#1f6b4d' : '#7f1d1d'}`,
+            background: data.summary.store_safe ? '#edf6f1' : '#e8bdc0',
+            border: `1px solid ${data.summary.store_safe ? '#d4e7dd' : '#e8bdc0'}`,
             display: 'flex', alignItems: 'center', gap: 16,
           }}>
             <span style={{ fontSize: '2rem' }}>{data.summary.store_safe ? '✅' : '🚨'}</span>
             <div>
-              <p style={{ fontWeight: 800, fontSize: '1.05rem', color: data.summary.store_safe ? '#6ee7b7' : '#fda4af', marginBottom: 2 }}>
+              <p style={{ fontWeight: 600, fontSize: '1.05rem', color: data.summary.store_safe ? 'var(--admin-success)' : 'var(--admin-danger)', marginBottom: 2 }}>
                 {data.summary.store_safe ? 'Store is safe to open' : `${data.summary.dangerous_active} active product(s) will fail on checkout`}
               </p>
-              <p style={{ fontSize: '0.82rem', color: data.summary.store_safe ? '#a7f3d0' : '#fecaca' }}>
+              <p style={{ fontSize: '0.82rem', color: data.summary.store_safe ? 'var(--admin-success)' : 'var(--admin-danger)' }}>
                 {data.summary.store_safe
                   ? 'Every active product has a verified, existing artifact with matching size.'
                   : 'At least one active product has a missing object, a size mismatch, or an unverified artifact. Customers who pay for these will hit a failed download.'}
@@ -198,13 +198,13 @@ export default function ArtifactsAdmin() {
               { label: 'Orphan Objects', value: data.summary.orphan_objects, color: 'var(--admin-warning)', icon: '👻' },
             ].map((s) => (
               <div key={s.label} style={{ ...card, position: 'relative', overflow: 'hidden' }}>
-                <div style={{ position: 'absolute', top: 0, right: 0, width: 80, height: 80, background: `radial-gradient(circle at top right, ${s.color}15, transparent)` }} />
+                <div style={{ position: 'absolute', top: 0, right: 0, width: 80, height: 80, background: 'transparent' }} />
                 <div style={{ position: 'relative' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
                     <p style={{ fontSize: '0.72rem', color: 'var(--admin-text-dim)', letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 600 }}>{s.label}</p>
-                    <span style={{ fontSize: '1.3rem', opacity: 0.5 }}>{s.icon}</span>
+
                   </div>
-                  <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 800, color: s.color, letterSpacing: '-0.02em' }}>{s.value}</p>
+                  <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 600, color: 'var(--admin-text)', letterSpacing: '-0.02em' }}>{s.value}</p>
                 </div>
               </div>
             ))}
@@ -229,7 +229,7 @@ export default function ArtifactsAdmin() {
             <div className="admin-table-wrap">
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
                 <thead>
-                  <tr style={{ background: '#050505' }}>
+                  <tr style={{ background: 'var(--admin-surface)' }}>
                     {['Product', 'Active', 'Artifact Path', 'DB Size', 'Actual Size', 'Status', 'Actions'].map((h) => (
                       <th key={h} style={{ textAlign: 'left', padding: '10px 16px', color: 'var(--admin-text-dim)', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.06em', borderBottom: '1px solid var(--admin-border)' }}>{h}</th>
                     ))}
@@ -237,20 +237,20 @@ export default function ArtifactsAdmin() {
                 </thead>
                 <tbody>
                   {filteredProducts.map((p) => (
-                    <tr key={p.id} style={{ borderBottom: '1px solid #141414', background: p.dangerous ? 'rgba(239,68,68,0.06)' : 'transparent' }}>
+                    <tr key={p.id} style={{ borderBottom: '1px solid var(--admin-surface)', background: p.dangerous ? 'rgba(239,68,68,0.06)' : 'transparent' }}>
                       <td style={{ padding: '10px 16px' }}>
                         <div style={{ fontWeight: 600, color: 'var(--admin-text)' }}>{p.name}</div>
                         <div style={{ fontSize: '0.72rem', color: 'var(--admin-text-dim)' }}>{p.id}{p.version ? ` · v${p.version}` : ''}</div>
                       </td>
                       <td style={{ padding: '10px 16px' }}>
-                        <span style={{ color: p.is_active ? '#6ee7b7' : 'var(--admin-text-dim)', fontWeight: 600 }}>{p.is_active ? 'Live' : 'Draft'}</span>
+                        <span style={{ color: p.is_active ? 'var(--admin-success)' : 'var(--admin-text-dim)', fontWeight: 600 }}>{p.is_active ? 'Live' : 'Draft'}</span>
                       </td>
                       <td style={{ padding: '10px 16px', color: p.artifact_path ? 'var(--admin-accent)' : 'var(--admin-text-dim)', fontFamily: 'monospace', fontSize: '0.76rem' }}>
                         {p.artifact_path || '—'}
-                        {p.artifact_path && !p.object_exists && <div style={{ color: '#fda4af', fontSize: '0.7rem', marginTop: 2 }}>not found in bucket</div>}
+                        {p.artifact_path && !p.object_exists && <div style={{ color: 'var(--admin-danger)', fontSize: '0.7rem', marginTop: 2 }}>not found in bucket</div>}
                       </td>
                       <td style={{ padding: '10px 16px', color: 'var(--admin-text-muted)' }}>{formatBytes(p.artifact_size_bytes)}</td>
-                      <td style={{ padding: '10px 16px', color: p.size_matches === false ? '#fda4af' : 'var(--admin-text-muted)' }}>
+                      <td style={{ padding: '10px 16px', color: p.size_matches === false ? 'var(--admin-danger)' : 'var(--admin-text-muted)' }}>
                         {formatBytes(p.actual_size_bytes)}
                         {p.size_matches === false && ' ⚠️'}
                       </td>
@@ -267,7 +267,7 @@ export default function ArtifactsAdmin() {
                           </button>
                           {p.status !== 'ok' && p.object_exists && (
                             <button
-                              style={{ ...secondaryButton, opacity: busyId === p.id ? 0.6 : 1, color: 'var(--admin-warning)', borderColor: '#4a3a12' }}
+                              style={{ ...secondaryButton, opacity: busyId === p.id ? 0.6 : 1, color: 'var(--admin-warning)', borderColor: '#fff8eb' }}
                               disabled={busyId === p.id}
                               onClick={() => {
                                 if (window.confirm(`Adopt the object currently in storage as the new baseline for "${p.name}"? This overwrites the recorded sha256/size.`)) {
@@ -305,7 +305,7 @@ export default function ArtifactsAdmin() {
             <div className="admin-table-wrap">
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
                 <thead>
-                  <tr style={{ background: '#050505' }}>
+                  <tr style={{ background: 'var(--admin-surface)' }}>
                     {['Object Path', 'Size', 'Content Type', 'Uploaded', 'Referenced'].map((h) => (
                       <th key={h} style={{ textAlign: 'left', padding: '10px 16px', color: 'var(--admin-text-dim)', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.06em', borderBottom: '1px solid var(--admin-border)' }}>{h}</th>
                     ))}
@@ -313,15 +313,15 @@ export default function ArtifactsAdmin() {
                 </thead>
                 <tbody>
                   {data.objects.map((o) => (
-                    <tr key={o.path} style={{ borderBottom: '1px solid #141414', background: !o.referenced ? 'rgba(245,158,11,0.06)' : 'transparent' }}>
+                    <tr key={o.path} style={{ borderBottom: '1px solid var(--admin-surface)', background: !o.referenced ? 'rgba(245,158,11,0.06)' : 'transparent' }}>
                       <td style={{ padding: '10px 16px', fontFamily: 'monospace', fontSize: '0.76rem', color: 'var(--admin-accent)' }}>{o.path}</td>
                       <td style={{ padding: '10px 16px', color: 'var(--admin-text-muted)' }}>{formatBytes(o.size)}</td>
                       <td style={{ padding: '10px 16px', color: 'var(--admin-text-dim)' }}>{o.content_type || '—'}</td>
                       <td style={{ padding: '10px 16px', color: 'var(--admin-text-dim)' }}>{formatDate(o.updated_at || o.created_at)}</td>
                       <td style={{ padding: '10px 16px' }}>
                         {o.referenced
-                          ? <span style={{ color: '#6ee7b7' }}>Yes</span>
-                          : <span style={{ color: '#f5d67c' }}>Orphan</span>}
+                          ? <span style={{ color: 'var(--admin-success)' }}>Yes</span>
+                          : <span style={{ color: 'var(--admin-warning)' }}>Orphan</span>}
                       </td>
                     </tr>
                   ))}

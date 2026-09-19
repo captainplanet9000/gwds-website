@@ -1,6 +1,19 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import {
+  Alert,
+  Button,
+  Card,
+  Descriptions,
+  Progress,
+  Space,
+  Statistic,
+  Table,
+  Tag,
+  Tabs,
+} from "antd";
+import { ReloadOutlined, ExportOutlined } from "@ant-design/icons";
 type Host = {
   host: string;
   observed_at: string;
@@ -17,13 +30,6 @@ type Host = {
     containers: { name: string; state: string; status: string }[];
     backup: Record<string, string>;
   };
-};
-const panel = {
-  padding: 22,
-  border: "1px solid var(--admin-border)",
-  borderRadius: 12,
-  background: "var(--admin-surface)",
-  marginBottom: 20,
 };
 export default function ServersPage() {
   const [hosts, setHosts] = useState<Host[]>([]);
@@ -52,224 +58,340 @@ export default function ServersPage() {
     const timer = setInterval(() => void load(), 30000);
     return () => clearInterval(timer);
   }, [load]);
+
   return (
-    <div>
-      <h1 style={{ fontSize: 30 }}>Servers &amp; recovery</h1>
-      <p>
-        Measured AWS host status, collected every minute. This page refreshes
-        every 30 seconds. Stale or failed collection is never shown as healthy.
-      </p>
-      <div
-        style={{ display: "flex", gap: 12, flexWrap: "wrap", margin: "20px 0" }}
-      >
-        <button
+    <>
+      <div className="admin-page-heading">
+        <div>
+          <h1>Servers & recovery</h1>
+          <p>Host health, services and backups. Metrics update every minute.</p>
+        </div>
+        <Button
+          icon={<ReloadOutlined />}
           onClick={() => void load()}
-          disabled={busy}
-          style={{
-            padding: "10px 16px",
-            borderRadius: 8,
-            border: "1px solid var(--admin-border)",
-            background: "var(--admin-surface)",
-            color: "var(--admin-text)",
-            cursor: "pointer",
-          }}
+          loading={busy}
         >
-          {busy ? "Refreshing…" : "Refresh telemetry"}
-        </button>
-        <Link href="/admin/hosting">Tenant controls &amp; incidents</Link>
-        <Link href="/admin/audit">Business audit log</Link>
+          Refresh
+        </Button>
       </div>
       {error && (
-        <p role="alert" style={{ color: "#fda4af" }}>
-          {error} Previously loaded data may be stale.
-        </p>
+        <Alert
+          type="error"
+          showIcon
+          title="Telemetry unavailable"
+          description={error + " Previously loaded data may be stale."}
+          style={{ marginBottom: 20 }}
+        />
       )}
-      <p style={{ fontSize: 13 }}>
-        Last successful fetch:{" "}
-        {asOf ? new Date(asOf).toLocaleString() : "Not yet loaded"}
-      </p>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          gap: 12,
+          flexWrap: "wrap",
+          marginBottom: 20,
+        }}
+      >
+        <span className="admin-muted">
+          Updated {asOf ? new Date(asOf).toLocaleString() : "—"}
+        </span>
+        <Space>
+          <Link href="/admin/hosting">Hosting operations</Link>
+          <Link href="/admin/audit">Audit log</Link>
+        </Space>
+      </div>
       {!error && asOf && !hosts.length && (
-        <p role="status">
-          No host has reported telemetry. Install the collector before accepting
-          customers.
-        </p>
+        <Alert
+          type="warning"
+          title="No host telemetry received"
+          description="Check the host collector before accepting customers."
+        />
       )}
       {hosts.map((h) => {
-        const age = clock - Date.parse(h.observed_at);
-        const stale = !Number.isFinite(age) || age < -60000 || age > 180000;
-        const m = h.metrics;
-        const failed = Object.entries(m.services).filter(
-          ([, v]) => v !== "active",
-        );
-        const containerFailures = m.containers.filter(
-          (c) => c.state !== "running" || c.status.includes("(unhealthy)"),
-        );
-        const backupAt = Date.parse(m.backup.ExecMainExitTimestamp || "");
-        const backupWarning =
-          m.backup.Result !== "success" ||
-          !Number.isFinite(backupAt) ||
-          clock - backupAt > 36 * 60 * 60 * 1000;
+        const m = h.metrics,
+          age = clock - Date.parse(h.observed_at),
+          stale = !Number.isFinite(age) || age < -60000 || age > 180000,
+          failed = Object.values(m.services).some((s) => s !== "active"),
+          containerFailures = m.containers.some(
+            (c) => c.state !== "running" || c.status.includes("(unhealthy)"),
+          ),
+          backupAt = Date.parse(m.backup.ExecMainExitTimestamp || ""),
+          backupWarning =
+            m.backup.Result !== "success" ||
+            !Number.isFinite(backupAt) ||
+            clock - backupAt > 36 * 60 * 60 * 1000;
         return (
-          <section key={h.host} style={panel}>
-            <h2 style={{ fontSize: 22 }}>{h.host}</h2>
-            <p
-              style={{ color: stale || failed.length ? "#fda4af" : "#6ee7b7" }}
+          <div key={h.host}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                marginBottom: 18,
+              }}
             >
-              {stale
-                ? "Telemetry stale — investigate collector"
-                : failed.length
-                  ? "Service attention required"
-                  : "Services reporting active"}{" "}
-              · observed {new Date(h.observed_at).toLocaleString()}
-            </p>
-            <div className="admin-stat-grid-4">
-              {[
-                ["Memory used", m.memoryUsedPercent + "%"],
-                ["Memory available", m.memoryAvailableMb + " MB"],
-                ["Disk used", m.diskUsedPercent + "%"],
-                ["Disk free", m.diskFreeGb + " GB"],
-              ].map(([k, v]) => (
-                <div key={k} style={panel}>
-                  <div>{k}</div>
-                  <strong style={{ fontSize: 24 }}>{v}</strong>
-                </div>
-              ))}
+              <h2 style={{ margin: 0 }}>{h.host}</h2>
+              <Tag
+                color={
+                  stale || failed || containerFailures ? "warning" : "success"
+                }
+              >
+                {stale
+                  ? "Stale telemetry"
+                  : failed || containerFailures
+                    ? "Needs attention"
+                    : "Services active"}
+              </Tag>
+              <span className="admin-muted">
+                Observed {new Date(h.observed_at).toLocaleTimeString()}
+              </span>
             </div>
+            <section className="admin-stat-grid-4" style={{ marginBottom: 24 }}>
+              <Card>
+                <Statistic
+                  title="Memory used"
+                  value={m.memoryUsedPercent}
+                  suffix="%"
+                />
+                <Progress
+                  percent={m.memoryUsedPercent}
+                  showInfo={false}
+                  strokeColor={
+                    m.memoryUsedPercent >= 85 ? "#b45309" : "#5676a8"
+                  }
+                  size="small"
+                />
+                <span className="admin-muted">
+                  {m.memoryAvailableMb.toLocaleString()} MB available
+                </span>
+              </Card>
+              <Card>
+                <Statistic
+                  title="Disk used"
+                  value={m.diskUsedPercent}
+                  suffix="%"
+                />
+                <Progress
+                  percent={m.diskUsedPercent}
+                  showInfo={false}
+                  strokeColor={m.diskUsedPercent >= 80 ? "#b45309" : "#5676a8"}
+                  size="small"
+                />
+                <span className="admin-muted">{m.diskFreeGb} GB available</span>
+              </Card>
+              <Card>
+                <Statistic
+                  title="CPU load · 1 minute"
+                  value={m.loadAverage[0]}
+                  precision={2}
+                />
+                <p className="admin-muted">{m.cpuCount} CPU cores</p>
+              </Card>
+              <Card>
+                <Statistic
+                  title="Load · 5 / 15 minutes"
+                  value={m.loadAverage
+                    .slice(1)
+                    .map((v) => v.toFixed(2))
+                    .join(" / ")}
+                />
+                <p className="admin-muted">System load averages</p>
+              </Card>
+            </section>
             {(m.memoryUsedPercent >= 85 || m.diskUsedPercent >= 80) && (
-              <p role="alert" style={{ color: "#fda4af" }}>
-                Resource pressure: review capacity before accepting more
-                tenants.
-              </p>
+              <Alert
+                type="warning"
+                showIcon
+                title="Resource pressure"
+                description="Review host capacity before accepting more workspaces."
+                style={{ marginBottom: 20 }}
+              />
             )}
-            {containerFailures.length > 0 && (
-              <p role="alert" style={{ color: "#fda4af" }}>
-                Containers need attention:{" "}
-                {containerFailures.map((c) => c.name).join(", ")}.
-              </p>
-            )}
-            {backupWarning && (
-              <p role="alert" style={{ color: "#fda4af" }}>
-                Backup failed, is older than 36 hours, or has no verified
-                completion timestamp.
-              </p>
-            )}
-            <p>
-              CPU cores: {m.cpuCount} · Load averages (1 / 5 / 15 minutes):{" "}
-              {m.loadAverage.map((v) => v.toFixed(2)).join(" / ")}
-            </p>
-            <div className="admin-stat-grid-2">
-              <div>
-                <h3 style={{ fontSize: 18 }}>Services</h3>
-                {Object.entries(m.services).map(([name, state]) => (
-                  <p key={name} style={{ overflowWrap: "anywhere" }}>
-                    <code>{name}</code>: <strong>{state}</strong>
-                  </p>
-                ))}
-              </div>
-              <div>
-                <h3 style={{ fontSize: 18 }}>Backup job</h3>
-                <p>
-                  Last result: {m.backup.Result || "Unknown"} · exit code:{" "}
-                  {m.backup.ExecMainStatus || "Unknown"}
-                </p>
-                <p>
-                  Last completion:{" "}
-                  {m.backup.ExecMainExitTimestamp || "Not reported"}
-                </p>
-                <p>
-                  A successful backup job does not verify off-host storage or a
-                  successful restore. Review the recovery runbook before a
-                  release.
-                </p>
-              </div>
-            </div>
-            <h3 style={{ fontSize: 18 }}>Containers</h3>
-            <div className="admin-table-wrap">
-              <table style={{ width: "100%" }}>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>State</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {m.containers.map((c) => (
-                    <tr key={c.name}>
-                      <td style={{ padding: 10 }}>{c.name}</td>
-                      <td>{c.state}</td>
-                      <td>{c.status}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
+            <Card
+              styles={{ body: { padding: "0 24px 24px" } }}
+              style={{ marginBottom: 24 }}
+            >
+              <Tabs
+                items={[
+                  {
+                    key: "services",
+                    label: "Services",
+                    children: (
+                      <Table
+                        rowKey="name"
+                        pagination={false}
+                        dataSource={Object.entries(m.services).map(
+                          ([name, state]) => ({ name, state }),
+                        )}
+                        columns={[
+                          {
+                            title: "Service",
+                            dataIndex: "name",
+                            render: (v) => (
+                              <span className="admin-code">{v}</span>
+                            ),
+                          },
+                          {
+                            title: "Status",
+                            dataIndex: "state",
+                            width: 150,
+                            render: (v) => (
+                              <Tag color={v === "active" ? "success" : "error"}>
+                                {v}
+                              </Tag>
+                            ),
+                          },
+                        ]}
+                        scroll={{ x: 520 }}
+                      />
+                    ),
+                  },
+                  {
+                    key: "containers",
+                    label: `Containers (${m.containers.length})`,
+                    children: (
+                      <Table
+                        rowKey="name"
+                        pagination={false}
+                        dataSource={m.containers}
+                        columns={[
+                          {
+                            title: "Container",
+                            dataIndex: "name",
+                            width: 480,
+                            render: (v) => (
+                              <span className="admin-code">{v}</span>
+                            ),
+                          },
+                          {
+                            title: "State",
+                            dataIndex: "state",
+                            width: 130,
+                            render: (v) => (
+                              <Tag
+                                color={v === "running" ? "success" : "warning"}
+                              >
+                                {v}
+                              </Tag>
+                            ),
+                          },
+                          {
+                            title: "Health & uptime",
+                            dataIndex: "status",
+                            width: 260,
+                          },
+                        ]}
+                        scroll={{ x: 870 }}
+                      />
+                    ),
+                  },
+                  {
+                    key: "backup",
+                    label: "Backup & recovery",
+                    children: (
+                      <>
+                        {backupWarning && (
+                          <Alert
+                            type="warning"
+                            showIcon
+                            title="Backup needs attention"
+                            description="The backup failed, is older than 36 hours, or has no completion timestamp."
+                            style={{ marginBottom: 20 }}
+                          />
+                        )}
+                        <Descriptions
+                          column={1}
+                          items={[
+                            {
+                              key: "result",
+                              label: "Last job result",
+                              children: m.backup.Result || "Unknown",
+                            },
+                            {
+                              key: "exit",
+                              label: "Exit code",
+                              children: m.backup.ExecMainStatus || "Unknown",
+                            },
+                            {
+                              key: "time",
+                              label: "Completed",
+                              children:
+                                m.backup.ExecMainExitTimestamp ||
+                                "Not reported",
+                            },
+                          ]}
+                        />
+                        <p className="admin-muted">
+                          Job completion does not verify off-host storage or
+                          recovery. Confirm a usable snapshot and test
+                          restoration before maintenance.
+                        </p>
+                      </>
+                    ),
+                  },
+                ]}
+              />
+            </Card>
+          </div>
         );
       })}
-      <section style={panel}>
-        <h2 style={{ fontSize: 22 }}>Infrastructure consoles</h2>
-        <p>
-          Open the provider console using your AWS or Vercel account. Server
-          shell access and infrastructure changes require the provider’s
-          permissions; credentials are never embedded in this page.
-        </p>
-        <div className="admin-link-grid">
+      <Card title="Infrastructure access" style={{ marginBottom: 24 }}>
+        <div className="admin-stat-grid-2">
           {[
             [
-              "AWS Lightsail: server, browser SSH and snapshots",
+              "AWS Lightsail",
+              "Server console, browser SSH and snapshots",
               "https://lightsail.aws.amazon.com/ls/webapp/home/instances",
             ],
             [
-              "AWS Session Manager: managed shell sessions",
-              "https://us-east-2.console.aws.amazon.com/systems-manager/session-manager?region=us-east-2",
+              "Vercel",
+              "Deployments and application logs",
+              "https://vercel.com/civals-projects/cival-systems-store",
             ],
             [
-              "CloudWatch: metrics and alarms",
+              "CloudWatch",
+              "Metrics and notification alarms",
               "https://us-east-2.console.aws.amazon.com/cloudwatch/home?region=us-east-2#alarmsV2:",
             ],
             [
-              "Vercel: deployments and application logs",
-              "https://vercel.com/civals-projects/cival-systems-store",
+              "Session Manager",
+              "Requires an enrolled host and AWS permissions",
+              "https://us-east-2.console.aws.amazon.com/systems-manager/session-manager?region=us-east-2",
             ],
-          ].map(([title, url]) => (
+          ].map(([title, description, url]) => (
             <a
-              key={url}
+              key={title}
               href={url}
               target="_blank"
               rel="noopener noreferrer"
-              style={{ ...panel, color: "var(--admin-text)" }}
+              style={{
+                display: "block",
+                padding: 16,
+                border: "1px solid var(--admin-border)",
+                borderRadius: 6,
+                color: "var(--admin-text)",
+              }}
             >
-              {title} ↗
+              <span
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  fontWeight: 500,
+                }}
+              >
+                {title}
+                <ExportOutlined />
+              </span>
+              <span className="admin-muted">{description}</span>
             </a>
           ))}
         </div>
-      </section>
-      <section style={panel}>
-        <h2 style={{ fontSize: 22 }}>Operator workflow</h2>
-        <ol style={{ lineHeight: 1.9 }}>
-          <li>
-            Check telemetry freshness, services, containers and available host
-            slots before accepting new customers.
-          </li>
-          <li>
-            Use Hosting Ops for tenant commands and inspect their recorded
-            completion. Queued is not completed.
-          </li>
-          <li>
-            Open a customer-visible incident when service is impaired. Use AWS
-            alarms for out-of-band notification.
-          </li>
-          <li>
-            Before maintenance, preserve backups and record open positions. A
-            process stop is not a position close.
-          </li>
-          <li>
-            After recovery, reconcile venue state, verify the tenant heartbeat
-            and review the audit log.
-          </li>
-        </ol>
-      </section>
-    </div>
+      </Card>
+      <p className="admin-muted">
+        Use Hosting to manage tenants and incidents. Confirm command completion
+        and reconcile venue positions after recovery. Stopping a process does
+        not close positions.
+      </p>
+    </>
   );
 }

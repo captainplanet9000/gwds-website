@@ -1,27 +1,35 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-
-interface AuditLog {
+"use client";
+import { useEffect, useState } from "react";
+import {
+  Alert,
+  Button,
+  Card,
+  Drawer,
+  Input,
+  Space,
+  Table,
+  Tag,
+  Tabs,
+} from "antd";
+import type { TableColumnsType } from "antd";
+import { ReloadOutlined } from "@ant-design/icons";
+type AuditLog = {
   id: string;
   action: string;
   entity: string;
   entity_id?: string;
-  meta?: any;
+  meta?: unknown;
   created_at: string;
-  admin_id?: string;
-}
-
-interface StripeEvent {
+};
+type StripeEvent = {
   id: string;
   type: string;
-  processed: boolean;
   status: string;
   livemode: boolean;
   created_at: string;
-}
-
-interface EmailOutbox {
+  error?: string;
+};
+type Email = {
   id: string;
   to_email: string;
   subject: string;
@@ -29,356 +37,348 @@ interface EmailOutbox {
   sent_at?: string;
   error_message?: string;
   created_at: string;
-}
-
-interface ApiResponse {
+};
+type Data = {
   auditLogs: AuditLog[];
-  auditCount: number;
   stripeEvents: StripeEvent[];
-  emailOutbox: EmailOutbox[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-  error?: string;
-}
-
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit'
-  });
+  emailOutbox: Email[];
+  pagination: { total: number };
 };
-
-const formatTime = (dateString: string) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    month: 'short',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-};
-
-export default function AuditPage() {
-  const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
-  const [stripeEvents, setStripeEvents] = useState<StripeEvent[]>([]);
-  const [emailOutbox, setEmailOutbox] = useState<EmailOutbox[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(50);
-  const [total, setTotal] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-
-  const [filters, setFilters] = useState({
-    action: '',
-    entity: '',
-    startDate: '',
-    endDate: ''
-  });
-
-  useEffect(() => {
-    fetchData();
-  }, [page, limit, filters]);
-
-  async function fetchData() {
-    setLoading(true);
-    setError('');
-    try {
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: limit.toString(),
-        ...(filters.action && { action: filters.action }),
-        ...(filters.entity && { entity: filters.entity }),
-        ...(filters.startDate && { startDate: filters.startDate }),
-        ...(filters.endDate && { endDate: filters.endDate })
-      });
-
-      const res = await fetch(`/api/admin/audit?${params}`);
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Failed to fetch audit data');
-      }
-
-      const data: ApiResponse = await res.json();
-      setAuditLogs(data.auditLogs);
-      setStripeEvents(data.stripeEvents);
-      setEmailOutbox(data.emailOutbox);
-      setTotal(data.pagination.total);
-      setTotalPages(data.pagination.totalPages);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+const date = (v?: string) =>
+  v
+    ? new Date(v).toLocaleString(undefined, {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : "—";
+const status = (v: string) => (
+  <Tag
+    color={
+      ["completed", "sent"].includes(v)
+        ? "success"
+        : ["failed", "error"].includes(v)
+          ? "error"
+          : "default"
     }
-  }
-
-  const handleFilterChange = (field: string, value: string) => {
-    setFilters({ ...filters, [field]: value });
-    setPage(1);
-  };
-
+  >
+    {v.replaceAll("_", " ")}
+  </Tag>
+);
+const initial = { action: "", entity: "", startDate: "", endDate: "" };
+export default function AuditPage() {
+  const [data, setData] = useState<Data | null>(null),
+    [error, setError] = useState(""),
+    [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1),
+    [limit, setLimit] = useState(25),
+    [draft, setDraft] = useState(initial),
+    [filters, setFilters] = useState(initial),
+    [refresh, setRefresh] = useState(0),
+    [record, setRecord] = useState<AuditLog | null>(null);
+  useEffect(() => {
+    const controller = new AbortController();
+    const params = new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+    });
+    Object.entries(filters).forEach(([k, v]) => {
+      if (v)
+        params.set(
+          k,
+          k === "endDate"
+            ? v + "T23:59:59.999Z"
+            : k === "startDate"
+              ? v + "T00:00:00.000Z"
+              : v,
+        );
+    });
+    fetch("/api/admin/audit?" + params, {
+      cache: "no-store",
+      signal: controller.signal,
+    })
+      .then(async (r) => {
+        const b = await r.json();
+        if (!r.ok) throw Error(b.error || "Could not load audit records.");
+        setData(b);
+      })
+      .catch((e) => {
+        if (e.name !== "AbortError") setError(e.message);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
+    return () => controller.abort();
+  }, [page, limit, filters, refresh]);
+  const columns: TableColumnsType<AuditLog> = [
+    {
+      title: "Action",
+      dataIndex: "action",
+      width: 240,
+      render: (v) => (
+        <span style={{ fontWeight: 500 }}>{v.replaceAll("_", " ")}</span>
+      ),
+    },
+    {
+      title: "Resource",
+      dataIndex: "entity",
+      width: 170,
+      render: (v) => v?.replaceAll("_", " ") || "—",
+    },
+    {
+      title: "Resource ID",
+      dataIndex: "entity_id",
+      width: 220,
+      render: (v) => <span className="admin-code">{v || "—"}</span>,
+    },
+    { title: "Time", dataIndex: "created_at", width: 210, render: date },
+    {
+      title: "",
+      key: "details",
+      width: 85,
+      render: (_, r) => (
+        <Button
+          type="link"
+          size="small"
+          onClick={() => setRecord(r)}
+          aria-label={"View " + r.action + " details"}
+        >
+          Details
+        </Button>
+      ),
+    },
+  ];
+  const stripeColumns: TableColumnsType<StripeEvent> = [
+    { title: "Event", dataIndex: "type", width: 280 },
+    { title: "Status", dataIndex: "status", width: 130, render: status },
+    {
+      title: "Mode",
+      dataIndex: "livemode",
+      width: 90,
+      render: (v) => <Tag>{v ? "Live" : "Test"}</Tag>,
+    },
+    { title: "Received", dataIndex: "created_at", width: 200, render: date },
+    {
+      title: "Event ID",
+      dataIndex: "id",
+      width: 280,
+      render: (v) => <span className="admin-code">{v}</span>,
+    },
+  ];
+  const emailColumns: TableColumnsType<Email> = [
+    { title: "Recipient", dataIndex: "to_email", width: 260 },
+    {
+      title: "Template",
+      dataIndex: "subject",
+      width: 210,
+      render: (v) => v.replaceAll("_", " "),
+    },
+    { title: "Status", dataIndex: "status", width: 110, render: status },
+    { title: "Sent", dataIndex: "sent_at", width: 200, render: date },
+    {
+      title: "Error",
+      dataIndex: "error_message",
+      width: 250,
+      render: (v) => v || "—",
+    },
+  ];
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">System Audit & Health</h1>
-
-        {error && <p role="alert" style={{color:'#b91c1c',padding:16}}>{error}</p>}
-        {/* Stripe Events Section */}
-        <section className="bg-white rounded-lg shadow mb-8">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-2xl font-semibold text-gray-900">Stripe Webhooks</h2>
-            <p className="text-sm text-gray-600 mt-1">
-              Recent webhook events from Stripe. Check status to confirm webhooks are landing correctly.
-            </p>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-6 py-3 text-left font-semibold text-gray-900">Event ID</th>
-                  <th className="px-6 py-3 text-left font-semibold text-gray-900">Type</th>
-                  <th className="px-6 py-3 text-left font-semibold text-gray-900">Status</th>
-                  <th className="px-6 py-3 text-left font-semibold text-gray-900">Created</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {stripeEvents.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} className="px-6 py-4 text-center text-gray-500">
-                      {loading ? "Loading webhook events…" : error ? "Webhook data unavailable" : "No webhook events"}
-                    </td>
-                  </tr>
-                ) : (
-                  stripeEvents.map(event => (
-                    <tr key={event.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-3 font-mono text-xs text-gray-700">{event.id}</td>
-                      <td className="px-6 py-3 text-gray-900">{event.type}</td>
-                      <td className="px-6 py-3">
-                        <span className={`inline-flex px-2 py-1 rounded-full text-xs font-semibold ${
-                          event.processed
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-yellow-100 text-yellow-800'
-                        }`}>
-                          {event.status} · {event.livemode ? 'live' : 'test'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-3 text-gray-600 text-xs">{formatTime(event.created_at)}</td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        {/* Email Outbox Section */}
-        <section className="bg-white rounded-lg shadow mb-8">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-2xl font-semibold text-gray-900">Email Outbox</h2>
-            <p className="text-sm text-gray-600 mt-1">
-              Outgoing email status. View whether customer emails are actually being sent.
-            </p>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-6 py-3 text-left font-semibold text-gray-900">To</th>
-                  <th className="px-6 py-3 text-left font-semibold text-gray-900">Template</th>
-                  <th className="px-6 py-3 text-left font-semibold text-gray-900">Status</th>
-                  <th className="px-6 py-3 text-left font-semibold text-gray-900">Sent</th>
-                  <th className="px-6 py-3 text-left font-semibold text-gray-900">Error</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {emailOutbox.length === 0 ? (
-                  <tr>
-                    <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
-                      {loading ? "Loading email status…" : error ? "Email data unavailable" : "No outbox records"}
-                    </td>
-                  </tr>
-                ) : (
-                  emailOutbox.map(email => (
-                    <tr key={email.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-3 text-xs text-gray-900">{email.to_email}</td>
-                      <td className="px-6 py-3 text-gray-700 truncate max-w-xs">{email.subject}</td>
-                      <td className="px-6 py-3">
-                        <span className={`inline-flex px-2 py-1 rounded-full text-xs font-semibold ${
-                          email.status === 'sent'
-                            ? 'bg-green-100 text-green-800'
-                            : email.status === 'failed'
-                            ? 'bg-red-100 text-red-800'
-                            : 'bg-gray-100 text-gray-800'
-                        }`}>
-                          {email.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-3 text-gray-600 text-xs">
-                        {email.sent_at ? formatTime(email.sent_at) : '-'}
-                      </td>
-                      <td className="px-6 py-3 text-xs text-red-600 truncate max-w-xs">
-                        {email.error_message || '-'}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        {/* Audit Logs Section */}
-        <section className="bg-white rounded-lg shadow">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-2xl font-semibold text-gray-900">Audit Logs</h2>
-            <p className="text-sm text-gray-600 mt-1">
-              Admin actions and system changes. Filter by action, entity, or date range.
-            </p>
-          </div>
-
-          {/* Filter Controls */}
-          <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Action</label>
-                <input
-                  type="text"
-                  placeholder="e.g., create, update, delete"
-                  value={filters.action}
-                  onChange={(e) => handleFilterChange('action', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Entity</label>
-                <input
-                  type="text"
-                  placeholder="e.g., order, product"
-                  value={filters.entity}
-                  onChange={(e) => handleFilterChange('entity', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
-                <input
-                  type="date"
-                  value={filters.startDate}
-                  onChange={(e) => handleFilterChange('startDate', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
-                <input
-                  type="date"
-                  value={filters.endDate}
-                  onChange={(e) => handleFilterChange('endDate', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Error Message */}
-          {error && (
-            <div className="px-6 py-4 bg-red-50 border-b border-red-200">
-              <p className="text-sm text-red-700">{error}</p>
-            </div>
-          )}
-
-          {/* Loading State */}
-          {loading && (
-            <div className="px-6 py-12 text-center">
-              <div className="inline-flex items-center gap-2">
-                <div className="w-4 h-4 bg-blue-500 rounded-full animate-pulse"></div>
-                <p className="text-gray-600">Loading audit logs...</p>
-              </div>
-            </div>
-          )}
-
-          {/* Audit Logs Table */}
-          {!loading && (
-            <>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead className="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                      <th className="px-6 py-3 text-left font-semibold text-gray-900">Action</th>
-                      <th className="px-6 py-3 text-left font-semibold text-gray-900">Entity</th>
-                      <th className="px-6 py-3 text-left font-semibold text-gray-900">Entity ID</th>
-                      <th className="px-6 py-3 text-left font-semibold text-gray-900">Details</th>
-                      <th className="px-6 py-3 text-left font-semibold text-gray-900">Created</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {auditLogs.length === 0 ? (
-                      <tr>
-                        <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
-                          {loading ? "Loading audit records…" : error ? "Audit data unavailable" : "No audit logs found"}
-                        </td>
-                      </tr>
-                    ) : (
-                      auditLogs.map(log => (
-                        <tr key={log.id} className="hover:bg-gray-50">
-                          <td className="px-6 py-3 font-semibold text-gray-900">{log.action}</td>
-                          <td className="px-6 py-3 text-gray-700">{log.entity}</td>
-                          <td className="px-6 py-3 text-gray-600 text-xs">{log.entity_id || '-'}</td>
-                          <td className="px-6 py-3 text-xs text-gray-600 font-mono max-w-xs truncate">
-                            {log.meta ? JSON.stringify(log.meta).slice(0, 60) + '...' : '-'}
-                          </td>
-                          <td className="px-6 py-3 text-gray-600 text-xs whitespace-nowrap">
-                            {formatDate(log.created_at)}
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Pagination */}
-              {auditLogs.length > 0 && (
-                <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-                  <div className="text-sm text-gray-600">
-                    Showing {auditLogs.length > 0 ? (page - 1) * limit + 1 : 0} to{' '}
-                    {Math.min(page * limit, total)} of {total} logs
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => setPage(Math.max(1, page - 1))}
-                      disabled={page === 1}
-                      className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      Previous
-                    </button>
-                    <span className="px-4 py-2 text-sm text-gray-700">
-                      Page {page} of {totalPages}
-                    </span>
-                    <button
-                      onClick={() => setPage(Math.min(totalPages, page + 1))}
-                      disabled={page === totalPages}
-                      className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      Next
-                    </button>
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-        </section>
+    <>
+      <div className="admin-page-heading">
+        <div>
+          <h1>Audit log</h1>
+          <p>
+            Review administrative activity, payment events and email delivery
+            records.
+          </p>
+        </div>
+        <Button
+          icon={<ReloadOutlined />}
+          onClick={() => {setLoading(true);setError("");setRefresh((v) => v + 1);}}
+          loading={loading}
+        >
+          Refresh
+        </Button>
       </div>
-    </div>
+      {error && (
+        <Alert
+          type="error"
+          showIcon
+          title="Records unavailable"
+          description={error + " Previously loaded records may be out of date."}
+          style={{ marginBottom: 20 }}
+        />
+      )}
+      <Card styles={{ body: { padding: "0 24px 24px" } }}>
+        <Tabs
+          items={[
+            {
+              key: "activity",
+              label: "Admin activity",
+              children: (
+                <>
+                  <form
+                    className="admin-filter-bar"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      setLoading(true);setError("");
+                      setPage(1);
+                      setFilters({ ...draft });
+                    }}
+                  >
+                    <label>
+                      Action
+                      <Input
+                        value={draft.action}
+                        placeholder="e.g. update_settings"
+                        onChange={(e) =>
+                          setDraft({ ...draft, action: e.target.value })
+                        }
+                      />
+                    </label>
+                    <label>
+                      Resource
+                      <Input
+                        value={draft.entity}
+                        placeholder="e.g. product"
+                        onChange={(e) =>
+                          setDraft({ ...draft, entity: e.target.value })
+                        }
+                      />
+                    </label>
+                    <label>
+                      From (UTC)
+                      <Input
+                        type="date"
+                        value={draft.startDate}
+                        onChange={(e) =>
+                          setDraft({ ...draft, startDate: e.target.value })
+                        }
+                      />
+                    </label>
+                    <label>
+                      Through (UTC)
+                      <Input
+                        type="date"
+                        min={draft.startDate}
+                        value={draft.endDate}
+                        onChange={(e) =>
+                          setDraft({ ...draft, endDate: e.target.value })
+                        }
+                      />
+                    </label>
+                    <Space>
+                      <Button htmlType="submit" type="primary">
+                        Apply
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setLoading(true);setError("");setRefresh(v=>v+1);
+                            setDraft(initial);
+                          setFilters(initial);
+                          setPage(1);
+                        }}
+                      >
+                        Reset
+                      </Button>
+                    </Space>
+                  </form>
+                  <Table
+                    rowKey="id"
+                    columns={columns}
+                    dataSource={data?.auditLogs || []}
+                    loading={loading}
+                    scroll={{ x: 920 }}
+                    locale={{
+                      emptyText: error
+                        ? "Records unavailable"
+                        : "No activity matches these filters",
+                    }}
+                    pagination={{
+                      current: page,
+                      pageSize: limit,
+                      total: data?.pagination.total || 0,
+                      showSizeChanger: true,
+                      pageSizeOptions: [25, 50, 100],
+                      showTotal: (n) => `${n} records`,
+                      onChange: (p, s) => {
+                      if(p===page&&s===limit)return;
+                      setLoading(true);setError("");
+                        setPage(s !== limit ? 1 : p);
+                        setLimit(s);
+                      },
+                    }}
+                  />
+                </>
+              ),
+            },
+            {
+              key: "stripe",
+              label: "Stripe events",
+              children: (
+                <>
+                  <p className="admin-muted">
+                    Most recent 20 events. Live and test events are labelled
+                    separately.
+                  </p>
+                  <Table
+                    rowKey="id"
+                    columns={stripeColumns}
+                    dataSource={data?.stripeEvents || []}
+                    loading={loading}
+                    scroll={{ x: 980 }}
+                    pagination={false}
+                    locale={{
+                      emptyText: error
+                        ? "Records unavailable"
+                        : "No payment events recorded",
+                    }}
+                  />
+                </>
+              ),
+            },
+            {
+              key: "email",
+              label: "Email delivery",
+              children: (
+                <>
+                  <p className="admin-muted">
+                    Most recent 50 messages. Sent indicates provider submission,
+                    not confirmed inbox delivery.
+                  </p>
+                  <Table
+                    rowKey="id"
+                    columns={emailColumns}
+                    dataSource={data?.emailOutbox || []}
+                    loading={loading}
+                    scroll={{ x: 980 }}
+                    pagination={{ pageSize: 10, showSizeChanger: false }}
+                    locale={{
+                      emptyText: error
+                        ? "Records unavailable"
+                        : "No outgoing messages recorded",
+                    }}
+                  />
+                </>
+              ),
+            },
+          ]}
+        />
+      </Card>
+      <Drawer
+        title="Activity details"
+        open={!!record}
+        onClose={() => setRecord(null)}
+        size={520}
+      >
+        <p>{record?.action.replaceAll("_", " ")}</p>
+        <p className="admin-muted">{date(record?.created_at)}</p>
+        <pre className="admin-record-details">
+          {JSON.stringify(record, null, 2)}
+        </pre>
+      </Drawer>
+    </>
   );
 }

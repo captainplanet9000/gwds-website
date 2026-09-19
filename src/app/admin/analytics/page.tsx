@@ -72,7 +72,7 @@ export default function AnalyticsAdmin() {
     <>
       <div style={{ marginBottom: 32, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 800, marginBottom: 8, letterSpacing: '-0.03em', color: 'var(--admin-text)' }}>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 600, marginBottom: 8, letterSpacing: '-0.03em', color: 'var(--admin-text)' }}>
             Analytics
           </h1>
           <p style={{ fontSize: '0.9rem', color: 'var(--admin-text-dim)' }}>
@@ -87,7 +87,7 @@ export default function AnalyticsAdmin() {
               style={{
                 padding: '10px 16px', borderRadius: 8,
                 border: days === p ? '1px solid var(--admin-accent)' : '1px solid var(--admin-border)',
-                background: days === p ? 'var(--admin-accent)10' : 'transparent',
+                background: days === p ? 'color-mix(in srgb, var(--admin-accent) 6%, transparent)' : 'transparent',
                 color: days === p ? 'var(--admin-accent)' : 'var(--admin-text-muted)',
                 fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.15s ease',
               }}
@@ -128,7 +128,7 @@ export default function AnalyticsAdmin() {
                     style={{
                       padding: '6px 14px', borderRadius: 6, fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer', textTransform: 'capitalize',
                       border: granularity === g ? '1px solid var(--admin-accent)' : '1px solid var(--admin-border)',
-                      background: granularity === g ? 'var(--admin-accent)10' : 'transparent',
+                      background: granularity === g ? 'color-mix(in srgb, var(--admin-accent) 6%, transparent)' : 'transparent',
                       color: granularity === g ? 'var(--admin-accent)' : 'var(--admin-text-muted)',
                     }}
                   >
@@ -145,7 +145,7 @@ export default function AnalyticsAdmin() {
                 <div key={`${d.label}-${i}`} title={`${d.label}: ${money(d.revenue)} · ${d.orders} order${d.orders === 1 ? '' : 's'}`}
                   style={{ flex: 1, minWidth: granularity === 'daily' ? 4 : 24, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
                   <div style={{ width: '100%', height: 150, display: 'flex', alignItems: 'end' }}>
-                    <div style={{ width: '100%', height: `${Math.max(2, (d.revenue / maxTrendRevenue) * 100)}%`, background: d.revenue ? 'linear-gradient(180deg, var(--admin-accent), var(--admin-accent))' : 'var(--admin-border)', borderRadius: '3px 3px 0 0' }} />
+                    <div style={{ width: '100%', height: `${Math.max(2, (d.revenue / maxTrendRevenue) * 100)}%`, background: d.revenue ? 'var(--admin-accent)' : 'var(--admin-border)', borderRadius: '3px 3px 0 0' }} />
                   </div>
                   {granularity !== 'daily' && <span style={{ fontSize: '0.62rem', color: 'var(--admin-text-dim)', whiteSpace: 'nowrap' }}>{d.label}</span>}
                 </div>
@@ -267,7 +267,7 @@ export default function AnalyticsAdmin() {
                           <td style={tdStyle}>
                             <span style={{
                               padding: '4px 10px', borderRadius: 6, fontSize: '0.7rem', fontWeight: 600,
-                              background: c.isActive && !expired ? 'var(--admin-success)15' : 'var(--admin-text-dim)15',
+                              background: c.isActive && !expired ? 'color-mix(in srgb, var(--admin-success) 8%, transparent)' : 'color-mix(in srgb, var(--admin-text-dim) 8%, transparent)',
                               color: c.isActive && !expired ? 'var(--admin-success)' : 'var(--admin-text-muted)',
                             }}>
                               {expired ? 'Expired' : c.isActive ? 'Active' : 'Disabled'}
@@ -290,10 +290,10 @@ export default function AnalyticsAdmin() {
 function StatCard({ label, value, color }: { label: string; value: string; color: string }) {
   return (
     <div style={{ background: 'var(--admin-surface)', border: '1px solid var(--admin-border)', borderRadius: 12, padding: 20, position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', top: 0, right: 0, width: 80, height: 80, background: `radial-gradient(circle at top right, ${color}15, transparent)` }} />
+      <div style={{ position: 'absolute', top: 0, right: 0, width: 80, height: 80, background: 'transparent' }} />
       <div style={{ position: 'relative' }}>
         <p style={{ fontSize: '0.72rem', color: 'var(--admin-text-dim)', letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 600, marginBottom: 10 }}>{label}</p>
-        <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 800, color, letterSpacing: '-0.02em' }}>{value}</p>
+        <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 600, color, letterSpacing: '-0.02em' }}>{value}</p>
       </div>
     </div>
   );
@@ -303,7 +303,7 @@ function MiniStat({ label, value, color }: { label: string; value: number; color
   return (
     <div style={{ background: 'var(--admin-surface-raised)', border: '1px solid var(--admin-border)', borderRadius: 10, padding: 14 }}>
       <div style={{ fontSize: '0.7rem', color: 'var(--admin-text-dim)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>{label}</div>
-      <div style={{ fontSize: '1.4rem', fontWeight: 800, color, fontFamily: 'var(--font-display)' }}>{value}</div>
+      <div style={{ fontSize: '1.4rem', fontWeight: 600, color, fontFamily: 'var(--font-display)' }}>{value}</div>
     </div>
   );
 }
@@ -328,12 +328,12 @@ function ProductBars({ rows, valueKey, format }: { rows: { productId: string; pr
     <div style={{ marginTop: 14 }}>
       {rows.map((r) => (
         <div key={r.productId} style={{ marginBottom: 14 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, fontSize: '0.83rem', color: '#ccc', marginBottom: 6 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, fontSize: '0.83rem', color: 'var(--admin-text-muted)', marginBottom: 6 }}>
             <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.productName}</span>
             <strong style={{ color: 'var(--admin-text)', flexShrink: 0 }}>{format(r[valueKey])}</strong>
           </div>
           <div style={{ height: 6, background: 'var(--admin-border)', borderRadius: 8, overflow: 'hidden' }}>
-            <div style={{ height: '100%', width: `${(r[valueKey] / max) * 100}%`, background: 'linear-gradient(90deg, var(--admin-accent), var(--admin-accent))' }} />
+            <div style={{ height: '100%', width: `${(r[valueKey] / max) * 100}%`, background: 'var(--admin-accent)' }} />
           </div>
         </div>
       ))}
@@ -344,4 +344,4 @@ function ProductBars({ rows, valueKey, format }: { rows: { productId: string; pr
 const cardStyle: React.CSSProperties = { background: 'var(--admin-surface)', border: '1px solid var(--admin-border)', borderRadius: 12, padding: 20 };
 const headingStyle: React.CSSProperties = { fontSize: '1rem', margin: 0, color: 'var(--admin-text)', fontFamily: 'var(--font-display)', fontWeight: 700 };
 const thStyle: React.CSSProperties = { padding: '10px 12px', color: 'var(--admin-text-dim)', fontSize: '0.7rem', textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600 };
-const tdStyle: React.CSSProperties = { padding: '12px', color: '#ccc', fontSize: '0.83rem' };
+const tdStyle: React.CSSProperties = { padding: '12px', color: 'var(--admin-text-muted)', fontSize: '0.83rem' };

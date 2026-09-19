@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { isPaidOrder } from '@/lib/reporting';
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState<any[]>([]);
@@ -11,32 +12,32 @@ export default function AdminOrders() {
   useEffect(() => {
     fetch('/api/admin/orders')
       .then(r => r.json())
-      .then(d => { 
-        setOrders(d.orders || []); 
-        setLoading(false); 
+      .then(d => {
+        setOrders(d.orders || []);
+        setLoading(false);
       })
       .catch(() => setLoading(false));
   }, []);
 
   const filteredOrders = orders.filter(o => {
-    if (filter === 'completed' && o.status !== 'completed') return false;
-    if (filter === 'pending' && o.status === 'completed') return false;
+    if (filter === 'paid' && !isPaidOrder(o)) return false;
+    if (filter !== 'all' && filter !== 'paid' && o.status !== filter) return false;
     if (search && !o.customer_email?.toLowerCase().includes(search.toLowerCase()) && !o.id?.toLowerCase().includes(search.toLowerCase())) return false;
     return true;
   });
 
-  const completed = filteredOrders.filter(o => o.status === 'completed');
-  const pending = filteredOrders.filter(o => o.status !== 'completed');
+  const completed = filteredOrders.filter(isPaidOrder);
+  const pending = filteredOrders.filter(o => o.status === 'pending');
   const totalRev = completed.reduce((s, o) => s + ((o.total_cents || 0) / 100), 0);
   const avgOrder = completed.length > 0 ? totalRev / completed.length : 0;
 
   return (
     <>
       <div style={{ marginBottom: 32 }}>
-        <h1 style={{ 
-          fontFamily: 'var(--font-display)', 
-          fontSize: '2rem', 
-          fontWeight: 800, 
+        <h1 style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: '2rem',
+          fontWeight: 600,
           marginBottom: 8,
           letterSpacing: '-0.03em',
           color: 'var(--admin-text)'
@@ -50,7 +51,7 @@ export default function AdminOrders() {
       <div className="admin-stat-grid-4" style={{ marginBottom: 24 }}>
         {[
           { label: 'Total Revenue', value: `$${totalRev.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, color: 'var(--admin-success)', icon: '💰' },
-          { label: 'Completed', value: completed.length, color: 'var(--admin-success)', icon: '✓' },
+          { label: 'Paid orders', value: completed.length, color: 'var(--admin-success)', icon: '✓' },
           { label: 'Pending', value: pending.length, color: 'var(--admin-warning)', icon: '⏱' },
           { label: 'Avg Order Value', value: `$${avgOrder.toFixed(2)}`, color: 'var(--admin-accent)', icon: '📊' },
         ].map(s => (
@@ -68,14 +69,14 @@ export default function AdminOrders() {
               right: 0,
               width: 80,
               height: 80,
-              background: `radial-gradient(circle at top right, ${s.color}15, transparent)`
+              background: 'transparent'
             }}></div>
             <div style={{ position: 'relative' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
                 <p style={{ fontSize: '0.72rem', color: 'var(--admin-text-dim)', letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 600 }}>{s.label}</p>
-                <span style={{ fontSize: '1.3rem', opacity: 0.5 }}>{s.icon}</span>
+
               </div>
-              <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 800, color: s.color, letterSpacing: '-0.02em' }}>{s.value}</p>
+              <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 600, color: 'var(--admin-text)', letterSpacing: '-0.02em' }}>{s.value}</p>
             </div>
           </div>
         ))}
@@ -114,8 +115,8 @@ export default function AdminOrders() {
             onBlur={e => e.target.style.borderColor = 'var(--admin-border)'}
           />
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          {['all', 'completed', 'pending'].map(f => (
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {['all', 'paid', 'pending', 'cancelled', 'expired', 'refunded'].map(f => (
             <button
               key={f}
               onClick={() => setFilter(f)}
@@ -123,7 +124,7 @@ export default function AdminOrders() {
                 padding: '10px 18px',
                 borderRadius: 8,
                 border: filter === f ? '1px solid var(--admin-accent)' : '1px solid var(--admin-border)',
-                background: filter === f ? 'var(--admin-accent)10' : 'transparent',
+                background: filter === f ? 'color-mix(in srgb, var(--admin-accent) 6%, transparent)' : 'transparent',
                 color: filter === f ? 'var(--admin-accent)' : 'var(--admin-text-muted)',
                 fontSize: '0.8rem',
                 fontWeight: 600,
@@ -160,10 +161,10 @@ export default function AdminOrders() {
         {loading ? (
           <div style={{ padding: 40, textAlign: 'center' }}>
             <div style={{ display: 'inline-flex', gap: 12, alignItems: 'center' }}>
-              <div style={{ 
-                width: 24, 
-                height: 24, 
-                border: '3px solid var(--admin-border)', 
+              <div style={{
+                width: 24,
+                height: 24,
+                border: '3px solid var(--admin-border)',
                 borderTopColor: 'var(--admin-accent)',
                 borderRadius: '50%',
                 animation: 'spin 0.8s linear infinite'
@@ -175,7 +176,7 @@ export default function AdminOrders() {
           <div style={{ padding: 60, textAlign: 'center', color: 'var(--admin-text-dim)' }}>
             <div style={{ fontSize: '3rem', marginBottom: 16, opacity: 0.3 }}>📦</div>
             <p style={{ fontSize: '1rem', marginBottom: 8 }}>No orders found</p>
-            <p style={{ fontSize: '0.85rem', color: '#444' }}>
+            <p style={{ fontSize: '0.85rem', color: 'var(--admin-text-muted)' }}>
               {search ? 'Try a different search term' : 'Orders will appear here once customers start purchasing'}
             </p>
           </div>
@@ -185,13 +186,13 @@ export default function AdminOrders() {
               <thead>
                 <tr style={{ borderBottom: '1px solid var(--admin-border)', background: 'var(--admin-surface)' }}>
                   {['Customer', 'Amount', 'Coupon', 'Status', 'Date', ''].map(h => (
-                    <th key={h} style={{ 
-                      padding: '16px', 
-                      textAlign: 'left', 
-                      fontSize: '0.7rem', 
-                      color: 'var(--admin-text-dim)', 
-                      fontWeight: 600, 
-                      letterSpacing: '0.1em', 
+                    <th key={h} style={{
+                      padding: '16px',
+                      textAlign: 'left',
+                      fontSize: '0.7rem',
+                      color: 'var(--admin-text-dim)',
+                      fontWeight: 600,
+                      letterSpacing: '0.1em',
                       textTransform: 'uppercase',
                       position: 'sticky',
                       top: 0,
@@ -204,19 +205,19 @@ export default function AdminOrders() {
                 {filteredOrders.map((o: any) => {
                   const gwdsId = o.stripe_session_id?.startsWith('local-') ? o.stripe_session_id.replace('local-', '') : null;
                   const isExpanded = expandedRow === o.id;
-                  
+
                   return (
-                    <tr 
-                      key={o.id} 
-                      style={{ 
+                    <tr
+                      key={o.id}
+                      style={{
                         borderBottom: '1px solid var(--admin-surface-raised)',
-                        background: isExpanded ? '#0f0f0f' : 'transparent',
+                        background: isExpanded ? 'var(--admin-surface)' : 'transparent',
                         transition: 'background 0.15s ease',
                         cursor: 'pointer'
                       }}
                       onClick={() => setExpandedRow(isExpanded ? null : o.id)}
                       onMouseEnter={e => {
-                        if (!isExpanded) e.currentTarget.style.background = '#0d0d0d';
+                        if (!isExpanded) e.currentTarget.style.background = 'var(--admin-surface)';
                       }}
                       onMouseLeave={e => {
                         if (!isExpanded) e.currentTarget.style.background = 'transparent';
@@ -236,9 +237,9 @@ export default function AdminOrders() {
                         )}
                       </td>
                       <td style={{ padding: '16px' }}>
-                        <div style={{ 
-                          fontSize: '0.95rem', 
-                          fontWeight: 700, 
+                        <div style={{
+                          fontSize: '0.95rem',
+                          fontWeight: 700,
                           color: 'var(--admin-success)',
                           fontFamily: 'var(--font-display)',
                           marginBottom: 2
@@ -258,7 +259,7 @@ export default function AdminOrders() {
                             borderRadius: 6,
                             fontSize: '0.72rem',
                             fontWeight: 600,
-                            background: 'var(--admin-warning)15',
+                            background: 'color-mix(in srgb, var(--admin-warning) 8%, transparent)',
                             color: 'var(--admin-warning)',
                             fontFamily: 'var(--font-mono, monospace)'
                           }}>
@@ -270,12 +271,12 @@ export default function AdminOrders() {
                       </td>
                       <td style={{ padding: '16px' }}>
                         <span style={{
-                          padding: '5px 12px', 
-                          borderRadius: 6, 
-                          fontSize: '0.72rem', 
+                          padding: '5px 12px',
+                          borderRadius: 6,
+                          fontSize: '0.72rem',
                           fontWeight: 600,
-                          background: o.status === 'completed' ? 'var(--admin-success)15' : o.status === 'pending' ? 'var(--admin-warning)15' : 'var(--admin-danger)15',
-                          color: o.status === 'completed' ? 'var(--admin-success)' : o.status === 'pending' ? 'var(--admin-warning)' : 'var(--admin-danger)',
+                          background: isPaidOrder(o) ? 'color-mix(in srgb, var(--admin-success) 8%, transparent)' : o.status === 'pending' ? 'color-mix(in srgb, var(--admin-warning) 8%, transparent)' : 'color-mix(in srgb, var(--admin-danger) 8%, transparent)',
+                          color: isPaidOrder(o) ? 'var(--admin-success)' : o.status === 'pending' ? 'var(--admin-warning)' : 'var(--admin-danger)',
                           textTransform: 'capitalize',
                           letterSpacing: '0.03em'
                         }}>
@@ -283,8 +284,8 @@ export default function AdminOrders() {
                         </span>
                       </td>
                       <td style={{ padding: '16px', fontSize: '0.82rem', color: 'var(--admin-text-dim)' }}>
-                        {new Date(o.created_at).toLocaleDateString('en-US', { 
-                          month: 'short', 
+                        {new Date(o.created_at).toLocaleDateString('en-US', {
+                          month: 'short',
                           day: 'numeric',
                           year: 'numeric',
                           hour: '2-digit',
@@ -292,8 +293,8 @@ export default function AdminOrders() {
                         })}
                       </td>
                       <td style={{ padding: '16px', textAlign: 'right' }}>
-                        <span style={{ 
-                          fontSize: '1rem', 
+                        <span style={{
+                          fontSize: '1rem',
                           color: 'var(--admin-text-dim)',
                           transition: 'transform 0.2s ease',
                           display: 'inline-block',

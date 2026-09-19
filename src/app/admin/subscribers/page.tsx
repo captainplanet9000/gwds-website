@@ -33,7 +33,7 @@ const EMAIL_TEMPLATES = {
     subject: '📬 Your Monthly Newsletter',
     content: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #000; color: var(--admin-text); padding: 40px 20px;">
   <h1 style="color: #4ade9f; font-size: 28px; margin-bottom: 24px;">What's New at Cival Systems 📬</h1>
-  
+
   <div style="background: var(--admin-surface); border: 1px solid var(--admin-border); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
     <h3 style="color: var(--admin-accent); font-size: 18px; margin-bottom: 8px;">✨ This Month's Highlights</h3>
     <ul style="font-size: 15px; line-height: 1.8; color: #ccc;">
@@ -42,14 +42,14 @@ const EMAIL_TEMPLATES = {
       <li>Upcoming events and announcements</li>
     </ul>
   </div>
-  
+
   <div style="background: var(--admin-surface); border: 1px solid var(--admin-border); border-radius: 12px; padding: 20px; margin-bottom: 24px;">
     <h3 style="color: var(--admin-success); font-size: 18px; margin-bottom: 8px;">🎯 Featured This Month</h3>
     <p style="font-size: 15px; line-height: 1.6; color: #ccc;">Spotlight on our most popular products and services...</p>
   </div>
-  
+
   <a href="https://gwds-website.vercel.app/store" style="display: inline-block; padding: 16px 32px; background: linear-gradient(135deg, var(--admin-accent), var(--admin-accent)); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px;">Browse Store →</a>
-  
+
   <p style="font-size: 14px; color: var(--admin-text-dim); margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--admin-border);">Stay sharp,<br/>The Cival Systems Team</p>
 </div>`
   },
@@ -58,16 +58,16 @@ const EMAIL_TEMPLATES = {
     content: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #000; color: var(--admin-text); padding: 40px 20px;">
   <h1 style="color: #4ade9f; font-size: 28px; margin-bottom: 16px;">Update from Cival Systems 📣</h1>
   <p style="font-size: 16px; line-height: 1.6; margin-bottom: 24px;">We wanted to share some important information with you...</p>
-  
+
   <div style="background: var(--admin-surface); border-left: 4px solid var(--admin-accent); padding: 20px; margin-bottom: 24px;">
     <h3 style="color: var(--admin-accent); font-size: 18px; margin-bottom: 12px;">What's Changed</h3>
     <p style="font-size: 15px; line-height: 1.6; color: #ccc;">Details about your update, improvements, or announcements go here...</p>
   </div>
-  
+
   <p style="font-size: 15px; line-height: 1.6; color: #ccc; margin-bottom: 24px;">If you have any questions, feel free to reach out to our support team.</p>
-  
+
   <a href="https://gwds-website.vercel.app/contact" style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, var(--admin-accent), var(--admin-accent)); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 15px;">Contact Support →</a>
-  
+
   <p style="font-size: 14px; color: var(--admin-text-dim); margin-top: 40px;">Thanks for your continued support!</p>
 </div>`
   }
@@ -104,7 +104,7 @@ export default function SubscribersAdmin() {
   const [showPreview, setShowPreview] = useState(false);
   const [search, setSearch] = useState('');
 
-  useEffect(() => { 
+  useEffect(() => {
     fetch('/api/admin/subscribers')
       .then(r => r.json())
       .then(d => {
@@ -118,15 +118,15 @@ export default function SubscribersAdmin() {
     if (!bcSubject || !bcContent) return;
     setBcStatus('sending');
     setBcResult(null);
-    
-    const res = await fetch('/api/admin/broadcast', { 
-      method: 'POST', 
-      headers: { 'Content-Type': 'application/json' }, 
-      body: JSON.stringify({ subject: bcSubject, html: bcContent, test }) 
+
+    const res = await fetch('/api/admin/broadcast', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ subject: bcSubject, html: bcContent, test })
     });
-    
+
     const data = await res.json();
-    setBcResult(data); 
+    setBcResult(data);
     setBcStatus('done');
   };
 
@@ -140,7 +140,7 @@ export default function SubscribersAdmin() {
 
   const active = subscribers.filter(s => s.is_active);
   const inactive = subscribers.filter(s => !s.is_active);
-  
+
   const growthData = Array.from({ length: 30 }, (_, i) => {
     const cutoff = new Date();
     cutoff.setDate(cutoff.getDate() - (29 - i));
@@ -150,7 +150,7 @@ export default function SubscribersAdmin() {
       count: subscribers.filter((subscriber) => new Date(subscriber.subscribed_at || subscriber.created_at || 0) <= cutoff).length,
     };
   });
-  
+
   const growthRate = active.length > 0 ? ((active.length / (active.length + inactive.length)) * 100).toFixed(1) : '0';
 
   const filteredSubscribers = subscribers.filter(s =>
@@ -159,26 +159,26 @@ export default function SubscribersAdmin() {
 
   const renderGrowthChart = (data: any[]) => {
     if (!data || data.length === 0) return null;
-    
+
     const max = Math.max(...data.map(d => d.count));
     const width = 600;
     const height = 180;
     const padding = 30;
     const chartWidth = width - padding * 2;
     const chartHeight = height - padding * 2;
-    
+
     const points = data.map((d, i) => {
       const x = padding + (i / (data.length - 1)) * chartWidth;
       const y = padding + chartHeight - ((d.count / max) * chartHeight);
       return { x, y, count: d.count };
     });
-    
-    const pathD = points.map((p, i) => 
+
+    const pathD = points.map((p, i) =>
       `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`
     ).join(' ');
-    
+
     const areaD = `${pathD} L ${points[points.length - 1].x} ${height - padding} L ${padding} ${height - padding} Z`;
-    
+
     return (
       <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} style={{ overflow: 'visible' }}>
         <defs>
@@ -187,7 +187,7 @@ export default function SubscribersAdmin() {
             <stop offset="100%" stopColor="var(--admin-success)" stopOpacity="0" />
           </linearGradient>
         </defs>
-        
+
         {/* Grid lines */}
         {[0, 0.25, 0.5, 0.75, 1].map(ratio => (
           <line
@@ -200,13 +200,13 @@ export default function SubscribersAdmin() {
             strokeWidth="1"
           />
         ))}
-        
+
         {/* Area */}
         <path d={areaD} fill="url(#growthGradient)" />
-        
+
         {/* Line */}
         <path d={pathD} fill="none" stroke="var(--admin-success)" strokeWidth="2.5" />
-        
+
         {/* Points */}
         {points.filter((_, i) => i % 5 === 0).map((p, i) => (
           <g key={i}>
@@ -221,10 +221,10 @@ export default function SubscribersAdmin() {
   return (
     <>
       <div style={{ marginBottom: 32 }}>
-        <h1 style={{ 
-          fontFamily: 'var(--font-display)', 
-          fontSize: '2rem', 
-          fontWeight: 800, 
+        <h1 style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: '2rem',
+          fontWeight: 600,
           marginBottom: 8,
           letterSpacing: '-0.03em',
           color: 'var(--admin-text)'
@@ -256,14 +256,14 @@ export default function SubscribersAdmin() {
               right: 0,
               width: 80,
               height: 80,
-              background: `radial-gradient(circle at top right, ${s.color}15, transparent)`
+              background: 'transparent'
             }}></div>
             <div style={{ position: 'relative' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
                 <p style={{ fontSize: '0.72rem', color: 'var(--admin-text-dim)', letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 600 }}>{s.label}</p>
-                <span style={{ fontSize: '1.3rem', opacity: 0.5 }}>{s.icon}</span>
+
               </div>
-              <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 800, color: s.color, letterSpacing: '-0.02em' }}>{s.value}</p>
+              <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 600, color: 'var(--admin-text)', letterSpacing: '-0.02em' }}>{s.value}</p>
             </div>
           </div>
         ))}
@@ -278,9 +278,9 @@ export default function SubscribersAdmin() {
         marginBottom: 24
       }}>
         <div style={{ marginBottom: 20 }}>
-          <h2 style={{ 
-            fontFamily: 'var(--font-display)', 
-            fontSize: '1.1rem', 
+          <h2 style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: '1.1rem',
             fontWeight: 700,
             color: 'var(--admin-text)',
             marginBottom: 4
@@ -292,29 +292,29 @@ export default function SubscribersAdmin() {
 
       {/* Email Broadcast Section */}
       <div style={{ marginBottom: 16 }}>
-        <button 
+        <button
           onClick={() => setShowBroadcast(!showBroadcast)}
           className="admin-btn-primary"
-          style={{ 
-            padding: '12px 24px', 
-            borderRadius: 8, 
-            border: 'none', 
-            background: showBroadcast ? 'var(--admin-border-strong)' : 'linear-gradient(135deg, var(--admin-accent), var(--admin-accent))', 
-            color: '#fff', 
-            fontSize: '0.82rem', 
-            fontWeight: 700, 
+          style={{
+            padding: '12px 24px',
+            borderRadius: 8,
+            border: 'none',
+            background: showBroadcast ? 'var(--admin-border-strong)' : 'var(--admin-accent)',
+            color: '#fff',
+            fontSize: '0.82rem',
+            fontWeight: 700,
             cursor: 'pointer',
             transition: 'all 0.15s ease'
           }}
           onMouseEnter={e => {
             if (!showBroadcast) {
-              e.currentTarget.style.background = 'linear-gradient(135deg, #9D6EFF, #F768AA)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(139, 92, 246, 0.3)';
+              e.currentTarget.style.background = 'var(--admin-accent)';
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(54, 94, 170, 0.3)';
             }
           }}
           onMouseLeave={e => {
             if (!showBroadcast) {
-              e.currentTarget.style.background = 'linear-gradient(135deg, var(--admin-accent), var(--admin-accent))';
+              e.currentTarget.style.background = 'var(--admin-accent)';
               e.currentTarget.style.boxShadow = 'none';
             }
           }}
@@ -324,17 +324,17 @@ export default function SubscribersAdmin() {
       </div>
 
       {showBroadcast && (
-        <div style={{ 
-          marginBottom: 24, 
-          padding: 24, 
-          borderRadius: 12, 
-          background: 'var(--admin-surface)', 
+        <div style={{
+          marginBottom: 24,
+          padding: 24,
+          borderRadius: 12,
+          background: 'var(--admin-surface)',
           border: '1px solid var(--admin-border)',
           boxShadow: '0 8px 32px rgba(0,0,0,0.4)'
         }}>
-          <h2 style={{ 
-            fontFamily: 'var(--font-display)', 
-            fontSize: '1.1rem', 
+          <h2 style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: '1.1rem',
             fontWeight: 700,
             color: 'var(--admin-text)',
             marginBottom: 20
@@ -342,14 +342,14 @@ export default function SubscribersAdmin() {
 
           {/* Templates */}
           <div style={{ marginBottom: 20 }}>
-            <label style={{ 
-              display: 'block', 
-              fontSize: '0.7rem', 
-              color: 'var(--admin-text-dim)', 
-              marginBottom: 10, 
-              textTransform: 'uppercase', 
-              letterSpacing: '0.05em', 
-              fontWeight: 600 
+            <label style={{
+              display: 'block',
+              fontSize: '0.7rem',
+              color: 'var(--admin-text-dim)',
+              marginBottom: 10,
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              fontWeight: 600
             }}>Quick Templates</label>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {[
@@ -373,7 +373,7 @@ export default function SubscribersAdmin() {
                     transition: 'all 0.15s ease'
                   }}
                   onMouseEnter={e => {
-                    e.currentTarget.style.background = `${template.color}15`;
+                    e.currentTarget.style.background = `color-mix(in srgb, ${template.color} 10%, white)`;
                     e.currentTarget.style.borderColor = template.color;
                   }}
                   onMouseLeave={e => {
@@ -388,90 +388,90 @@ export default function SubscribersAdmin() {
           </div>
 
           <div style={{ marginBottom: 16 }}>
-            <label style={{ 
-              display: 'block', 
-              fontSize: '0.7rem', 
-              color: 'var(--admin-text-dim)', 
-              marginBottom: 6, 
-              textTransform: 'uppercase', 
-              letterSpacing: '0.05em', 
-              fontWeight: 600 
+            <label style={{
+              display: 'block',
+              fontSize: '0.7rem',
+              color: 'var(--admin-text-dim)',
+              marginBottom: 6,
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              fontWeight: 600
             }}>Subject Line</label>
-            <input 
-              value={bcSubject} 
-              onChange={e => setBcSubject(e.target.value)} 
+            <input
+              value={bcSubject}
+              onChange={e => setBcSubject(e.target.value)}
               placeholder="Verified product or service update"
-              style={{ 
-                width: '100%', 
-                padding: '12px 14px', 
-                background: 'var(--admin-surface-raised)', 
-                border: '1px solid #222', 
-                borderRadius: 8, 
-                color: 'var(--admin-text)', 
-                fontSize: '0.88rem', 
-                outline: 'none', 
+              style={{
+                width: '100%',
+                padding: '12px 14px',
+                background: 'var(--admin-surface-raised)',
+                border: '1px solid var(--admin-border)',
+                borderRadius: 8,
+                color: 'var(--admin-text)',
+                fontSize: '0.88rem',
+                outline: 'none',
                 boxSizing: 'border-box',
                 transition: 'border-color 0.15s ease'
-              }} 
+              }}
               onFocus={e => e.target.style.borderColor = 'var(--admin-accent)'}
-              onBlur={e => e.target.style.borderColor = '#222'}
+              onBlur={e => e.target.style.borderColor = 'var(--admin-border)'}
             />
           </div>
 
           <div style={{ marginBottom: 16 }}>
-            <label style={{ 
-              display: 'block', 
-              fontSize: '0.7rem', 
-              color: 'var(--admin-text-dim)', 
-              marginBottom: 6, 
-              textTransform: 'uppercase', 
-              letterSpacing: '0.05em', 
-              fontWeight: 600 
+            <label style={{
+              display: 'block',
+              fontSize: '0.7rem',
+              color: 'var(--admin-text-dim)',
+              marginBottom: 6,
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              fontWeight: 600
             }}>Email Content (HTML)</label>
-            <textarea 
-              value={bcContent} 
-              onChange={e => setBcContent(e.target.value)} 
+            <textarea
+              value={bcContent}
+              onChange={e => setBcContent(e.target.value)}
               rows={12}
               placeholder='<h1>Verified update</h1><p>State exactly what changed and when.</p>'
-              style={{ 
-                width: '100%', 
-                padding: '14px', 
-                background: 'var(--admin-surface-raised)', 
-                border: '1px solid #222', 
-                borderRadius: 8, 
-                color: 'var(--admin-text)', 
-                fontSize: '0.8rem', 
-                outline: 'none', 
-                resize: 'vertical', 
-                fontFamily: 'var(--font-mono, monospace)', 
+              style={{
+                width: '100%',
+                padding: '14px',
+                background: 'var(--admin-surface-raised)',
+                border: '1px solid var(--admin-border)',
+                borderRadius: 8,
+                color: 'var(--admin-text)',
+                fontSize: '0.8rem',
+                outline: 'none',
+                resize: 'vertical',
+                fontFamily: 'var(--font-mono, monospace)',
                 boxSizing: 'border-box',
                 lineHeight: 1.5,
                 transition: 'border-color 0.15s ease'
-              }} 
+              }}
               onFocus={e => e.target.style.borderColor = 'var(--admin-accent)'}
-              onBlur={e => e.target.style.borderColor = '#222'}
+              onBlur={e => e.target.style.borderColor = 'var(--admin-border)'}
             />
           </div>
 
           {/* Preview */}
           {showPreview && bcContent && (
-            <div style={{ 
-              marginBottom: 16, 
-              padding: 20, 
-              background: '#fff', 
-              border: '2px solid var(--admin-accent)', 
+            <div style={{
+              marginBottom: 16,
+              padding: 20,
+              background: '#fff',
+              border: '2px solid var(--admin-accent)',
               borderRadius: 8,
               maxHeight: 400,
               overflow: 'auto'
             }}>
-              <div style={{ 
-                fontSize: '0.7rem', 
-                color: 'var(--admin-accent)', 
-                marginBottom: 12, 
-                fontWeight: 700, 
-                textTransform: 'uppercase', 
+              <div style={{
+                fontSize: '0.7rem',
+                color: 'var(--admin-accent)',
+                marginBottom: 12,
+                fontWeight: 700,
+                textTransform: 'uppercase',
                 letterSpacing: '0.08em',
-                background: '#000',
+                background: 'var(--admin-surface)',
                 padding: '6px 10px',
                 borderRadius: 4,
                 display: 'inline-block'
@@ -483,13 +483,13 @@ export default function SubscribersAdmin() {
           )}
 
           {bcResult && (
-            <div style={{ 
-              marginBottom: 16, 
-              padding: '14px 18px', 
-              borderRadius: 8, 
-              background: bcResult.error ? '#1a0a0a' : 'var(--admin-success)10', 
-              border: `1px solid ${bcResult.error ? 'var(--admin-danger)40' : 'var(--admin-success)30'}`, 
-              fontSize: '0.85rem', 
+            <div style={{
+              marginBottom: 16,
+              padding: '14px 18px',
+              borderRadius: 8,
+              background: bcResult.error ? '#fff3f3' : 'color-mix(in srgb, var(--admin-success) 6%, transparent)',
+              border: `1px solid ${bcResult.error ? 'color-mix(in srgb, var(--admin-danger) 25%, transparent)' : 'color-mix(in srgb, var(--admin-success) 19%, transparent)'}`,
+              fontSize: '0.85rem',
               color: bcResult.error ? 'var(--admin-danger)' : 'var(--admin-success)',
               fontWeight: 500,
               display: 'flex',
@@ -502,17 +502,17 @@ export default function SubscribersAdmin() {
           )}
 
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-            <button 
+            <button
               onClick={() => setShowPreview(!showPreview)}
               disabled={!bcContent}
-              style={{ 
-                padding: '10px 20px', 
-                borderRadius: 8, 
-                border: '1px solid var(--admin-border-strong)', 
-                background: showPreview ? 'var(--admin-accent)10' : 'transparent', 
-                color: showPreview ? 'var(--admin-accent)' : '#ccc', 
-                fontSize: '0.82rem', 
-                fontWeight: 600, 
+              style={{
+                padding: '10px 20px',
+                borderRadius: 8,
+                border: '1px solid var(--admin-border-strong)',
+                background: showPreview ? 'color-mix(in srgb, var(--admin-accent) 6%, transparent)' : 'transparent',
+                color: showPreview ? 'var(--admin-accent)' : 'var(--admin-text-muted)',
+                fontSize: '0.82rem',
+                fontWeight: 600,
                 cursor: bcContent ? 'pointer' : 'not-allowed',
                 opacity: bcContent ? 1 : 0.5,
                 transition: 'all 0.15s ease'
@@ -526,30 +526,30 @@ export default function SubscribersAdmin() {
               onMouseLeave={e => {
                 if (bcContent && !showPreview) {
                   e.currentTarget.style.borderColor = 'var(--admin-border-strong)';
-                  e.currentTarget.style.color = '#ccc';
+                  e.currentTarget.style.color = 'var(--admin-text-muted)';
                 }
               }}
             >
               {showPreview ? '👁 Hide Preview' : '👁 Show Preview'}
             </button>
-            <button 
-              onClick={() => sendBroadcast(true)} 
+            <button
+              onClick={() => sendBroadcast(true)}
               disabled={bcStatus === 'sending' || !bcSubject || !bcContent}
-              style={{ 
-                padding: '10px 20px', 
-                borderRadius: 8, 
-                border: '1px solid var(--admin-warning)', 
-                background: 'transparent', 
-                color: 'var(--admin-warning)', 
-                fontSize: '0.82rem', 
-                fontWeight: 600, 
+              style={{
+                padding: '10px 20px',
+                borderRadius: 8,
+                border: '1px solid var(--admin-warning)',
+                background: 'transparent',
+                color: 'var(--admin-warning)',
+                fontSize: '0.82rem',
+                fontWeight: 600,
                 cursor: (bcSubject && bcContent) ? 'pointer' : 'not-allowed',
                 opacity: (bcSubject && bcContent) ? 1 : 0.5,
                 transition: 'all 0.15s ease'
               }}
               onMouseEnter={e => {
                 if (bcSubject && bcContent) {
-                  e.currentTarget.style.background = 'var(--admin-warning)15';
+                  e.currentTarget.style.background = 'color-mix(in srgb, var(--admin-warning) 8%, transparent)';
                 }
               }}
               onMouseLeave={e => {
@@ -560,33 +560,33 @@ export default function SubscribersAdmin() {
             >
               {bcStatus === 'sending' ? '⏳ Sending...' : '🧪 Send Test (to owner)'}
             </button>
-            <button 
-              onClick={() => { 
+            <button
+              onClick={() => {
                 if (confirm(`Send to ALL ${active.length} active subscribers?\n\nThis cannot be undone.`)) {
-                  sendBroadcast(false); 
+                  sendBroadcast(false);
                 }
-              }} 
+              }}
               disabled={bcStatus === 'sending' || !bcSubject || !bcContent}
-              style={{ 
-                padding: '10px 20px', 
-                borderRadius: 8, 
-                border: 'none', 
-                background: (bcSubject && bcContent) ? 'linear-gradient(135deg, var(--admin-success), #059669)' : 'var(--admin-border-strong)', 
-                color: '#fff', 
-                fontSize: '0.82rem', 
-                fontWeight: 700, 
+              style={{
+                padding: '10px 20px',
+                borderRadius: 8,
+                border: 'none',
+                background: (bcSubject && bcContent) ? 'var(--admin-accent)' : 'var(--admin-border-strong)',
+                color: '#fff',
+                fontSize: '0.82rem',
+                fontWeight: 700,
                 cursor: (bcSubject && bcContent) ? 'pointer' : 'not-allowed',
                 transition: 'all 0.15s ease'
               }}
               onMouseEnter={e => {
                 if (bcSubject && bcContent) {
-                  e.currentTarget.style.background = 'linear-gradient(135deg, var(--admin-success), var(--admin-success))';
+                  e.currentTarget.style.background = 'var(--admin-accent)';
                   e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.3)';
                 }
               }}
               onMouseLeave={e => {
                 if (bcSubject && bcContent) {
-                  e.currentTarget.style.background = 'linear-gradient(135deg, var(--admin-success), #059669)';
+                  e.currentTarget.style.background = 'var(--admin-accent)';
                   e.currentTarget.style.boxShadow = 'none';
                 }
               }}
@@ -636,10 +636,10 @@ export default function SubscribersAdmin() {
         {loading ? (
           <div style={{ padding: 40, textAlign: 'center' }}>
             <div style={{ display: 'inline-flex', gap: 12, alignItems: 'center' }}>
-              <div style={{ 
-                width: 24, 
-                height: 24, 
-                border: '3px solid var(--admin-border)', 
+              <div style={{
+                width: 24,
+                height: 24,
+                border: '3px solid var(--admin-border)',
                 borderTopColor: 'var(--admin-accent)',
                 borderRadius: '50%',
                 animation: 'spin 0.8s linear infinite'
@@ -652,7 +652,7 @@ export default function SubscribersAdmin() {
           <div style={{ padding: 60, textAlign: 'center', color: 'var(--admin-text-dim)' }}>
             <div style={{ fontSize: '3rem', marginBottom: 16, opacity: 0.3 }}>📧</div>
             <p style={{ fontSize: '1rem', marginBottom: 8 }}>No subscribers found</p>
-            <p style={{ fontSize: '0.85rem', color: '#444' }}>
+            <p style={{ fontSize: '0.85rem', color: 'var(--admin-text-muted)' }}>
               {search ? 'Try a different search term' : 'Subscribers will appear here once people sign up'}
             </p>
           </div>
@@ -662,13 +662,13 @@ export default function SubscribersAdmin() {
               <thead>
                 <tr style={{ borderBottom: '1px solid var(--admin-border)', background: 'var(--admin-surface)' }}>
                   {['Email', 'Source', 'Status', 'Subscribed'].map(h => (
-                    <th key={h} style={{ 
-                      padding: '16px', 
-                      textAlign: 'left', 
-                      fontSize: '0.7rem', 
-                      color: 'var(--admin-text-dim)', 
-                      fontWeight: 600, 
-                      letterSpacing: '0.1em', 
+                    <th key={h} style={{
+                      padding: '16px',
+                      textAlign: 'left',
+                      fontSize: '0.7rem',
+                      color: 'var(--admin-text-dim)',
+                      fontWeight: 600,
+                      letterSpacing: '0.1em',
                       textTransform: 'uppercase',
                       position: 'sticky',
                       top: 0,
@@ -679,13 +679,13 @@ export default function SubscribersAdmin() {
               </thead>
               <tbody>
                 {filteredSubscribers.map((s: any) => (
-                  <tr 
-                    key={s.id} 
-                    style={{ 
+                  <tr
+                    key={s.id}
+                    style={{
                       borderBottom: '1px solid var(--admin-surface-raised)',
                       transition: 'background 0.15s ease'
                     }}
-                    onMouseEnter={e => e.currentTarget.style.background = '#0d0d0d'}
+                    onMouseEnter={e => e.currentTarget.style.background = 'var(--admin-surface)'}
                     onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                   >
                     <td style={{ padding: '16px', fontSize: '0.88rem', color: 'var(--admin-text)', fontWeight: 500 }}>
@@ -697,7 +697,7 @@ export default function SubscribersAdmin() {
                         borderRadius: 6,
                         fontSize: '0.7rem',
                         fontWeight: 600,
-                        background: 'var(--admin-accent)15',
+                        background: 'color-mix(in srgb, var(--admin-accent) 8%, transparent)',
                         color: 'var(--admin-accent)',
                         textTransform: 'capitalize'
                       }}>
@@ -705,13 +705,13 @@ export default function SubscribersAdmin() {
                       </span>
                     </td>
                     <td style={{ padding: '16px' }}>
-                      <span style={{ 
-                        padding: '5px 12px', 
-                        borderRadius: 6, 
-                        fontSize: '0.7rem', 
-                        fontWeight: 600, 
-                        background: s.is_active ? 'var(--admin-success)20' : 'var(--admin-text-dim)20', 
-                        color: s.is_active ? 'var(--admin-success)' : 'var(--admin-text-dim)', 
+                      <span style={{
+                        padding: '5px 12px',
+                        borderRadius: 6,
+                        fontSize: '0.7rem',
+                        fontWeight: 600,
+                        background: s.is_active ? 'color-mix(in srgb, var(--admin-success) 13%, transparent)' : 'color-mix(in srgb, var(--admin-text-dim) 13%, transparent)',
+                        color: s.is_active ? 'var(--admin-success)' : 'var(--admin-text-dim)',
                         textTransform: 'uppercase',
                         letterSpacing: '0.03em'
                       }}>
@@ -719,8 +719,8 @@ export default function SubscribersAdmin() {
                       </span>
                     </td>
                     <td style={{ padding: '16px', fontSize: '0.82rem', color: 'var(--admin-text-dim)' }}>
-                      {new Date(s.subscribed_at || s.created_at).toLocaleDateString('en-US', { 
-                        month: 'short', 
+                      {new Date(s.subscribed_at || s.created_at).toLocaleDateString('en-US', {
+                        month: 'short',
                         day: 'numeric',
                         year: 'numeric'
                       })}

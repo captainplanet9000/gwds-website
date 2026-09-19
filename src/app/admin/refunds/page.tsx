@@ -106,7 +106,7 @@ export default function AdminRefunds() {
   return (
     <>
       <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 800, marginBottom: 8, letterSpacing: '-0.03em', color: 'var(--admin-text)' }}>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 600, marginBottom: 8, letterSpacing: '-0.03em', color: 'var(--admin-text)' }}>
           Refunds &amp; Disputes
         </h1>
         <p style={{ fontSize: '0.9rem', color: 'var(--admin-text-dim)' }}>
@@ -116,12 +116,12 @@ export default function AdminRefunds() {
       </div>
 
       {error && (
-        <div style={{ ...cardStyle, borderColor: 'var(--admin-danger)50', background: 'var(--admin-danger)12', marginBottom: 16, color: 'var(--admin-danger)', fontSize: '0.85rem' }}>
+        <div style={{ ...cardStyle, borderColor: 'color-mix(in srgb, var(--admin-danger) 31%, transparent)', background: 'color-mix(in srgb, var(--admin-danger) 7%, transparent)', marginBottom: 16, color: 'var(--admin-danger)', fontSize: '0.85rem' }}>
           {error}
         </div>
       )}
       {notice && (
-        <div style={{ ...cardStyle, borderColor: 'var(--admin-success)50', background: 'var(--admin-success)12', marginBottom: 16, color: 'var(--admin-success)', fontSize: '0.85rem' }}>
+        <div style={{ ...cardStyle, borderColor: 'color-mix(in srgb, var(--admin-success) 31%, transparent)', background: 'color-mix(in srgb, var(--admin-success) 7%, transparent)', marginBottom: 16, color: 'var(--admin-success)', fontSize: '0.85rem' }}>
           {notice}
         </div>
       )}
@@ -134,13 +134,13 @@ export default function AdminRefunds() {
           { label: 'Total Refunded', value: summary ? money(summary.total_refunded_cents) : '—', color: 'var(--admin-success)', icon: '💸' },
         ].map((s) => (
           <div key={s.label} style={{ ...cardStyle, position: 'relative', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', top: 0, right: 0, width: 80, height: 80, background: `radial-gradient(circle at top right, ${s.color}15, transparent)` }} />
+            <div style={{ position: 'absolute', top: 0, right: 0, width: 80, height: 80, background: 'transparent' }} />
             <div style={{ position: 'relative' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
                 <p style={{ fontSize: '0.72rem', color: 'var(--admin-text-dim)', letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 600 }}>{s.label}</p>
-                <span style={{ fontSize: '1.3rem', opacity: 0.5 }}>{s.icon}</span>
+
               </div>
-              <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 800, color: s.color, letterSpacing: '-0.02em' }}>{s.value}</p>
+              <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 600, color: 'var(--admin-text)', letterSpacing: '-0.02em' }}>{s.value}</p>
             </div>
           </div>
         ))}
@@ -169,7 +169,7 @@ export default function AdminRefunds() {
                     <tr key={r.id} style={{ borderBottom: '1px solid var(--admin-surface-raised)' }}>
                       <td style={{ padding: '14px 16px', fontSize: '0.85rem', color: 'var(--admin-text)' }}>{r.order?.customer_email || '—'}</td>
                       <td style={{ padding: '14px 16px', fontSize: '0.78rem', color: 'var(--admin-text-muted)', fontFamily: 'monospace' }}>{r.order_id.slice(0, 8)}</td>
-                      <td style={{ padding: '14px 16px', fontSize: '0.82rem', color: '#aaa', maxWidth: 260 }}>{r.reason}</td>
+                      <td style={{ padding: '14px 16px', fontSize: '0.82rem', color: 'var(--admin-text-muted)', maxWidth: 260 }}>{r.reason}</td>
                       <td style={{ padding: '14px 16px', fontSize: '0.85rem', color: 'var(--admin-text)' }}>{r.order ? money(r.order.total_cents, r.order.currency) : '—'}</td>
                       <td style={{ padding: '14px 16px' }}><span style={badgeStyle(statusColor(r.status))}>{r.status}</span></td>
                       <td style={{ padding: '14px 16px', fontSize: '0.78rem', color: 'var(--admin-text-dim)' }}>{new Date(r.created_at).toLocaleDateString()}</td>
@@ -227,7 +227,7 @@ export default function AdminRefunds() {
                       <Fragment key={order.id}>
                         <tr
                           onClick={() => setExpanded(isOpen ? null : order.id)}
-                          style={{ borderBottom: '1px solid var(--admin-surface-raised)', cursor: 'pointer', background: isOpen ? '#0f0f0f' : 'transparent' }}
+                          style={{ borderBottom: '1px solid var(--admin-surface-raised)', cursor: 'pointer', background: isOpen ? 'var(--admin-surface)' : 'transparent' }}
                         >
                           <td style={{ padding: '14px 16px' }}>
                             <div style={{ fontSize: '0.85rem', color: 'var(--admin-text)' }}>{order.customer_name || order.customer_email}</div>
@@ -253,12 +253,12 @@ export default function AdminRefunds() {
                           </td>
                         </tr>
                         {isOpen && (
-                          <tr key={`${order.id}-detail`} style={{ borderBottom: '1px solid var(--admin-surface-raised)', background: '#0d0d0d' }}>
+                          <tr key={`${order.id}-detail`} style={{ borderBottom: '1px solid var(--admin-surface-raised)', background: 'var(--admin-surface)' }}>
                             <td colSpan={6} style={{ padding: '16px 20px' }}>
                               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 20 }}>
                                 <div>
                                   <p style={{ fontSize: '0.7rem', color: 'var(--admin-text-dim)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>Order</p>
-                                  <p style={{ fontSize: '0.78rem', color: '#aaa', fontFamily: 'monospace' }}>{order.id}</p>
+                                  <p style={{ fontSize: '0.78rem', color: 'var(--admin-text-muted)', fontFamily: 'monospace' }}>{order.id}</p>
                                   <p style={{ fontSize: '0.78rem', color: 'var(--admin-text-muted)', marginTop: 4 }}>Payment intent: {order.payment_intent_id || '—'}</p>
                                   {order.failure_reason && <p style={{ fontSize: '0.78rem', color: 'var(--admin-danger)', marginTop: 4 }}>Reason: {order.failure_reason}</p>}
                                   <p style={{ fontSize: '0.78rem', color: 'var(--admin-text-muted)', marginTop: 4 }}>Downloads revoked: {order.downloads_revoked} / {order.downloads_total}</p>
@@ -268,7 +268,7 @@ export default function AdminRefunds() {
                                   {order.items.map((item) => {
                                     const ent = order.entitlements.find((e) => e.product_id === item.product_id);
                                     return (
-                                      <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', color: '#aaa', marginBottom: 4 }}>
+                                      <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', color: 'var(--admin-text-muted)', marginBottom: 4 }}>
                                         <span>{item.product_name} ×{item.quantity}</span>
                                         <span style={{ color: ent?.status === 'revoked' ? 'var(--admin-danger)' : 'var(--admin-success)' }}>{ent?.status || 'n/a'}</span>
                                       </div>
@@ -279,7 +279,7 @@ export default function AdminRefunds() {
                                   <p style={{ fontSize: '0.7rem', color: 'var(--admin-text-dim)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>Stripe Event Timeline</p>
                                   {order.events.length === 0 && <p style={{ fontSize: '0.78rem', color: 'var(--admin-text-dim)' }}>No events recorded.</p>}
                                   {order.events.map((ev) => (
-                                    <div key={ev.stripe_event_id} style={{ fontSize: '0.76rem', color: '#aaa', marginBottom: 4 }}>
+                                    <div key={ev.stripe_event_id} style={{ fontSize: '0.76rem', color: 'var(--admin-text-muted)', marginBottom: 4 }}>
                                       <span style={{ color: 'var(--admin-text-muted)' }}>{new Date(ev.received_at).toLocaleString()}</span>{' — '}
                                       {ev.event_type} <span style={{ color: statusColor(ev.status === 'completed' ? 'active' : ev.status) }}>({ev.status})</span>
                                     </div>

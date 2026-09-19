@@ -39,33 +39,33 @@ type ProvisionAlert = {
 };
 
 const card: React.CSSProperties = {
-  background: "#07100d",
-  border: "1px solid #17352b",
+  background: "var(--admin-surface)",
+  border: "1px solid var(--admin-border)",
   borderRadius: 12,
   padding: 20,
 };
 const input: React.CSSProperties = {
   width: "100%",
-  background: "#030806",
-  color: "#e5f7ef",
-  border: "1px solid #21483b",
+  background: "var(--admin-surface)",
+  color: "var(--admin-text)",
+  border: "1px solid var(--admin-border)",
   borderRadius: 8,
   padding: "10px 12px",
 };
 const button: React.CSSProperties = {
-  background: "#4ade9f",
-  color: "#03110b",
+  background: "var(--admin-accent)",
+  color: "#ffffff",
   border: 0,
   borderRadius: 7,
   padding: "9px 12px",
-  fontWeight: 800,
+  fontWeight: 600,
   cursor: "pointer",
 };
 const secondary: React.CSSProperties = {
   ...button,
-  background: "#10251e",
-  color: "#a7f3d0",
-  border: "1px solid #245443",
+  background: "var(--admin-border)",
+  color: "var(--admin-success)",
+  border: "1px solid var(--admin-border)",
 };
 
 function Badge({ value }: { value: string }) {
@@ -96,9 +96,9 @@ function Badge({ value }: { value: string }) {
         padding: "4px 8px",
         borderRadius: 999,
         fontSize: 11,
-        fontWeight: 800,
-        background: good ? "#0e3b2b" : bad ? "#441b22" : "#25291f",
-        color: good ? "#6ee7b7" : bad ? "#fda4af" : "#d9d59b",
+        fontWeight: 600,
+        background: good ? "#edf6f1" : bad ? "#e8bdc0" : "var(--admin-surface-raised)",
+        color: good ? "var(--admin-success)" : bad ? "var(--admin-danger)" : "var(--admin-text-muted)",
       }}
     >
       {value || "unknown"}
@@ -222,7 +222,7 @@ export default function HostingOperationsPage() {
 
   if (!data)
     return (
-      <div style={{ color: "#789488" }}>
+      <div style={{ color: "var(--admin-text-muted)" }}>
         {error || "Loading hosting operations..."}
       </div>
     );
@@ -240,7 +240,7 @@ export default function HostingOperationsPage() {
   ];
   const alertCount = alerts?.length ?? 0;
   return (
-    <div style={{ color: "#e5f7ef" }}>
+    <div style={{ color: "var(--admin-text)" }}>
       <div
         style={{
           display: "flex",
@@ -254,19 +254,19 @@ export default function HostingOperationsPage() {
         <div>
           <div
             style={{
-              color: "#4ade9f",
+              color: "var(--admin-accent)",
               fontSize: 11,
               letterSpacing: ".16em",
               textTransform: "uppercase",
-              fontWeight: 800,
+              fontWeight: 600,
             }}
           >
             Managed service control plane
           </div>
           <h1 style={{ margin: "8px 0 4px", fontSize: 30 }}>
-            Hosting Operations
+            Hosting operations
           </h1>
-          <p style={{ color: "#789488", margin: 0 }}>
+          <p style={{ color: "var(--admin-text-muted)", margin: 0 }}>
             Billing, onboarding, provisioning, runtime health,
             recovery, incidents and teardown.
           </p>
@@ -283,8 +283,8 @@ export default function HostingOperationsPage() {
           role="alert"
           style={{
             ...card,
-            borderColor: "#7f1d1d",
-            background: "#2a0f12",
+            borderColor: "#e8bdc0",
+            background: "#fff3f3",
             marginBottom: 20,
             display: "flex",
             justifyContent: "space-between",
@@ -294,11 +294,11 @@ export default function HostingOperationsPage() {
           }}
         >
           <div>
-            <strong style={{ color: "#fda4af" }}>
+            <strong style={{ color: "var(--admin-danger)" }}>
               {alertCount} paid customer{alertCount === 1 ? "" : "s"} charged with provisioning
               stuck.
             </strong>
-            <p style={{ color: "#f3b4bb", margin: "6px 0 0", lineHeight: 1.5 }}>
+            <p style={{ color: "var(--admin-danger)", margin: "6px 0 0", lineHeight: 1.5 }}>
               Automatic retry has either given up (config problem — needs a fix) or run out of
               attempts. Nobody is retrying these on their own any more.
             </p>
@@ -309,7 +309,7 @@ export default function HostingOperationsPage() {
         </div>
       )}
       {alertsError && (
-        <div style={{ ...card, borderColor: "#7f1d1d", color: "#fecaca", marginBottom: 18 }}>
+        <div style={{ ...card, borderColor: "#e8bdc0", color: "var(--admin-danger)", marginBottom: 18 }}>
           Provisioning alerts: {alertsError}
         </div>
       )}
@@ -317,15 +317,15 @@ export default function HostingOperationsPage() {
         <div
           style={{
             ...card,
-            borderColor: "#806b22",
-            background: "#1c1808",
+            borderColor: "#e4d5b2",
+            background: "#fff8eb",
             marginBottom: 20,
           }}
         >
-          <strong style={{ color: "#fde68a" }}>
+          <strong style={{ color: "var(--admin-warning)" }}>
             Production activation gate is closed.
           </strong>
-          <p style={{ color: "#cbbf8c", margin: "7px 0 0", lineHeight: 1.5 }}>
+          <p style={{ color: "var(--admin-warning)", margin: "7px 0 0", lineHeight: 1.5 }}>
             Plans and operations can be configured, but checkout remains blocked
             by <code>NEXT_PUBLIC_HOSTING_SALES_ENABLED=false</code>. A plan gate
             alone cannot begin charging.
@@ -336,8 +336,8 @@ export default function HostingOperationsPage() {
         <div
           style={{
             ...card,
-            borderColor: "#7f1d1d",
-            color: "#fecaca",
+            borderColor: "#e8bdc0",
+            color: "var(--admin-danger)",
             marginBottom: 18,
           }}
         >
@@ -369,9 +369,9 @@ export default function HostingOperationsPage() {
                   padding: "1px 7px",
                   borderRadius: 999,
                   fontSize: 11,
-                  fontWeight: 800,
-                  background: "#7f1d1d",
-                  color: "#fecaca",
+                  fontWeight: 600,
+                  background: "#e8bdc0",
+                  color: "var(--admin-danger)",
                 }}
               >
                 {alertCount}
@@ -399,10 +399,10 @@ export default function HostingOperationsPage() {
               }}
             >
               <div>
-                <h2 style={{ fontSize: 17, margin: 0 }}>Fleet — real tenant processes</h2>
+                <h2 style={{ fontSize: 17, margin: 0 }}>Tenant workspaces</h2>
                 <p
                   style={{
-                    color: "#789488",
+                    color: "var(--admin-text-muted)",
                     margin: "6px 0 0",
                     fontSize: 13,
                     lineHeight: 1.5,
@@ -423,7 +423,7 @@ export default function HostingOperationsPage() {
               </div>
             </div>
             {fleet.error && (
-              <div style={{ color: "#fecaca", fontSize: 13, marginTop: 10 }}>
+              <div style={{ color: "var(--admin-danger)", fontSize: 13, marginTop: 10 }}>
                 Fleet: {fleet.error} — counts below are the last successful read.
               </div>
             )}
@@ -442,19 +442,19 @@ export default function HostingOperationsPage() {
                     key={label as string}
                     style={
                       isAlarm
-                        ? { ...card, borderColor: "#7f1d1d", background: "#2a0f12" }
+                        ? { ...card, borderColor: "#e8bdc0", background: "#fff3f3" }
                         : card
                     }
                   >
-                    <div style={{ color: isAlarm ? "#f3b4bb" : "#789488", fontSize: 12 }}>
+                    <div style={{ color: isAlarm ? "var(--admin-danger)" : "var(--admin-text-muted)", fontSize: 12 }}>
                       {label}
                     </div>
                     <div
                       style={{
                         fontSize: 26,
-                        fontWeight: 850,
+                        fontWeight: 600,
                         marginTop: 8,
-                        color: isAlarm ? "#fda4af" : undefined,
+                        color: isAlarm ? "var(--admin-danger)" : undefined,
                       }}
                     >
                       {/* "…" until the first read resolves -- the same rule the provisioning
@@ -498,15 +498,15 @@ export default function HostingOperationsPage() {
               return (
                 <div
                   key={label as string}
-                  style={isAlertTile ? { ...card, borderColor: "#7f1d1d", background: "#2a0f12" } : card}
+                  style={isAlertTile ? { ...card, borderColor: "#e8bdc0", background: "#fff3f3" } : card}
                 >
-                  <div style={{ color: isAlertTile ? "#f3b4bb" : "#789488", fontSize: 12 }}>{label}</div>
+                  <div style={{ color: isAlertTile ? "var(--admin-danger)" : "var(--admin-text-muted)", fontSize: 12 }}>{label}</div>
                   <div
                     style={{
                       fontSize: 26,
-                      fontWeight: 850,
+                      fontWeight: 600,
                       marginTop: 8,
-                      color: isAlertTile ? "#fda4af" : undefined,
+                      color: isAlertTile ? "var(--admin-danger)" : undefined,
                     }}
                   >
                     {value}
@@ -517,14 +517,14 @@ export default function HostingOperationsPage() {
           </div>
           <section style={{ ...card, marginBottom: 18 }}>
             <h2 style={{ fontSize: 17, marginTop: 0 }}>Host admission and placement</h2>
-            <p style={{ color: "#a7bdb3", fontSize: 13 }}>
+            <p style={{ color: "var(--admin-text-muted)", fontSize: 13 }}>
               New paid tenants are placed only on a registered host with admissions enabled and a
               free slot. A disabled host can keep serving existing tenants without accepting new ones.
             </p>
             <div className="admin-table-wrap">
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
-                  <tr style={{ color: "#789488", fontSize: 12, textAlign: "left" }}>
+                  <tr style={{ color: "var(--admin-text-muted)", fontSize: 12, textAlign: "left" }}>
                     <th style={{ padding: "9px 8px" }}>Host</th>
                     <th style={{ padding: "9px 8px" }}>Admissions</th>
                     <th style={{ padding: "9px 8px" }}>Assigned</th>
@@ -535,7 +535,7 @@ export default function HostingOperationsPage() {
                 </thead>
                 <tbody>
                   {data.hosts.map((host) => (
-                    <tr key={host.host} style={{ borderTop: "1px solid #17352b" }}>
+                    <tr key={host.host} style={{ borderTop: "1px solid var(--admin-border)" }}>
                       <td style={{ padding: "11px 8px" }}><code>{host.host}</code></td>
                       <td style={{ padding: "11px 8px" }}>
                         <Badge value={host.admissions_enabled ? "enabled" : "disabled"} />
@@ -543,7 +543,7 @@ export default function HostingOperationsPage() {
                       <td style={{ padding: "11px 8px" }}>{host.active_tenants}</td>
                       <td style={{ padding: "11px 8px" }}>{host.max_tenants}</td>
                       <td style={{ padding: "11px 8px" }}>{host.available_slots}</td>
-                      <td style={{ padding: "11px 8px", color: "#789488" }}>{host.note || "—"}</td>
+                      <td style={{ padding: "11px 8px", color: "var(--admin-text-muted)" }}>{host.note || "—"}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -553,7 +553,7 @@ export default function HostingOperationsPage() {
           <div className="admin-stat-grid-2">
             <section style={card}>
               <h2 style={{ fontSize: 17, marginTop: 0 }}>Launch checklist</h2>
-              <p style={{ color: "#a7bdb3", fontSize: 13 }}>
+              <p style={{ color: "var(--admin-text-muted)", fontSize: 13 }}>
                 Subscription reservations: {data.stats.reservedSubscriptions} / {data.stats.subscriptionCapacity}.
                 This admission limit is separate from measured worker capacity.
               </p>
@@ -596,7 +596,7 @@ export default function HostingOperationsPage() {
                     display: "flex",
                     justifyContent: "space-between",
                     padding: "11px 0",
-                    borderTop: "1px solid #17352b",
+                    borderTop: "1px solid var(--admin-border)",
                   }}
                 >
                   <span>{label}</span>
@@ -605,7 +605,7 @@ export default function HostingOperationsPage() {
               ))}
             </section>
             <section style={card}>
-              <h2 style={{ fontSize: 17, marginTop: 0 }}>Immediate queue</h2>
+              <h2 style={{ fontSize: 17, marginTop: 0 }}>Work queue</h2>
               {data.tasks
                 .filter((t) =>
                   ["queued", "in_progress", "blocked", "failed"].includes(
@@ -618,7 +618,7 @@ export default function HostingOperationsPage() {
                     key={task.id}
                     style={{
                       padding: "10px 0",
-                      borderTop: "1px solid #17352b",
+                      borderTop: "1px solid var(--admin-border)",
                     }}
                   >
                     <div
@@ -631,14 +631,14 @@ export default function HostingOperationsPage() {
                       <Badge value={task.status} />
                     </div>
                     <div
-                      style={{ color: "#789488", fontSize: 12, marginTop: 4 }}
+                      style={{ color: "var(--admin-text-muted)", fontSize: 12, marginTop: 4 }}
                     >
                       {task.instance_id}
                     </div>
                   </div>
                 ))}
               {!data.tasks.length && (
-                <p style={{ color: "#789488" }}>No tasks yet.</p>
+                <p style={{ color: "var(--admin-text-muted)" }}>No tasks yet.</p>
               )}
             </section>
           </div>
@@ -666,7 +666,7 @@ export default function HostingOperationsPage() {
                       style={{
                         textAlign: "left",
                         padding: 10,
-                        color: "#789488",
+                        color: "var(--admin-text-muted)",
                         fontSize: 11,
                       }}
                     >
@@ -677,10 +677,10 @@ export default function HostingOperationsPage() {
               </thead>
               <tbody>
                 {data.subscriptions.map((row) => (
-                  <tr key={row.id} style={{ borderTop: "1px solid #17352b" }}>
+                  <tr key={row.id} style={{ borderTop: "1px solid var(--admin-border)" }}>
                     <td style={{ padding: 10 }}>
                       <div>{row.customer_email}</div>
-                      <small style={{ color: "#789488" }}>
+                      <small style={{ color: "var(--admin-text-muted)" }}>
                         {row.id.slice(0, 8)}
                       </small>
                     </td>
@@ -719,7 +719,7 @@ export default function HostingOperationsPage() {
               <div
                 key={row.id}
                 style={{
-                  borderTop: "1px solid #17352b",
+                  borderTop: "1px solid var(--admin-border)",
                   padding: "16px 0",
                   display: "grid",
                   gridTemplateColumns: "minmax(220px,1fr) 2fr auto",
@@ -729,11 +729,11 @@ export default function HostingOperationsPage() {
               >
                 <div>
                   <strong>{row.workspace_name || "Unnamed workspace"}</strong>
-                  <div style={{ color: "#789488", fontSize: 12 }}>
+                  <div style={{ color: "var(--admin-text-muted)", fontSize: 12 }}>
                     {sub?.customer_email} · {sub?.plan_id}
                   </div>
                 </div>
-                <div style={{ fontSize: 13, color: "#b6cbc2" }}>
+                <div style={{ fontSize: 13, color: "var(--admin-text-muted)" }}>
                   {row.environment} · {row.region} · {row.risk_profile} ·{" "}
                   {row.requested_agents?.join(", ") || "no agents"}
                   <br />
@@ -787,7 +787,7 @@ export default function HostingOperationsPage() {
           </h2>
           <p
             style={{
-              color: "#789488",
+              color: "var(--admin-text-muted)",
               margin: "0 0 14px",
               fontSize: 13,
               lineHeight: 1.5,
@@ -817,10 +817,10 @@ export default function HostingOperationsPage() {
                   style={{
                     width: "100%",
                     textAlign: "left",
-                    background: selectedId === row.id ? "#10251e" : "transparent",
-                    color: "#e5f7ef",
+                    background: selectedId === row.id ? "var(--admin-border)" : "transparent",
+                    color: "var(--admin-text)",
                     border: 0,
-                    borderTop: "1px solid #17352b",
+                    borderTop: "1px solid var(--admin-border)",
                     padding: "14px 10px",
                     cursor: "pointer",
                   }}
@@ -831,7 +831,7 @@ export default function HostingOperationsPage() {
                     <strong>{row.tenant_key}</strong>
                     <Badge value={row.status} />
                   </div>
-                  <div style={{ color: "#789488", fontSize: 12, marginTop: 5 }}>
+                  <div style={{ color: "var(--admin-text-muted)", fontSize: 12, marginTop: 5 }}>
                     {subscriptionFor(row.subscription_id)?.customer_email} ·{" "}
                     {row.region} · health {row.health_status}
                   </div>
@@ -849,7 +849,7 @@ export default function HostingOperationsPage() {
                     ["databaseRef", "Tenant database reference"],
                     ["releaseVersion", "Release version"],
                   ].map(([key, label]) => (
-                    <label key={key} style={{ fontSize: 12, color: "#789488" }}>
+                    <label key={key} style={{ fontSize: 12, color: "var(--admin-text-muted)" }}>
                       {label}
                       <input
                         style={{ ...input, marginTop: 5 }}
@@ -956,7 +956,7 @@ export default function HostingOperationsPage() {
                     Activate tenant
                   </button>
                   <button
-                    style={{ ...secondary, color: "#fda4af" }}
+                    style={{ ...secondary, color: "var(--admin-danger)" }}
                     disabled={!!busy}
                     onClick={() =>
                       mutate(`suspend-${selected.id}`, {
@@ -972,7 +972,7 @@ export default function HostingOperationsPage() {
                 <div
                   style={{
                     marginTop: 16,
-                    color: "#789488",
+                    color: "var(--admin-text-muted)",
                     fontSize: 12,
                     lineHeight: 1.6,
                   }}
@@ -994,7 +994,7 @@ export default function HostingOperationsPage() {
             <div
               key={task.id}
               style={{
-                borderTop: "1px solid #17352b",
+                borderTop: "1px solid var(--admin-border)",
                 padding: "14px 0",
                 display: "grid",
                 gridTemplateColumns: "1fr 150px auto",
@@ -1004,12 +1004,12 @@ export default function HostingOperationsPage() {
             >
               <div>
                 <strong>{task.task_type}</strong>
-                <div style={{ color: "#789488", fontSize: 12 }}>
+                <div style={{ color: "var(--admin-text-muted)", fontSize: 12 }}>
                   {task.instance_id} · priority {task.priority} · attempt{" "}
                   {task.attempts}
                 </div>
                 {task.last_error && (
-                  <div style={{ color: "#fda4af", fontSize: 12 }}>
+                  <div style={{ color: "var(--admin-danger)", fontSize: 12 }}>
                     {task.last_error}
                   </div>
                 )}
@@ -1044,7 +1044,7 @@ export default function HostingOperationsPage() {
                   Complete
                 </button>
                 <button
-                  style={{ ...secondary, color: "#fda4af" }}
+                  style={{ ...secondary, color: "var(--admin-danger)" }}
                   disabled={!!busy}
                   onClick={() =>
                     mutate(`fail-${task.id}`, {
@@ -1066,7 +1066,7 @@ export default function HostingOperationsPage() {
       {tab === "provisioning" && (
         <section style={card}>
           <h2 style={{ marginTop: 0 }}>Provisioning alerts</h2>
-          <p style={{ color: "#789488", marginTop: -6 }}>
+          <p style={{ color: "var(--admin-text-muted)", marginTop: -6 }}>
             Paid-signup tenants (C:/GWDS/hosting control plane) whose provisioning failed and will
             not retry itself. <strong>Terminal</strong> means the failure names a specific,
             considered cause (a config or safety refusal) that a retry cannot fix on its own —
@@ -1075,16 +1075,16 @@ export default function HostingOperationsPage() {
             times on its own, but it kept failing anyway.
           </p>
           {alerts === null && !alertsError && (
-            <p style={{ color: "#789488" }}>Loading…</p>
+            <p style={{ color: "var(--admin-text-muted)" }}>Loading…</p>
           )}
           {alerts !== null && alerts.length === 0 && (
-            <p style={{ color: "#789488" }}>Nothing needs attention right now.</p>
+            <p style={{ color: "var(--admin-text-muted)" }}>Nothing needs attention right now.</p>
           )}
           {(alerts || []).map((alert) => (
             <div
               key={alert.command_id}
               style={{
-                borderTop: "1px solid #17352b",
+                borderTop: "1px solid var(--admin-border)",
                 padding: "16px 0",
                 display: "grid",
                 gridTemplateColumns: "minmax(220px,1fr) 2fr auto",
@@ -1094,14 +1094,14 @@ export default function HostingOperationsPage() {
             >
               <div>
                 <strong>{alert.slug}</strong>
-                <div style={{ color: "#789488", fontSize: 12, marginTop: 4 }}>
+                <div style={{ color: "var(--admin-text-muted)", fontSize: 12, marginTop: 4 }}>
                   {alert.attempts} attempt{alert.attempts === 1 ? "" : "s"}
                   {alert.finished_at
                     ? ` · last failed ${new Date(alert.finished_at).toLocaleString()}`
                     : ""}
                 </div>
               </div>
-              <div style={{ fontSize: 13, color: "#b6cbc2" }}>
+              <div style={{ fontSize: 13, color: "var(--admin-text-muted)" }}>
                 {alert.failing_step && (
                   <div style={{ marginBottom: 4 }}>
                     Failed step: <code>{alert.failing_step}</code>
@@ -1109,7 +1109,7 @@ export default function HostingOperationsPage() {
                 )}
                 <div>{alert.error || alert.failing_step_error || "No error text recorded."}</div>
                 {alert.error_code && (
-                  <div style={{ color: "#789488", fontSize: 11, marginTop: 4 }}>
+                  <div style={{ color: "var(--admin-text-muted)", fontSize: 11, marginTop: 4 }}>
                     code: {alert.error_code}
                   </div>
                 )}
@@ -1121,9 +1121,9 @@ export default function HostingOperationsPage() {
                     padding: "4px 8px",
                     borderRadius: 999,
                     fontSize: 11,
-                    fontWeight: 800,
-                    background: "#441b22",
-                    color: "#fda4af",
+                    fontWeight: 600,
+                    background: "#e8bdc0",
+                    color: "var(--admin-danger)",
                   }}
                 >
                   {alert.classification === "terminal" ? "terminal — needs a fix" : "retries exhausted"}
@@ -1145,7 +1145,7 @@ export default function HostingOperationsPage() {
         <div className="admin-stat-grid-2">
           <section style={card}>
             <h2 style={{ marginTop: 0 }}>Open an incident</h2>
-            <label style={{ color: "#789488", fontSize: 12 }}>
+            <label style={{ color: "var(--admin-text-muted)", fontSize: 12 }}>
               Instance
               <select
                 style={{ ...input, marginTop: 5, marginBottom: 10 }}
@@ -1206,7 +1206,7 @@ export default function HostingOperationsPage() {
             {data.incidents.map((row) => (
               <div
                 key={row.id}
-                style={{ padding: "12px 0", borderTop: "1px solid #17352b" }}
+                style={{ padding: "12px 0", borderTop: "1px solid var(--admin-border)" }}
               >
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
@@ -1216,7 +1216,7 @@ export default function HostingOperationsPage() {
                     <Badge value={row.severity} /> <Badge value={row.status} />
                   </span>
                 </div>
-                <p style={{ color: "#9bb3a9", fontSize: 13 }}>
+                <p style={{ color: "var(--admin-text-muted)", fontSize: 13 }}>
                   {row.description}
                 </p>
                 {row.status !== "resolved" && (
@@ -1248,7 +1248,7 @@ export default function HostingOperationsPage() {
       {tab === "plans" && (
         <section style={card}>
           <h2 style={{ marginTop: 0 }}>Plan launch gates</h2>
-          <p style={{ color: "#789488" }}>
+          <p style={{ color: "var(--admin-text-muted)" }}>
             A launch-ready plan still cannot charge while the global production
             switch is off.
           </p>
@@ -1257,7 +1257,7 @@ export default function HostingOperationsPage() {
               key={plan.id}
               style={{
                 padding: "14px 0",
-                borderTop: "1px solid #17352b",
+                borderTop: "1px solid var(--admin-border)",
                 display: "grid",
                 gridTemplateColumns: "1fr 150px 160px auto",
                 gap: 12,
@@ -1266,7 +1266,7 @@ export default function HostingOperationsPage() {
             >
               <div>
                 <strong>{plan.name}</strong>
-                <div style={{ color: "#789488", fontSize: 12 }}>
+                <div style={{ color: "var(--admin-text-muted)", fontSize: 12 }}>
                   {plan.description}
                 </div>
               </div>
@@ -1305,11 +1305,11 @@ export default function HostingOperationsPage() {
                 gridTemplateColumns: "170px 90px 1fr",
                 gap: 12,
                 padding: "10px 0",
-                borderTop: "1px solid #17352b",
+                borderTop: "1px solid var(--admin-border)",
                 fontSize: 12,
               }}
             >
-              <span style={{ color: "#789488" }}>
+              <span style={{ color: "var(--admin-text-muted)" }}>
                 {new Date(row.created_at).toLocaleString()}
               </span>
               <Badge value={row.actor_type} />

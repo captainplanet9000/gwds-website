@@ -31,16 +31,16 @@ export default function MessagesAdmin() {
   };
 
   const statusColors: Record<string, { bg: string; text: string; dot: string }> = {
-    new: { bg: 'var(--admin-danger)20', text: 'var(--admin-danger)', dot: 'var(--admin-danger)' },
-    read: { bg: 'var(--admin-warning)20', text: 'var(--admin-warning)', dot: 'var(--admin-warning)' },
-    replied: { bg: 'var(--admin-success)20', text: 'var(--admin-success)', dot: 'var(--admin-success)' },
-    archived: { bg: 'var(--admin-text-dim)20', text: 'var(--admin-text-dim)', dot: 'var(--admin-text-dim)' },
+    new: { bg: 'color-mix(in srgb, var(--admin-danger) 13%, transparent)', text: 'var(--admin-danger)', dot: 'var(--admin-danger)' },
+    read: { bg: 'color-mix(in srgb, var(--admin-warning) 13%, transparent)', text: 'var(--admin-warning)', dot: 'var(--admin-warning)' },
+    replied: { bg: 'color-mix(in srgb, var(--admin-success) 13%, transparent)', text: 'var(--admin-success)', dot: 'var(--admin-success)' },
+    archived: { bg: 'color-mix(in srgb, var(--admin-text-dim) 13%, transparent)', text: 'var(--admin-text-dim)', dot: 'var(--admin-text-dim)' },
   };
 
   const filteredContacts = contacts.filter(c => {
     if (filter !== 'all' && c.status !== filter) return false;
-    if (search && 
-        !c.name?.toLowerCase().includes(search.toLowerCase()) && 
+    if (search &&
+        !c.name?.toLowerCase().includes(search.toLowerCase()) &&
         !c.email?.toLowerCase().includes(search.toLowerCase()) &&
         !c.subject?.toLowerCase().includes(search.toLowerCase()) &&
         !c.message?.toLowerCase().includes(search.toLowerCase())) {
@@ -60,19 +60,19 @@ export default function MessagesAdmin() {
     email: messages[0].email,
     name: messages[0].name,
     count: messages.length,
-    latest: messages.sort((a: any, b: any) => 
+    latest: messages.sort((a: any, b: any) =>
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     )[0],
-    messages: messages.sort((a: any, b: any) => 
+    messages: messages.sort((a: any, b: any) =>
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     )
-  })).sort((a, b) => 
+  })).sort((a, b) =>
     new Date(b.latest.created_at).getTime() - new Date(a.latest.created_at).getTime()
   );
 
   const newMessages = contacts.filter(c => c.status === 'new').length;
   const repliedMessages = contacts.filter(c => c.status === 'replied').length;
-  
+
   const getRelativeTime = (date: string) => {
     const now = new Date();
     const then = new Date(date);
@@ -80,7 +80,7 @@ export default function MessagesAdmin() {
     const minutes = Math.floor(diff / 60000);
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
-    
+
     if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
     if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
     if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
@@ -90,10 +90,10 @@ export default function MessagesAdmin() {
   return (
     <>
       <div style={{ marginBottom: 32 }}>
-        <h1 style={{ 
-          fontFamily: 'var(--font-display)', 
-          fontSize: '2rem', 
-          fontWeight: 800, 
+        <h1 style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: '2rem',
+          fontWeight: 600,
           marginBottom: 8,
           letterSpacing: '-0.03em',
           color: 'var(--admin-text)'
@@ -125,14 +125,14 @@ export default function MessagesAdmin() {
               right: 0,
               width: 80,
               height: 80,
-              background: `radial-gradient(circle at top right, ${s.color}15, transparent)`
+              background: 'transparent'
             }}></div>
             <div style={{ position: 'relative' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
                 <p style={{ fontSize: '0.72rem', color: 'var(--admin-text-dim)', letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 600 }}>{s.label}</p>
-                <span style={{ fontSize: '1.3rem', opacity: 0.5 }}>{s.icon}</span>
+
               </div>
-              <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 800, color: s.color, letterSpacing: '-0.02em' }}>{s.value}</p>
+              <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 600, color: 'var(--admin-text)', letterSpacing: '-0.02em' }}>{s.value}</p>
             </div>
           </div>
         ))}
@@ -162,7 +162,7 @@ export default function MessagesAdmin() {
                 padding: '10px 18px',
                 borderRadius: 8,
                 border: filter === f.key ? '1px solid var(--admin-accent)' : '1px solid var(--admin-border)',
-                background: filter === f.key ? 'var(--admin-accent)10' : 'transparent',
+                background: filter === f.key ? 'color-mix(in srgb, var(--admin-accent) 6%, transparent)' : 'transparent',
                 color: filter === f.key ? 'var(--admin-accent)' : 'var(--admin-text-muted)',
                 fontSize: '0.8rem',
                 fontWeight: 600,
@@ -187,11 +187,11 @@ export default function MessagesAdmin() {
               }}
             >
               {f.label}
-              <span style={{ 
-                fontSize: '0.7rem', 
-                padding: '2px 6px', 
-                borderRadius: 4, 
-                background: filter === f.key ? 'var(--admin-accent)20' : 'var(--admin-border)',
+              <span style={{
+                fontSize: '0.7rem',
+                padding: '2px 6px',
+                borderRadius: 4,
+                background: filter === f.key ? 'color-mix(in srgb, var(--admin-accent) 13%, transparent)' : 'var(--admin-border)',
                 minWidth: 20,
                 textAlign: 'center'
               }}>
@@ -225,18 +225,18 @@ export default function MessagesAdmin() {
       {/* Messages */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         {loading ? (
-          <div style={{ 
-            background: 'var(--admin-surface)', 
-            border: '1px solid var(--admin-border)', 
-            borderRadius: 12, 
-            padding: 40, 
-            textAlign: 'center' 
+          <div style={{
+            background: 'var(--admin-surface)',
+            border: '1px solid var(--admin-border)',
+            borderRadius: 12,
+            padding: 40,
+            textAlign: 'center'
           }}>
             <div style={{ display: 'inline-flex', gap: 12, alignItems: 'center' }}>
-              <div style={{ 
-                width: 24, 
-                height: 24, 
-                border: '3px solid var(--admin-border)', 
+              <div style={{
+                width: 24,
+                height: 24,
+                border: '3px solid var(--admin-border)',
                 borderTopColor: 'var(--admin-accent)',
                 borderRadius: '50%',
                 animation: 'spin 0.8s linear infinite'
@@ -246,17 +246,17 @@ export default function MessagesAdmin() {
             </div>
           </div>
         ) : threads.length === 0 ? (
-          <div style={{ 
-            background: 'var(--admin-surface)', 
-            border: '1px solid var(--admin-border)', 
-            borderRadius: 12, 
-            padding: 60, 
-            textAlign: 'center', 
-            color: 'var(--admin-text-dim)' 
+          <div style={{
+            background: 'var(--admin-surface)',
+            border: '1px solid var(--admin-border)',
+            borderRadius: 12,
+            padding: 60,
+            textAlign: 'center',
+            color: 'var(--admin-text-dim)'
           }}>
             <div style={{ fontSize: '3rem', marginBottom: 16, opacity: 0.3 }}>💬</div>
             <p style={{ fontSize: '1rem', marginBottom: 8 }}>No messages found</p>
-            <p style={{ fontSize: '0.85rem', color: '#444' }}>
+            <p style={{ fontSize: '0.85rem', color: 'var(--admin-text-muted)' }}>
               {search || filter !== 'all' ? 'Try adjusting your filters' : 'Messages from your contact form will appear here'}
             </p>
           </div>
@@ -265,18 +265,18 @@ export default function MessagesAdmin() {
             const message = thread.latest;
             const isExpanded = expandedId === message.id;
             const statusColor = statusColors[message.status] || statusColors.new;
-            
+
             return (
-              <div 
-                key={message.id} 
-                style={{ 
-                  background: 'var(--admin-surface)', 
-                  border: message.status === 'new' ? '1px solid var(--admin-accent)40' : '1px solid var(--admin-border)',
-                  borderRadius: 12, 
+              <div
+                key={message.id}
+                style={{
+                  background: 'var(--admin-surface)',
+                  border: message.status === 'new' ? '1px solid color-mix(in srgb, var(--admin-accent) 25%, transparent)' : '1px solid var(--admin-border)',
+                  borderRadius: 12,
                   padding: 20,
                   transition: 'all 0.2s ease',
                   cursor: 'pointer',
-                  boxShadow: message.status === 'new' ? '0 0 20px rgba(139, 92, 246, 0.1)' : 'none'
+                  boxShadow: message.status === 'new' ? '0 0 20px rgba(54, 94, 170, 0.1)' : 'none'
                 }}
                 onClick={() => setExpandedId(isExpanded ? null : message.id)}
                 onMouseEnter={e => {
@@ -285,9 +285,9 @@ export default function MessagesAdmin() {
                   e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.3)';
                 }}
                 onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = message.status === 'new' ? 'var(--admin-accent)40' : 'var(--admin-border)';
+                  e.currentTarget.style.borderColor = message.status === 'new' ? 'color-mix(in srgb, var(--admin-accent) 25%, transparent)' : 'var(--admin-border)';
                   e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = message.status === 'new' ? '0 0 20px rgba(139, 92, 246, 0.1)' : 'none';
+                  e.currentTarget.style.boxShadow = message.status === 'new' ? '0 0 20px rgba(54, 94, 170, 0.1)' : 'none';
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12, flexWrap: 'wrap', gap: 12 }}>
@@ -301,13 +301,13 @@ export default function MessagesAdmin() {
                       boxShadow: `0 0 8px ${statusColor.dot}`,
                       flexShrink: 0
                     }}></div>
-                    
+
                     {/* Sender Info */}
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
-                        <span style={{ 
-                          fontSize: '0.95rem', 
-                          fontWeight: 700, 
+                        <span style={{
+                          fontSize: '0.95rem',
+                          fontWeight: 700,
                           color: 'var(--admin-text)',
                           fontFamily: 'var(--font-display)'
                         }}>
@@ -321,7 +321,7 @@ export default function MessagesAdmin() {
                             fontSize: '0.7rem',
                             padding: '2px 8px',
                             borderRadius: 4,
-                            background: 'var(--admin-accent)15',
+                            background: 'color-mix(in srgb, var(--admin-accent) 8%, transparent)',
                             color: 'var(--admin-accent)',
                             fontWeight: 600
                           }}>
@@ -334,15 +334,15 @@ export default function MessagesAdmin() {
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Status Badge */}
-                  <span style={{ 
-                    padding: '5px 12px', 
-                    borderRadius: 6, 
-                    fontSize: '0.7rem', 
-                    fontWeight: 600, 
-                    background: statusColor.bg, 
-                    color: statusColor.text, 
+                  <span style={{
+                    padding: '5px 12px',
+                    borderRadius: 6,
+                    fontSize: '0.7rem',
+                    fontWeight: 600,
+                    background: statusColor.bg,
+                    color: statusColor.text,
                     textTransform: 'uppercase',
                     letterSpacing: '0.03em',
                     flexShrink: 0
@@ -352,9 +352,9 @@ export default function MessagesAdmin() {
                 </div>
 
                 {/* Subject */}
-                <div style={{ 
-                  fontSize: '0.88rem', 
-                  color: 'var(--admin-warning)', 
+                <div style={{
+                  fontSize: '0.88rem',
+                  color: 'var(--admin-warning)',
                   marginBottom: 10,
                   fontWeight: 600,
                   fontFamily: 'var(--font-display)'
@@ -363,10 +363,10 @@ export default function MessagesAdmin() {
                 </div>
 
                 {/* Message Preview */}
-                <div style={{ 
-                  fontSize: '0.85rem', 
-                  color: isExpanded ? '#ccc' : 'var(--admin-text-muted)', 
-                  lineHeight: 1.6, 
+                <div style={{
+                  fontSize: '0.85rem',
+                  color: isExpanded ? 'var(--admin-text-muted)' : 'var(--admin-text-muted)',
+                  lineHeight: 1.6,
                   whiteSpace: isExpanded ? 'pre-wrap' : 'nowrap',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
@@ -378,14 +378,14 @@ export default function MessagesAdmin() {
 
                 {/* Show all messages in thread if expanded */}
                 {isExpanded && thread.messages.length > 1 && (
-                  <div style={{ 
-                    marginTop: 16, 
-                    paddingTop: 16, 
-                    borderTop: '1px solid var(--admin-border)' 
+                  <div style={{
+                    marginTop: 16,
+                    paddingTop: 16,
+                    borderTop: '1px solid var(--admin-border)'
                   }}>
-                    <div style={{ 
-                      fontSize: '0.75rem', 
-                      color: 'var(--admin-text-dim)', 
+                    <div style={{
+                      fontSize: '0.75rem',
+                      color: 'var(--admin-text-dim)',
                       marginBottom: 12,
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
@@ -394,17 +394,17 @@ export default function MessagesAdmin() {
                       Thread History ({thread.messages.length - 1} earlier)
                     </div>
                     {thread.messages.slice(1).map((m: any) => (
-                      <div key={m.id} style={{ 
-                        marginBottom: 12, 
-                        padding: 12, 
-                        background: 'var(--admin-surface-raised)', 
+                      <div key={m.id} style={{
+                        marginBottom: 12,
+                        padding: 12,
+                        background: 'var(--admin-surface-raised)',
                         borderRadius: 8,
                         borderLeft: '3px solid var(--admin-border-strong)'
                       }}>
                         <div style={{ fontSize: '0.75rem', color: 'var(--admin-text-dim)', marginBottom: 6 }}>
                           {getRelativeTime(m.created_at)} • {m.subject || 'No subject'}
                         </div>
-                        <div style={{ fontSize: '0.8rem', color: '#999', lineHeight: 1.5 }}>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--admin-text-muted)', lineHeight: 1.5 }}>
                           {m.message?.substring(0, 150)}{m.message?.length > 150 ? '...' : ''}
                         </div>
                       </div>
@@ -413,27 +413,27 @@ export default function MessagesAdmin() {
                 )}
 
                 {/* Actions */}
-                <div style={{ 
-                  display: 'flex', 
-                  gap: 8, 
+                <div style={{
+                  display: 'flex',
+                  gap: 8,
                   flexWrap: 'wrap',
                   paddingTop: 12,
                   borderTop: '1px solid var(--admin-border)'
                 }}
                 onClick={e => e.stopPropagation()}>
                   {['read', 'replied', 'archived'].map(s => (
-                    <button 
-                      key={s} 
-                      onClick={() => updateStatus(message.id, s)} 
+                    <button
+                      key={s}
+                      onClick={() => updateStatus(message.id, s)}
                       disabled={message.status === s}
-                      style={{ 
-                        padding: '6px 14px', 
-                        borderRadius: 6, 
-                        border: '1px solid var(--admin-border-strong)', 
-                        background: message.status === s ? '#222' : 'transparent', 
-                        color: message.status === s ? 'var(--admin-text-dim)' : 'var(--admin-text-muted)', 
-                        fontSize: '0.72rem', 
-                        cursor: message.status === s ? 'default' : 'pointer', 
+                      style={{
+                        padding: '6px 14px',
+                        borderRadius: 6,
+                        border: '1px solid var(--admin-border-strong)',
+                        background: message.status === s ? 'var(--admin-border)' : 'transparent',
+                        color: message.status === s ? 'var(--admin-text-dim)' : 'var(--admin-text-muted)',
+                        fontSize: '0.72rem',
+                        cursor: message.status === s ? 'default' : 'pointer',
                         textTransform: 'capitalize',
                         fontWeight: 600,
                         transition: 'all 0.15s ease',
@@ -455,15 +455,15 @@ export default function MessagesAdmin() {
                       {s === 'read' ? '👁 Mark Read' : s === 'replied' ? '✓ Replied' : '📦 Archive'}
                     </button>
                   ))}
-                  <a 
+                  <a
                     href={`mailto:${message.email}?subject=Re: ${encodeURIComponent(message.subject || 'Your message')}&body=${encodeURIComponent(`\n\n---\nOriginal message from ${message.name}:\n${message.message}`)}`}
-                    style={{ 
-                      padding: '6px 14px', 
-                      borderRadius: 6, 
-                      border: '1px solid var(--admin-accent)40', 
+                    style={{
+                      padding: '6px 14px',
+                      borderRadius: 6,
+                      border: '1px solid color-mix(in srgb, var(--admin-accent) 25%, transparent)',
                       background: 'transparent',
-                      color: 'var(--admin-accent)', 
-                      fontSize: '0.72rem', 
+                      color: 'var(--admin-accent)',
+                      fontSize: '0.72rem',
                       textDecoration: 'none',
                       fontWeight: 600,
                       display: 'inline-block',
@@ -471,12 +471,12 @@ export default function MessagesAdmin() {
                     }}
                     onClick={e => e.stopPropagation()}
                     onMouseEnter={e => {
-                      e.currentTarget.style.background = 'var(--admin-accent)10';
+                      e.currentTarget.style.background = 'color-mix(in srgb, var(--admin-accent) 6%, transparent)';
                       e.currentTarget.style.borderColor = 'var(--admin-accent)';
                     }}
                     onMouseLeave={e => {
                       e.currentTarget.style.background = 'transparent';
-                      e.currentTarget.style.borderColor = 'var(--admin-accent)40';
+                      e.currentTarget.style.borderColor = 'color-mix(in srgb, var(--admin-accent) 25%, transparent)';
                     }}
                   >
                     ↗ Reply via Email

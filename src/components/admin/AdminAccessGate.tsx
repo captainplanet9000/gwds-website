@@ -96,36 +96,36 @@ export default function AdminAccessGate({ onAuthenticated }: { onAuthenticated: 
 
   const busy = mode === 'checking' || mode === 'authorizing';
   return (
-    <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', background: '#020806', color: '#eefcf6', padding: 24 }}>
-      <section style={{ width: 'min(440px, 100%)', border: '1px solid rgba(74,222,159,.24)', borderRadius: 18, padding: 28, background: '#06110e', boxShadow: '0 24px 80px rgba(0,0,0,.45)' }}>
-        <div style={{ color: '#4ade9f', fontSize: 12, fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase' }}>Cival Systems</div>
+    <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', background: 'var(--admin-surface)', color: 'var(--admin-text)', padding: 24 }}>
+      <section style={{ width: 'min(440px, 100%)', border: '1px solid var(--admin-border)', borderRadius: 18, padding: 28, background: 'var(--admin-surface)', boxShadow: '0 8px 30px rgba(24,34,48,.06)' }}>
+        <div style={{ color: 'var(--admin-accent)', fontSize: 12, fontWeight: 600, letterSpacing: '.16em', textTransform: 'uppercase' }}>Cival Systems</div>
         <h1 style={{ fontSize: 28, margin: '10px 0 8px' }}>Operations console</h1>
-        <p style={{ color: '#8aa99c', lineHeight: 1.55, margin: '0 0 22px' }}>Owner account and authenticator verification are required. Shared admin passwords are disabled.</p>
+        <p style={{ color: 'var(--admin-text-muted)', lineHeight: 1.55, margin: '0 0 22px' }}>Sign in with your administrator account and authenticator code.</p>
 
         {mode === 'sign-in' && <>
           <label style={labelStyle}>Email</label>
           <input type="email" autoComplete="username" value={email} onChange={(event) => setEmail(event.target.value)} style={inputStyle} />
           <label style={labelStyle}>Password</label>
           <input type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} onKeyDown={(event) => event.key === 'Enter' && void signIn()} style={inputStyle} />
-          <button type="button" onClick={() => void signIn().catch((reason) => { setError(reason instanceof Error ? reason.message : 'Sign-in failed.'); setMode('sign-in'); })} style={buttonStyle}>Continue securely</button>
+          <button type="button" onClick={() => void signIn().catch((reason) => { setError(reason instanceof Error ? reason.message : 'Sign-in failed.'); setMode('sign-in'); })} style={buttonStyle}>Continue</button>
         </>}
 
         {mode === 'enroll' && <>
-          <p style={{ color: '#c8e6da', lineHeight: 1.5 }}>Scan this code in an authenticator app, then enter its six-digit code. This is required once for this account.</p>
+          <p style={{ color: 'var(--admin-text)', lineHeight: 1.5 }}>Scan this code in an authenticator app, then enter its six-digit code. This is required once for this account.</p>
           {/* Supabase returns a self-contained SVG data URL for this enrollment. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={qrCode} alt="Authenticator enrollment QR code" width={220} height={220} style={{ display: 'block', margin: '16px auto', background: '#fff', padding: 10, borderRadius: 12 }} />
-          <details style={{ color: '#8aa99c', marginBottom: 16 }}><summary>Can’t scan?</summary><code style={{ display: 'block', overflowWrap: 'anywhere', marginTop: 8, color: '#d8f7e9' }}>{secret}</code></details>
+          <details style={{ color: 'var(--admin-text-muted)', marginBottom: 16 }}><summary>Can’t scan?</summary><code style={{ display: 'block', overflowWrap: 'anywhere', marginTop: 8, color: 'var(--admin-text)' }}>{secret}</code></details>
           <MfaCode code={code} setCode={setCode} submit={verifyMfa} />
         </>}
 
         {mode === 'challenge' && <>
-          <p style={{ color: '#c8e6da', lineHeight: 1.5 }}>Enter the six-digit code from your authenticator app.</p>
+          <p style={{ color: 'var(--admin-text)', lineHeight: 1.5 }}>Enter the six-digit code from your authenticator app.</p>
           <MfaCode code={code} setCode={setCode} submit={verifyMfa} />
         </>}
 
-        {busy && <p style={{ color: '#8aa99c' }}>{mode === 'authorizing' ? 'Verifying role and MFA…' : 'Checking account…'}</p>}
-        {error && <p role="alert" style={{ color: '#ff9c9c', marginTop: 16 }}>{error}</p>}
+        {busy && <p style={{ color: 'var(--admin-text-muted)' }}>{mode === 'authorizing' ? 'Verifying role and MFA…' : 'Checking account…'}</p>}
+        {error && <p role="alert" style={{ color: 'var(--admin-danger)', marginTop: 16 }}>{error}</p>}
       </section>
     </div>
   );
@@ -135,10 +135,10 @@ function MfaCode({ code, setCode, submit }: { code: string; setCode: (value: str
   return <>
     <label style={labelStyle}>Authenticator code</label>
     <input inputMode="numeric" autoComplete="one-time-code" maxLength={6} value={code} onChange={(event) => setCode(event.target.value.replace(/\D/g, '').slice(0, 6))} onKeyDown={(event) => event.key === 'Enter' && void submit()} style={{ ...inputStyle, fontSize: 24, letterSpacing: '.25em', textAlign: 'center' }} />
-    <button type="button" onClick={() => void submit()} style={buttonStyle}>Verify and open console</button>
+    <button type="button" onClick={() => void submit()} style={buttonStyle}>Verify</button>
   </>;
 }
 
-const labelStyle: CSSProperties = { display: 'block', fontSize: 12, fontWeight: 700, color: '#a9c9bb', margin: '14px 0 7px' };
-const inputStyle: CSSProperties = { width: '100%', background: '#020806', color: '#eefcf6', border: '1px solid #1b4536', borderRadius: 10, padding: '12px 14px', outline: 'none' };
-const buttonStyle: CSSProperties = { width: '100%', marginTop: 18, border: 0, borderRadius: 10, padding: '13px 16px', background: '#4ade9f', color: '#02110a', fontWeight: 850, cursor: 'pointer' };
+const labelStyle: CSSProperties = { display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--admin-text-muted)', margin: '14px 0 7px' };
+const inputStyle: CSSProperties = { width: '100%', background: 'var(--admin-surface)', color: 'var(--admin-text)', border: '1px solid #d4e7dd', borderRadius: 10, padding: '12px 14px', outline: 'none' };
+const buttonStyle: CSSProperties = { width: '100%', marginTop: 18, border: 0, borderRadius: 10, padding: '13px 16px', background: 'var(--admin-accent)', color: '#ffffff', fontWeight: 600, cursor: 'pointer' };
