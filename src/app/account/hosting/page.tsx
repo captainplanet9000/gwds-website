@@ -574,6 +574,7 @@ export default function HostingAccountPage() {
                     </h2>
                     <div style={{ display: "flex", gap: 8 }}>
                       <Status value={subscription.status} />
+                      {subscription.livemode === false && <Status value="test billing" />}
                       {subscription.cancel_at_period_end && (
                         <Status value="cancels at period end" />
                       )}
@@ -587,6 +588,7 @@ export default function HostingAccountPage() {
                     Manage billing, invoices, or cancellation
                   </button>
                 </div>
+                {subscription.livemode === false && <p>This subscription uses Stripe test billing. Its invoices do not charge real money. Billing mode is separate from the trading network; verify that network inside your dashboard.</p>}
                 <p
                   style={{ color: "var(--color-neutral-700)", marginBottom: 0 }}
                 >

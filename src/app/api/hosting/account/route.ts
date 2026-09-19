@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
     const user = await requireVerifiedUser(req);
     const supabase = createServerClient();
     const { data: subscriptions, error } = await supabase.from('hosting_subscriptions')
-      .select('id,plan_id,status,price_cents,currency,stripe_customer_id,cancel_at_period_end,current_period_start,current_period_end,trial_end,last_invoice_status,last_payment_at,created_at,updated_at')
+      .select('id,plan_id,status,price_cents,currency,stripe_customer_id,livemode,cancel_at_period_end,current_period_start,current_period_end,trial_end,last_invoice_status,last_payment_at,created_at,updated_at')
       .eq('user_id', user.id).order('created_at', { ascending: false });
     if (error) throw new CommerceError('HOSTING_ACCOUNT_UNAVAILABLE', 'Your hosting account could not be loaded.', 503);
     const { data: previous, error: historyError } = await supabase.from('hosting_subscriptions')
