@@ -48,6 +48,7 @@ export async function sendOrderReadyEmail(email: string, order: OrderEmailData) 
       <p style="font-size:16px;line-height:1.6;color:#5d554a">Your Cival Systems license is attached to the account used at checkout. Sign in to create a short-lived download link whenever you need the files.</p>
       <ul style="padding-left:20px;line-height:1.5">${list}</ul>
       <a href="${accountUrl}" style="display:inline-block;margin-top:16px;background:#c67139;color:#fff;text-decoration:none;font-weight:700;padding:14px 22px;border-radius:999px">Open my account</a>
+      <p style="font-size:15px;line-height:1.7">Next: identify the version in your download, follow the <a href="${siteUrl}/docs/setup">purchase-to-setup guide</a>, and complete the first-run checks before operating.</p>
       <div style="margin-top:28px;padding-top:20px;border-top:1px solid #e8dbc5;font-size:13px;line-height:1.7;color:#6f665a">
         Order ${escapeHtml(order.id)}<br>${escapeHtml(date)} · ${escapeHtml(total)}
       </div>
@@ -67,6 +68,9 @@ ${productNames.map((name) => `- ${name}`).join('\n')}
 
 Open your account to create a short-lived download link:
 ${accountUrl}
+
+Installation and first-run guide:
+${siteUrl}/docs/setup
 
 Order: ${order.id}
 Date: ${date}

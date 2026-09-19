@@ -1,82 +1,64 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'Cival Core 2.0 Setup Guide',
-  description: 'Install and run the verified Cival Core 2.0 paper-trading source template.',
+  title: 'Purchase, install and operate your Cival product',
+  description: 'Version-specific setup, downloads, strategy installation, first-run checks, backups and troubleshooting for Cival source products.',
 };
 
-const steps = [
-  {
-    title: 'Verify and extract the release',
-    body: 'Download Cival Core 2.0 from your verified account. Keep the original ZIP until setup is complete. If your receipt includes a SHA-256 digest, compare it before extracting.',
-  },
-  {
-    title: 'Install the locked dependencies',
-    code: 'npm ci',
-    body: 'Open a terminal in the extracted product folder. Use Node.js 20 or newer. The lockfile pins the dependency tree reviewed for this release.',
-  },
-  {
-    title: 'Run the local workspace',
-    code: 'npm run dev',
-    body: 'Open http://localhost:3000. Local mode stores your paper workspace in this browser. It does not need an exchange account, wallet, API key, or database.',
-  },
-  {
-    title: 'Use only simulated orders',
-    body: 'Review the dashboard, adjust agents and goals, submit paper orders, and export a JSON backup. The supported release has no live-order endpoint, exchange connector, withdrawal route, or private-key form.',
-  },
-  {
-    title: 'Verify a production build',
-    code: 'npm run check',
-    body: 'This runs lint, TypeScript, unit tests, and a production build. Run it after making changes and before deploying your fork.',
-  },
-] as const;
+const common = [
+  ['Choose the right product', 'Core includes the Darvas strategy. Trader includes Core and all six strategy frameworks. Add-ons need a compatible installed edition; they are not standalone dashboards. A source license does not include a cloud server, exchange funds or third-party API credits.'],
+  ['Purchase with your verified account', 'Sign in and verify your email before checkout. Keep the same account for payment and downloads. Review the cart, license, refund terms and add-on requirement. The server checks current availability and price before opening Stripe checkout.'],
+  ['Wait for fulfillment', 'A successful payment return page is followed by server-side payment verification. Check your account for the order and download action. If payment is processing, do not buy again. Send support the order reference if access does not arrive. Never send your wallet seed phrase or API secrets.'],
+  ['Download and preserve the release', 'Open Account, locate the paid order and choose Download. Links expire; generate a fresh one from the account instead of reusing an old email link. Keep the ZIP, receipt, version and original checksum together. Extract into a new directory, not over a running installation.'],
+];
+const checks = [
+  'Confirm package.json version, Node requirement and included README/RUNBOOK agree with the archive you downloaded.',
+  'Install and build successfully. Do not suppress compiler errors or security checks to make the build pass.',
+  'Prove unauthorized requests cannot read or change your account. A successful health endpoint alone does not prove secure operation.',
+  'Create a test agent, inspect its decision history and verify the selected symbol, network and risk limits.',
+  'In a verified simulator or testnet environment, observe one complete open → manage → close cycle and reconcile fills and fees.',
+  'Test pause, emergency stop, restart recovery and backups. Know whether a control pauses new entries, cancels orders or closes positions.',
+  'Restart the application and confirm agents, settings, orders and history persist. Restore a backup into an isolated instance.',
+];
+const troubleshooting = [
+  ['Download link expired', 'Sign in to the purchasing account and generate a new Download link. Expired links do not mean you need to purchase again.'],
+  ['Charged but no download', 'Check the order status in Account. If pending, allow payment verification to finish. Contact support with the order reference and timestamp; do not retry payment to fix fulfillment.'],
+  ['Supabase URL is required', 'You are probably running a 2.1 source edition. Configure a working Supabase project and the required server environment before building. Plain PostgreSQL alone does not provide the Auth and REST endpoints the app imports.'],
+  ['npm ci says no lockfile', 'Some historical 2.1 archives did not include a lockfile. Use npm install only for that archive, preserve the generated package-lock.json, and inspect the resulting dependency/build errors. This is not evidence of a verified release.'],
+  ['Agent installed but invisible', 'Check manifest.json, entryPoint and the directory nesting: plugins/<plugin>/manifest.json and its compiled dist entry must exist. Read the loader errors after restart. Do not nest the complete ZIP inside another plugin directory.'],
+  ['Agent active but no trades', 'Read the latest decision, data timestamp, configured symbol, account/network and risk rejection. Capital availability alone is not an entry signal. Confirm that an existing position is not already using the strategy’s position slot.'],
+  ['Wrong balances or missing positions', 'Match the account address and testnet/mainnet selection with the exchange. Refresh data and compare positions, fills and open orders. Do not duplicate an order while reconciliation is uncertain.'],
+  ['A build or safety check fails', 'Stop installation at that step and retain the exact error and product version. Ask support for a corrected release. Do not turn off authentication, type checking or execution safeguards to work around it.'],
+];
 
 export default function SetupGuidePage() {
-  return (
-    <div className="cival">
-      <Navbar />
-      <main className="cival-fade" style={{ maxWidth: 800, margin: '0 auto', padding: '150px 28px 96px' }}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--color-neutral-600)', marginBottom: 32, display: 'flex', gap: 8 }}>
-          <Link href="/store/trading-dashboard-template">Cival Core 2.0</Link><span>→</span><span style={{ color: 'var(--color-accent)' }}>Setup</span>
-        </div>
-        <span className="tag tag-accent">Verified release 2.0.0</span>
-        <h1 style={{ fontSize: 'clamp(36px,5vw,58px)', letterSpacing: '-0.015em', margin: '18px 0 16px' }}>Set up Cival Core 2.0</h1>
-        <p style={{ fontSize: 17, color: 'var(--color-neutral-700)', lineHeight: 1.7, marginBottom: 44, maxWidth: 650 }}>
-          The package is a paper-trading source template. Start locally, keep it paper-only, and read the included README, SECURITY, LICENSE, SUPPORT, and RUNBOOK files before changing or deploying it.
-        </p>
-
-        <div style={{ display: 'grid', gap: 14 }}>
-          {steps.map((step, index) => (
-            <section className="card" style={{ padding: 26 }} key={step.title}>
-              <div style={{ display: 'flex', gap: 15, alignItems: 'flex-start' }}>
-                <span style={{ width: 34, height: 34, borderRadius: '50%', background: 'var(--color-accent)', color: 'var(--color-bg)', display: 'grid', placeItems: 'center', fontFamily: 'var(--font-mono)', fontWeight: 700, flexShrink: 0 }}>{index + 1}</span>
-                <div>
-                  <h2 style={{ fontSize: 20, margin: '3px 0 9px' }}>{step.title}</h2>
-                  {'code' in step && step.code ? <pre style={{ background: 'var(--color-bg)', border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-md)', padding: '12px 14px', overflowX: 'auto' }}><code>{step.code}</code></pre> : null}
-                  <p style={{ color: 'var(--color-neutral-700)', lineHeight: 1.7, marginBottom: 0 }}>{step.body}</p>
-                </div>
-              </div>
-            </section>
-          ))}
-        </div>
-
-        <section style={{ marginTop: 38, padding: 26, border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-lg)' }}>
-          <h2 style={{ fontSize: 22, marginTop: 0 }}>Optional managed hosting</h2>
-          <p style={{ color: 'var(--color-neutral-700)', lineHeight: 1.7 }}>
-            The source supports authenticated cloud saves when Cival configures a managed tenant. Do not put a Supabase service-role key or any exchange/wallet credential into the customer application. Managed hosting is not available for purchase until the public launch gate is open.
-          </p>
-          <Link href="/hosted" className="btn btn-secondary">Review managed hosting</Link>
-        </section>
-
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 38 }}>
-          <a className="btn btn-primary" href="https://cival-core-v2-template.vercel.app" target="_blank" rel="noopener noreferrer">Open the paper demo</a>
-          <Link className="btn btn-secondary" href="/contact?subject=Technical%20Support">Contact support</Link>
-        </div>
-      </main>
-      <Footer />
-    </div>
-  );
+  return <div className="cival"><Navbar /><main style={{maxWidth: 1100, margin: '0 auto', padding: '120px 24px 80px'}}>
+    <section style={{position: 'relative', overflow: 'hidden', borderRadius: 24, padding: 'clamp(24px,5vw,60px)', background: 'var(--color-neutral-100)'}}>
+      <Image src="/images/guides/customer-journey-v1.png" width={1536} height={1024} priority alt="Conceptual illustration of a software package, manual, server and connected strategy modules" style={{width: '100%', height: 'auto', display: 'block', borderRadius: 16}} />
+      <p style={{fontFamily: 'var(--font-mono)', fontSize: 12, marginTop: 24}}>CIVAL FIELD GUIDE · PURCHASE TO OPERATION</p>
+      <h1 style={{fontSize: 'clamp(32px,5vw,56px)', lineHeight: 1.08, maxWidth: 650}}>Your first run starts here.</h1>
+      <p style={{maxWidth: 690, lineHeight: 1.75}}>Choose your installation path, follow the instructions for your exact release, and verify each step before moving on. The source editions and managed customer dashboard are different products with different setup requirements.</p>
+      <nav aria-label="Guide sections" style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>{[['purchase','Purchase & access'],['versions','Choose your version'],['plugins','Install an agent'],['verify','First-run checks'],['troubleshooting','Troubleshooting']].map(([id,label]) => <a key={id} className="btn btn-secondary" href={`#${id}`}>{label}</a>)}</nav>
+    </section>
+    <section id="purchase" style={{marginTop: 48, scrollMarginTop: 100}}><h2>1. From purchase to download</h2><div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,260px),1fr))', gap: 16}}>{common.map(([title,body],i) => <article key={title} className="card" style={{padding: 24}}><p style={{fontFamily: 'var(--font-mono)', color: 'var(--color-accent)'}}>0{i+1}</p><h3>{title}</h3><p style={{lineHeight: 1.75}}>{body}</p></article>)}</div><p><Link href="/account">Open purchases and downloads →</Link></p></section>
+    <section id="versions" style={{marginTop: 56, scrollMarginTop: 100}}><h2>2. Match the guide to your version</h2><p>The version in the downloaded package is authoritative. Do not use Core 2.0 demo instructions to install a 2.1 source edition.</p>
+      <details open className="card" style={{padding: 24, marginTop: 16}}><summary style={{fontSize: 21, fontWeight: 600, cursor: 'pointer'}}>Core / Trader 2.1 source editions</summary>
+        <p style={{lineHeight: 1.75}}>These archives include a Next.js application, Supabase integration and strategy plugins. They need a Node environment compatible with package.json, a Supabase project with Auth and REST services, a PostgreSQL client for schema setup, and private server configuration. A plain PostgreSQL database is insufficient.</p>
+        <p><strong>Release status:</strong> installation verification is incomplete. The 2.1 archive audit found compiler and execution-safety issues. The steps below explain the required setup; they do not certify this release for unattended or real-money operation. Request a corrected, validated release if any check fails.</p>
+        <ol style={{lineHeight: 1.9}}><li>Extract to a new directory. Read README, RUNBOOK, LICENSE and .env.example.</li><li>Copy .env.example to .env.local. Use Copy-Item on PowerShell or cp on Linux/macOS. Keep this file private and out of source control.</li><li>Create a dedicated Supabase project. Configure its URL, keys and the owner/auth settings listed in the archive. Never put server-role or wallet keys in NEXT_PUBLIC variables.</li><li>Apply schema/001_core.sql to the dedicated database with psql. Keep the connection string in your environment; do not paste it into support chats.</li><li>Use npm ci if the archive includes a lockfile; otherwise npm install and retain the generated lockfile. Run npx tsc --noEmit and npm run build. Resolve errors before continuing.</li><li>Run npm start. The historical 2.1 source edition uses port 9005. Keep access local until authentication and server isolation have been verified.</li><li>Complete the first-run checklist below in an isolated environment. A paper-mode label by itself is not proof that every execution path is simulated.</li></ol>
+        <h3>Schema command</h3><p>PowerShell</p><pre style={{overflowX:'auto'}}><code>{'psql "$env:DATABASE_URL" -v ON_ERROR_STOP=1 -f schema/001_core.sql'}</code></pre><p>Linux / macOS</p><pre style={{overflowX:'auto'}}><code>{'psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f schema/001_core.sql'}</code></pre>
+      </details>
+      <details className="card" style={{padding: 24, marginTop: 16}}><summary style={{fontSize:21,fontWeight:600,cursor:'pointer'}}>Historical Cival Core 2.0 paper template</summary><p style={{lineHeight:1.75}}>This is the separate paper-only template, with browser-local workspace storage. Its package declares Node 22.x. It does not connect to an exchange or accept funds. Do not mistake its demo for the 2.1 source edition.</p><pre style={{overflowX:'auto'}}><code>{'npm ci\nnpm run check\nnpm run dev'}</code></pre><p>Open localhost:3000. Use the Paper Desk to submit a simulated order, inspect the audit log, and export a workspace backup from Settings. Hosted mode requires a matching Cival tenant configuration; leave it off for a local installation.</p></details>
+      <details className="card" style={{padding:24,marginTop:16}}><summary style={{fontSize:21,fontWeight:600,cursor:'pointer'}}>Managed customer dashboard</summary><ol style={{lineHeight:1.9}}><li>Choose a hosting plan and complete account onboarding.</li><li>Open your instance from Account → Hosting. Use the account launch link when a session has expired.</li><li>Connect your own wallet, confirm the network and approve the trade-only agent key.</li><li>Check the exchange balance and choose strategies within your plan limit.</li><li>Configure risk controls and observe testnet activity before considering mainnet.</li></ol><p>Funding, withdrawals and key approval have real effects on the selected network. Review wallet prompts and never send funds to a software product download or a support contact.</p><Link className="btn btn-secondary" href="/account/hosting">Open hosting setup</Link></details>
+    </section>
+    <section id="plugins" style={{marginTop:56,scrollMarginTop:100}}><h2>3. Install a strategy add-on</h2><p style={{lineHeight:1.75}}>An add-on is a strategy module, not a complete app. Check the included manifest compatibility and INSTALL.md against your installed edition. Core already contains Darvas; Trader includes all six frameworks.</p><ol style={{lineHeight:1.9}}><li>Back up your database, settings and current plugins. Pause new entries and record existing positions before maintenance.</li><li>Extract the purchased agent into the edition’s plugins directory using the installPath in manifest.json.</li><li>Confirm manifest.json and the declared entryPoint exist. Keep both readable source and compiled strategy files.</li><li>Restart the dashboard and inspect plugin loader errors. Confirm the strategy appears before creating or assigning an agent.</li><li>Configure symbols, timeframe, risk limits and capital allocation. Test signal evaluation with the intended data source.</li><li>Verify order ownership, protection and exits on testnet before enabling unattended operation.</li></ol></section>
+    <section id="verify" style={{marginTop:56,scrollMarginTop:100}}><h2>4. First-run acceptance checklist</h2><p>Complete this for each installation and major update. Keep the evidence with your release backup.</p>{checks.map(text => <div key={text} style={{padding:'14px 0',borderBottom:'1px solid var(--color-divider)',lineHeight:1.75}}>□ {text}</div>)}</section>
+    <section style={{marginTop:56}}><h2>5. Operate, back up and update</h2><p style={{lineHeight:1.8}}>For self-hosting, keep the application behind HTTPS and authenticated access, bind internal services privately, and monitor uptime, data freshness, failed orders, disk space and database backups. Store encrypted backups separately from the server. Test restores. Before upgrading, preserve the old ZIP, lockfile, configuration and database snapshot; read migration notes and test the new version in isolation. Do not run two independent trading engines against the same account during a migration.</p><p style={{lineHeight:1.8}}>If rollback is needed, stop the new runtime, reconcile exchange orders and positions, and restore only a database version compatible with the chosen application. Restoring a database never reverses an exchange trade.</p></section>
+    <section id="troubleshooting" style={{marginTop:56,scrollMarginTop:100}}><h2>Troubleshooting</h2>{troubleshooting.map(([title,body]) => <details key={title} style={{padding:'20px 0',borderBottom:'1px solid var(--color-divider)'}}><summary style={{fontWeight:600,cursor:'pointer'}}>{title}</summary><p style={{lineHeight:1.8}}>{body}</p></details>)}</section>
+    <section className="card" style={{marginTop:48,padding:28}}><h2>Get useful help quickly</h2><p style={{lineHeight:1.75}}>Include the order reference, product and version, operating system, Node version, failed step and a redacted error. Never include .env files, passwords, session tokens, seed phrases or private keys.</p><div style={{display:'flex',gap:12,flexWrap:'wrap'}}><Link href="/contact" className="btn btn-primary">Contact support</Link><Link href="/account" className="btn btn-secondary">My purchases</Link><Link href="/store" className="btn btn-secondary">Back to store</Link><span style={{alignSelf:"center"}}>Use your browser’s Print command to save this guide as PDF.</span></div></section>
+  </main><Footer /></div>;
 }

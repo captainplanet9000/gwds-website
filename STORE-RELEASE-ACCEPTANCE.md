@@ -1,0 +1,63 @@
+# Store release audit — 19 September 2026
+
+## Release decision
+
+**Source products are not approved for new sales.** Storage integrity and payment fulfillment pass the checks below; they do not prove the software installs or manages trades correctly. The source-sales guard is in `src/lib/release-readiness.ts` and the checkout API. Existing entitlements/downloads and managed hosting are separate paths.
+
+Production baseline: storefront commit `c55ebfb`, branch `sync/hosting-dashboard-link`, Vercel deployment `dpl_DkVqcQB8YbExxrgNy65DvwfyRY2Z`. This branch preserves its mode-specific Stripe price fields and customer hosting integration.
+
+## Verified evidence
+
+- All eight active downloadable products have active, live USD Stripe prices matching the database amounts.
+- Paginated paid store Checkout sessions: one; unmatched paid orders: zero. The matching order is an earlier $0.50 fulfillment test, not proof of normal customer volume.
+- That order has an active entitlement and fulfilled status. Its email outbox entry is marked sent; recipient mailbox arrival was not verified.
+- All eight exact production ZIP downloads match their registered SHA-256 and byte lengths.
+- Core 2.1 repair candidate strict typecheck currently reports 74 diagnostics. The original exact archive reported 278 before prior repairs. Passing a build with ignored TypeScript errors is not acceptance.
+- The six published plugin manifests contained settings absent from their source defaults. VWAP used a string session length and scalar band multiplier; supplied defaults threw during evaluation. Flat prices also exposed an invalid equal-price protection setup.
+- The unpublished 2.1.1 plugin candidates align manifest defaults and declared timeframes with code. VWAP rejects malformed configuration/data, collapsed bands and invalid protection geometry. Strict compilation plus 42 synthetic signal-contract checks pass. These are not profitability or runtime-integration tests.
+- Storefront automated tests: 76 passing at the initial verification. Re-run the commands below after any subsequent change.
+
+## Implemented storefront changes
+
+- Catalog availability endpoint fails closed; checkout rejects archives awaiting acceptance before creating an order or payment session.
+- Cart normalization removes products already included in editions. API independently rejects overlapping licenses.
+- Desk remains hidden, matching its inactive production status. Core includes Darvas; Trader includes Core and six frameworks. Correct Trader comparison: $344 separately versus $249, a $95 difference.
+- Descriptions now reflect source behavior. Removed unverified average hold times, returns, chart overlays, ADX, order-flow feed, automated farm coordination and external macro/on-chain data claims.
+- Sentiment Proxy Research explicitly labels its candle-derived estimates and simulated variables. It can issue trade signals.
+- Version-aware purchase/setup guide, installation requirements, troubleshooting, backups, rollback and first-run acceptance. Linked from product details, purchase success, account downloads and order email template.
+- Removed richer-runtime screenshots and promotional videos from current source products. New illustration assets are explicitly not screenshots.
+- Server-key handling recognizes Stripe restricted keys consistently across checkout, webhook and hosting paths.
+- Updated Next.js and image processing dependencies to address reported production audit findings.
+
+## Required before re-enabling sales
+
+1. Finish the full Core runtime repair in `C:\GWDS\selfhost-release-20260918\core`. Repair schema/model mismatches, missing connector methods, internal scheduler authentication and alternate execution paths. Do not suppress compiler diagnostics or weaken authentication.
+2. Complete strict clean installation from a new immutable ZIP on supported Windows and Linux environments. Include a lockfile and accurate Node requirements. Verify Supabase Auth/REST/schema setup; plain PostgreSQL is insufficient.
+3. Prove owner authorization and isolation against an empty dedicated database. Verify missing/invalid secrets fail closed, no credentials reach the client, and startup binds safely.
+4. Prove paper mode across every signing path. Complete testnet open → protect → manage → close, restart reconciliation, cancel failures, partial fills, stale data and emergency stop. Record actual evidence without manufacturing trades or results.
+5. Validate all six candidates through the exact dashboard loader and agent UI. Confirm configuration edits, ownership, status, lifecycle and install/uninstall behavior. Keep the Macro proxy limitations visible.
+6. Apply accepted repairs to Trader and validate that bundle independently. Do not copy a Core result to Trader without testing.
+7. Package source, compiled plugin entry, LICENSE, INSTALL, README, environment example, release notes and a portable first-run check. Add container/reverse-proxy, backup and restore guidance validated against the shipped runtime.
+8. Record archive version, SHA-256 and size. Scan for secrets and dependency findings. Update catalog version (currently stale versus 2.1.0 ZIPs), immutable storage path/hash/size only after acceptance. Preserve historical purchase terms and existing artifact access.
+9. In an isolated Stripe test environment, complete account registration/verification, checkout success/cancel, webhook retry/duplicate/out-of-order events, entitlement creation, email retry, authorized re-download, cross-account denial, refund/revocation and plugin dependency/plan limits. Current paid production evidence is only one prior fulfillment test.
+10. Capture screenshots and tutorial walkthroughs from those exact artifacts. Replace conceptual imagery only with correctly labelled evidence. Verify desktop/mobile, keyboard use, validation errors and recovery paths.
+11. Remove accepted product IDs from the release gate and disable the broad source-sales hold only when appropriate. Deploy and verify real customer-facing availability. Never enable a product solely because Storage contains a ZIP.
+
+## Reproducible local checks
+
+```powershell
+npm ci --ignore-scripts
+npm test
+npm run build
+npm audit
+node scripts/verify-strategy-packages.mjs
+git diff --check
+```
+
+`release-assets/strategy-packages/validation.json` records the candidate signal results. Candidates are excluded from Vercel deployment and have not replaced customer downloads. Local `.vercel` audit files contain access-dependent diagnostics and are intentionally not committed. Do not upload environment files or signed download links.
+
+## Artwork provenance
+
+AI-generated conceptual artwork: `public/images/guides/customer-journey-v1.png`. Created through the image generation tool in text-to-image mode; no model selector was available. Prompt direction: premium Cival onboarding composition, ivory/cobalt/charcoal studio palette, matte 3D software cube, blank manual, server and connected modules; no text, UI, trading charts or coins. It represents onboarding, not application functionality.
+
+Six vector strategy covers are reproducible using `scripts/create-strategy-covers.mjs`; they explicitly identify themselves as conceptual strategy illustrations. No fabricated performance screenshots are used.

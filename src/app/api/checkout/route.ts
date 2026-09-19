@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type Stripe from 'stripe';
+import { needsReleaseAcceptance } from '@/lib/release-readiness';
+import { redundantCartProducts } from '@/lib/cart-products';
 import { getProduct } from '@/lib/products';
 import { createServerClient } from '@/lib/supabase';
 import { getStripe } from '@/lib/stripe';
@@ -11,6 +13,7 @@ import {
   commerceErrorMessage,
   errorResponseBody,
   getSiteUrl,
+  isLiveStripeKey,
   normalizeCoupon,
   normalizeName,
   requireVerifiedUser,
@@ -135,7 +138,7 @@ async function requireCoreDependency(userId: string, items: CheckoutItemInput[])
 // id this environment should charge against, and returns it per product id for lineItems() to use.
 async function verifyStripePrices(rows: CatalogProductRow[]): Promise<Map<string, string>> {
   const stripe = getStripe();
-  const live = process.env.STRIPE_SECRET_KEY?.startsWith('sk_live_') ?? false;
+  const live = isLiveStripeKey();
   const resolved = new Map<string, string>();
   for (const row of rows) {
     const priceId = live ? row.stripe_price_id_live : row.stripe_price_id_test;
@@ -195,6 +198,12 @@ export async function POST(req: NextRequest) {
     }
 
     const items = parseItems(body.items);
+    if (items.some(item => needsReleaseAcceptance(item.productId))) {
+      throw new CommerceError('RELEASE_ACCEPTANCE_PENDING', 'New source-product purchases are paused while installation and execution checks are completed. Existing downloads remain in your account. No payment was taken.', 503);
+    }
+    if (redundantCartProducts(items.map(item => item.productId)).length) {
+      throw new CommerceError('INCLUDED_PRODUCT', 'Your cart contains a product already included in an edition. Remove the duplicate license before checkout.', 409);
+    }
     const name = normalizeName(body.name);
     const couponCode = normalizeCoupon(body.couponCode);
     const marketingConsent = body.marketingConsent === true;

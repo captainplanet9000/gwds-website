@@ -326,7 +326,8 @@ export default function AccountPage() {
                               )}
                             </div>
 
-                            <div style={{ display: 'flex', gap: 8 }}>
+                            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                              <Link className="btn btn-secondary" href={`/docs/setup?product=${item.product_id}`}>Setup guide</Link>
                               <button
                                 onClick={() => handleRegenerateDownload(order.id, item.product_id)}
                                 disabled={!canDownload || regenerating === regKey}

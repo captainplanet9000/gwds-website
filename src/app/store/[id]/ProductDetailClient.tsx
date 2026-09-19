@@ -8,7 +8,7 @@ import ProductVideo from '@/components/ProductVideo';
 import RequiresDashboardBanner from '@/components/RequiresDashboardBanner';
 import { useCart } from '@/contexts/CartContext';
 import { EDITION_INCLUDES, type Product } from '@/lib/products';
-import { STORE_SALES_ENABLED } from '@/lib/store-config';
+import { useStoreCatalog } from '@/lib/use-store-catalog';
 
 function money(n: number) {
   return '$' + n.toLocaleString('en-US');
@@ -16,6 +16,8 @@ function money(n: number) {
 
 export default function ProductDetailClient({ product, related }: { product: Product; related: Product[] }) {
   const { items, dispatch } = useCart();
+  const { catalog, error: catalogError, retry } = useStoreCatalog();
+  const purchasable = !!catalog?.[product.id]?.available;
   const [added, setAdded] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
@@ -41,7 +43,7 @@ export default function ProductDetailClient({ product, related }: { product: Pro
   })();
 
   const addToCart = () => {
-    if (!STORE_SALES_ENABLED) return;
+    if (!purchasable) return;
     dispatch({ type: 'ADD_ITEM', product });
     dispatch({ type: 'OPEN_CART' });
     setAdded(true);
@@ -49,7 +51,7 @@ export default function ProductDetailClient({ product, related }: { product: Pro
   };
 
   const buyNow = () => {
-    if (!STORE_SALES_ENABLED) return;
+    if (!purchasable) return;
     dispatch({ type: 'CLEAR_CART' });
     dispatch({ type: 'ADD_ITEM', product });
   };
@@ -69,20 +71,21 @@ export default function ProductDetailClient({ product, related }: { product: Pro
         <section style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 28px 0' }}>
           <div data-cv-2col style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.15fr) minmax(0,0.85fr)', gap: 48, alignItems: 'start' }}>
             <div style={{ position: 'relative', borderRadius: 'calc(var(--radius-lg) * 1.15)', overflow: 'hidden', aspectRatio: '16/10', background: 'var(--color-neutral-200)', boxShadow: 'var(--shadow-md)' }}>
-              {product.image && (
+              {product.image && ((product.images?.length || 0) > 0 ? (
                 <button
                   type="button"
-                  aria-label={`Open ${product.name} screenshot gallery`}
+                  aria-label={`${product.name} conceptual illustration`}
                   onClick={() => (product.images?.length || 0) > 0 && setLightboxIndex(0)}
                   style={{ all: 'unset', position: 'absolute', inset: 0, display: 'block', cursor: (product.images?.length || 0) > 0 ? 'zoom-in' : 'default' }}
                 >
                   <img src={product.image} alt={product.name}
                     style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
                 </button>
-              )}
+              ) : <img src={product.image} alt={`${product.name} conceptual illustration`} style={{width:'100%',height:'100%',objectFit:'cover'}} />)}
             </div>
 
             <div>
+              <p style={{fontSize: 12, color: 'var(--color-neutral-600)'}}>Artwork illustrates the product category. It is not a screenshot of the downloadable release.</p>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 18 }}>
                 <span className={`tag ${tagClass}`}>{product.badge || product.productType}</span>
                 {product.requiresDashboard && <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--color-neutral-600)' }}>Add-on · needs an edition</span>}
@@ -103,9 +106,10 @@ export default function ProductDetailClient({ product, related }: { product: Pro
                 </div>
               )}
 
-              {!STORE_SALES_ENABLED ? (
+              {!purchasable ? (
                 <div role="status" style={{ padding: '14px 18px', borderRadius: 'var(--radius-md)', background: 'var(--color-accent-2-100)', color: 'var(--color-accent-2-900)', fontSize: 14, lineHeight: 1.55, marginBottom: 14 }}>
-                  Release verification is in progress. Checkout remains closed and no payment can be taken.
+                  {catalogError ? 'Availability could not be checked.' : !catalog ? 'Checking product availability…' : 'This release is currently unavailable for new purchases. Existing licenses remain in your account.'}
+                  {catalogError && <button className="btn btn-secondary" onClick={retry}>Retry</button>}
                 </div>
               ) : coveredBy ? (
                 <div style={{ padding: '14px 18px', borderRadius: 'var(--radius-md)', background: 'var(--color-accent-2-100)', color: 'var(--color-accent-2-800)', fontSize: 14, fontWeight: 600, marginBottom: 14 }}>
@@ -130,7 +134,7 @@ export default function ProductDetailClient({ product, related }: { product: Pro
               )}
 
               <div style={{ display: 'grid', gap: 2, borderRadius: 'var(--radius-lg)', overflow: 'hidden', border: '1px solid var(--color-divider)' }}>
-                {['Verified release archive', 'Account-bound perpetual license', 'Short-lived private download links', 'One year of compatible updates where specified'].map((a) => (
+                {['Versioned source archive', 'Account-bound perpetual license', 'Short-lived private download links', 'One year of compatible updates where specified'].map((a) => (
                   <div key={a} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 18px', background: 'var(--color-neutral-100)', fontSize: 14 }}>
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-2-700)" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><path d="M20 6 9 17l-5-5" /></svg>
                     {a}
@@ -209,7 +213,7 @@ export default function ProductDetailClient({ product, related }: { product: Pro
               <div style={{ marginTop: 24, padding: '22px 24px', borderRadius: 'var(--radius-lg)', background: 'var(--color-accent-2-100)' }}>
                 <div style={{ fontFamily: 'var(--font-heading)', fontSize: 17, marginBottom: 8, color: 'var(--color-accent-2-900)' }}>Not included</div>
                 <p style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--color-accent-2-900)', margin: 0 }}>
-                  Exchange connectivity, wallet credentials, live-order execution, funded capital, or trading signals. The supported release is paper-only software, not financial advice.
+                  Funded capital, exchange accounts, AI-provider credits, server and database subscriptions, and installation services. Strategy add-ons require a compatible installed edition. Execution capabilities and requirements depend on the downloaded version.
                 </p>
               </div>
             </div>
@@ -217,14 +221,14 @@ export default function ProductDetailClient({ product, related }: { product: Pro
         </section>
 
         <section style={{ maxWidth: 1200, margin: '0 auto', padding: '80px 28px 0' }}>
-          <h2 style={{ fontSize: 'clamp(26px,2.6vw,34px)', letterSpacing: '-0.02em', margin: '0 0 8px' }}>Running in under ten minutes</h2>
-          <p style={{ fontSize: 15.5, color: 'var(--color-neutral-700)', margin: '0 0 28px' }}>Full documentation ships in the download.</p>
+          <h2 style={{ fontSize: 'clamp(26px,2.6vw,34px)', letterSpacing: '-0.02em', margin: '0 0 8px' }}>From purchase to first verified run</h2>
+          <p style={{ fontSize: 15.5, color: 'var(--color-neutral-700)', margin: '0 0 28px' }}>Follow the guide for your downloaded version. Self-hosting requires server and database administration.</p>
           <div data-cv-2col style={{ display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 1, background: 'var(--color-divider)', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
             {[
               { n: '01', t: 'Download & extract', d: 'Grab the zip from your download page and unpack it wherever you keep projects.' },
-              { n: '02', t: 'Install dependencies', d: 'Run npm ci in the extracted product folder with Node.js 20 or newer.' },
-              { n: '03', t: 'Open the paper desk', d: 'Run npm run dev and open localhost:3000. Local mode does not require an exchange, wallet, API key, or database.' },
-              { n: '04', t: 'Verify your changes', d: 'Use simulated orders, export a backup, and run npm run check before deploying your fork.' },
+              { n: '02', t: 'Check your version', d: 'Read package.json, README and RUNBOOK. Core 2.0 and 2.1 use different storage and startup requirements.' },
+              { n: '03', t: 'Configure & install', d: 'Follow the setup guide for the edition, or the included INSTALL.md for a strategy plugin. Keep server credentials private.' },
+              { n: '04', t: 'Validate & maintain', d: 'Verify login, persistence, order controls and recovery in an isolated environment. Keep a backup before every update.' },
             ].map((s) => (
               <div key={s.n} style={{ background: 'var(--color-neutral-100)', padding: '28px 26px' }}>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--color-accent)', marginBottom: 14 }}>{s.n}</div>
@@ -235,6 +239,7 @@ export default function ProductDetailClient({ product, related }: { product: Pro
           </div>
         </section>
 
+        <p style={{maxWidth: 1200, margin: '28px auto', padding: '0 28px'}}><Link href={`/docs/setup?product=${product.id}`}>Open the complete setup guide →</Link></p>
         <section style={{ maxWidth: 800, margin: '80px auto 0', padding: '0 28px' }}>
           <div style={{ padding: '24px 28px', background: 'var(--color-accent-100)', borderRadius: 'var(--radius-lg)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap' }}>
             <div style={{ flex: 1, minWidth: 200 }}>

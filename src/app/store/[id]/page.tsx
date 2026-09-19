@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 import { products, getProduct, categories } from '@/lib/products';
-import { STORE_SALES_ENABLED } from '@/lib/store-config';
 import ProductDetailClient from './ProductDetailClient';
 import { notFound } from 'next/navigation';
 
@@ -65,7 +64,6 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
       "@type": "Offer",
       price: product.price,
       priceCurrency: "USD",
-      availability: STORE_SALES_ENABLED ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       url: `${siteUrl}/store/${product.id}`,
       seller: { "@type": "Organization", name: "Cival Systems" },
     },

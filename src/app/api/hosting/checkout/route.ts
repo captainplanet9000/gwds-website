@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     // but use different-mode Stripe keys, and a Stripe price's mode can't change after creation --
     // see 20260911140000_split_stripe_price_id_by_mode.sql. Pick the column matching this
     // deployment's own key before this environment's price even exists there.
-    const live = process.env.STRIPE_SECRET_KEY?.startsWith('sk_live_') ?? false;
+    const live = /^(sk|rk)_live_/.test(process.env.STRIPE_SECRET_KEY || '');
     const stripePriceId = live ? plan?.stripe_price_id_live : plan?.stripe_price_id_test;
     if (!plan?.is_active || !plan.launch_ready || !stripePriceId || plan.price_cents < 50) {
       throw new CommerceError('PLAN_NOT_READY', hostingLaunchMessage(), 503);

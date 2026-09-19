@@ -1,0 +1,245 @@
+{
+  "scope": "Offline compilation and synthetic signal contract checks; no exchange or runtime integration acceptance",
+  "results": [
+    {
+      "id": "darvas-indicator",
+      "cases": [
+        {
+          "scenario": "empty",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "flat",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "rising",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "falling",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "volatile",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "zero-volume",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "spike",
+          "direction": "neutral",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "elliott-wave-agent",
+      "cases": [
+        {
+          "scenario": "empty",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "flat",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "rising",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "falling",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "volatile",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "zero-volume",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "spike",
+          "direction": "neutral",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "heikin-ashi-agent",
+      "cases": [
+        {
+          "scenario": "empty",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "flat",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "rising",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "falling",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "volatile",
+          "direction": "long",
+          "passed": true
+        },
+        {
+          "scenario": "zero-volume",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "spike",
+          "direction": "neutral",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "macro-sentiment-agent",
+      "cases": [
+        {
+          "scenario": "empty",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "flat",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "rising",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "falling",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "volatile",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "zero-volume",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "spike",
+          "direction": "long",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "mean-reversion-agent",
+      "cases": [
+        {
+          "scenario": "empty",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "flat",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "rising",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "falling",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "volatile",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "zero-volume",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "spike",
+          "direction": "neutral",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "vwap-momentum-agent",
+      "cases": [
+        {
+          "scenario": "empty",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "flat",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "rising",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "falling",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "volatile",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "zero-volume",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "spike",
+          "direction": "long",
+          "passed": true
+        }
+      ]
+    }
+  ]
+}

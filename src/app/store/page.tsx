@@ -68,7 +68,9 @@ function Tick() {
   );
 }
 
-export default async function StorePage() {
+export default async function StorePage({ searchParams }: { searchParams: Promise<{ cat?: string }> }) {
+  const { cat } = await searchParams;
+  const initialCategory = cat === 'edition' ? 'flagship' : cat === 'agent' ? 'agent' : 'all';
   const salesEnabled = process.env.NEXT_PUBLIC_HOSTING_SALES_ENABLED === 'true';
   const plans = (await getHostingPlans()).filter((plan) => plan.executionMode === 'live');
 
@@ -76,7 +78,7 @@ export default async function StorePage() {
     <div className="cival">
       <Navbar />
       <main className="cival-fade" style={{ maxWidth: 1200, margin: '0 auto', padding: '56px 28px 96px' }}>
-        <StoreCatalogue />
+        <StoreCatalogue key={initialCategory} initialCategory={initialCategory} />
 
         {plans.length > 0 && (
           <section style={{ marginTop: 88, paddingTop: 56, borderTop: '1px solid var(--color-divider)' }}>

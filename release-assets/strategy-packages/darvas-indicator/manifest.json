@@ -1,0 +1,41 @@
+{
+  "id": "darvas-box",
+  "name": "Darvas Box Breakout",
+  "version": "2.1.1",
+  "description": "Nicolas Darvas Box Breakout strategy with volume confirmation",
+  "author": "GWDS",
+  "category": "strategy",
+  "strategy": "darvas-box",
+  "entryPoint": "dist/strategy.js",
+  "configurable": true,
+  "defaultConfig": {
+    "boxFormationPeriod": 28,
+    "volumeMultiplier": 1.5,
+    "minBoxHeight": 2,
+    "maxBoxAge": 140,
+    "stopLossPercent": 5,
+    "takeProfitRatio": 3,
+    "lookbackPeriod": 28,
+    "boxConfirmationPeriod": 5
+  },
+  "requiredIndicators": [
+    "volume",
+    "high",
+    "low",
+    "close"
+  ],
+  "supportedTimeframes": [
+    "4h",
+    "1d",
+    "1h"
+  ],
+  "riskProfile": "moderate",
+  "compatibility": {
+    "dashboard": ">=2.1.0 <2.2.0",
+    "node": ">=20"
+  },
+  "installPath": "plugins/darvas-indicator",
+  "source": "src/strategy.ts",
+  "productId": "darvas-indicator",
+  "releaseStatus": "candidate"
+}

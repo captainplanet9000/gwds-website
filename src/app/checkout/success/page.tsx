@@ -68,7 +68,7 @@ function SuccessContent() {
       : state === 'invalid' ? 'We could not verify this checkout.'
         : 'Confirming your payment…';
   const message = paid
-    ? 'Your licenses are in your account. Create a short-lived download link there whenever you need the verified release files.'
+    ? 'Your licenses are in your account. Create a short-lived download link there whenever you need the release files.'
     : state === 'failed'
       ? 'No new access was granted. Check your payment method or return to the store to try again.'
       : state === 'invalid'
@@ -84,6 +84,7 @@ function SuccessContent() {
       <p style={{ fontSize: 17, lineHeight: 1.6, color: 'var(--color-neutral-800)', margin: '0 auto 28px', maxWidth: '50ch' }}>{message}</p>
       {orderId && <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--color-neutral-600)', marginBottom: 24 }}>Order {orderId}</p>}
       <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+        {paid && <Link href="/docs/setup" className="btn btn-secondary">Read the setup guide</Link>}
         {paid && <Link href="/account" className="btn btn-primary" style={{ height: 48, padding: '0 24px' }}>Open my account</Link>}
         <Link href={state === 'failed' ? '/checkout' : '/store'} className="btn btn-secondary" style={{ height: 48, padding: '0 24px' }}>
           {state === 'failed' ? 'Try checkout again' : 'Return to store'}

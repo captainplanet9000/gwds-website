@@ -1,0 +1,47 @@
+{
+  "id": "vwap-breakout",
+  "name": "VWAP Volume Breakout",
+  "version": "2.1.1",
+  "description": "Volume-weighted average price breakouts with POC and volume profile analysis",
+  "author": "GWDS",
+  "category": "strategy",
+  "strategy": "vwap-breakout",
+  "entryPoint": "dist/strategy.js",
+  "configurable": true,
+  "defaultConfig": {
+    "sessionLength": 24,
+    "bandMultiplier": [
+      1,
+      2,
+      3
+    ],
+    "volumeThreshold": 2,
+    "cumulativeDeltaPeriod": 20,
+    "pocBinSize": 0.5,
+    "anchoredPeriod": 50,
+    "meanReversionBand": 2,
+    "minSessionVolume": 100000,
+    "priceMovementThreshold": 0.5
+  },
+  "requiredIndicators": [
+    "vwap",
+    "volume",
+    "high",
+    "low",
+    "close"
+  ],
+  "supportedTimeframes": [
+    "15m",
+    "1h",
+    "4h"
+  ],
+  "riskProfile": "aggressive",
+  "compatibility": {
+    "dashboard": ">=2.1.0 <2.2.0",
+    "node": ">=20"
+  },
+  "installPath": "plugins/vwap-momentum-agent",
+  "source": "src/strategy.ts",
+  "productId": "vwap-momentum-agent",
+  "releaseStatus": "candidate"
+}

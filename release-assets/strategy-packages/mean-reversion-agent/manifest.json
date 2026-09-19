@@ -1,0 +1,45 @@
+{
+  "id": "mean-reversion",
+  "name": "Bollinger Band Mean Reversion",
+  "version": "2.1.1",
+  "description": "Statistical mean reversion using Bollinger Bands, Keltner Channels, and RSI",
+  "author": "GWDS",
+  "category": "strategy",
+  "strategy": "mean-reversion",
+  "entryPoint": "dist/strategy.js",
+  "configurable": true,
+  "defaultConfig": {
+    "bbPeriod": 20,
+    "bbStdDev": 2,
+    "kcPeriod": 20,
+    "kcMultiplier": 1.5,
+    "rsiPeriod": 14,
+    "rsiOversold": 30,
+    "rsiOverbought": 70,
+    "bandwidthThreshold": 5,
+    "walkingThreshold": 3,
+    "doubleBottomLookback": 20,
+    "minBodyPercent": 0.3,
+    "takeProfitTarget": "middle"
+  },
+  "requiredIndicators": [
+    "bollinger-bands",
+    "rsi",
+    "keltner-channels",
+    "atr"
+  ],
+  "supportedTimeframes": [
+    "15m",
+    "1h",
+    "4h"
+  ],
+  "riskProfile": "moderate",
+  "compatibility": {
+    "dashboard": ">=2.1.0 <2.2.0",
+    "node": ">=20"
+  },
+  "installPath": "plugins/mean-reversion-agent",
+  "source": "src/strategy.ts",
+  "productId": "mean-reversion-agent",
+  "releaseStatus": "candidate"
+}

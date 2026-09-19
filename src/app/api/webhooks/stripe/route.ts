@@ -3,7 +3,7 @@ import type Stripe from 'stripe';
 import { createServerClient } from '@/lib/supabase';
 import { sendOrderReadyEmail, type OrderEmailData } from '@/lib/email';
 import { deliverHostingNotification } from '@/lib/hosting-notifications';
-import { hashPayload, type OrderItemRow } from '@/lib/commerce';
+import { hashPayload, isLiveStripeKey, type OrderItemRow } from '@/lib/commerce';
 import { parsePeriod } from '@/lib/hosting';
 import { getStripe } from '@/lib/stripe';
 
@@ -105,7 +105,7 @@ async function fulfillSession(event: Stripe.Event, session: Stripe.Checkout.Sess
     || order.total_cents !== session.amount_total) {
     throw new Error('ORDER_SESSION_MISMATCH');
   }
-  const keyIsLive = process.env.STRIPE_SECRET_KEY?.startsWith('sk_live_') ?? false;
+  const keyIsLive = isLiveStripeKey();
   if (event.livemode !== keyIsLive) throw new Error('LIVEMODE_MISMATCH');
 
   const { data, error } = await supabase.rpc('fulfill_store_order', {
@@ -368,7 +368,7 @@ export async function POST(req: NextRequest) {
 
   const payloadHash = hashPayload(payload);
   try {
-    const keyIsLive = process.env.STRIPE_SECRET_KEY?.startsWith('sk_live_') ?? false;
+    const keyIsLive = isLiveStripeKey();
     if (event.livemode !== keyIsLive) throw new Error('LIVEMODE_MISMATCH');
 
     switch (event.type) {

@@ -1,0 +1,43 @@
+{
+  "id": "heikin-ashi",
+  "name": "Heikin Ashi Trend Following",
+  "version": "2.1.1",
+  "description": "Smoothed candlestick trend following with reversal detection",
+  "author": "GWDS",
+  "category": "strategy",
+  "strategy": "heikin-ashi",
+  "entryPoint": "dist/strategy.js",
+  "configurable": true,
+  "defaultConfig": {
+    "smoothingPeriod": 1,
+    "minConsecutiveCandles": 3,
+    "wickFilter": true,
+    "emaConfirmation": true,
+    "emaPeriod": 20,
+    "trendStrengthThreshold": 5,
+    "dojiThreshold": 0.5,
+    "minBodySize": 0.3,
+    "stopLossATR": 2,
+    "takeProfitRatio": 2.5
+  },
+  "requiredIndicators": [
+    "heikin-ashi",
+    "ema",
+    "atr"
+  ],
+  "supportedTimeframes": [
+    "15m",
+    "1h",
+    "4h",
+    "1d"
+  ],
+  "riskProfile": "conservative",
+  "compatibility": {
+    "dashboard": ">=2.1.0 <2.2.0",
+    "node": ">=20"
+  },
+  "installPath": "plugins/heikin-ashi-agent",
+  "source": "src/strategy.ts",
+  "productId": "heikin-ashi-agent",
+  "releaseStatus": "candidate"
+}

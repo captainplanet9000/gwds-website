@@ -131,7 +131,7 @@ export function getSiteUrl(): string {
 }
 
 export function isLiveStripeKey(): boolean {
-  return process.env.STRIPE_SECRET_KEY?.startsWith('sk_live_') ?? false;
+  return /^(sk|rk)_live_/.test(process.env.STRIPE_SECRET_KEY || '');
 }
 
 export function commerceErrorMessage(raw: string): CommerceError {
