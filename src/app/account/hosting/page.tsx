@@ -797,7 +797,7 @@ export default function HostingAccountPage() {
                   style={{ color: "var(--color-neutral-700)", lineHeight: 1.7 }}
                 >
                   Use the connected wallet and workspace controls below. Agent
-                  choices are installed through your workspace�s loadout; risk
+                  choices are installed through the workspace loadout; risk
                   limits are configured in the dashboard.
                 </p>
                 <div
@@ -918,8 +918,8 @@ export default function HostingAccountPage() {
                       <div>
                         <dt>Last cycle</dt>
                         <dd>
-                          {runtime.lastCycleAt
-                            ? new Date(runtime.lastCycleAt).toLocaleString()
+                          {(runtime.lastCycleAt || runtime.recentCycles?.[0]?.started_at)
+                            ? new Date(runtime.lastCycleAt || runtime.recentCycles[0].started_at).toLocaleString()
                             : "Not reported"}
                         </dd>
                       </div>
