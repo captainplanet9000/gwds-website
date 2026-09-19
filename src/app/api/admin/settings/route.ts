@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { SOURCE_RELEASES_ON_HOLD } from '@/lib/release-readiness';
 import { createServerClient } from '@/lib/supabase';
 import { adminUnauthorized, requireAdmin } from '@/lib/admin-auth';
 
@@ -14,7 +15,7 @@ export async function GET(req: NextRequest) {
     if (error) throw error;
 
     // Add read-only sales_enabled status from environment
-    const salesEnabled = process.env.NEXT_PUBLIC_STORE_SALES_ENABLED === 'true';
+    const salesEnabled = process.env.NEXT_PUBLIC_STORE_SALES_ENABLED === 'true' && !SOURCE_RELEASES_ON_HOLD;
 
     return NextResponse.json({
       settings: {
@@ -29,7 +30,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
-  if (!await requireAdmin(req)) return adminUnauthorized();
+  if (!await requireAdmin(req, ['owner','operator'])) return adminUnauthorized();
   try {
     const sb = createServerClient();
     const body = await req.json();
@@ -83,7 +84,7 @@ export async function PUT(req: NextRequest) {
     }
 
     // Add read-only sales_enabled status from environment
-    const salesEnabled = process.env.NEXT_PUBLIC_STORE_SALES_ENABLED === 'true';
+    const salesEnabled = process.env.NEXT_PUBLIC_STORE_SALES_ENABLED === 'true' && !SOURCE_RELEASES_ON_HOLD;
 
     return NextResponse.json({
       settings: {

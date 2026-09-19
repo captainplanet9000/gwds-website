@@ -16,6 +16,8 @@ interface StripeEvent {
   id: string;
   type: string;
   processed: boolean;
+  status: string;
+  livemode: boolean;
   created_at: string;
 }
 
@@ -130,6 +132,7 @@ export default function AuditPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">System Audit & Health</h1>
 
+        {error && <p role="alert" style={{color:'#b91c1c',padding:16}}>{error}</p>}
         {/* Stripe Events Section */}
         <section className="bg-white rounded-lg shadow mb-8">
           <div className="px-6 py-4 border-b border-gray-200">
@@ -152,7 +155,7 @@ export default function AuditPage() {
                 {stripeEvents.length === 0 ? (
                   <tr>
                     <td colSpan={4} className="px-6 py-4 text-center text-gray-500">
-                      No webhook events
+                      {loading ? "Loading webhook events…" : error ? "Webhook data unavailable" : "No webhook events"}
                     </td>
                   </tr>
                 ) : (
@@ -166,7 +169,7 @@ export default function AuditPage() {
                             ? 'bg-green-100 text-green-800'
                             : 'bg-yellow-100 text-yellow-800'
                         }`}>
-                          {event.processed ? 'Processed' : 'Pending'}
+                          {event.status} · {event.livemode ? 'live' : 'test'}
                         </span>
                       </td>
                       <td className="px-6 py-3 text-gray-600 text-xs">{formatTime(event.created_at)}</td>
@@ -191,7 +194,7 @@ export default function AuditPage() {
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="px-6 py-3 text-left font-semibold text-gray-900">To</th>
-                  <th className="px-6 py-3 text-left font-semibold text-gray-900">Subject</th>
+                  <th className="px-6 py-3 text-left font-semibold text-gray-900">Template</th>
                   <th className="px-6 py-3 text-left font-semibold text-gray-900">Status</th>
                   <th className="px-6 py-3 text-left font-semibold text-gray-900">Sent</th>
                   <th className="px-6 py-3 text-left font-semibold text-gray-900">Error</th>
@@ -201,7 +204,7 @@ export default function AuditPage() {
                 {emailOutbox.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
-                      No outbox records
+                      {loading ? "Loading email status…" : error ? "Email data unavailable" : "No outbox records"}
                     </td>
                   </tr>
                 ) : (
@@ -322,7 +325,7 @@ export default function AuditPage() {
                     {auditLogs.length === 0 ? (
                       <tr>
                         <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
-                          No audit logs found
+                          {loading ? "Loading audit records…" : error ? "Audit data unavailable" : "No audit logs found"}
                         </td>
                       </tr>
                     ) : (

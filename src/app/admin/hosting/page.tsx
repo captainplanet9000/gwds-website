@@ -470,7 +470,7 @@ export default function HostingOperationsPage() {
             {[
               ["Active subscriptions", data.stats.activeSubscriptions],
               [
-                "Monthly recurring",
+                "Live active plan value / month",
                 `$${((data.stats.recurringRevenueCents || 0) / 100).toFixed(2)}`,
               ],
               // SERVICE RECORDS (public.hosting_instances), not tenants -- see the fleet panel

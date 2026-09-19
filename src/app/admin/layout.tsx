@@ -18,6 +18,7 @@ const navItems = [
   { name: 'Refunds', href: '/admin/refunds', icon: '↩️' },
   { name: 'Audit Log', href: '/admin/audit', icon: '🧾' },
   { name: 'Store Settings', href: '/admin/theme', icon: '🎨' },
+  { name: 'Servers & Recovery', href: '/admin/servers', icon: '🖥️' },
   { name: 'Hosting Ops', href: '/admin/hosting', icon: '⚙️' },
 ];
 
@@ -59,11 +60,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         * { box-sizing: border-box; }
         
         /* Utility Classes */
-        .admin-stat-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-        .admin-stat-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-        .admin-stat-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-        .admin-link-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-        .admin-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .admin-stat-grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+        .admin-stat-grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+        .admin-stat-grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+        .admin-link-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+        .admin-content-inner { min-width: 0; overflow-wrap: anywhere; }
+        .admin-table-wrap { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         .admin-table-wrap table { min-width: 600px; }
         
         @keyframes skeleton-pulse {
@@ -80,10 +82,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           .admin-hamburger-btn { display: flex !important; }
           .admin-topbar-inner { padding: 12px 16px !important; }
           .admin-content-inner { padding: 20px 16px !important; }
-          .admin-stat-grid-4 { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+          .admin-stat-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
           .admin-stat-grid-3 { grid-template-columns: 1fr; gap: 12px; }
           .admin-stat-grid-2 { grid-template-columns: 1fr; gap: 12px; }
-          .admin-link-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+          .admin-link-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
         }
         @media (max-width: 480px) {
           .admin-stat-grid-4 { grid-template-columns: 1fr; }
@@ -178,7 +180,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Main */}
         <main 
           className="admin-main-wrap"
-          style={{ flex: 1, marginLeft: 240, minHeight: '100vh', display: 'flex', flexDirection: 'column', transition: 'margin-left 0.2s ease' }}
+          style={{ flex: 1, minWidth: 0, marginLeft: 240, minHeight: '100vh', display: 'flex', flexDirection: 'column', transition: 'margin-left 0.2s ease' }}
         >
           {/* Top Bar */}
           <div 
@@ -187,6 +189,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           >
             <button 
               className="admin-hamburger-btn"
+              aria-label={menuOpen ? "Close admin navigation" : "Open admin navigation"}
+              aria-expanded={menuOpen}
               onClick={() => setMenuOpen(!menuOpen)}
               style={{ background: 'none', border: '1px solid var(--admin-border)', borderRadius: 6, color: 'var(--admin-text-muted)', padding: '8px 12px', fontSize: '1.1rem', cursor: 'pointer', marginRight: 'auto', display: 'none', alignItems: 'center', justifyContent: 'center' }}
             >

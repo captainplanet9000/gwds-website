@@ -307,7 +307,7 @@ export default function ThemeAdminPage() {
                     Store Sales Status
                   </div>
                   <p style={{ fontSize: 'var(--gwds-text-xs)', color: 'var(--gwds-color-text-muted)' }}>
-                    Controlled by server environment variable (read-only)
+                    Effective source-sales status, including release-readiness restrictions (read-only)
                   </p>
                 </div>
                 <div style={{
