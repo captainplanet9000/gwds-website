@@ -5,6 +5,9 @@
 .hosting-account dd { margin: 4px 0 0; overflow-wrap: anywhere; }
 .hosting-account dt { font-size: 13px; color: var(--color-neutral-700); }
 .hosting-account section { min-width: 0; overflow-wrap: anywhere; }
+.hosting-account a.btn-primary,
+.hosting-account a.btn-primary:visited,
+.hosting-account a.btn-primary:hover { color: #07130e !important; }
 @media (max-width: 600px) {
   .hosting-account .hosting-steps { grid-template-columns: minmax(0, 1fr) !important; gap: 26px !important; }
   .hosting-account .btn { white-space: normal; text-align: center; }
