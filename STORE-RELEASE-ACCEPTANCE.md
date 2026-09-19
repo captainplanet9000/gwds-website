@@ -13,6 +13,7 @@ Production baseline: storefront commit `c55ebfb`, branch `sync/hosting-dashboard
 - That order has an active entitlement and fulfilled status. Its email outbox entry is marked sent; recipient mailbox arrival was not verified.
 - All eight exact production ZIP downloads match their registered SHA-256 and byte lengths.
 - Core 2.1 repair candidate strict typecheck currently reports 74 diagnostics. The original exact archive reported 278 before prior repairs. Passing a build with ignored TypeScript errors is not acceptance.
+- Its schema lists 23 referenced-but-undefined tables, including order and position storage. The old README described a larger v10 runtime with unsupported performance claims. Replacement candidate README/RUNBOOK files are in `release-assets/core-documentation`; these have not replaced paid downloads.
 - The six published plugin manifests contained settings absent from their source defaults. VWAP used a string session length and scalar band multiplier; supplied defaults threw during evaluation. Flat prices also exposed an invalid equal-price protection setup.
 - The unpublished 2.1.1 plugin candidates align manifest defaults and declared timeframes with code. VWAP rejects malformed configuration/data, collapsed bands and invalid protection geometry. Strict compilation plus 47 synthetic signal-contract and input-rejection checks pass. These are not profitability or runtime-integration tests.
 - Storefront automated tests: 76 passing at the initial verification. Re-run the commands below after any subsequent change.
@@ -45,6 +46,8 @@ Production baseline: storefront commit `c55ebfb`, branch `sync/hosting-dashboard
 11. Remove accepted product IDs from the release gate and disable the broad source-sales hold only when appropriate. Deploy and verify real customer-facing availability. Never enable a product solely because Storage contains a ZIP.
 
 ## Reproducible local checks
+
+Storefront deployment `dpl_7dGEdU68m8SLuiuU5pBh2kbeed67` was promoted to www.civalsystems.com on 2026-09-19. Public store/catalog/guide return 200, source availability is false for all eight held products, and anonymous account-order requests return 401. Desktop/mobile checks verified category links, search, product navigation, guide contrast and expandable help. Code and candidates are preserved in draft PR #8 against the actual production source branch.
 
 ```powershell
 npm ci --ignore-scripts
