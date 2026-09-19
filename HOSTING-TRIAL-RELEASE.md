@@ -32,7 +32,7 @@ The eight downloadable source products remain held by their release-readiness ga
 ## Operational changes and rollback
 
 - Initial trial deployment: `dpl_9LtPPVRvMh4etoKfoFryctQR6ozz`, commit `9c6ab35`.
-- Account-copy/email-idempotency follow-up: commit `c3cfe99` (deployment recorded in release notes after verification).
+- Account-copy/email-idempotency follow-up: commit `c3cfe99`, deployment `dpl_9iRsAjqCJMkvgWQoNUmynpFtdRuh`, promoted and browser-verified on www.civalsystems.com.
 - Previous storefront deployment before this trial release: `dpl_FVT6PzZNgv6535VXXDbYzPnjwnW7`.
 - Supabase auth config backup on the host: `/opt/cival/supabase/.env.before-solo-trial-20260919` (mode 0600). Only eight exact return URLs were appended. Recreated only the `auth` service.
 - Stripe endpoint `we_1U6fUgLLyk0oaesNuymN6cPp` retained its existing events and added the trial reminder event.
