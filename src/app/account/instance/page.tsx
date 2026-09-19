@@ -705,7 +705,7 @@ export default function InstancePage() {
                 )}
               </section>
 
-              <section
+              <section id="agents"
                 style={{
                   padding: 26,
                   border: "1px solid var(--color-divider)",

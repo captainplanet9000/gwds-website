@@ -1,27 +1,22 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
 
-const HOSTING_AGENT_IDS = [
-  "darvas-box",
-  "elliott-wave",
-  "vwap-momentum",
-  "heikin-ashi",
-  "mean-reversion",
-  "macro-sentiment",
-  "regime-coordinator",
-] as const;
-
 // Supabase returns heterogeneous JSON rows for this read-only aggregate view.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = Record<string, any>;
 type AccountData = {
-  config: { salesEnabled: boolean; serviceTermsVersion: string; soloTrialDays: number; trialEligible: boolean };
+  config: {
+    salesEnabled: boolean;
+    serviceTermsVersion: string;
+    soloTrialDays: number;
+    trialEligible: boolean;
+  };
   plans: Row[];
   subscriptions: Row[];
   onboarding: Row[];
@@ -29,15 +24,6 @@ type AccountData = {
   incidents: Row[];
   usage: Row[];
   audit: Row[];
-};
-
-const field: React.CSSProperties = {
-  width: "100%",
-  background: "var(--color-neutral-100)",
-  color: "var(--color-text)",
-  border: "1px solid var(--color-divider)",
-  borderRadius: "var(--radius-md)",
-  padding: "12px 14px",
 };
 
 function Status({ value }: { value: string }) {
@@ -68,29 +54,10 @@ export default function HostingAccountPage() {
     command: Row | null;
   } | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
-  // `environment` is deliberately NOT in this form.
-  //
-  // It used to be, hardcoded to "paper", and it was spread into the PUT body below. The server
-  // (/api/hosting/onboarding) has always ignored it and written its own value, so the field never
-  // did anything except state a claim the page had no authority to make — and once the paid tiers
-  // became live-execution plans, the claim was wrong as well as inert.
-  //
-  // It is removed rather than corrected to the plan's execution mode. Sending the derived mode
-  // would post "simulated"/"live" into a column whose CHECK constraint is ('paper','live'), and,
-  // worse, would leave a browser-controlled field named `environment` sitting in the request body
-  // of the route that decides whether a workspace can route real orders. The next person to make
-  // the client and server "agree" would be one `body.environment` away from letting a customer
-  // arm live execution from devtools. The server is the only writer; the browser now says nothing.
-  const [form, setForm] = useState({
-    workspaceName: "",
-    region: "iad1",
-    riskProfile: "conservative",
-    maxDrawdownPct: "5",
-    maxPositionUsd: "",
-    customerNotes: "",
-    requestedAgents: ["darvas-box"] as string[],
-  });
-
+  const [runtime, setRuntime] = useState<Row | null>(null);
+  const [runtimeError, setRuntimeError] = useState("");
+  const [provisionError, setProvisionError] = useState("");
+  const [refresh, setRefresh] = useState(0);
   useEffect(() => {
     if (!authLoading && !user)
       router.replace("/account/login?next=/account/hosting");
@@ -105,21 +72,13 @@ export default function HostingAccountPage() {
     if (!response.ok)
       throw new Error(body.error || "Hosting account could not be loaded");
     setData(body);
-    const current = body.onboarding?.[0];
-    if (current)
-      setForm({
-        workspaceName: current.workspace_name || "",
-        region: current.region || "iad1",
-        riskProfile: current.risk_profile || "conservative",
-        maxDrawdownPct: current.max_drawdown_pct?.toString() || "5",
-        maxPositionUsd: current.max_position_usd?.toString() || "",
-        customerNotes: current.customer_notes || "",
-        requestedAgents: current.requested_agents || ["darvas-box"],
-      });
   }, [session?.access_token]);
   useEffect(() => {
-    if (user && session) load().catch((reason) => setError(reason.message));
-  }, [user, session, load]);
+    if (user && session)
+      load()
+        .then(() => setError(""))
+        .catch((reason) => setError(reason.message));
+  }, [user, session, load, refresh]);
 
   // A subscription row that never resulted in a live billing relationship (a checkout that
   // expired before payment, or one the customer canceled) must not permanently occupy this
@@ -131,15 +90,13 @@ export default function HostingAccountPage() {
     (row) => !["incomplete_expired", "canceled"].includes(row.status),
   );
 
-  // Real provisioning progress — polled directly from control.tenant_commands via
-  // /api/hosting/provision-status, never a spinner standing in for unknown state. Polls only while
-  // there is something that could still change (no tenant row yet, or a command that is queued or
-  // claimed); stops once the command lands on done/failed so a settled state doesn't keep hitting
-  // the network.
+  // Refresh provisioning quickly during setup and every 30 seconds once settled.
   const subscriptionId = subscription?.id;
   useEffect(() => {
-    if (subscription?.status !== 'pending_checkout') return;
-    const timer = setInterval(() => { load().catch(() => {}); }, 5000);
+    if (subscription?.status !== "pending_checkout") return;
+    const timer = setInterval(() => {
+      load().catch(() => {});
+    }, 5000);
     return () => clearInterval(timer);
   }, [subscription?.status, load]);
   useEffect(() => {
@@ -160,13 +117,32 @@ export default function HostingAccountPage() {
         );
         const body = await response.json();
         if (cancelled) return;
-        if (response.ok) setProvision(body);
+        if (!response.ok)
+          throw new Error(
+            body.error || "Provisioning status could not be loaded.",
+          );
+        setProvision(body);
+        setProvisionError("");
         const status = body?.command?.status;
-        if (!cancelled && (!body?.tenant || status === "queued" || status === "claimed")) {
-          timer = setTimeout(poll, 6000);
+        if (
+          !cancelled &&
+          subscription?.status !== "pending_checkout" &&
+          status !== "failed"
+        ) {
+          timer = setTimeout(
+            poll,
+            status === "queued" || status === "claimed" ? 6000 : 30000,
+          );
         }
-      } catch {
-        if (!cancelled) timer = setTimeout(poll, 10000);
+      } catch (reason) {
+        if (!cancelled) {
+          setProvisionError(
+            reason instanceof Error
+              ? reason.message
+              : "Provisioning status unavailable",
+          );
+          timer = setTimeout(poll, 15000);
+        }
       }
     };
     poll();
@@ -174,27 +150,47 @@ export default function HostingAccountPage() {
       cancelled = true;
       if (timer) clearTimeout(timer);
     };
-  }, [subscriptionId, session?.access_token]);
+  }, [subscriptionId, subscription?.status, session?.access_token, refresh]);
   const onboarding = data?.onboarding.find(
     (row) => row.subscription_id === subscription?.id,
   );
-  const instance = data?.instances.find(
-    (row) => row.subscription_id === subscription?.id,
-  );
   const plan = data?.plans.find((row) => row.id === subscription?.plan_id);
-
-  // Onboarding preferences are not authoritative runtime network or execution state.
-  const environmentLabel = onboarding?.environment === "live"
-    ? "Exchange-connected setup"
-    : "Simulated setup record";
-
-  const usage = useMemo(
-    () =>
-      (data?.usage || [])
-        .filter((row) => row.subscription_id === subscription?.id)
-        .reduce((total, row) => total + Number(row.agent_hours || 0), 0),
-    [data, subscription?.id],
-  );
+  useEffect(() => {
+    if (!session?.access_token || !provision?.tenant?.slug) { setRuntime(null); return; }
+    let stopped = false;
+    let timer: ReturnType<typeof setTimeout>;
+    const poll = async () => {
+      try {
+        const response = await fetch("/api/account/instance", {
+          headers: { Authorization: `Bearer ${session.access_token}` },
+          cache: "no-store",
+        });
+        const body = await response.json();
+        if (!response.ok)
+          throw new Error(body.error || "Runtime status unavailable");
+        if (!stopped) {
+          setRuntime(body);
+          setRuntimeError("");
+        }
+      } catch (reason) {
+        if (!stopped) {
+          setRuntime(null);
+          setRuntimeError(
+            reason instanceof Error
+              ? reason.message
+              : "Runtime status unavailable",
+          );
+        }
+      } finally {
+        if (!stopped) timer = setTimeout(poll, 30000);
+      }
+    };
+    poll();
+    return () => {
+      stopped = true;
+      clearTimeout(timer);
+    };
+  }, [session?.access_token, provision?.tenant?.slug, refresh]);
 
   const call = async (
     key: string,
@@ -238,8 +234,11 @@ export default function HostingAccountPage() {
         headers: { Authorization: `Bearer ${session?.access_token}` },
       });
       const body = await response.json();
-      if (!response.ok) throw new Error(body.error || "The live dashboard is temporarily unavailable.");
-      window.open(body.url, "_blank", "noopener,noreferrer");
+      if (!response.ok)
+        throw new Error(
+          body.error || "The live dashboard is temporarily unavailable.",
+        );
+      window.location.assign(body.url);
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "Request failed");
     } finally {
@@ -255,6 +254,14 @@ export default function HostingAccountPage() {
           style={{ minHeight: "100vh", paddingTop: 180, textAlign: "center" }}
         >
           {error || "Loading hosting account..."}
+          {error && (
+            <button
+              className="btn btn-secondary"
+              onClick={() => setRefresh((value) => value + 1)}
+            >
+              Retry
+            </button>
+          )}
         </main>
         <Footer />
       </div>
@@ -289,13 +296,20 @@ export default function HostingAccountPage() {
                 Your Cival workspace
               </h1>
               <p style={{ color: "var(--color-neutral-700)", margin: 0 }}>
-                Billing, onboarding, deployment, health, incidents and usage in
-                one place.
+                Your subscription, dashboard access and workspace setup in one
+                place.
               </p>
             </div>
-            <div style={{ display: "flex", gap: 10 }}>
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+              <button
+                className="btn btn-secondary"
+                disabled={!!busy}
+                onClick={() => setRefresh((value) => value + 1)}
+              >
+                Refresh status
+              </button>
               <Link className="btn btn-primary" href="/account/funding">
-                Fund your agent
+                Wallet & funding
               </Link>
               <Link className="btn btn-secondary" href="/account">
                 Source purchases
@@ -361,81 +375,97 @@ export default function HostingAccountPage() {
                   gap: 14,
                 }}
               >
-                {data.plans.filter(item => item.is_active && item.price_cents > 0).map((item) => (
-                  <article
-                    key={item.id}
-                    style={{
-                      padding: 24,
-                      background: "var(--color-surface)",
-                      border: `1px solid ${item.id === "desk" ? "var(--color-accent)" : "var(--color-divider)"}`,
-                      borderRadius: "var(--radius-lg)",
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 12,
-                    }}
-                  >
-                    <div>
-                      <span className="tag tag-neutral">{item.name}</span>
-                      <div
-                        style={{
-                          fontFamily: "var(--font-mono)",
-                          fontSize: 30,
-                          marginTop: 14,
-                        }}
-                      >
-                        {item.price_cents
-                          ? `$${(item.price_cents / 100).toFixed(0)}`
-                          : "Free"}
-                        <small
-                          style={{
-                            fontSize: 12,
-                            color: "var(--color-neutral-600)",
-                          }}
-                        >
-                          {`/${item.billing_interval}`}
-                        </small>
-                      </div>
-                    </div>
-                    <p
+                {data.plans
+                  .filter((item) => item.is_active && item.price_cents > 0)
+                  .map((item) => (
+                    <article
+                      key={item.id}
                       style={{
-                        color: "var(--color-neutral-700)",
-                        fontSize: 14,
-                        lineHeight: 1.5,
+                        padding: 24,
+                        background: "var(--color-surface)",
+                        border: `1px solid ${item.id === "desk" ? "var(--color-accent)" : "var(--color-divider)"}`,
+                        borderRadius: "var(--radius-lg)",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 12,
                       }}
                     >
-                      {item.description}
-                      {item.id === 'solo' && data.config.trialEligible && <span style={{display:'block',marginTop:12,fontWeight:600}}>7 days free, then ${(item.price_cents / 100).toFixed(2)}/{item.billing_interval}. Payment method required. Cancel before the trial ends to avoid the first charge.</span>}
-                    </p>
-                    <div style={{ display: "grid", gap: 7, fontSize: 13 }}>
-                      {(item.features || []).map((feature: string) => (
-                        <span key={feature}>✓ {feature}</span>
-                      ))}
-                    </div>
-                    <button
-                      className="btn btn-primary"
-                      style={{ marginTop: "auto" }}
-                      disabled={
-                        !!busy ||
-                        !data.config.salesEnabled ||
-                        !item.launch_ready ||
-                        item.price_cents === 0 ||
-                        !acceptedTerms
-                      }
-                      onClick={() =>
-                        call(`checkout-${item.id}`, "/api/hosting/checkout", {
-                          planId: item.id,
-                          acceptedTerms,
-                        })
-                      }
-                    >
-                      {!data.config.salesEnabled || !item.launch_ready
-                        ? "Activation pending"
-                        : item.id === 'solo' && data.config.trialEligible
-                          ? "Start 7-day Solo trial"
-                          : "Subscribe securely"}
-                    </button>
-                  </article>
-                ))}
+                      <div>
+                        <span className="tag tag-neutral">{item.name}</span>
+                        <div
+                          style={{
+                            fontFamily: "var(--font-mono)",
+                            fontSize: 30,
+                            marginTop: 14,
+                          }}
+                        >
+                          {item.price_cents
+                            ? `$${(item.price_cents / 100).toFixed(0)}`
+                            : "Free"}
+                          <small
+                            style={{
+                              fontSize: 12,
+                              color: "var(--color-neutral-600)",
+                            }}
+                          >
+                            {`/${item.billing_interval}`}
+                          </small>
+                        </div>
+                      </div>
+                      <p
+                        style={{
+                          color: "var(--color-neutral-700)",
+                          fontSize: 14,
+                          lineHeight: 1.5,
+                        }}
+                      >
+                        {item.description}
+                        {item.id === "solo" && data.config.trialEligible && (
+                          <span
+                            style={{
+                              display: "block",
+                              marginTop: 12,
+                              fontWeight: 600,
+                            }}
+                          >
+                            7 days free, then $
+                            {(item.price_cents / 100).toFixed(2)}/
+                            {item.billing_interval}. Payment method required.
+                            Cancel before the trial ends to avoid the first
+                            charge.
+                          </span>
+                        )}
+                      </p>
+                      <div style={{ display: "grid", gap: 7, fontSize: 13 }}>
+                        {(item.features || []).map((feature: string) => (
+                          <span key={feature}>✓ {feature}</span>
+                        ))}
+                      </div>
+                      <button
+                        className="btn btn-primary"
+                        style={{ marginTop: "auto" }}
+                        disabled={
+                          !!busy ||
+                          !data.config.salesEnabled ||
+                          !item.launch_ready ||
+                          item.price_cents === 0 ||
+                          !acceptedTerms
+                        }
+                        onClick={() =>
+                          call(`checkout-${item.id}`, "/api/hosting/checkout", {
+                            planId: item.id,
+                            acceptedTerms,
+                          })
+                        }
+                      >
+                        {!data.config.salesEnabled || !item.launch_ready
+                          ? "Activation pending"
+                          : item.id === "solo" && data.config.trialEligible
+                            ? "Start 7-day Solo trial"
+                            : "Subscribe securely"}
+                      </button>
+                    </article>
+                  ))}
               </div>
               <label
                 style={{
@@ -457,8 +487,15 @@ export default function HostingAccountPage() {
                   I accept the <Link href="/terms">Terms</Link>,{" "}
                   <Link href="/refunds">Refund Policy</Link>,{" "}
                   <Link href="/disclaimer">Trading Disclaimer</Link>, and{" "}
-                  <Link href="/hosting-terms">Managed Hosting Service Terms</Link>{" "}
-                  version {data.config.serviceTermsVersion}. I authorize recurring billing at the selected plan’s displayed price, after any eligible seven-day Solo trial, until I cancel. Stripe securely collects my payment method. I can cancel in Manage billing before the trial ends to avoid the first charge.
+                  <Link href="/hosting-terms">
+                    Managed Hosting Service Terms
+                  </Link>{" "}
+                  version {data.config.serviceTermsVersion}. I authorize
+                  recurring billing at the selected plan’s displayed price,
+                  after any eligible seven-day Solo trial, until I cancel.
+                  Stripe securely collects my payment method. I can cancel in
+                  Manage billing before the trial ends to avoid the first
+                  charge.
                 </span>
               </label>
             </section>
@@ -468,7 +505,7 @@ export default function HostingAccountPage() {
                 data-cv-2col
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "repeat(4,minmax(0,1fr))",
+                  gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))",
                   gap: 12,
                   marginBottom: 24,
                 }}
@@ -476,8 +513,18 @@ export default function HostingAccountPage() {
                 {[
                   ["Plan", plan?.name || subscription.plan_id],
                   ["Billing", subscription.status],
-                  ["Runtime", instance?.status || "awaiting setup"],
-                  ["Health", instance?.health_status || "unknown"],
+                  [
+                    "Runtime",
+                    runtime?.processState ||
+                      provision?.tenant?.status ||
+                      "not provisioned",
+                  ],
+                  [
+                    "Health",
+                    runtimeError
+                      ? "unavailable"
+                      : runtime?.health || "not yet reported",
+                  ],
                 ].map(([label, value]) => (
                   <div
                     key={label}
@@ -543,11 +590,25 @@ export default function HostingAccountPage() {
                 <p
                   style={{ color: "var(--color-neutral-700)", marginBottom: 0 }}
                 >
-                  {subscription.status === 'trialing' ? 'Your free trial ends ' : 'Current period ends '}{" "}
-                  {(subscription.status === 'trialing' ? subscription.trial_end : subscription.current_period_end)
-                    ? new Date(subscription.status === 'trialing' ? subscription.trial_end : subscription.current_period_end).toLocaleString()
+                  {subscription.status === "trialing"
+                    ? "Your free trial ends "
+                    : "Current period ends "}{" "}
+                  {(
+                    subscription.status === "trialing"
+                      ? subscription.trial_end
+                      : subscription.current_period_end
+                  )
+                    ? new Date(
+                        subscription.status === "trialing"
+                          ? subscription.trial_end
+                          : subscription.current_period_end,
+                      ).toLocaleString()
                     : "after activation"}
-                  . {subscription.status === 'trialing' && (subscription.cancel_at_period_end ? 'Cancellation is scheduled; the trial will not renew.' : `Your saved payment method will be charged $${((plan?.price_cents || 0) / 100).toFixed(2)}/${plan?.billing_interval || 'month'} afterward unless you cancel before this time.`)} Agent usage this period: {usage.toFixed(1)} hours.
+                  .{" "}
+                  {subscription.status === "trialing" &&
+                    (subscription.cancel_at_period_end
+                      ? "Cancellation is scheduled; the trial will not renew."
+                      : `Your saved payment method will be charged $${((plan?.price_cents || 0) / 100).toFixed(2)}/${plan?.billing_interval || "month"} afterward unless you cancel before this time.`)}
                 </p>
               </section>
 
@@ -564,16 +625,21 @@ export default function HostingAccountPage() {
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
+                    flexWrap: "wrap",
                     gap: 10,
                   }}
                 >
-                  <h2 style={{ margin: 0, fontSize: 20 }}>Provisioning your dashboard</h2>
-                  <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                  <h2 style={{ margin: 0, fontSize: 20 }}>
+                    Your hosted dashboard
+                  </h2>
+                  <div
+                    style={{ display: "flex", gap: 10, alignItems: "center" }}
+                  >
                     {provision?.command && (
                       <Status
                         value={
-                          !onboarding?.account_address ? "awaiting wallet" : provision.command.status === "done"
-                            ? "active"
+                          provision.command.status === "done"
+                            ? provision.tenant?.status || "provisioned"
                             : provision.command.status
                         }
                       />
@@ -589,18 +655,62 @@ export default function HostingAccountPage() {
                     )}
                   </div>
                 </div>
-                {subscription.status === 'pending_checkout' && <div style={{display:'flex',gap:12,flexWrap:'wrap',marginTop:16}}>
-                  <button className="btn btn-primary" disabled={!!busy} onClick={() => call('resume-checkout','/api/hosting/checkout-session',{subscriptionId:subscription.id,action:'resume'})}>Continue secure checkout</button>
-                  <button className="btn btn-secondary" disabled={!!busy} onClick={() => call('cancel-checkout','/api/hosting/checkout-session',{subscriptionId:subscription.id,action:'cancel'})}>Cancel checkout and choose a plan</button>
-                </div>}
-                {!onboarding?.account_address && ['active', 'trialing'].includes(subscription.status) && (
-                <p>Your plan is active. <Link href="/account/funding">Connect and verify your wallet</Link> to create your dashboard. Setup continues automatically after verification.</p>
-              )}
-              {!provision?.tenant ? (
+                {subscription.status === "pending_checkout" && (
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: 12,
+                      flexWrap: "wrap",
+                      marginTop: 16,
+                    }}
+                  >
+                    <button
+                      className="btn btn-primary"
+                      disabled={!!busy}
+                      onClick={() =>
+                        call(
+                          "resume-checkout",
+                          "/api/hosting/checkout-session",
+                          { subscriptionId: subscription.id, action: "resume" },
+                        )
+                      }
+                    >
+                      Continue secure checkout
+                    </button>
+                    <button
+                      className="btn btn-secondary"
+                      disabled={!!busy}
+                      onClick={() =>
+                        call(
+                          "cancel-checkout",
+                          "/api/hosting/checkout-session",
+                          { subscriptionId: subscription.id, action: "cancel" },
+                        )
+                      }
+                    >
+                      Cancel checkout and choose a plan
+                    </button>
+                  </div>
+                )}
+                {!provision?.tenant &&
+                  !onboarding?.account_address &&
+                  ["active", "trialing"].includes(subscription.status) && (
+                    <p>
+                      Your plan is active.{" "}
+                      <Link href="/account/funding">
+                        Connect and verify your wallet
+                      </Link>{" "}
+                      to create your dashboard. Setup continues automatically
+                      after verification.
+                    </p>
+                  )}
+                {!provision?.tenant ? (
                   <p style={{ color: "var(--color-neutral-700)" }}>
                     {subscription.status === "pending_checkout"
                       ? "Complete secure checkout to activate your subscription or eligible trial. No trading funds are included."
-                      : "Waiting for your workspace to be queued. This updates automatically — no action is needed."}
+                      : !onboarding?.account_address
+                        ? "Connect and verify your wallet to continue setup."
+                        : "Your wallet is verified. Waiting for workspace provisioning; status updates automatically."}
                   </p>
                 ) : (
                   <div style={{ display: "grid", gap: 10 }}>
@@ -647,7 +757,7 @@ export default function HostingAccountPage() {
                         </span>
                       </div>
                     ))}
-                    {provision.command?.status === "failed" && onboarding?.account_address && (
+                    {provision.command?.status === "failed" && (
                       <div
                         style={{
                           marginTop: 6,
@@ -660,209 +770,100 @@ export default function HostingAccountPage() {
                         }}
                       >
                         <strong>Dashboard setup needs attention.</strong>{" "}
-                        <Link href="/account/funding">Retry wallet verification</Link> to resume setup. If the problem continues, <Link href="/contact">contact support</Link> and reference subscription {subscription.id}.
+                        <Link href="/contact?subject=Hosting%20provisioning">
+                          Contact hosting support
+                        </Link>{" "}
+                        and reference subscription {subscription.id}. Your
+                        wallet does not need to be re-approved solely because
+                        server provisioning failed.
                       </div>
                     )}
                   </div>
                 )}
               </section>
 
-              {onboarding && (
-                <section
+              <section
+                style={{
+                  padding: 26,
+                  border: "1px solid var(--color-divider)",
+                  borderRadius: "var(--radius-lg)",
+                  marginBottom: 18,
+                }}
+              >
+                <h2 style={{ marginTop: 0, fontSize: 22 }}>
+                  Set up and operate your workspace
+                </h2>
+                <p
+                  style={{ color: "var(--color-neutral-700)", lineHeight: 1.7 }}
+                >
+                  Use the connected wallet and workspace controls below. Agent
+                  choices are installed through your workspace�s loadout; risk
+                  limits are configured in the dashboard.
+                </p>
+                <div
                   style={{
-                    padding: 26,
-                    border: "1px solid var(--color-divider)",
-                    borderRadius: "var(--radius-lg)",
-                    marginBottom: 18,
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))",
+                    gap: 16,
                   }}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    <h2 style={{ margin: 0, fontSize: 20 }}>Workspace onboarding</h2>
-                    <Status value={onboarding.status} />
-                  </div>
-                  <p style={{ color: "var(--color-neutral-700)", lineHeight: 1.65 }}>
-                    These setup preferences are submitted for operator review. Saving this form does
-                    not change or pause your running agents. The saved setup record can differ from
-                    your active workspace: open your dashboard to verify the current network, orders
-                    and risk limits. Testnet uses test funds; mainnet trades can lose real money.
-                    Approve only the trade-only agent key and never share a wallet seed phrase or
-                    withdrawal-capable private key.
-                  </p>
-                  <Link className="btn btn-secondary" href="/account/instance" style={{ marginBottom: 20 }}>
-                    Manage workspace, wallet and agents
-                  </Link>
-                  <div
-                    data-cv-2col
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "repeat(2,minmax(0,1fr))",
-                      gap: 12,
-                    }}
-                  >
-                    <label>
-                      Workspace name
-                      <input
-                        style={field}
-                        value={form.workspaceName}
-                        onChange={(e) =>
-                          setForm({ ...form, workspaceName: e.target.value })
-                        }
-                      />
-                    </label>
-                    <label>
-                      Preferred region (subject to availability)
-                      <select
-                        style={field}
-                        value={form.region}
-                        onChange={(e) =>
-                          setForm({ ...form, region: e.target.value })
-                        }
-                      >
-                        {["iad1", "sfo1", "fra1", "sin1"].map((v) => (
-                          <option key={v}>{v}</option>
-                        ))}
-                      </select>
-                    </label>
-                    {/* Read-only because the customer does not choose this and never could: the
-                      * server sets it. It shows the recorded value so the field can never claim
-                      * more than the row behind it. */}
-                    <label>
-                      Saved setup preference (not current network)
-                      <input style={field} value={environmentLabel} readOnly />
-                    </label>
-                    <label>
-                      Risk profile
-                      <select
-                        style={field}
-                        value={form.riskProfile}
-                        onChange={(e) =>
-                          setForm({ ...form, riskProfile: e.target.value })
-                        }
-                      >
-                        <option value="conservative">Conservative</option>
-                        <option value="balanced">Balanced</option>
-                        <option value="custom">Custom</option>
-                      </select>
-                    </label>
-                    <label>
-                      Maximum drawdown %
-                      <input
-                        type="number"
-                        min="0.1"
-                        max="100"
-                        step="0.1"
-                        style={field}
-                        value={form.maxDrawdownPct}
-                        onChange={(e) =>
-                          setForm({ ...form, maxDrawdownPct: e.target.value })
-                        }
-                      />
-                    </label>
-                    <label>
-                      Maximum position USD
-                      <input
-                        type="number"
-                        min="1"
-                        style={field}
-                        value={form.maxPositionUsd}
-                        onChange={(e) =>
-                          setForm({ ...form, maxPositionUsd: e.target.value })
-                        }
-                      />
-                    </label>
-                  </div>
-                  <div style={{ marginTop: 16 }}>
-                    <strong>
-                      Requested agents
-                      {typeof plan?.agent_limit === "number"
-                        ? ` (choose up to ${plan.agent_limit})`
+                  <article>
+                    <h3>1. Connect your wallet</h3>
+                    <p>
+                      Verify wallet ownership and approve the trade-only key.
+                      Check the network before funding.
+                    </p>
+                    <Link className="btn btn-secondary" href="/account/funding">
+                      Connect wallet & approve key
+                    </Link>
+                  </article>
+                  <article>
+                    <h3>2. Deposit or withdraw</h3>
+                    <p>
+                      Open the dashboard’s Deposit &amp; Withdraw page to authorize transfers from your own wallet. Hosting fees do not fund trading.
+                    </p>
+                    <button className="btn btn-secondary" disabled={!!busy || provision?.tenant?.status !== "active"} onClick={openDashboard}>Open dashboard for transfers</button>
+                  </article>
+                  <article>
+                    <h3>3. Choose your agents</h3>
+                    <p>
+                      {plan?.agent_limit
+                        ? `Your plan supports ${plan.agent_limit} simultaneous agent${plan.agent_limit === 1 ? "" : "s"}. `
                         : ""}
-                    </strong>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexWrap: "wrap",
-                        gap: 8,
-                        marginTop: 8,
-                      }}
-                    >
-                      {HOSTING_AGENT_IDS.map((agent) => {
-                        const checked = form.requestedAgents.includes(agent);
-                        // Matches control.sync_tenant_loadout_from_onboarding's own cap: the
-                        // customer's plan buys a fixed number of installed agents, and letting the
-                        // form collect more than that just produces requests the backend refuses.
-                        const atLimit =
-                          typeof plan?.agent_limit === "number" &&
-                          form.requestedAgents.length >= plan.agent_limit;
-                        return (
-                          <label
-                            key={agent}
-                            style={{
-                              padding: "8px 10px",
-                              border: "1px solid var(--color-divider)",
-                              borderRadius: 999,
-                              opacity: !checked && atLimit ? 0.5 : 1,
-                            }}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={checked}
-                              disabled={!checked && atLimit}
-                              onChange={(e) =>
-                                setForm({
-                                  ...form,
-                                  requestedAgents: e.target.checked
-                                    ? [...form.requestedAgents, agent]
-                                    : form.requestedAgents.filter(
-                                        (item) => item !== agent,
-                                      ),
-                                })
-                              }
-                            />{" "}
-                            {agent}
-                          </label>
-                        );
-                      })}
-                    </div>
-                  </div>
-                  <label style={{ display: "block", marginTop: 16 }}>
-                    Notes
-                    <textarea
-                      style={{ ...field, minHeight: 90 }}
-                      value={form.customerNotes}
-                      onChange={(e) =>
-                        setForm({ ...form, customerNotes: e.target.value })
-                      }
-                    />
-                  </label>
-                  <button
-                    className="btn btn-primary"
-                    style={{ marginTop: 14 }}
-                    disabled={!!busy}
-                    onClick={() =>
-                      call(
-                        "onboarding",
-                        "/api/hosting/onboarding",
-                        {
-                          subscriptionId: subscription.id,
-                          ...form,
-                          maxDrawdownPct: Number(form.maxDrawdownPct) || null,
-                          maxPositionUsd: Number(form.maxPositionUsd) || null,
-                        },
-                        "PUT",
-                      )
-                    }
-                  >
-                    Submit for operator review
-                  </button>
-                </section>
-              )}
+                      Select available strategies and markets, then review
+                      installation status.
+                    </p>
+                    {provision?.tenant ? (
+                      <Link
+                        className="btn btn-secondary"
+                        href="/account/instance#agents"
+                      >
+                        Configure agents
+                      </Link>
+                    ) : (
+                      <p>Available after your dashboard is provisioned.</p>
+                    )}
+                  </article>
+                  <article>
+                    <h3>4. Review trading controls</h3>
+                    <p>
+                      Review recent cycles and pause controls in your workspace.
+                      Open the dashboard to configure strategy limits and
+                      monitor positions.
+                    </p>
+                    {provision?.tenant ? (
+                      <Link
+                        className="btn btn-secondary"
+                        href="/account/instance"
+                      >
+                        Manage workspace
+                      </Link>
+                    ) : (
+                      <p>Complete wallet verification to continue.</p>
+                    )}
+                  </article>
+                </div>
+              </section>
 
               <div
                 data-cv-2col
@@ -880,53 +881,62 @@ export default function HostingAccountPage() {
                   }}
                 >
                   <h2 style={{ marginTop: 0, fontSize: 20 }}>Service health</h2>
-                  {instance ? (
-                    <div style={{ display: "grid", gap: 10 }}>
-                      {[
-                        ["Runtime", instance.health_status],
-                        ["Backups", instance.backup_status],
-                        [
-                          "Last heartbeat",
-                          instance.last_heartbeat_at
-                            ? new Date(
-                                instance.last_heartbeat_at,
-                              ).toLocaleString()
-                            : "not yet",
-                        ],
-                        [
-                          "Recovery test",
-                          instance.last_recovery_test_at
-                            ? new Date(
-                                instance.last_recovery_test_at,
-                              ).toLocaleDateString()
-                            : "not yet",
-                        ],
-                        [
-                          "Release",
-                          instance.release_version || "awaiting deployment",
-                        ],
-                      ].map(([label, value]) => (
-                        <div
-                          key={label}
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            borderTop: "1px solid var(--color-divider)",
-                            paddingTop: 10,
-                          }}
-                        >
-                          <span>{label}</span>
-                          <span style={{ color: "var(--color-neutral-700)" }}>
-                            {value}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
+                  {runtimeError && <p role="alert">{runtimeError}</p>}
+                  {provisionError && <p role="alert">{provisionError}</p>}
+                  {runtime ? (
+                    <dl style={{ display: "grid", gap: 12 }}>
+                      <div>
+                        <dt>Process</dt>
+                        <dd>{runtime.processState}</dd>
+                      </div>
+                      <div>
+                        <dt>Health</dt>
+                        <dd>{runtime.health}</dd>
+                      </div>
+                      <div>
+                        <dt>New trade entries</dt>
+                        <dd>
+                          {runtime.halt?.active
+                            ? "Paused"
+                            : "Allowed by workspace control"}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt>Scheduled cycles</dt>
+                        <dd>
+                          {runtime.schedule?.enabled ? "Enabled" : "Disabled"}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt>Last heartbeat</dt>
+                        <dd>
+                          {runtime.heartbeatAt
+                            ? new Date(runtime.heartbeatAt).toLocaleString()
+                            : "Not reported"}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt>Last cycle</dt>
+                        <dd>
+                          {runtime.lastCycleAt
+                            ? new Date(runtime.lastCycleAt).toLocaleString()
+                            : "Not reported"}
+                        </dd>
+                      </div>
+                    </dl>
                   ) : (
                     <p>
-                      Instance creation begins after subscription activation.
+                      Current runtime status appears once the workspace is
+                      provisioned. Status refreshes every 30 seconds.
                     </p>
                   )}
+                  <p
+                    style={{ fontSize: 13, color: "var(--color-neutral-700)" }}
+                  >
+                    An enabled scheduler does not guarantee a trade signal.
+                    Verify testnet or mainnet and your risk settings in the
+                    dashboard.
+                  </p>
                 </section>
                 <section
                   style={{
@@ -935,7 +945,9 @@ export default function HostingAccountPage() {
                     borderRadius: "var(--radius-lg)",
                   }}
                 >
-                  <h2 style={{ marginTop: 0, fontSize: 20 }}>Customer-visible incidents</h2>
+                  <h2 style={{ marginTop: 0, fontSize: 20 }}>
+                    Customer-visible incidents
+                  </h2>
                   {data.incidents.length ? (
                     data.incidents.map((row) => (
                       <div
