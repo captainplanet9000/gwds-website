@@ -45,7 +45,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   if (!product || product.legacy) notFound();
 
   const related = products
-    .filter(p => p.category === product.category && p.id !== product.id && !p.legacy && !(EDITION_INCLUDES[product.id] || []).includes(p.id))
+    .filter(p => p.category === product.category && p.id !== product.id && !p.legacy && !(EDITION_INCLUDES[product.id] || []).includes(p.id) && !(EDITION_INCLUDES[p.id] || []).includes(product.id))
     .sort((a, b) => Math.abs(a.price - product.price) - Math.abs(b.price - product.price))
     .slice(0, 3);
 

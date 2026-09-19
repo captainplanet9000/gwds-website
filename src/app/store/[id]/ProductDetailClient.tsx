@@ -16,6 +16,8 @@ function money(n: number) {
 }
 
 export default function ProductDetailClient({ product, related }: { product: Product; related: Product[] }) {
+  const isAgent = product.productType === "agent";
+  const isTrader = product.id === "multi-strat-bundle";
   const isCore = product.id === "trading-dashboard-template";
   const { items, dispatch } = useCart();
   const { catalog, error: catalogError, retry } = useStoreCatalog();
@@ -73,11 +75,11 @@ export default function ProductDetailClient({ product, related }: { product: Pro
                 <span style={{ fontSize: 13, color: 'var(--color-neutral-600)' }}>one-time product license</span>
               </div>
 
-              {product.requiresDashboard && <RequiresDashboardBanner />}
+              {product.requiresDashboard && <RequiresDashboardBanner includedInCore={product.id === "darvas-indicator"} />}
               {product.isBundle && (
                 <div style={{ background: 'var(--color-accent-2-100)', borderRadius: 'var(--radius-md)', padding: '12px 16px', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 10 }}>
                   <span>✅</span>
-                  <span style={{ color: 'var(--color-accent-2-800)', fontSize: 14, fontWeight: 600 }}>Includes the full platform — no additional purchase needed</span>
+                  <span style={{ color: 'var(--color-accent-2-800)', fontSize: 14, fontWeight: 600 }}>Includes Core and all six strategy frameworks. Hosting and third-party fees are separate.</span>
                 </div>
               )}
 
@@ -109,7 +111,7 @@ export default function ProductDetailClient({ product, related }: { product: Pro
               )}
 
               <div style={{ display: 'grid', gap: 2, borderRadius: 'var(--radius-lg)', overflow: 'hidden', border: '1px solid var(--color-divider)' }}>
-                {(isCore ? ['Downloadable software — installed by you', 'One-time license fee; hosting costs are separate', 'Darvas Box strategy included', 'Source code you can read and customize'] : ['Versioned source archive', 'Account-bound perpetual license', 'Short-lived private download links', 'One year of compatible updates where specified']).map((a) => (
+                {(isCore ? ['Downloadable software — installed by you', 'One-time license fee; hosting costs are separate', 'Darvas Box strategy included', 'Source code you can read and customize'] : isAgent ? ['Downloadable strategy source code', 'Requires a compatible dashboard installation', 'Included in Trader Edition', 'One-time software license fee'] : ['Core dashboard source included', 'All six strategy frameworks included', 'Installed and maintained by you', 'Hosting and trading funds are separate']).map((a) => (
                   <div key={a} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 18px', background: 'var(--color-neutral-100)', fontSize: 14 }}>
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-2-700)" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><path d="M20 6 9 17l-5-5" /></svg>
                     {a}
@@ -154,14 +156,14 @@ export default function ProductDetailClient({ product, related }: { product: Pro
               </div>
             </div>
             <div>
-              <h2 style={{ fontSize: 'clamp(26px,2.6vw,34px)', letterSpacing: '-0.02em', margin: '0 0 20px' }}>{isCore ? "What is Core Edition?" : "About this product"}</h2>
+              <h2 style={{ fontSize: 'clamp(26px,2.6vw,34px)', letterSpacing: '-0.02em', margin: '0 0 20px' }}>{isCore ? "What is Core Edition?" : isAgent ? "How this strategy works" : "What is Trader Edition?"}</h2>
               {(product.longDescription || '').split('\n\n').map((p: string, i: number) => (
                 <p key={i} style={{ fontSize: 16, lineHeight: 1.65, color: 'var(--color-neutral-800)' }}>{p}</p>
               ))}
               <div style={{ marginTop: 24, padding: '22px 24px', borderRadius: 'var(--radius-lg)', background: 'var(--color-accent-2-100)' }}>
                 <div style={{ fontFamily: 'var(--font-heading)', fontSize: 17, marginBottom: 8, color: 'var(--color-accent-2-900)' }}>Not included</div>
                 <p style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--color-accent-2-900)', margin: 0 }}>
-                  {isCore ? "A hosted dashboard, server or database fees, installation services, trading funds and paid third-party services. Other strategy plugins are sold separately; Trader includes all six strategy frameworks." : "Funded capital, exchange accounts, AI-provider credits, server and database subscriptions, and installation services. Strategy add-ons require a compatible installed edition. Execution capabilities and requirements depend on the downloaded version."}
+                  {isCore ? "A hosted dashboard, server or database fees, installation services, trading funds and paid third-party services. Other strategy plugins are sold separately; Trader includes all six strategy frameworks." : isTrader ? "Managed hosting, server and database fees, installation services, trading funds and paid data or AI services. You install and maintain the software yourself." : "A standalone dashboard, managed hosting, trading funds, installation services or paid data subscriptions. The dashboard supplies market data and handles orders and positions; this download supplies the strategy code."}
                 </p>
               </div>
             </div>
@@ -169,19 +171,19 @@ export default function ProductDetailClient({ product, related }: { product: Pro
         </section>
 
         <section style={{ maxWidth: 1200, margin: '0 auto', padding: '80px 28px 0' }}>
-          <h2 style={{ fontSize: 'clamp(26px,2.6vw,34px)', letterSpacing: '-0.02em', margin: '0 0 8px' }}>{isCore ? "How you get started" : "From purchase to first verified run"}</h2>
-          <p style={{ fontSize: 15.5, color: 'var(--color-neutral-700)', margin: '0 0 28px' }}>{isCore ? "When purchases reopen, these are the steps to set up Core. You will need a compatible Node.js environment, a Supabase project and the ability to configure and maintain both." : "Follow the guide for your downloaded version. Self-hosting requires server and database administration."}</p>
+          <h2 style={{ fontSize: 'clamp(26px,2.6vw,34px)', letterSpacing: '-0.02em', margin: '0 0 8px' }}>{isAgent ? "How to install this strategy" : "How you get started"}</h2>
+          <p style={{ fontSize: 15.5, color: 'var(--color-neutral-700)', margin: '0 0 28px' }}>{isAgent ? "Install the add-on into a working dashboard that supports its version. Read the included installation guide before changing your setup." : "When purchases reopen, download your edition from your account. You will need a compatible Node.js environment, a Supabase project and the ability to configure and maintain both."}</p>
           <div data-cv-2col style={{ display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 1, background: 'var(--color-divider)', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
-            {(isCore ? [
-              { n: '01', t: 'Download your software', d: 'After payment is confirmed, download Core from your account and extract it into a new folder.' },
+            {(!isAgent ? [
+              { n: '01', t: 'Download your software', d: 'After payment is confirmed, download your edition from your account and extract it into a new folder.' },
               { n: '02', t: 'Set up your environment', d: 'Follow the included guide to install dependencies, connect Supabase and create the database tables.' },
               { n: '03', t: 'Configure your workspace', d: 'Start the dashboard, set up your account and configure your strategy, market and risk settings.' },
               { n: '04', t: 'Test before going live', d: 'Check login, saved settings and trading controls. Verify a full testnet trade before considering real funds.' },
             ] : [
-              { n: '01', t: 'Download & extract', d: 'Grab the zip from your download page and unpack it wherever you keep projects.' },
-              { n: '02', t: 'Check your version', d: 'Read package.json, README and RUNBOOK. Core 2.0 and 2.1 use different storage and startup requirements.' },
-              { n: '03', t: 'Configure & install', d: 'Follow the setup guide for the edition, or the included INSTALL.md for a strategy plugin. Keep server credentials private.' },
-              { n: '04', t: 'Validate & maintain', d: 'Verify login, persistence, order controls and recovery in an isolated environment. Keep a backup before every update.' },
+              { n: '01', t: 'Check compatibility', d: 'Match the add-on version to your installed dashboard. Confirm the strategy is not already included in your edition.' },
+              { n: '02', t: 'Back up and install', d: 'Back up your settings and plugins. Follow the included installation guide to copy the strategy into your dashboard.' },
+              { n: '03', t: 'Choose your settings', d: 'Restart the dashboard, select the strategy and configure its market, timeframe and risk limits.' },
+              { n: '04', t: 'Review a test run', d: 'Check signals, order handling and exits on testnet before considering real funds. Keep a backup before updates.' },
             ]).map((s) => (
               <div key={s.n} style={{ background: 'var(--color-neutral-100)', padding: '28px 26px' }}>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--color-accent)', marginBottom: 14 }}>{s.n}</div>
@@ -204,6 +206,24 @@ export default function ProductDetailClient({ product, related }: { product: Pro
           <p style={{marginTop:24,fontSize:15,lineHeight:1.6}}>Prefer managed hosting? <Link href="/hosted">Compare hosted plans →</Link></p>
         </section>}
 
+        {!isCore && <section style={{maxWidth:1200,margin:'0 auto',padding:'56px 28px 40px'}}>
+          <h2 style={{fontSize:'clamp(26px,2.6vw,34px)',lineHeight:1.2,marginBottom:24}}>Before you buy</h2>
+          {(isAgent ? [
+            ['Can I use this without the dashboard?', 'No. This is a strategy add-on, not a standalone trading app. You need a compatible Cival dashboard to supply data, run the strategy and manage orders.'],
+            ['Is this already in my edition?', product.id === 'darvas-indicator' ? 'Darvas is included in both Core and Trader. You do not need to purchase it again.' : 'Trader includes this strategy. If you own Core, this is an optional additional strategy. Check your account and installed plugins before buying.'],
+            ['Does this add agents to my hosted plan?', 'No. This purchase is downloadable source code. Hosted dashboard subscriptions have their own strategy selection and agent limits.'],
+            ['Do I need a paid AI service?', 'These strategies use programmed rules rather than an LLM. No AI subscription is included. Any external service you add has its own costs.'],
+            ['Are updates and support included?', 'The purchase covers the supplied software version. Check the license and product terms for update rights; future major versions may be separate products. Contact support for purchase or installation help.'],
+          ] : [
+            ['Do I also need to buy Core or the individual agents?', 'No. Trader includes Core, Darvas and the other five strategy frameworks. Buying them again would duplicate what is already included.'],
+            ['How is the $95 saving calculated?', 'Core is listed at $99 and includes Darvas. The other five add-ons are $49 each, making $344 separately. Trader is $249. The $344 comparison is not a previous sale price.'],
+            ['Does Trader include a hosted dashboard?', 'No. You install and maintain Trader on your own infrastructure. Managed hosting is a separate subscription.'],
+            ['Can all six strategies trade immediately?', 'No. You must complete installation, configure the strategies and verify order handling and risk controls. New purchases remain paused while release issues are corrected.'],
+            ['Does Sentiment Proxy include news or macroeconomic data?', 'No. It is an experimental research strategy based on price and volume estimates. External news, social and macroeconomic feeds are not included.'],
+          ]).map(([question,answer])=><details key={question} style={{padding:'20px 0',borderBottom:'1px solid var(--color-divider)'}}><summary style={{fontSize:16,fontWeight:600,lineHeight:1.5,cursor:'pointer'}}>{question}</summary><p style={{fontSize:15,lineHeight:1.7,color:'var(--color-neutral-800)',maxWidth:800,marginTop:16}}>{answer}</p></details>)}
+          <p style={{fontSize:15,lineHeight:1.6,marginTop:24}}><Link href="/terms">Read software license terms</Link> · <Link href="/hosted">Explore managed hosting</Link></p>
+        </section>}
+
         <p style={{maxWidth: 1200, margin: '28px auto', padding: '0 28px'}}><Link href={`/docs/setup?product=${product.id}`}>Open the complete setup guide →</Link></p>
         <section style={{ maxWidth: 800, margin: '80px auto 0', padding: '0 28px' }}>
           <div style={{ padding: '24px 28px', background: 'var(--color-accent-100)', borderRadius: 'var(--radius-lg)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap' }}>
@@ -217,8 +237,8 @@ export default function ProductDetailClient({ product, related }: { product: Pro
 
         {related.length > 0 && (
           <section style={{ maxWidth: 1200, margin: '0 auto', padding: '80px 28px 96px' }}>
-            <h2 style={{ fontSize: 'clamp(26px,2.6vw,34px)', letterSpacing: '-0.02em', margin: '0 0 24px' }}>{isCore ? "Explore other strategies" : "Pairs well with"}</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 16 }}>
+            <h2 style={{ fontSize: 'clamp(26px,2.6vw,34px)', letterSpacing: '-0.02em', margin: '0 0 24px' }}>{isAgent || isCore ? "Explore other strategies" : "Explore more products"}</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,260px),1fr))', gap: 16 }}>
               {related.map((p) => (
                 <Link key={p.id} href={`/store/${p.id}`} style={{ display: 'flex', alignItems: 'center', gap: 18, padding: '22px 24px', borderRadius: 'calc(var(--radius-lg) * 1.15)', background: 'var(--color-surface)', textDecoration: 'none', color: 'var(--color-text)' }}>
                   <div style={{ width: 44, height: 44, flexShrink: 0, borderRadius: 999, background: 'var(--color-neutral-100)', display: 'grid', placeItems: 'center', fontSize: 20 }}>{p.emoji}</div>

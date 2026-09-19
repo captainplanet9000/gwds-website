@@ -24,13 +24,13 @@ const farms = demo('demo-farms', 'Group agents into farms', 'Explore the broader
 const analytics = demo('demo-analytics', 'Compare strategies', 'Inspect sample strategy comparisons and distributions in the broader demo. These figures are illustrative and are not measured strategy performance.', '/analytics');
 const journal = demo('demo-journal', 'Review trade decisions', 'The broader demo shows sample entries, exits, and journal analysis. Journal AI analysis is not supplied by an individual strategy plugin.', '/journal');
 const plugins = demo('demo-plugins', 'Plugin workspace', 'Preview the demo’s plugin interface. Follow the supplied installation guide for the downloadable package.', '/plugins');
-const liveAgent = hosted('customer-agent-detail-testnet', 'Hosted agent detail', 'An actual hosted testnet Renko agent with its position and protection details. Renko is a hosted example, not one of the six standalone plugins in this bundle.', '/agents');
+const liveAgent = hosted('customer-agent-detail-testnet', 'Hosted agent detail', 'An actual hosted testnet Renko agent with its position and protection details. Renko is a hosted example, not included in the downloadable Core or Trader editions.', '/agents');
 const liveFarm = hosted('customer-farms-testnet', 'Hosted testnet farm', 'A real customer workspace showing the testnet farm’s capital and results. Hosted service is separate from source-code purchases.', '/farms');
-const liveGoal = hosted('customer-goals-testnet', 'Hosted validation goal', 'A testnet validation goal linked to the operational farm. This is operational evidence for the hosted edition, not acceptance of the source archives.', '/goals');
+const liveGoal = hosted('customer-goals-testnet', 'Hosted validation goal', 'A testnet validation goal linked to the operational farm. This is operational evidence for the hosted edition, not proof that the downloadable editions are ready to trade.', '/goals');
 
 const strategy = (number: number, slug: string, title: string, detail: string) => demo(`demo-${slug}`, title, detail, `/agents/agent-${number}`);
 const darvas = strategy(3, 'darvas', 'Darvas agent workspace', 'Sample Darvas profile, position, and trade history. The current plugin supplies the Darvas signal logic; the dashboard supplies the workspace.');
-const elliott = strategy(2, 'elliott', 'Elliott Wave agent workspace', 'Sample Elliott Wave profile. The downloadable strategy uses deterministic pivot heuristics, not guaranteed wave identification.');
+const elliott = strategy(2, 'elliott', 'Elliott Wave agent workspace', 'Sample Elliott Wave profile. The downloadable strategy uses programmed price-swing rules, not guaranteed wave identification.');
 const vwap = strategy(1, 'vwap', 'VWAP agent workspace', 'Sample VWAP profile and trade history. Current package contents specify its volume-weighted signal rules.');
 const heikin = strategy(4, 'heikin-ashi', 'Heikin Ashi agent workspace', 'Sample trend-following profile. Demo narrative and performance are illustrative; consult the package rules for actual signals.');
 const mean = strategy(5, 'mean-reversion', 'Mean reversion agent workspace', 'Sample mean reversion profile. The plugin uses Bollinger-based rules; market conditions can invalidate a reversion setup.');

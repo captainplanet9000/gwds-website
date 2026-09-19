@@ -74,7 +74,7 @@ export default function StoreCatalogue({ initialCategory = 'all' }: { initialCat
 
         {(!STORE_SALES_ENABLED || visibleProducts.some(p => needsReleaseAcceptance(p.id))) && (
           <div role="status" style={{ marginBottom: 28, padding: '18px 22px', borderRadius: 'var(--radius-lg)', background: 'var(--color-accent-2-100)', color: 'var(--color-accent-2-900)', lineHeight: 1.6 }}>
-            <strong>Release verification is in progress.</strong> New source-product purchases are paused while clean installation and execution checks are completed. Existing purchases remain in your account. Managed hosting has its own separate setup and availability.
+            <strong>Software updates are in progress.</strong> New software purchases are paused while we fix and test installation and trading issues. Existing purchases remain in your account. Managed hosting has its own separate setup and availability.
           </div>
         )}
 
@@ -90,9 +90,9 @@ export default function StoreCatalogue({ initialCategory = 'all' }: { initialCat
             <div style={{ fontSize: 13.5, lineHeight: 1.55, color: 'var(--color-neutral-800)' }}>You operate the server, database, updates and backups. Read the version-specific guide and validate execution before connecting funds.</div>
           </div>
           <div style={{ background: 'var(--color-neutral-100)', padding: '24px 26px' }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--color-accent)', marginBottom: 11 }}>Account-bound licenses</div>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--color-accent)', marginBottom: 11 }}>Your purchases</div>
             <div style={{ fontFamily: 'var(--font-heading)', fontSize: 19, marginBottom: 7, lineHeight: 1.25 }}>Re-download securely</div>
-            <div style={{ fontSize: 13.5, lineHeight: 1.55, color: 'var(--color-neutral-800)' }}>Purchases stay attached to your verified account, with short-lived links generated when you need them.</div>
+            <div style={{ fontSize: 13.5, lineHeight: 1.55, color: 'var(--color-neutral-800)' }}>Purchases stay attached to your verified account, so you can generate a fresh download link when you need one.</div>
           </div>
         </div>
 
