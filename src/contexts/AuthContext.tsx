@@ -3,15 +3,16 @@
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from 'react';
 import { createBrowserClient, isBrowserSupabaseConfigured } from '@/lib/supabase';
 import type { User, Session, Provider } from '@supabase/supabase-js';
+import { authDestination } from '@/lib/auth-destination';
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string) => Promise<{ needsVerification: boolean }>;
-  signInWithMagicLink: (email: string) => Promise<void>;
-  signInWithProvider: (provider: Provider) => Promise<void>;
+  signUp: (email: string, password: string, next?: string) => Promise<{ needsVerification: boolean }>;
+  signInWithMagicLink: (email: string, next?: string) => Promise<void>;
+  signInWithProvider: (provider: Provider, next?: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -59,32 +60,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) throw error;
   }, []);
 
-  const handleSignUp = useCallback(async (email: string, password: string) => {
+  const handleSignUp = useCallback(async (email: string, password: string, next?: string) => {
     const supabase = createBrowserClient();
-    const { data, error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: `${window.location.origin}${authDestination(next)}` } });
     if (error) throw error;
     // If user is returned but no session, email confirmation is required
     const needsVerification = !!data.user && !data.session;
     return { needsVerification };
   }, []);
 
-  const handleMagicLink = useCallback(async (email: string) => {
+  const handleMagicLink = useCallback(async (email: string, next?: string) => {
     const supabase = createBrowserClient();
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/account`,
+        emailRedirectTo: `${window.location.origin}${authDestination(next)}`,
       },
     });
     if (error) throw error;
   }, []);
 
-  const handleSignInWithProvider = useCallback(async (provider: Provider) => {
+  const handleSignInWithProvider = useCallback(async (provider: Provider, next?: string) => {
     const supabase = createBrowserClient();
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${window.location.origin}/account`,
+        redirectTo: `${window.location.origin}${authDestination(next)}`,
       },
     });
     if (error) throw error;

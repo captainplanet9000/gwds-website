@@ -424,6 +424,26 @@ export async function POST(req: NextRequest) {
       case 'customer.subscription.deleted':
         await syncHostingSubscription(event, event.data.object, payloadHash);
         break;
+      case 'customer.subscription.trial_will_end': {
+        if (event.data.object.metadata?.commerce_kind !== 'hosting') break;
+        const current = await getStripe().subscriptions.retrieve(event.data.object.id);
+        if (current.status !== 'trialing' || current.cancel_at_period_end || !current.trial_end) break;
+        const id = requireMetadataId(current.metadata.hosting_subscription_id, 'HOSTING_SUBSCRIPTION_ID');
+        const db = createServerClient();
+        const { data: row, error: rowError } = await db.from('hosting_subscriptions')
+          .select('customer_email,plan_id').eq('id', id).eq('stripe_subscription_id', current.id).single();
+        if (rowError || !row) throw new Error('TRIAL_REMINDER_SUBSCRIPTION_NOT_FOUND');
+        const price = current.items.data[0]?.price;
+        const amount = price?.unit_amount == null ? 'the price shown in your billing account' : new Intl.NumberFormat('en-US', { style: 'currency', currency: price.currency }).format(price.unit_amount / 100);
+        const dedupKey = `trial-ending-${current.id}-${current.trial_end}`;
+        const { error: notificationError } = await db.from('hosting_notifications').upsert({
+          subscription_id: id, template: 'hosting_started', recipient_email: row.customer_email,
+          dedup_key: dedupKey, payload: { title: 'Your Solo trial ends soon', detail: `Your trial ends ${new Date(current.trial_end * 1000).toUTCString()}. Your saved payment method will then be charged ${amount} per ${price?.recurring?.interval || 'billing period'} unless you cancel before that time. Open Account > Hosting > Manage billing to review or cancel. Trading funds are separate.` },
+        }, { onConflict: 'dedup_key', ignoreDuplicates: true });
+        if (notificationError) throw new Error('TRIAL_REMINDER_QUEUE_FAILED');
+        await deliverHostingNotification(id, dedupKey);
+        break;
+      }
       case 'invoice.paid':
       case 'invoice.payment_failed':
         await syncHostingInvoice(event, event.data.object, payloadHash);

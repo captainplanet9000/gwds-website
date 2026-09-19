@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { COMMERCE_VERSIONS, CommerceError, errorResponseBody, getSiteUrl, requireVerifiedUser } from '@/lib/commerce';
-import { HOSTING_SERVICE_TERMS_VERSION, hostingLaunchMessage, hostingSalesEnabled } from '@/lib/hosting';
+import { HOSTING_SERVICE_TERMS_VERSION, hostingLaunchMessage, hostingSalesEnabled, hostingTrialDays, hostingSubscriptionOptions } from '@/lib/hosting';
 import { getStripe } from '@/lib/stripe';
 import { createServerClient } from '@/lib/supabase';
 
@@ -27,6 +27,15 @@ export async function POST(req: NextRequest) {
     }
 
     const supabase = createServerClient();
+    // Eligibility is server-owned. Failed/abandoned checkouts do not consume a trial;
+    // a completed subscription does, even after cancellation.
+    const { data: previous, error: historyError } = await supabase.from('hosting_subscriptions')
+      .select('id').eq('customer_email', user.email!).not('stripe_subscription_id', 'is', null).limit(1);
+    if (historyError) throw new CommerceError('TRIAL_ELIGIBILITY_UNAVAILABLE', 'We could not verify your trial eligibility. Please retry.', 503);
+    const { data: userHistory, error: userHistoryError } = await supabase.from('hosting_subscriptions')
+      .select('id').eq('user_id', user.id).not('stripe_subscription_id', 'is', null).limit(1);
+    if (userHistoryError) throw new CommerceError('TRIAL_ELIGIBILITY_UNAVAILABLE', 'We could not verify your trial eligibility. Please retry.', 503);
+    const trialDays = hostingTrialDays(body.planId, !!previous?.length || !!userHistory?.length);
     const { data: plan, error: planError } = await supabase.from('hosting_plans')
       .select('id,name,price_cents,currency,billing_interval,stripe_price_id_test,stripe_price_id_live,is_active,launch_ready')
       .eq('id', body.planId).maybeSingle();
@@ -66,15 +75,20 @@ export async function POST(req: NextRequest) {
       }
       throw new CommerceError('HOSTING_CHECKOUT_UNAVAILABLE', hostingLaunchMessage(), 503);
     }
-    pendingSubscriptionId = created[0].subscription_id;
+    const subscriptionId = created[0].subscription_id;
+    if (typeof subscriptionId !== 'string' || !subscriptionId) {
+      throw new CommerceError('HOSTING_CHECKOUT_UNAVAILABLE', hostingLaunchMessage(), 503);
+    }
+    pendingSubscriptionId = subscriptionId;
 
     const { data: customer } = await supabase.from('customers').select('stripe_customer_id').eq('user_id', user.id).maybeSingle();
     const siteUrl = getSiteUrl();
     const metadata = {
       commerce_kind: 'hosting',
-      hosting_subscription_id: pendingSubscriptionId,
+      hosting_subscription_id: subscriptionId,
       hosting_plan_id: plan.id,
       user_id: user.id,
+      trial_days: String(trialDays),
     };
     const sessionParamsFor = (stripeCustomerId: string | null) => ({
       mode: 'subscription' as const,
@@ -85,7 +99,12 @@ export async function POST(req: NextRequest) {
       customer_email: stripeCustomerId ? undefined : user.email!,
       client_reference_id: user.id,
       metadata,
-      subscription_data: { metadata },
+      subscription_data: hostingSubscriptionOptions(metadata, trialDays),
+      payment_method_collection: 'always' as const,
+      payment_method_types: ['card'] as ['card'],
+      custom_text: { submit: { message: trialDays > 0
+        ? `Your ${trialDays}-day Solo trial starts when checkout completes. Your saved payment method will be charged the displayed recurring price after the trial unless you cancel in Account > Hosting > Manage billing before it ends. Trading funds are separate.`
+        : 'Your subscription renews at the displayed recurring price until canceled through Account > Hosting > Manage billing. Trading funds are separate.' } },
       allow_promotion_codes: true,
       billing_address_collection: 'auto' as const,
     });

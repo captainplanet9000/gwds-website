@@ -21,7 +21,7 @@ const HOSTING_AGENT_IDS = [
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = Record<string, any>;
 type AccountData = {
-  config: { salesEnabled: boolean; serviceTermsVersion: string };
+  config: { salesEnabled: boolean; serviceTermsVersion: string; soloTrialDays: number; trialEligible: boolean };
   plans: Row[];
   subscriptions: Row[];
   onboarding: Row[];
@@ -137,6 +137,11 @@ export default function HostingAccountPage() {
   // claimed); stops once the command lands on done/failed so a settled state doesn't keep hitting
   // the network.
   const subscriptionId = subscription?.id;
+  useEffect(() => {
+    if (subscription?.status !== 'pending_checkout') return;
+    const timer = setInterval(() => { load().catch(() => {}); }, 5000);
+    return () => clearInterval(timer);
+  }, [subscription?.status, load]);
   useEffect(() => {
     if (!subscriptionId || !session?.access_token) {
       setProvision(null);
@@ -366,11 +371,11 @@ export default function HostingAccountPage() {
                 data-cv-2col
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "repeat(4,minmax(0,1fr))",
+                  gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))",
                   gap: 14,
                 }}
               >
-                {data.plans.map((item) => (
+                {data.plans.filter(item => item.is_active && item.price_cents > 0).map((item) => (
                   <article
                     key={item.id}
                     style={{
@@ -401,7 +406,7 @@ export default function HostingAccountPage() {
                             color: "var(--color-neutral-600)",
                           }}
                         >
-                          {item.price_cents ? "/mo" : ""}
+                          {`/${item.billing_interval}`}
                         </small>
                       </div>
                     </div>
@@ -413,6 +418,7 @@ export default function HostingAccountPage() {
                       }}
                     >
                       {item.description}
+                      {item.id === 'solo' && data.config.trialEligible && <span style={{display:'block',marginTop:12,fontWeight:600}}>7 days free, then ${(item.price_cents / 100).toFixed(2)}/{item.billing_interval}. Payment method required. Cancel before the trial ends to avoid the first charge.</span>}
                     </p>
                     <div style={{ display: "grid", gap: 7, fontSize: 13 }}>
                       {(item.features || []).map((feature: string) => (
@@ -438,8 +444,8 @@ export default function HostingAccountPage() {
                     >
                       {!data.config.salesEnabled || !item.launch_ready
                         ? "Activation pending"
-                        : item.price_cents === 0
-                          ? "Paper access pending"
+                        : item.id === 'solo' && data.config.trialEligible
+                          ? "Start 7-day Solo trial"
                           : "Subscribe securely"}
                     </button>
                   </article>
@@ -466,7 +472,7 @@ export default function HostingAccountPage() {
                   <Link href="/refunds">Refund Policy</Link>,{" "}
                   <Link href="/disclaimer">Trading Disclaimer</Link>, and{" "}
                   <Link href="/hosting-terms">Managed Hosting Service Terms</Link>{" "}
-                  version {data.config.serviceTermsVersion}. Stripe manages billing and cancellation.
+                  version {data.config.serviceTermsVersion}. I authorize recurring billing at the selected plan’s displayed price, after any eligible seven-day Solo trial, until I cancel. Stripe securely collects my payment method. I can cancel in Manage billing before the trial ends to avoid the first charge.
                 </span>
               </label>
             </section>
@@ -551,13 +557,11 @@ export default function HostingAccountPage() {
                 <p
                   style={{ color: "var(--color-neutral-700)", marginBottom: 0 }}
                 >
-                  Current period ends{" "}
-                  {subscription.current_period_end
-                    ? new Date(
-                        subscription.current_period_end,
-                      ).toLocaleDateString()
+                  {subscription.status === 'trialing' ? 'Your free trial ends ' : 'Current period ends '}{" "}
+                  {(subscription.status === 'trialing' ? subscription.trial_end : subscription.current_period_end)
+                    ? new Date(subscription.status === 'trialing' ? subscription.trial_end : subscription.current_period_end).toLocaleString()
                     : "after activation"}
-                  . Agent usage this period: {usage.toFixed(1)} hours.
+                  . {subscription.status === 'trialing' && (subscription.cancel_at_period_end ? 'Cancellation is scheduled; the trial will not renew.' : `Your saved payment method will be charged $${((plan?.price_cents || 0) / 100).toFixed(2)}/${plan?.billing_interval || 'month'} afterward unless you cancel before this time.`)} Agent usage this period: {usage.toFixed(1)} hours.
                 </p>
               </section>
 
@@ -599,13 +603,17 @@ export default function HostingAccountPage() {
                     )}
                   </div>
                 </div>
+                {subscription.status === 'pending_checkout' && <div style={{display:'flex',gap:12,flexWrap:'wrap',marginTop:16}}>
+                  <button className="btn btn-primary" disabled={!!busy} onClick={() => call('resume-checkout','/api/hosting/checkout-session',{subscriptionId:subscription.id,action:'resume'})}>Continue secure checkout</button>
+                  <button className="btn btn-secondary" disabled={!!busy} onClick={() => call('cancel-checkout','/api/hosting/checkout-session',{subscriptionId:subscription.id,action:'cancel'})}>Cancel checkout and choose a plan</button>
+                </div>}
                 {!onboarding?.account_address && ['active', 'trialing'].includes(subscription.status) && (
                 <p>Your plan is active. <Link href="/account/funding">Connect and verify your wallet</Link> to create your dashboard. Setup continues automatically after verification.</p>
               )}
               {!provision?.tenant ? (
                   <p style={{ color: "var(--color-neutral-700)" }}>
                     {subscription.status === "pending_checkout"
-                      ? "Provisioning starts as soon as payment is confirmed."
+                      ? "Complete secure checkout to activate your subscription or eligible trial. No trading funds are included."
                       : "Waiting for your workspace to be queued. This updates automatically — no action is needed."}
                   </p>
                 ) : (
@@ -704,7 +712,7 @@ export default function HostingAccountPage() {
                     * withdraw, so there is still no secret for Cival to hold. */}
                   <p style={{ color: "var(--color-neutral-700)" }}>
                     {!planRunsLiveAgents
-                      ? "Your free plan runs on simulated fills and never reaches a live venue. That is permanent for this tier, not a temporary restriction: a free account that could move real money is an abuse vector that costs the abuser nothing. Upgrade to a paid plan for live execution."
+                      ? "This legacy workspace uses simulated fills. New hosting subscriptions use paid plans, with a seven-day Solo trial for eligible customers."
                       : recordedIsLive
                         ? "Your plan runs live agents against the exchange account you fund yourself. Real orders, real money, and real losses are possible."
                         : "Your plan is a live-execution plan, but this workspace is still recorded as simulated: live order routing has not been switched on yet. Until it is, nothing your agents do here reaches a venue and no order of yours can lose money."}{" "}

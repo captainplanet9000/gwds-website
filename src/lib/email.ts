@@ -99,7 +99,7 @@ export async function sendHostingEmail(email: string, message: HostingEmailData)
   const siteUrl = getSiteUrl();
   const accountUrl = `${siteUrl}/account/hosting`;
   const copy = {
-    hosting_started: ['Your managed workspace is queued', `Your ${message.planName} subscription is confirmed. Complete onboarding so Cival Operations can review and provision the workspace.`],
+    hosting_started: [message.title || 'Your managed workspace is queued', message.detail || `Your ${message.planName} subscription is confirmed. Open your hosting account to follow provisioning and complete your workspace setup.`],
     hosting_payment_failed: ['Action needed: hosting payment failed', 'Stripe could not collect the latest hosting invoice. Update your payment method to avoid or resolve a service suspension.'],
     hosting_canceled: ['Your hosting cancellation is recorded', 'Your subscription has been canceled. Runtime teardown and credential deletion will follow the service lifecycle shown in your account.'],
     hosting_activated: ['Your managed workspace is active', 'Provisioning, health, backup and recovery checks passed. Open your account to review runtime status before enabling any live strategy.'],

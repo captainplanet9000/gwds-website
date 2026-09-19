@@ -46,8 +46,14 @@ export async function PUT(req: NextRequest) {
     // yield 'paper' — the safe value — rather than defaulting a workspace to live execution on
     // incomplete information.
     const { data: plan } = subscription.plan_id
-      ? await supabase.from('hosting_plans').select('price_cents').eq('id', subscription.plan_id).maybeSingle()
+      ? await supabase.from('hosting_plans').select('price_cents,agent_limit').eq('id', subscription.plan_id).maybeSingle()
       : { data: null };
+    if (!plan || typeof plan.agent_limit !== 'number' || plan.agent_limit < 1) {
+      throw new CommerceError('PLAN_UNAVAILABLE', 'Your plan limits could not be verified. Please retry.', 503);
+    }
+    if (requestedAgents.length > plan.agent_limit) {
+      throw new CommerceError('AGENT_LIMIT_EXCEEDED', `Your plan supports up to ${plan.agent_limit} agents. Remove extra selections before continuing.`, 409);
+    }
     const priceCents = typeof plan?.price_cents === 'number' ? plan.price_cents : 0;
     const environment = planExecutionMode(priceCents) === 'live' ? 'live' : 'paper';
     const now = new Date().toISOString();

@@ -17,7 +17,7 @@ export default function ProductGallery({ images, name }: { images: ProductScreen
 
   return <div className={styles.gallery}>
     <button className={styles.hero} onClick={() => dialog.current?.showModal()} aria-label={`Enlarge ${current.title}`}>
-      <Image src={current.src} alt={current.title} {...size(current.src)} sizes="(max-width: 800px) 100vw, 620px" priority />
+      <Image src={current.src} alt={current.title} {...size(current.src)} quality={95} sizes="(max-width: 800px) 100vw, 620px" priority />
       <span className={styles.badge}>{screenshotLabels[current.source]}</span>
       <span className={styles.enlarge}>Enlarge ↗</span>
     </button>
@@ -35,7 +35,7 @@ export default function ProductGallery({ images, name }: { images: ProductScreen
     }} onClick={e => { if (e.target === e.currentTarget) dialog.current?.close(); }}>
       <div className={styles.viewer}>
         <div className={styles.toolbar}><span>{screenshotLabels[current.source]} · {selected + 1}/{images.length}</span><button autoFocus onClick={() => dialog.current?.close()} aria-label="Close screenshot gallery">Close ✕</button></div>
-        <Image src={current.src} alt={current.title} {...size(current.src)} sizes="95vw" />
+        <Image src={current.src} alt={current.title} {...size(current.src)} unoptimized sizes="95vw" />
         <div className={styles.caption}><strong>{current.title}</strong><p>{current.caption}</p></div>
         <div className={styles.controls}><button onClick={() => move(-1)} aria-label="Previous screenshot">← Previous</button><a href={current.src} target="_blank" rel="noopener noreferrer" style={{color:'#bfdbfe'}}>Open original image ↗</a><button onClick={() => move(1)} aria-label="Next screenshot">Next →</button></div>
       </div>

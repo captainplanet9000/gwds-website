@@ -15,15 +15,15 @@ const sections = [
   ],
   [
     "2. Eligibility and account security",
-    "You must provide accurate account information and keep your login secure. The supported service is paper-only and does not accept exchange API keys, wallet secrets, seed phrases, private keys, or authority to submit live orders. You are responsible for the research settings and simulated risk limits submitted through your account.",
+    "You must provide accurate account information and keep your login secure. You remain responsible for your venue account, chosen network, strategies and risk limits. Supported trading uses a trade-only agent key approved by you. Never submit your wallet seed phrase or withdrawal-capable private key.",
   ],
   [
     "3. Activation and operator review",
-    "Payment does not place a strategy live. Cival may require onboarding information and operator approval. Every supported workspace remains paper-only. Cival may reject or suspend unsafe, unlawful, abusive, unsupported or technically incompatible configurations.",
+    "Payment does not place a strategy live. Cival may require onboarding information and operator approval. A subscription or trial does not itself authorize trading. Connect your account, approve the trading key, configure limits and deliberately enable automation only after reviewing the network and settings. Cival may reject or suspend unsafe, unlawful, abusive, unsupported or technically incompatible configurations.",
   ],
   [
     "4. Billing and cancellation",
-    "Paid plans renew at the interval and price displayed in Stripe Checkout until canceled. You may update payment methods, view invoices, or cancel through the Stripe customer portal. Unless checkout says otherwise, cancellation takes effect at the end of the paid billing period. Fees already earned for an active billing period are governed by the Refund Policy and applicable law.",
+    "Paid plans renew at the interval and price displayed in Stripe Checkout until canceled. You may update payment methods, view invoices, or cancel through the Stripe customer portal. Unless checkout says otherwise, cancellation takes effect at the end of the paid billing period. Eligible new hosting customers may start one seven-day Solo trial. A payment method is required at signup. The trial begins when checkout completes and automatically converts to the displayed paid recurring subscription unless canceled before the trial ends. The account and Stripe checkout show the renewal terms. Cancel through Account > Hosting > Manage billing. Trading capital is not included. Fees already earned for an active billing period are governed by the Refund Policy and applicable law.",
   ],
   [
     "5. Usage limits and changes",
@@ -31,7 +31,7 @@ const sections = [
   ],
   [
     "6. Credentials and customer data",
-    "Cival does not request or store exchange, wallet, or third-party provider secrets for the supported paper service. Customer workspace state is isolated by verified account and tenant access controls. Cival may retain billing, security and audit records as described in the Privacy Policy and may delete runtime data after service termination.",
+    "Cival does not request your personal wallet seed phrase or withdrawal-capable private key. The managed runtime uses server-side trading-agent credentials, and optional AI services may require provider credentials. Customer workspace state is isolated by verified account and tenant access controls. Cival may retain billing, security and audit records as described in the Privacy Policy and may delete runtime data after service termination.",
   ],
   [
     "7. Availability, maintenance and incidents",
@@ -60,7 +60,7 @@ export default function HostingTermsPage() {
         style={{ minHeight: "100vh", padding: "130px 24px 90px" }}
       >
         <article style={{ maxWidth: 820, margin: "0 auto" }}>
-          <span className="tag tag-accent">Version 2026-08-20</span>
+          <span className="tag tag-accent">Version 2026-09-19</span>
           <h1 style={{ fontSize: "clamp(38px,6vw,64px)", margin: "18px 0" }}>
             Managed Hosting Service Terms
           </h1>

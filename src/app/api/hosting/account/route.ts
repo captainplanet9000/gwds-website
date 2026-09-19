@@ -13,6 +13,12 @@ export async function GET(req: NextRequest) {
       .select('id,plan_id,status,price_cents,currency,stripe_customer_id,cancel_at_period_end,current_period_start,current_period_end,trial_end,last_invoice_status,last_payment_at,created_at,updated_at')
       .eq('user_id', user.id).order('created_at', { ascending: false });
     if (error) throw new CommerceError('HOSTING_ACCOUNT_UNAVAILABLE', 'Your hosting account could not be loaded.', 503);
+    const { data: previous, error: historyError } = await supabase.from('hosting_subscriptions')
+      .select('id').eq('customer_email', user.email!).not('stripe_subscription_id', 'is', null).limit(1);
+    if (historyError) throw new CommerceError('TRIAL_ELIGIBILITY_UNAVAILABLE', 'Trial eligibility could not be loaded.', 503);
+    const { data: userHistory, error: userHistoryError } = await supabase.from('hosting_subscriptions')
+      .select('id').eq('user_id', user.id).not('stripe_subscription_id', 'is', null).limit(1);
+    if (userHistoryError) throw new CommerceError('TRIAL_ELIGIBILITY_UNAVAILABLE', 'Trial eligibility could not be loaded.', 503);
 
     const subscriptionIds = (subscriptions || []).map((row) => row.id);
     const [{ data: plans }, { data: onboarding }, { data: instances }, { data: incidents }, { data: usage }, { data: audit }] = await Promise.all([
@@ -25,7 +31,7 @@ export async function GET(req: NextRequest) {
     ]);
 
     return NextResponse.json({
-      config: publicHostingConfig(), plans: plans || [], subscriptions: subscriptions || [],
+      config: { ...publicHostingConfig(), trialEligible: !previous?.length && !userHistory?.length }, plans: plans || [], subscriptions: subscriptions || [],
       onboarding: onboarding || [], instances: instances || [], incidents: incidents || [],
       usage: usage || [], audit: audit || [],
     }, { headers: { 'Cache-Control': 'no-store' } });

@@ -16,7 +16,7 @@ export default function Footer() {
             </span>
           </div>
           <p style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--color-neutral-400)', margin: 0, maxWidth: '34ch' }}>
-            Cival Systems. Trading infrastructure and autonomous agents, sold as source.
+            Cival Systems. Trading dashboards, extensible agents and managed hosting.
           </p>
         </div>
 
@@ -66,7 +66,7 @@ export default function Footer() {
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 28px 56px' }}>
         <hr style={{ border: 0, height: 1, background: 'color-mix(in srgb, var(--color-neutral-100) 14%, transparent)', margin: '0 0 24px' }} />
         <p style={{ fontSize: 11.5, lineHeight: 1.65, color: 'var(--color-neutral-500)', margin: '0 0 16px', maxWidth: '96ch' }}>
-          Cival Systems products are software templates and source code sold as development starting points. They are not financial advice.
+          Cival Systems offers downloadable software and managed dashboard hosting. These products and services are not financial advice.
           Trading cryptocurrencies, futures, and digital assets involves substantial risk of loss. Past performance shown in demos or marketing
           does not guarantee future results. Cival Systems is not a registered investment advisor or broker-dealer.
         </p>

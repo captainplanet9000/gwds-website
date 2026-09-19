@@ -1,98 +1,98 @@
 {
   "customer-agent-detail-testnet.jpg": {
-    "width": 1432,
-    "height": 994
+    "width": 3832,
+    "height": 2160
   },
   "customer-agents-testnet.jpg": {
-    "width": 1432,
-    "height": 994
+    "width": 3832,
+    "height": 2160
   },
   "customer-farms-testnet.jpg": {
-    "width": 1432,
-    "height": 994
+    "width": 3832,
+    "height": 2160
   },
   "customer-goals-testnet.jpg": {
-    "width": 1432,
-    "height": 994
+    "width": 3832,
+    "height": 2160
   },
   "customer-overview-testnet.jpg": {
-    "width": 1432,
-    "height": 994
+    "width": 3832,
+    "height": 2160
   },
   "demo-agents-detail.jpg": {
-    "width": 1272,
-    "height": 4732
+    "width": 3832,
+    "height": 3457
   },
   "demo-agents.jpg": {
-    "width": 1272,
-    "height": 716
+    "width": 3832,
+    "height": 2160
   },
   "demo-analytics.jpg": {
-    "width": 1272,
-    "height": 716
+    "width": 3832,
+    "height": 2160
   },
   "demo-darvas-detail.jpg": {
-    "width": 1272,
-    "height": 2616
+    "width": 3832,
+    "height": 2337
   },
   "demo-darvas.jpg": {
-    "width": 1272,
-    "height": 716
+    "width": 3832,
+    "height": 2160
   },
   "demo-elliott-detail.jpg": {
-    "width": 1272,
-    "height": 2432
+    "width": 3832,
+    "height": 2337
   },
   "demo-elliott.jpg": {
-    "width": 1272,
-    "height": 716
+    "width": 3832,
+    "height": 2160
   },
   "demo-farms.jpg": {
-    "width": 1272,
-    "height": 716
+    "width": 3832,
+    "height": 2160
   },
   "demo-heikin-ashi-detail.jpg": {
-    "width": 1272,
-    "height": 2296
+    "width": 3832,
+    "height": 2337
   },
   "demo-heikin-ashi.jpg": {
-    "width": 1272,
-    "height": 716
+    "width": 3832,
+    "height": 2160
   },
   "demo-journal.jpg": {
-    "width": 1272,
-    "height": 716
+    "width": 3832,
+    "height": 2160
   },
   "demo-mean-reversion-detail.jpg": {
-    "width": 1272,
-    "height": 2391
+    "width": 3832,
+    "height": 2337
   },
   "demo-mean-reversion.jpg": {
-    "width": 1272,
-    "height": 716
+    "width": 3832,
+    "height": 2160
   },
   "demo-overview.jpg": {
-    "width": 1272,
-    "height": 716
+    "width": 3832,
+    "height": 2160
   },
   "demo-plugins.jpg": {
-    "width": 1272,
-    "height": 716
+    "width": 3832,
+    "height": 2160
   },
   "demo-sentiment-detail.jpg": {
-    "width": 1272,
-    "height": 2388
+    "width": 3832,
+    "height": 2337
   },
   "demo-sentiment.jpg": {
-    "width": 1272,
-    "height": 716
+    "width": 3832,
+    "height": 2160
   },
   "demo-vwap-detail.jpg": {
-    "width": 1272,
-    "height": 2405
+    "width": 3832,
+    "height": 2337
   },
   "demo-vwap.jpg": {
-    "width": 1272,
-    "height": 716
+    "width": 3832,
+    "height": 2160
   }
 }
