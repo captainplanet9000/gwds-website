@@ -5,29 +5,31 @@ import Footer from '@/components/Footer';
 import { products } from '@/lib/products';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
+import './marketing-pages.css';
 
-const RIBBON = ['A hedge fund starting point', 'Full TypeScript source', 'Runs on Hyperliquid', 'Skip months of build time', 'From $99', 'One-click setup', 'Agents that execute', 'Own it outright'];
+const RIBBON = ['Your trading workspace', 'Full TypeScript source', 'Built for Hyperliquid', 'Start with the foundation', 'Source editions from $99', 'Managed hosting available', 'Configurable agents', 'Build on your terms'];
 const STATS = [
-  { v: '$184K', k: 'Demo portfolio' },
-  { v: '6', k: 'Autonomous agents' },
-  { v: '2,847', k: 'Trades executed' },
-  { v: '68%', k: 'Win rate' },
+  { v: '6', k: 'Strategy frameworks' },
+  { v: '1', k: 'Connected workspace' },
+  { v: '24/7', k: 'Automation by design' },
+  { v: '2', k: 'Ways to deploy' },
 ];
 const PREMISE = [
-  { n: '01', t: 'The runtime is the hard part', d: 'Order lifecycle, reconciliation, agent supervision, halts that actually halt. Weeks of work with no upside when it goes right.' },
-  { n: '02', t: 'Agents execute, not suggest', d: "These aren't alert bots. They size, enter, trail, and flatten on Hyperliquid without a human in the loop." },
-  { n: '03', t: 'You own the source', d: 'Full TypeScript. Fork it, rename it, sell your own thing on top of it. No license server, no phone-home.' },
+  { n: '01', t: 'The runtime is the hard part', d: 'Market data, order tracking, agent supervision and risk controls take substantial work to connect. Start with a shared foundation and focus your development effort on your strategy.' },
+  { n: '02', t: 'Autonomous agents, around the clock', d: 'Designed for 24/7 strategy evaluation on a running, connected deployment. Monitor decisions and positions, set limits and pause automation from one workspace.' },
+  { n: '03', t: 'A foundation you can make your own', d: 'Source editions include readable TypeScript. Use your preferred editor or AI coding tool to customize strategies, extend the dashboard and build your own trading workflow.' },
 ];
 const EDITORS = ['Cursor', 'Windsurf', 'VS Code', 'Zed', 'WebStorm', 'Neovim'];
 const SOURCE_NOTES = [
-  { t: 'AI-assisted customisation', d: 'Point Cursor or Windsurf at the repo and change strategies, add indicators, or build a new agent from an existing one.' },
-  { t: 'Full TypeScript, no obfuscation', d: 'Strategies, risk management, UI components, API routes — every line readable and editable.' },
-  { t: 'One-click setup', d: 'Double-click QUICK-START: dependencies install, config is written, the dashboard opens. Deploy to Vercel when you’re ready.' },
+  { t: 'Work with your AI coding tools', d: 'Open the source in your preferred editor. Ask your coding assistant to explain a strategy, add an indicator or help implement a new agent.' },
+  { t: 'Customize the whole workflow', d: 'Adapt strategy logic, risk settings, dashboard components and integrations. Review changes and test them before enabling execution.' },
+  { t: 'Build from a documented starting point', d: 'Follow the setup guide for your exact release, configure its dependencies and verify a complete test run before operating unattended.' },
 ];
 const COMMUNITY = [
-  { n: '42', t: 'channels, including a dedicated setup room' },
-  { n: '24h', t: 'typical answer time on plugin questions' },
-  { n: '1yr', t: 'of updates included with every product' },
+  { n: 'Learn', t: 'Follow the version-specific setup guide' },
+  { n: 'Build', t: 'Discuss strategies and dashboard customization' },
+  { n: 'Ask', t: 'Get help with purchases and installation' },
 ];
 
 // `legacy` is excluded from BOTH lists, not just editions.
@@ -95,11 +97,10 @@ function Premise() {
         <div>
           <h6 style={{ marginBottom: 18 }}>The premise</h6>
           <h2 style={{ fontSize: 'clamp(31px,3.4vw,46px)', lineHeight: 1.1, letterSpacing: '-0.015em', margin: '0 0 22px' }}>
-            Building the boring 80% costs you a quarter and a million tokens.
+            Spend your time on strategies, not rebuilding the foundation.
           </h2>
           <p style={{ fontSize: 17, lineHeight: 1.6, color: 'var(--color-neutral-800)', maxWidth: '42ch' }}>
-            You don&apos;t need help having strategy ideas. You need somewhere to run them — with position tracking that reconciles,
-            drawdown limits that actually halt an agent, and a UI you can look at during a 14% day.
+            Building a trading platform from scratch takes development time and repeated AI coding credits. Cival gives you a starting point: a dashboard for configuring agents, monitoring their activity and managing trading controls in one place.
           </p>
         </div>
         <div style={{ display: 'grid', gap: 18 }}>
@@ -124,8 +125,8 @@ function CoreEditionCard() {
     <section style={{ maxWidth: 1200, margin: '0 auto', padding: '0 28px 120px' }}>
       <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 24, marginBottom: 32 }}>
         <div>
-          <h6 style={{ marginBottom: 14 }}>Where everyone starts</h6>
-          <h2 style={{ fontSize: 'clamp(30px,3.2vw,44px)', letterSpacing: '-0.015em', lineHeight: 1.1, margin: 0 }}>Ninety-nine dollars to own the platform.</h2>
+          <h6 style={{ marginBottom: 14 }}>Start with the platform</h6>
+          <h2 style={{ fontSize: 'clamp(30px,3.2vw,44px)', letterSpacing: '-0.015em', lineHeight: 1.1, margin: 0 }}>Your foundation for automated trading.</h2>
         </div>
         <Link href="/store" className="btn btn-ghost">Compare editions →</Link>
       </div>
@@ -133,12 +134,12 @@ function CoreEditionCard() {
         <div style={{ padding: '52px 46px', display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
             <span className="tag tag-accent">Core edition</span>
-            <span className="tag tag-neutral">Next.js 15 · TS</span>
+            <span className="tag tag-neutral">TypeScript source</span>
           </div>
           <h3 style={{ fontSize: 36, letterSpacing: '-0.015em', lineHeight: 1.14, margin: '0 0 14px' }}>Core Edition</h3>
           <p style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--color-neutral-800)', margin: '0 0 26px' }}>{coreEdition.description}</p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px 20px', marginBottom: 32 }}>
-            {['Live VWAP + RSI agent included', 'Goal-based execution', 'Farm orchestration', 'Drawdown halts + reconciliation', '44 themes', '2,400+ source files'].map((f) => (
+            {['Darvas strategy included', 'Editable dashboard source', 'Extensible strategy framework', 'Configurable risk controls', 'Version-specific setup guide', 'Self-hosting flexibility'].map((f) => (
               <div key={f} style={{ display: 'flex', gap: 9, alignItems: 'flex-start', fontSize: 14, lineHeight: 1.4 }}>
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-2-700)" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 3 }}><path d="M20 6 9 17l-5-5" /></svg>
                 <span>{f}</span>
@@ -154,7 +155,7 @@ function CoreEditionCard() {
           </div>
         </div>
         <div style={{ position: 'relative', minHeight: 460, background: 'var(--color-neutral-200)', overflow: 'hidden' }}>
-          {coreEdition.image && <img src={coreEdition.image} alt="Core Edition dashboard" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top left' }} />}
+          {coreEdition.image && <Image src={coreEdition.image} fill sizes="(max-width:768px) 100vw,650px" alt="Core Edition dashboard" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top left' }} />}
         </div>
       </div>
     </section>
@@ -166,9 +167,9 @@ function AgentRail() {
     <section style={{ position: 'relative', background: 'var(--color-neutral-100)', borderTop: '1px solid var(--color-divider)', borderBottom: '1px solid var(--color-divider)', padding: '80px 0' }}>
       <div style={{ maxWidth: 1200, margin: '0 auto 32px', padding: '0 28px' }}>
         <h6 style={{ marginBottom: 14 }}>The agents</h6>
-        <h2 style={{ fontSize: 'clamp(30px,3.2vw,44px)', letterSpacing: '-0.012em', margin: '0 0 12px' }}>Six strategies that trade while you sleep.</h2>
+        <h2 style={{ fontSize: 'clamp(30px,3.2vw,44px)', letterSpacing: '-0.012em', margin: '0 0 12px' }}>Choose the strategy. Shape the workflow.</h2>
         <p style={{ fontSize: 16, color: 'var(--color-neutral-800)', margin: 0, maxWidth: '52ch' }}>
-          Each one drops into the dashboard as a plugin. Run one, or run all six as a coordinated farm under shared risk limits.
+          Explore six strategy frameworks, available individually or together in Trader. Each add-on needs a compatible dashboard edition. Configure its market, settings and limits, then validate its behavior before enabling automation.
         </p>
       </div>
       <div style={{ display: 'flex', gap: 20, padding: '0 28px', overflowX: 'auto', scrollSnapType: 'x mandatory' }}>
@@ -200,13 +201,12 @@ function SourceShowcase() {
     <section style={{ background: 'var(--color-neutral-900)', color: 'var(--color-neutral-100)' }}>
       <div data-cv-2col style={{ maxWidth: 1200, margin: '0 auto', padding: '120px 28px', display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)', gap: 64, alignItems: 'start' }}>
         <div style={{ paddingBottom: 40 }}>
-          <h6 style={{ color: 'var(--color-accent-400)', marginBottom: 18 }}>Source, not SaaS</h6>
+          <h6 style={{ color: 'var(--color-accent-400)', marginBottom: 18 }}>Build on the source</h6>
           <h2 style={{ fontSize: 'clamp(30px,3.2vw,44px)', lineHeight: 1.1, letterSpacing: '-0.015em', margin: '0 0 20px', color: 'var(--color-neutral-100)' }}>
-            Open it in your editor. Make it unrecognisable.
+            Open it in your editor. Make it your own.
           </h2>
           <p style={{ fontSize: 16.5, lineHeight: 1.6, color: 'var(--color-neutral-300)', maxWidth: '44ch' }}>
-            No compiled binaries, no obfuscation, no license server. Clean TypeScript you can point Cursor at and refactor into your
-            own thing. There is no version of this where we can turn it off.
+            Your source edition is a starting point for your autonomous trading journey. Bring it into your favorite AI coding tool, change the strategies, redesign the interface or add integrations. You control how your installation evolves, under the included license.
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 28 }}>
             {EDITORS.map((e) => (
@@ -227,10 +227,10 @@ function SourceShowcase() {
             <span style={{ width: 9, height: 9, borderRadius: 99, background: 'var(--color-accent-500)' }} />
             <span style={{ width: 9, height: 9, borderRadius: 99, background: 'var(--color-accent-2-500)' }} />
             <span style={{ width: 9, height: 9, borderRadius: 99, background: 'var(--color-neutral-600)' }} />
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11.5, color: 'var(--color-neutral-500)', marginLeft: 8 }}>agents/vwap-rsi/strategy.ts</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11.5, color: 'var(--color-neutral-500)', marginLeft: 8 }}>Illustrative strategy configuration</span>
           </div>
           <pre style={{ margin: 0, padding: 24, fontFamily: 'var(--font-mono)', fontSize: 12.5, lineHeight: 1.85, color: 'var(--color-neutral-300)', overflowX: 'auto' }}>
-{`// tune it, break it, ship it — it's your file now
+{`// Example only: adapt to your release, then test
 export const config: AgentConfig = {
   venue:        'hyperliquid',
   symbols:      ['BTC', 'ETH', 'SOL'],
@@ -250,9 +250,9 @@ function EditionsStack() {
     <section style={{ maxWidth: 1200, margin: '0 auto', padding: '120px 28px 0' }}>
       <div style={{ marginBottom: 40 }}>
         <h6 style={{ marginBottom: 14 }}>Editions</h6>
-        <h2 style={{ fontSize: 'clamp(30px,3.2vw,44px)', letterSpacing: '-0.015em', lineHeight: 1.1, margin: 0 }}>Three steps, no wrong entry point.</h2>
+        <h2 style={{ fontSize: 'clamp(30px,3.2vw,44px)', letterSpacing: '-0.015em', lineHeight: 1.1, margin: 0 }}>Start with Core. Expand with Trader.</h2>
         <p style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--color-neutral-800)', maxWidth: '56ch', margin: '14px 0 0' }}>
-          Every edition includes the full platform and its source. Move up when you want more strategies — you only pay the difference.
+          Core provides the dashboard foundation with Darvas. Trader includes Core and all six strategy frameworks. Compare release availability, included features and setup requirements before purchasing.
         </p>
       </div>
       <div style={{ display: 'grid', gap: 26, paddingBottom: 120 }}>
@@ -285,18 +285,18 @@ function ProofDemo() {
   return (
     <section data-cv-2col style={{ maxWidth: 1200, margin: '0 auto', padding: '0 28px 120px', display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1.4fr)', gap: 56, alignItems: 'center' }}>
       <div>
-        <h6 style={{ marginBottom: 16 }}>Proof</h6>
-        <h2 style={{ fontSize: 'clamp(30px,3.2vw,42px)', lineHeight: 1.1, letterSpacing: '-0.015em', margin: '0 0 18px' }}>Click through it before you pay us anything.</h2>
+        <h6 style={{ marginBottom: 16 }}>Explore the interface</h6>
+        <h2 style={{ fontSize: 'clamp(30px,3.2vw,42px)', lineHeight: 1.1, letterSpacing: '-0.015em', margin: '0 0 18px' }}>Get familiar with your future workspace.</h2>
         <p style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--color-neutral-800)', margin: '0 0 26px' }}>
-          The demo is the product with sample data in it. Six agents, seven farms, live analytics, every tab. No signup, no email gate.
+          Explore the public demo to see the dashboard layout, agents and analytics with sample data. It does not execute trades. Available features and setup depend on your edition and release.
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
           <a href="https://ai-trading-dashboard-demo.vercel.app" target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ height: 46, padding: '0 22px' }}>Open the demo</a>
-          <Link href="/store/trading-dashboard-template" className="btn btn-secondary" style={{ height: 46, padding: '0 20px' }}>Own it for $99</Link>
+          <Link href="/store/trading-dashboard-template" className="btn btn-secondary" style={{ height: 46, padding: '0 20px' }}>Explore Core Edition</Link>
         </div>
       </div>
       <div style={{ position: 'relative', borderRadius: 'var(--radius-lg)', overflow: 'hidden', boxShadow: 'var(--shadow-lg)', aspectRatio: '16/10', background: 'var(--color-bg)' }}>
-        <img src="/images/cival/gw-shot-live-trading.png" alt="Live trading dashboard" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <Image fill sizes="(max-width:768px) 100vw,680px" src="/images/cival/gw-shot-live-trading.png" alt="Cival dashboard preview with sample data" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
       </div>
     </section>
   );
@@ -308,9 +308,9 @@ function Community() {
       <div data-cv-2col style={{ borderRadius: 'calc(var(--radius-lg) * 1.15)', background: 'var(--color-accent-2-100)', padding: '60px 48px', display: 'grid', gridTemplateColumns: 'minmax(0,1.1fr) minmax(0,0.9fr)', gap: 48, alignItems: 'center' }}>
         <div>
           <h6 style={{ color: 'var(--color-accent-2-700)', marginBottom: 16 }}>Community</h6>
-          <h2 style={{ fontSize: 'clamp(28px,3vw,40px)', letterSpacing: '-0.02em', margin: '0 0 14px' }}>42 channels of people running this in production.</h2>
+          <h2 style={{ fontSize: 'clamp(28px,3vw,40px)', letterSpacing: '-0.02em', margin: '0 0 14px' }}>A place to learn, build and ask questions.</h2>
           <p style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--color-accent-2-900)', margin: '0 0 26px', maxWidth: '48ch' }}>
-            Setup help, plugin sharing, strategy arguments at 3am. If you get stuck on a Supabase key, someone has already been stuck on it.
+            Use the setup guide to get oriented, join the community to discuss your workflow and contact support when you need help with your purchase or installation.
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
             <a href="https://discord.gg/EZk6gTx57k" target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ height: 46, padding: '0 22px' }}>Join the Discord</a>
@@ -334,10 +334,9 @@ function FinalCTA() {
   return (
     <section style={{ borderTop: '1px solid var(--color-divider)' }}>
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '130px 28px', textAlign: 'center' }}>
-        <h2 style={{ fontSize: 'clamp(38px,5.2vw,70px)', lineHeight: 1.06, letterSpacing: '-0.018em', margin: '0 auto 26px', maxWidth: '20ch' }}>Your desk, running by tonight.</h2>
+        <h2 style={{ fontSize: 'clamp(38px,5.2vw,70px)', lineHeight: 1.06, letterSpacing: '-0.018em', margin: '0 auto 26px', maxWidth: '20ch' }}>Build your trading workspace.</h2>
         <p style={{ fontSize: 17, color: 'var(--color-neutral-800)', margin: '0 auto 34px', maxWidth: '52ch' }}>
-          Three editions, full TypeScript source, agents that execute on Hyperliquid the moment you hand them a key. The template does
-          the boring part; the edge stays yours.
+          Choose an editable source edition or a managed dashboard. Explore the strategies, review the setup requirements and begin with a verified test run. Your account, your configuration, your decision to enable trading.
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center' }}>
           <Link href="/store" className="btn btn-primary" style={{ height: 54, padding: '0 32px', fontSize: 16 }}>Explore the store</Link>
@@ -353,7 +352,7 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero />
-        <Marquee />
+        <div className="homepage-refresh"><Marquee />
         <Stats />
         <Premise />
         <CoreEditionCard />
@@ -362,7 +361,7 @@ export default function Home() {
         <EditionsStack />
         <ProofDemo />
         <Community />
-        <FinalCTA />
+        <FinalCTA /></div>
       </main>
       <Footer />
     </div>

@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { HostingAccessProvider, HostingAccessButton, HostingTrialCopy } from "@/components/HostingAccess";
+import "../marketing-pages.css";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -85,7 +87,7 @@ export default async function HostedPage() {
   return (
     <div className="cival">
       <Navbar />
-      <main
+      <HostingAccessProvider><main className="marketing-page"
         style={{ padding: "110px 24px 80px", maxWidth: 1200, margin: "0 auto" }}
       >
         <section style={{ maxWidth: 850, marginBottom: 40 }}>
@@ -114,23 +116,23 @@ export default async function HostedPage() {
               marginTop: 24,
             }}
           >
-            <Link className="btn btn-primary" href="/account/hosting">
+            <HostingAccessButton>
               {sales && solo?.launch_ready
                 ? `Start Solo’s ${SOLO_TRIAL_DAYS}-day trial`
                 : "View hosting availability"}
-            </Link>
+            </HostingAccessButton>
             <a className="btn btn-secondary" href="#plans">
               Compare plans
             </a>
           </div>
-          <p style={{ fontSize: 13, lineHeight: 1.6 }}>
+          <HostingTrialCopy><p style={{ fontSize: 13, lineHeight: 1.6 }}>
             Payment method required.{" "}
             {solo
               ? `${SOLO_TRIAL_DAYS} days free, then ${money(solo)}/${solo.billing_interval}.`
               : "Renewal pricing is shown below and in checkout."}{" "}
             Cancel before your trial ends to avoid the first charge. For
             eligible new hosting customers.
-          </p>
+          </p></HostingTrialCopy>
         </section>
         <figure
           style={{
@@ -174,7 +176,7 @@ export default async function HostedPage() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))",
+              gridTemplateColumns: "repeat(auto-fit,minmax(min(100%,260px),1fr))",
               gap: 20,
               marginTop: 24,
             }}
@@ -217,22 +219,18 @@ export default async function HostedPage() {
                       <li key={feature}>{feature}</li>
                     ))}
                 </ul>
-                <Link
-                  className="btn btn-primary"
-                  href="/account/hosting"
-                  style={{ marginTop: 16 }}
-                >
+<HostingAccessButton>
                   {sales && plan.launch_ready
                     ? plan.id === "solo"
                       ? "Start 7-day trial"
                       : "Choose " + plan.name
                     : "View availability"}
-                </Link>
+                </HostingAccessButton>
                 {plan.id === "solo" && (
-                  <p style={{ fontSize: 12, lineHeight: 1.6 }}>
+                  <HostingTrialCopy><p style={{ fontSize: 12, lineHeight: 1.6 }}>
                     Card required. {money(plan)}/{plan.billing_interval} after
                     the trial unless canceled. One trial per eligible customer.
-                  </p>
+                  </p></HostingTrialCopy>
                 )}
               </article>
             ))}
@@ -242,13 +240,7 @@ export default async function HostedPage() {
           <h2 style={{ fontSize: 32 }}>
             From signup to your first verified run
           </h2>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))",
-              gap: 20,
-            }}
-          >
+          <div className="onboarding-grid">
             {steps.map(([title, copy], i) => (
               <article
                 key={title}
@@ -297,7 +289,7 @@ export default async function HostedPage() {
             </Link>
           </p>
         </section>
-      </main>
+      </main></HostingAccessProvider>
       <Footer />
     </div>
   );

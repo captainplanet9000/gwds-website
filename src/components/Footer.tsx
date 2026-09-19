@@ -42,7 +42,7 @@ export default function Footer() {
         </div>
 
         <div>
-          <h6 style={{ color: 'var(--color-neutral-500)', marginBottom: 14 }}>Studio</h6>
+          <h6 style={{ color: 'var(--color-neutral-500)', marginBottom: 14 }}>Company</h6>
           <div data-cv-linklist style={{ display: 'grid', gap: 9, fontSize: 14 }}>
             <Link href="/about" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>About</Link>
             <Link href="/contact" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Contact</Link>

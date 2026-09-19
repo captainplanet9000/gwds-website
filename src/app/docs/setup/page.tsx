@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import '../../marketing-pages.css';
 
 export const metadata: Metadata = {
   title: 'Purchase, install and operate your Cival product',
@@ -36,9 +37,9 @@ const troubleshooting = [
 ];
 
 export default function SetupGuidePage() {
-  return <div className="cival"><Navbar /><main style={{maxWidth: 1100, margin: '0 auto', padding: '120px 24px 80px'}}>
+  return <div className="cival"><Navbar /><main className="marketing-page" style={{maxWidth: 1100, margin: '0 auto', padding: '120px 24px 80px'}}>
     <section style={{position: 'relative', overflow: 'hidden', borderRadius: 24, padding: 'clamp(24px,5vw,60px)', background: 'var(--color-neutral-100)'}}>
-      <Image src="/images/guides/customer-journey-v1.png" width={1536} height={1024} priority alt="Conceptual illustration of a software package, manual, server and connected strategy modules" style={{width: '100%', height: 'auto', display: 'block', borderRadius: 16}} />
+      <Image src="/images/guides/cival-systems-v2.webp" width={1672} height={941} priority alt="Cival Systems conceptual artwork: a central platform connected to six strategy modules" style={{width: '100%', height: 'auto', display: 'block', borderRadius: 16}} />
       <p style={{fontFamily: 'var(--font-mono)', fontSize: 12, marginTop: 24}}>CIVAL FIELD GUIDE · PURCHASE TO OPERATION</p>
       <h1 style={{fontSize: 'clamp(32px,5vw,56px)', lineHeight: 1.08, maxWidth: 650}}>Your first run starts here.</h1>
       <p style={{maxWidth: 690, lineHeight: 1.75}}>Choose your installation path, follow the instructions for your exact release, and verify each step before moving on. The source editions and managed customer dashboard are different products with different setup requirements.</p>

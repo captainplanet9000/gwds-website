@@ -75,6 +75,7 @@
 /* A .cival element taken out of normal flow is chrome (nav / overlay), never the page
    wrapper, so it must size to its own content rather than the viewport. */
 nav.cival,
+footer.cival,
 .cival[data-chrome="true"] {
   min-height: 0;
 }
@@ -174,7 +175,8 @@ nav.cival,
 }
 
 @media (max-width: 460px) {
-  .cival [data-cv-footer] { grid-template-columns: 1fr !important; }
+  .cival [data-cv-footer] { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 24px !important; }
+  .cival [data-cv-footer] > div:first-child { grid-column: 1 / -1; }
 }
 
 /* Wide key/value tables (comparison matrix, delivery status) reflow to stacked
