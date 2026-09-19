@@ -156,8 +156,9 @@ function ProductCard({ product, covered, available, onAdd }: { product: Product;
   return (
     <motion.div layout initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96 }} transition={{ duration: 0.35 }}
       style={{ display: 'flex', flexDirection: 'column', borderRadius: 'calc(var(--radius-lg) * 1.15)', background: 'var(--color-surface)', overflow: 'hidden' }}>
-      <Link href={`/store/${product.id}`} style={{ display: 'block', position: 'relative', aspectRatio: '5/2', background: 'var(--color-neutral-200)', textDecoration: 'none' }}>
-        {product.image && <img src={product.image} alt={product.name} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />}
+      <Link href={`/store/${product.id}`} style={{ display: 'block', position: 'relative', aspectRatio: '1440/1000', background: 'var(--color-neutral-200)', textDecoration: 'none' }}>
+        <span style={{position:"absolute",bottom:8,left:8,zIndex:1,background:"#0f172a",color:"#fff",padding:"4px 7px",borderRadius:5,fontSize:10}}>Demo · sample data</span>
+        {product.image && <img src={product.image} alt={product.name} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'top' }} />}
       </Link>
       <div style={{ padding: '24px 24px 26px', display: 'flex', flexDirection: 'column', gap: 12, flex: 1 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>

@@ -65,3 +65,9 @@ git diff --check
 AI-generated conceptual artwork: `public/images/guides/customer-journey-v1.png`. Created through the image generation tool in text-to-image mode; no model selector was available. Prompt direction: premium Cival onboarding composition, ivory/cobalt/charcoal studio palette, matte 3D software cube, blank manual, server and connected modules; no text, UI, trading charts or coins. It represents onboarding, not application functionality.
 
 Six vector strategy covers are reproducible using `scripts/create-strategy-covers.mjs`; they explicitly identify themselves as conceptual strategy illustrations. No fabricated performance screenshots are used.
+
+## Screenshot gallery release
+
+The store now uses browser captures from the user-selected demo and hosted testnet workspace. Core, Trader and all six standalone strategies retain their product IDs and contents. Product-specific captions, source labels, full-detail images, thumbnails and a keyboard-accessible native dialog replace conceptual hero art. See PRODUCT-SCREENSHOT-AUDIT.md for provenance and remaining findings. This is presentation evidence from broader editions, not acceptance of the currently held archives.
+
+Validation: 78 tests passed (including image type/dimensions and complete product coverage); production build and TypeScript check passed. Browser checks covered desktop and 390px mobile width, no horizontal overflow, full-size viewer navigation, Escape and focus restoration, plus all six corrected demo agent profiles. No orders, funding or withdrawals were submitted.

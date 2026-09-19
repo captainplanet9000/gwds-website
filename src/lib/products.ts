@@ -1,3 +1,4 @@
+import { productMedia } from './product-media';
 export type ProductCategory = "trading";
 
 /** Product tier — drives store grouping/sorting. Every product declares one. */
@@ -391,6 +392,12 @@ Buying the same parts individually comes to $551. This is $399, and it includes 
     videoUrl: "/videos/products/everything-bundle.mp4",
   },
 ];
+
+// Keep catalog, metadata, and galleries on the same authentic screenshot.
+for (const product of products) {
+  const gallery = productMedia[product.id];
+  if (gallery) { product.image = gallery[0].src; product.images = gallery.map(image => image.src); }
+}
 
 /** What each edition already contains — an add-on covered by an edition already
  * in the cart is shown as included rather than charged again. */
