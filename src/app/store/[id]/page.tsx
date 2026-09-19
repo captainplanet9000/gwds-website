@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { products, getProduct, categories } from '@/lib/products';
+import { products, getProduct, categories, EDITION_INCLUDES } from '@/lib/products';
 import ProductDetailClient from './ProductDetailClient';
 import { notFound } from 'next/navigation';
 
@@ -45,7 +45,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   if (!product || product.legacy) notFound();
 
   const related = products
-    .filter(p => p.category === product.category && p.id !== product.id && !p.legacy)
+    .filter(p => p.category === product.category && p.id !== product.id && !p.legacy && !(EDITION_INCLUDES[product.id] || []).includes(p.id))
     .sort((a, b) => Math.abs(a.price - product.price) - Math.abs(b.price - product.price))
     .slice(0, 3);
 
