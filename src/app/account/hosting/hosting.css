@@ -1,0 +1,11 @@
+.hosting-account .hosting-steps article { min-width: 0; display: flex; flex-direction: column; }
+.hosting-account .hosting-steps h3 { font-size: 21px; line-height: 1.35; margin: 0 0 10px; }
+.hosting-account .hosting-steps p { font-size: 14px; line-height: 1.65; margin: 0 0 18px; }
+.hosting-account .hosting-steps .btn { white-space: normal; text-align: center; line-height: 1.4; margin-top: auto; max-width: 100%; font-size: 13px; }
+.hosting-account dd { margin: 4px 0 0; overflow-wrap: anywhere; }
+.hosting-account dt { font-size: 13px; color: var(--color-neutral-700); }
+.hosting-account section { min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 600px) {
+  .hosting-account .hosting-steps { grid-template-columns: minmax(0, 1fr) !important; gap: 26px !important; }
+  .hosting-account .btn { white-space: normal; text-align: center; }
+}

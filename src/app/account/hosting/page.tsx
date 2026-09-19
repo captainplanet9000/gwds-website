@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
+import "./hosting.css";
 
 // Supabase returns heterogeneous JSON rows for this read-only aggregate view.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -271,7 +272,7 @@ export default function HostingAccountPage() {
     <div className="cival">
       <Navbar />
       <main
-        className="cival-fade"
+        className="cival-fade hosting-account"
         style={{ minHeight: "100vh", padding: "130px 24px 90px" }}
       >
         <div style={{ maxWidth: 1050, margin: "0 auto" }}>
@@ -806,6 +807,7 @@ export default function HostingAccountPage() {
                   limits are configured in the dashboard.
                 </p>
                 <div
+                  className="hosting-steps"
                   style={{
                     display: "grid",
                     gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))",
