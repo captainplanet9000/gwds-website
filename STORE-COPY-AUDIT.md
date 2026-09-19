@@ -18,5 +18,7 @@ Scope: Trader Edition and the six visible strategy products. Core was refreshed 
 - Related recommendations exclude both included components and editions that contain the current product.
 - Simplified catalogue and screenshot captions; Renko is explicitly not part of Core or Trader downloads.
 
+- Store hosting cards also contained a stale Solo source-license claim; now use the same feature filtering as /hosted. Signed-in hosting buttons now lead to the hosting account.
+
 ## Validation and limits
 110 tests pass. Production build and TypeScript pass. Existing lint warnings concern legacy image elements and a sort cast, not copy failures. Release-readiness gates, prices, Stripe IDs and entitlements are unchanged. This is a product-page audit and copy correction, not completion of the outstanding downloadable archive repairs.
