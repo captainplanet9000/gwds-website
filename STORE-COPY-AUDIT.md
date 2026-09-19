@@ -22,3 +22,6 @@ Scope: Trader Edition and the six visible strategy products. Core was refreshed 
 
 ## Validation and limits
 110 tests pass. Production build and TypeScript pass. Existing lint warnings concern legacy image elements and a sort cast, not copy failures. Release-readiness gates, prices, Stripe IDs and entitlements are unchanged. This is a product-page audit and copy correction, not completion of the outstanding downloadable archive repairs.
+
+## Published verification
+Deployment dpl_L9QGGML4LSVcUTLPP5jmnndYvf48 promoted to production. All seven published pages checked: revised descriptions and FAQs present, unsupported year-of-updates and no-extra-cost promises absent. All seven checked at 390px with no horizontal overflow. Add-on FAQ expands correctly. Store has no stale Core-license hosting claim and shows three Open hosting account links for the signed-in customer.
