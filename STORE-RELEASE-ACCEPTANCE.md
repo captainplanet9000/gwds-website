@@ -14,7 +14,7 @@ Production baseline: storefront commit `c55ebfb`, branch `sync/hosting-dashboard
 - All eight exact production ZIP downloads match their registered SHA-256 and byte lengths.
 - Core 2.1 repair candidate strict typecheck currently reports 74 diagnostics. The original exact archive reported 278 before prior repairs. Passing a build with ignored TypeScript errors is not acceptance.
 - The six published plugin manifests contained settings absent from their source defaults. VWAP used a string session length and scalar band multiplier; supplied defaults threw during evaluation. Flat prices also exposed an invalid equal-price protection setup.
-- The unpublished 2.1.1 plugin candidates align manifest defaults and declared timeframes with code. VWAP rejects malformed configuration/data, collapsed bands and invalid protection geometry. Strict compilation plus 42 synthetic signal-contract checks pass. These are not profitability or runtime-integration tests.
+- The unpublished 2.1.1 plugin candidates align manifest defaults and declared timeframes with code. VWAP rejects malformed configuration/data, collapsed bands and invalid protection geometry. Strict compilation plus 47 synthetic signal-contract and input-rejection checks pass. These are not profitability or runtime-integration tests.
 - Storefront automated tests: 76 passing at the initial verification. Re-run the commands below after any subsequent change.
 
 ## Implemented storefront changes
@@ -27,7 +27,8 @@ Production baseline: storefront commit `c55ebfb`, branch `sync/hosting-dashboard
 - Version-aware purchase/setup guide, installation requirements, troubleshooting, backups, rollback and first-run acceptance. Linked from product details, purchase success, account downloads and order email template.
 - Removed richer-runtime screenshots and promotional videos from current source products. New illustration assets are explicitly not screenshots.
 - Server-key handling recognizes Stripe restricted keys consistently across checkout, webhook and hosting paths.
-- Updated Next.js and image processing dependencies to address reported production audit findings.
+- Updated Next.js, image processing and development dependencies. Full `npm audit`: zero known vulnerabilities.
+- Corrected production catalog descriptions and versions to match the exact 2.1.0 archives. Historical order snapshots and archive hashes/paths remain unchanged.
 
 ## Required before re-enabling sales
 
@@ -38,7 +39,7 @@ Production baseline: storefront commit `c55ebfb`, branch `sync/hosting-dashboard
 5. Validate all six candidates through the exact dashboard loader and agent UI. Confirm configuration edits, ownership, status, lifecycle and install/uninstall behavior. Keep the Macro proxy limitations visible.
 6. Apply accepted repairs to Trader and validate that bundle independently. Do not copy a Core result to Trader without testing.
 7. Package source, compiled plugin entry, LICENSE, INSTALL, README, environment example, release notes and a portable first-run check. Add container/reverse-proxy, backup and restore guidance validated against the shipped runtime.
-8. Record archive version, SHA-256 and size. Scan for secrets and dependency findings. Update catalog version (currently stale versus 2.1.0 ZIPs), immutable storage path/hash/size only after acceptance. Preserve historical purchase terms and existing artifact access.
+8. Record replacement archive version, SHA-256 and size. Scan for secrets and dependency findings. Update catalog version and immutable storage path/hash/size only after acceptance. Preserve historical purchase terms and existing artifact access.
 9. In an isolated Stripe test environment, complete account registration/verification, checkout success/cancel, webhook retry/duplicate/out-of-order events, entitlement creation, email retry, authorized re-download, cross-account denial, refund/revocation and plugin dependency/plan limits. Current paid production evidence is only one prior fulfillment test.
 10. Capture screenshots and tutorial walkthroughs from those exact artifacts. Replace conceptual imagery only with correctly labelled evidence. Verify desktop/mobile, keyboard use, validation errors and recovery paths.
 11. Remove accepted product IDs from the release gate and disable the broad source-sales hold only when appropriate. Deploy and verify real customer-facing availability. Never enable a product solely because Storage contains a ZIP.

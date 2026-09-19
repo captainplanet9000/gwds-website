@@ -40,6 +40,7 @@ for (const id of fs.readdirSync(root).filter(id => fs.statSync(path.join(root, i
       assert(['long','short','neutral'].includes(signal.direction));
       assert(typeof signal.reasoning === 'string' && signal.reasoning.length > 0);
       finite(signal);
+      assert(signal.confidence >= 0 && signal.confidence <= 100);
       if (signal.direction !== 'neutral') {
         assert(signal.entry > 0 && signal.stopLoss > 0 && signal.takeProfit > 0, 'actionable signal needs protection prices');
         if (signal.direction === 'long') assert(signal.stopLoss < signal.entry && signal.takeProfit > signal.entry);
@@ -47,6 +48,26 @@ for (const id of fs.readdirSync(root).filter(id => fs.statSync(path.join(root, i
       }
       cases.push({scenario, direction: signal.direction, passed: true});
     } catch (error) { cases.push({scenario, passed: false, error: error.message}); }
+  }
+  if (id === 'vwap-momentum-agent') {
+    for (const [scenario, overrides] of [
+      ['legacy-string-session', {sessionLength: '24h'}],
+      ['legacy-scalar-band', {bandMultiplier: 2}],
+      ['missing-protection-band', {bandMultiplier: [1,2]}],
+      ['zero-bin-size', {pocBinSize: 0}],
+    ]) {
+      ctx.config = {...manifest.defaultConfig, ...overrides};
+      const signal = new vm.Script('module.exports.strategy.execute(candles,config)').runInContext(ctx, {timeout:2000});
+      assert.equal(signal.direction, 'neutral', scenario);
+      assert.equal(signal.reasoning, 'Invalid VWAP configuration', scenario);
+      cases.push({scenario, direction: signal.direction, passed: true});
+    }
+    ctx.config = manifest.defaultConfig;
+    ctx.candles.reverse();
+    const signal = new vm.Script('module.exports.strategy.execute(candles,config)').runInContext(ctx, {timeout:2000});
+    assert.equal(signal.direction, 'neutral');
+    assert.equal(signal.reasoning, 'Invalid or out-of-order candle data');
+    cases.push({scenario:'out-of-order-candles',direction:signal.direction,passed:true});
   }
   results.push({id, cases});
 }

@@ -238,6 +238,31 @@
           "scenario": "spike",
           "direction": "long",
           "passed": true
+        },
+        {
+          "scenario": "legacy-string-session",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "legacy-scalar-band",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "missing-protection-band",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "zero-bin-size",
+          "direction": "neutral",
+          "passed": true
+        },
+        {
+          "scenario": "out-of-order-candles",
+          "direction": "neutral",
+          "passed": true
         }
       ]
     }
