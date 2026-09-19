@@ -20,6 +20,7 @@ export async function deliverHostingNotification(subscriptionId: string, dedupKe
       ? `Your seven-day Solo trial ends ${new Date(subscription.trial_end).toUTCString()}. Afterward your saved payment method will be charged ${new Intl.NumberFormat('en-US', { style: 'currency', currency: plan.currency || 'USD' }).format(plan.price_cents / 100)} per ${plan.billing_interval} unless you cancel before the trial ends. Open Account > Hosting > Manage billing to cancel. Follow provisioning and finish setup in your hosting account. Trading capital is separate.` : undefined;
     const result = await sendHostingEmail(notification.recipient_email, {
       subscriptionId,
+      deliveryId: notification.id,
       planName: plan?.name || subscription?.plan_id || 'Managed Hosting',
       template: notification.template as HostingEmailData['template'],
       title: typeof notification.payload?.title === 'string' ? notification.payload.title : notification.template === 'hosting_started' && trialDetail ? 'Your Solo trial has started' : undefined,

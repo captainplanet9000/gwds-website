@@ -183,24 +183,10 @@ export default function HostingAccountPage() {
   );
   const plan = data?.plans.find((row) => row.id === subscription?.plan_id);
 
-  // What the plan SELLS, derived from price and never from the plan's name or id — the same rule
-  // planExecutionMode() applies in src/lib/hosting.ts, which /hosted renders from. Restated here
-  // instead of imported because @/lib/hosting reaches @/lib/commerce -> @/lib/supabase, which
-  // reads SUPABASE_SERVICE_ROLE_KEY; that module must never be pulled into a "use client" bundle.
-  // Price is the reason, not a label: a plan that costs nothing executes nothing, so a renamed
-  // free tier can never accidentally read as live here.
-  const planRunsLiveAgents = Number(plan?.price_cents ?? 0) > 0;
-
-  // What the service actually RECORDED for this workspace. /api/hosting/onboarding writes this
-  // column server-side and discards whatever the browser sent, so the stored row is the only
-  // honest thing to show the customer. Reading it (rather than printing a constant) also means
-  // the field stops lying by itself on the day the server starts writing 'live' — the copy tracks
-  // the gate instead of having to be remembered and edited alongside it.
-  const recordedEnvironment: string = onboarding?.environment || "paper";
-  const recordedIsLive = recordedEnvironment === "live";
-  const environmentLabel = recordedIsLive
-    ? "Live execution"
-    : "Simulated execution";
+  // Onboarding preferences are not authoritative runtime network or execution state.
+  const environmentLabel = onboarding?.environment === "live"
+    ? "Exchange-connected setup"
+    : "Simulated setup record";
 
   const usage = useMemo(
     () =>
@@ -700,27 +686,17 @@ export default function HostingAccountPage() {
                     <h2 style={{ margin: 0, fontSize: 20 }}>Workspace onboarding</h2>
                     <Status value={onboarding.status} />
                   </div>
-                  {/* Three distinct states, because one sentence cannot honestly cover them.
-                    * A free plan is simulated permanently and by design; a paid plan sells live
-                    * agents but still provisions with environment='paper' while the server
-                    * hardcodes it in /api/hosting/onboarding; and once that changes the recorded
-                    * row reads 'live' and this says so. Each branch is written against what is
-                    * recorded, never ahead of it — the copy must never promise more execution than
-                    * the server has actually granted. The credential sentence is a standing
-                    * invariant and stays true on every branch: a live plan trades through a
-                    * trade-only agent wallet the customer approves themselves, which cannot
-                    * withdraw, so there is still no secret for Cival to hold. */}
-                  <p style={{ color: "var(--color-neutral-700)" }}>
-                    {!planRunsLiveAgents
-                      ? "This legacy workspace uses simulated fills. New hosting subscriptions use paid plans, with a seven-day Solo trial for eligible customers."
-                      : recordedIsLive
-                        ? "Your plan runs live agents against the exchange account you fund yourself. Real orders, real money, and real losses are possible."
-                        : "Your plan is a live-execution plan, but this workspace is still recorded as simulated: live order routing has not been switched on yet. Until it is, nothing your agents do here reaches a venue and no order of yours can lose money."}{" "}
-                    Cival never accepts exchange credentials, wallet secrets,
-                    seed phrases, or private keys on any plan — a live plan
-                    trades through a trade-only agent wallet you approve
-                    yourself, which cannot withdraw.
+                  <p style={{ color: "var(--color-neutral-700)", lineHeight: 1.65 }}>
+                    These setup preferences are submitted for operator review. Saving this form does
+                    not change or pause your running agents. The saved setup record can differ from
+                    your active workspace: open your dashboard to verify the current network, orders
+                    and risk limits. Testnet uses test funds; mainnet trades can lose real money.
+                    Approve only the trade-only agent key and never share a wallet seed phrase or
+                    withdrawal-capable private key.
                   </p>
+                  <Link className="btn btn-secondary" href="/account/instance" style={{ marginBottom: 20 }}>
+                    Manage workspace, wallet and agents
+                  </Link>
                   <div
                     data-cv-2col
                     style={{
@@ -740,7 +716,7 @@ export default function HostingAccountPage() {
                       />
                     </label>
                     <label>
-                      Region
+                      Preferred region (subject to availability)
                       <select
                         style={field}
                         value={form.region}
@@ -757,7 +733,7 @@ export default function HostingAccountPage() {
                       * server sets it. It shows the recorded value so the field can never claim
                       * more than the row behind it. */}
                     <label>
-                      Environment
+                      Saved setup preference (not current network)
                       <input style={field} value={environmentLabel} readOnly />
                     </label>
                     <label>
