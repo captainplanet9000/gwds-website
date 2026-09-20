@@ -3,7 +3,7 @@
 **Restricted testnet pilot; not ready for unrestricted customer automation or source release.**
 Keep new entries paused and Core unpublished until the acceptance gates below pass.
 
-## Latest verification — 08:46 UTC
+## Latest verification — 08:51 UTC
 
 - Runtime `680ffe226144fdd060e0faa80d22080933ea84ab` is deployed to all three original tenants, image `sha256:acb8e95b911a4c5bf649f2a24288f8fa97f73f8f806faa77575acabcc4ce384a`. All entry halts remain enabled. Earlier e273 and 4b3914b deployment references below are historical; 4b3914b remains the previous rollback image.
 - Seven host-capacity/service/telemetry CloudWatch alarms were enabled and verified OK; SNS confirmation and test email delivery passed. The metrics collector runs every minute.
@@ -25,6 +25,8 @@ Keep new entries paused and Core unpublished until the acceptance gates below pa
 
 - Hosting CI 35500577147 passed application checks and Terraform validation. Its clean-database fixture now includes the checkout and agent-setup schema contracts; all migrations also passed a separate fresh disposable PostgreSQL test. Production migration history/checksums were not rewritten.
 - Temporary private transport release runtime-transfer-35499994832-1 was removed after the image was hash-verified, restored-tested, deployed, and browser-checked. The immutable registry image and prior rollback image remain available.
+
+- First scheduled pilot cycle after rollout completed at 08:50:38 UTC: outcome OK, HTTP 200, 6.346 seconds, zero errors, zero new executions. This verifies a halted management/reconciliation cycle, not a new full trading lifecycle.
 
 ## Earlier verification (historical; see latest state above)
 
