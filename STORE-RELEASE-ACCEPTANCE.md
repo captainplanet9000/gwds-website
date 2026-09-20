@@ -11,21 +11,37 @@ count below; it does not approve the old published ZIP or a replacement sale.
 Candidate evidence is in `C:/GWDS/selfhost-release-20260918/core/.acceptance/`.
 
 The hosted runtime release at commit
-`6e9f9833769bc576b193fd1915c945a28568ab78` passes its allocation, exposure
+`b86bf251bbb02fea25a99d15b1a88638d72e52fe` passes its allocation, exposure
 reconciliation, tenant-boundary, provider-key, durable-execution, production
 configuration, dependency-policy and isolated-container gates. It also fixes
 production loading of installed strategy plugins and proves that customer
-strategy configuration reaches the plugin evaluator. The dependency policy has
-no critical findings; it records one reviewed high-severity Langsmith advisory
-that still requires a coordinated LangChain upgrade.
+strategy configuration reaches the plugin evaluator. Its mandatory CI also
+tests automatic entry pausing after Hyperliquid's volume-based account-action
+quota refusal. The dependency policy has no critical findings; it records one
+reviewed high-severity Langsmith advisory that still requires a coordinated
+LangChain upgrade.
 
 The immutable image for that commit was loaded as digest
-`sha256:eb498083422b1aed0df522c153458aaee83759773100cfe2e72db54704e4e1db`
+`sha256:ec5b9bb338b88c4aace1014d71577aeac39c19c56dfe2817e66603b94b343bf6`
 and rolled through all three active tenant containers with audited, non-forced
 stop/start commands. The host reconciler subsequently reported all three as
 `confirmed_running`; the host agent and Caddy were active. Each loopback and
 public TLS dashboard route answered `401` without a customer session, which is
 the expected fail-closed response and confirms routing reached the new runtime.
+Publication run 35544302561 and private transport run 35544908972 passed; the
+temporary checksum-verified transfer artifacts were deleted after deployment.
+
+An authenticated pilot cycle reached Hyperliquid and found
+that the testnet account had exhausted its volume-based action allowance:
+274,332 cumulative requests against 153,133 allowed. The attempted entry was
+rejected by the venue and no execution occurred. The pilot was halted through
+the durable control plane with a named incident reason. A second cycle completed
+with zero errors, reported the account flat and kept entries paused while exit
+management remained available. On the deployed quota-aware release, a fresh
+authenticated cycle again completed with HTTP 200, zero errors and zero
+executions; the durable control-plane gate remained blocked, Renko reported
+`entries_paused`, and the agent position remained flat. Do not clear the pilot
+halt until an eligible account or sufficient venue allowance is verified.
 
 All 118 storefront tests pass. The local database activation checks pass for
 test/live price binding, replay idempotency, conflicting events, mismatched
