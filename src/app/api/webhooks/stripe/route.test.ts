@@ -7,11 +7,13 @@ const state = vi.hoisted(() => ({
   deliver: vi.fn(),
   rowError: null as null | { message: string },
   rpc: vi.fn(),
+  chargeRetrieve: vi.fn(),
 }));
 vi.mock("@/lib/stripe", () => ({
   getStripe: () => ({
     webhooks: { constructEvent: () => state.event },
     subscriptions: { retrieve: state.retrieve },
+    charges: { retrieve: state.chargeRetrieve },
   }),
 }));
 vi.mock("@/lib/hosting-notifications", () => ({
@@ -151,5 +153,17 @@ describe("hosting trial reminder webhook", () => {
     state.retrieve.mockRejectedValue(new Error("Stripe unavailable"));
     expect((await request()).status).toBe(500);
     expect(state.rpc).not.toHaveBeenCalled();
+  });
+  it("does not restore a fully refunded purchase after a won dispute", async () => {
+    state.event = {id:"evt_dispute",type:"charge.dispute.closed",livemode:false,data:{object:{charge:"ch_fixture",status:"won"}}};
+    state.chargeRetrieve.mockResolvedValue({id:"ch_fixture",payment_intent:"pi_fixture",amount:9900,amount_refunded:9900});
+    expect((await request()).status).toBe(200);
+    expect(state.rpc).toHaveBeenCalledWith("apply_store_order_status_event",expect.objectContaining({p_status:"refunded",p_revoke:true}));
+  });
+  it("uses current refund totals when an older partial refund arrives late", async () => {
+    state.event = {id:"evt_refund",type:"charge.refunded",livemode:false,data:{object:{id:"ch_fixture",amount:9900,amount_refunded:100}}};
+    state.chargeRetrieve.mockResolvedValue({id:"ch_fixture",payment_intent:"pi_fixture",amount:9900,amount_refunded:9900});
+    expect((await request()).status).toBe(200);
+    expect(state.rpc).toHaveBeenCalledWith("apply_store_order_status_event",expect.objectContaining({p_status:"refunded",p_revoke:true}));
   });
 });

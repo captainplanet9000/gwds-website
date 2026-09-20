@@ -401,7 +401,7 @@ export async function POST(req: NextRequest) {
         break;
       }
       case 'charge.refunded': {
-        const charge = event.data.object;
+        const charge = await getStripe().charges.retrieve(event.data.object.id);
         const fullyRefunded = charge.amount_refunded >= charge.amount;
         await applyStatusEvent({ event, payloadHash, paymentIntentId: objectId(charge.payment_intent), status: fullyRefunded ? 'refunded' : 'partially_refunded', reason: event.type, revoke: fullyRefunded });
         break;
@@ -416,7 +416,8 @@ export async function POST(req: NextRequest) {
         const dispute = event.data.object;
         const charge = await getStripe().charges.retrieve(objectId(dispute.charge)!);
         const won = dispute.status === 'won';
-        await applyStatusEvent({ event, payloadHash, paymentIntentId: objectId(charge.payment_intent), status: won ? 'paid' : 'dispute_lost', reason: `dispute_${dispute.status}`, revoke: !won, restore: won });
+        const fullyRefunded = charge.amount_refunded >= charge.amount;
+        await applyStatusEvent({ event, payloadHash, paymentIntentId: objectId(charge.payment_intent), status: fullyRefunded ? 'refunded' : won ? 'paid' : 'dispute_lost', reason: `dispute_${dispute.status}`, revoke: fullyRefunded || !won, restore: won && !fullyRefunded });
         break;
       }
       case 'customer.subscription.created':
