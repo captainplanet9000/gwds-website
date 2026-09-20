@@ -30,3 +30,26 @@
   .cival .homepage-refresh [data-cv-2col] { gap:28px !important; }
   .cival .homepage-refresh [data-cv-2col] > div { min-width:0; padding-left:20px !important; padding-right:20px !important; }
 }
+.cival .home-hosting { max-width:1200px; margin:0 auto; padding:0 28px 120px; scroll-margin-top:100px; }
+.cival .home-hosting-intro { display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:end; margin-bottom:32px; }
+.cival .home-hosting h6 { margin:0 0 16px; }
+.cival .home-hosting h2 { font-size:clamp(30px,3.4vw,46px); line-height:1.12; letter-spacing:-.02em; margin:0; }
+.cival .home-hosting-intro p { font-size:16px; line-height:1.7; margin:0 0 20px; color:var(--color-neutral-800); }
+.cival .home-hosting-plans { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; }
+.cival .home-hosting-plan { min-width:0; display:flex; flex-direction:column; padding:30px; border:1px solid var(--color-divider); border-radius:20px; background:var(--color-surface); }
+.cival .home-hosting-solo { border-color:var(--color-accent-700); }
+.cival .home-hosting-plan-heading { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; min-height:32px; }
+.cival .home-hosting h3 { font-family:var(--font-body); font-size:22px; font-weight:600; line-height:1.3; margin:0; }
+.cival .home-hosting-price { display:flex; align-items:baseline; flex-wrap:wrap; gap:6px; margin:24px 0 14px; }
+.cival .home-hosting-price strong { font-family:var(--font-mono); font-size:38px; font-weight:500; letter-spacing:-.04em; }
+.cival .home-hosting-price span { font-size:14px; color:var(--color-neutral-700); }
+.cival .home-hosting-capacity { font-size:17px; font-weight:500; line-height:1.5; margin:0 0 18px; }
+.cival .home-hosting ul { padding:0 0 0 18px; margin:0 0 28px; font-size:14px; line-height:1.65; color:var(--color-neutral-800); }
+.cival .home-hosting li + li { margin-top:8px; }
+.cival .home-hosting .btn { min-height:48px; height:auto; padding:12px 18px; white-space:normal; text-align:center; line-height:1.4; }
+.cival .home-hosting-plan > .btn { margin-top:auto; }
+.cival .home-hosting-details { margin-top:24px; max-width:85ch; font-size:13px; line-height:1.7; color:var(--color-neutral-700); }
+.cival .home-hosting-details p { margin:0 0 10px; }
+.cival .home-hosting a:focus-visible { outline:2px solid var(--color-accent); outline-offset:4px; }
+@media(max-width:900px) { .cival .home-hosting-intro { grid-template-columns:1fr; gap:24px; } .cival .home-hosting-plan { padding:22px; } }
+@media(max-width:680px) { .cival .home-hosting { padding:0 20px 72px; } .cival .home-hosting-plans { grid-template-columns:1fr; } }
