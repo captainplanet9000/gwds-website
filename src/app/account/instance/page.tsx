@@ -239,6 +239,12 @@ export default function InstancePage() {
         setDraft({});
         return;
       }
+      if (instanceRes.status === 401) {
+        setData(null);
+        setLoadout(null);
+        setDraft({});
+        router.replace("/account/login?next=/account/instance");
+      }
       throw new Error(instanceBody.error || "Your instance could not be loaded");
     }
     setNotFound(null);
@@ -251,8 +257,13 @@ export default function InstancePage() {
       // The saved set is the only thing the editor is ever seeded from, so a reload after a save
       // (or after a failed save) shows what the server actually holds, not what was typed.
       setDraft(draftFrom(loadoutBody.strategies));
+      setError("");
+    } else {
+      setLoadout(null);
+      setDraft({});
+      throw new Error(loadoutBody.error || "Your strategy configuration could not be loaded. Refresh to try again.");
     }
-  }, [session?.access_token]);
+  }, [session?.access_token, router]);
 
   useEffect(() => {
     if (user && session) load().catch((reason) => setError(reason.message));
@@ -297,7 +308,8 @@ export default function InstancePage() {
       });
       const body = await response.json();
       if (!response.ok) throw new Error(body.error || "The live dashboard is temporarily unavailable.");
-      window.open(body.url, "_blank", "noopener,noreferrer");
+      // Navigate after ticket creation without relying on a popup permission.
+      window.location.assign(body.url);
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "Request failed");
     } finally {
@@ -526,22 +538,9 @@ export default function InstancePage() {
                 >
                   <div>
                     <h2 style={{ margin: "0 0 6px" }}>Your dashboard</h2>
-                    {/* This used to end "signed in as you", which it is not. The button mints a
-                      * one-time gateway ticket (/api/account/dashboard-link) that proves to the
-                      * reverse proxy which tenant you own and opens a gateway session; that is
-                      * network admission, not authentication to the workspace. The dashboard
-                      * behind it runs its own login and asks for it.
-                      *
-                      * The fix is the sentence, deliberately not SSO. Making the first step also
-                      * be the second means the workspace trusting a proxy-supplied header as
-                      * proof of identity — anyone who can reach the app port directly then
-                      * bypasses login by setting that header. That is the owner's decision to
-                      * make, not a copy fix, so the copy describes the two steps that exist. */}
                     <p style={{ color: "var(--color-neutral-700)", margin: 0 }}>
-                      Opens your workspace in a new tab. The link admits you
-                      through the hosting gateway; the dashboard then asks for
-                      its own sign-in, which is separate from your Cival Systems
-                      account.
+                      Open your private workspace to configure agents, review positions
+                      and monitor trading. Your account provides secure access to your dashboard.
                     </p>
                   </div>
                   <button
@@ -765,7 +764,7 @@ export default function InstancePage() {
                               borderRadius: "var(--radius-md)",
                             }}
                           >
-                            <div style={{ color: "var(--color-neutral-600)", fontSize: 12 }}>Agents</div>
+                            <div style={{ color: "var(--color-neutral-600)", fontSize: 12 }}>Selected strategy slots</div>
                             <div
                               style={{
                                 fontFamily: "var(--font-mono)",
