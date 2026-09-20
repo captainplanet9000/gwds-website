@@ -1,5 +1,32 @@
 # Store release audit — 19 September 2026
 
+## Verification update — 20 September 2026
+
+The Core repair candidate now passes 33 tests, strict TypeScript checking, a
+production build, and seven production-server startup/access checks. The latest
+repairs make eight market/risk/strategy consumers use the configured Hyperliquid
+network. Market-data failures and malformed prices return HTTP 502 with an
+explicit stale indicator. This supersedes the earlier 74-diagnostic candidate
+count below; it does not approve the old published ZIP or a replacement sale.
+Candidate evidence is in `C:/GWDS/selfhost-release-20260918/core/.acceptance/`.
+
+All 118 storefront tests pass. The local database activation checks pass for
+test/live price binding, replay idempotency, conflicting events, mismatched
+sessions and rollback. A concurrent admission test accepted exactly 100 of 120
+attempts with 100 available slots, released one slot after expiration, and denied
+customer capacity writes. This measures reservations, not running-host capacity.
+All 47 existing synthetic strategy-package cases pass; these are not evidence of
+profits or complete live execution.
+
+The read-only Stripe check verified active live USD prices, enabled charges and
+payouts, and the enabled production webhook. It does not verify successful
+customer payment or webhook delivery end to end. The legacy sandbox harness now
+refuses remote customer databases before catalog mutations, even when given a
+Stripe test key. A complete isolated purchase-to-install journey remains required.
+
+Source sales remain held pending exact-artifact installation, fresh trade
+lifecycle/fault acceptance, bundle acceptance and replacement archive publication.
+
 ## Release decision
 
 **Source products are not approved for new sales.** Storage integrity and payment fulfillment pass the checks below; they do not prove the software installs or manages trades correctly. The source-sales guard is in `src/lib/release-readiness.ts` and the checkout API. Existing entitlements/downloads and managed hosting are separate paths.
