@@ -78,3 +78,95 @@ The disposable container was removed after verification. `scripts/verify-isolate
 ## Snapshot state at handoff
 
 The current production host now has AutoSnapshot Enabled at 09:00 UTC. Manual snapshot `cival-production-v2-launch-20260919` was still pending at the latest check; do not mark that copy complete until AWS reports available. Existing available snapshots belong to the old host and predate this audit.
+
+## Follow-up verification — 20 September 2026 UTC
+
+AWS now reports `cival-production-v2-launch-20260919` **available**, with source
+`cival-cloud-01-production-v2`. The CLI account and instance public IP were checked
+against the actual host before changing configuration.
+
+The production host returned no failed systemd units. Three tenant containers and
+the Supabase services were running; disk usage was 25%, memory available about
+4.4 GB, and the backup/telemetry timers were scheduled. These are fresh operational
+observations, not load-test or trade-lifecycle acceptance.
+
+The Lightsail Email contact is `Valid`. `TestAlarm` for the production CPU alarm
+returned `Succeeded`; inbox delivery is not yet independently confirmed. Disabled
+notifications on the three alarms targeting the retired, stopped `cival-cloud-01`
+instance, including its noisy status-check ALARM. The production-v2 alarms remain
+enabled. The prior alarm configuration was saved privately before modification.
+
+The completed snapshot does not yet constitute a full-host recovery drill. Do not
+boot a snapshot clone with trading containers enabled: it could duplicate execution.
+
+## Deployed follow-up — 20 September 2026 UTC
+
+- Created clean recovery host `cival-cloud-02` (`3.151.88.151`), 8 GB Lightsail,
+  $44/month bundle. Firewall active; admissions disabled; no customer workloads.
+- Copied the verified backup into a private, encrypted, versioned S3 bucket and
+  restored both databases and 671 persistent files on the new host. Payload SHA-256
+  and sizes matched. Restore took 53 seconds after download. Restored 19 orders,
+  5 tenant records and 12 auth users. No production trading process was started.
+- Installed automatic daily offsite backup on production, verified its first run,
+  and enabled its timer. The backup identity can upload but cannot read/delete
+  objects. CloudWatch backup alarm is OK. **Its separate operations SNS email
+  subscription remains PendingConfirmation**; the user was asked to confirm it.
+- Hosting test run: 690 passed, no skips. Core: 27 unit tests, strict typecheck,
+  configured build and real 35-table isolation/paper-ledger integrations pass.
+  The referenced-table gaps are resolved. Core remains an unpublished candidate.
+- Fixed stale Stripe subscription webhook handling by retrieving current Stripe
+  state before issuing tenant lifecycle commands. Added regression tests for late
+  active/past-due events and API unavailability. Storefront: 116 tests, typecheck and
+  production build pass. Commit `c3e295a` deployed as
+  `dpl_HovhVGAXKEUH6wecJ19ULpBCtcyt`, aliased to civalsystems.com. Home, store and
+  hosted pages returned 200; unsigned webhook request returned 400.
+
+The AWS operations scripts/runbook are committed in hosting as `a9132e3`.
+Independent database/file recovery is verified, but full application recovery,
+fencing, placement/load acceptance, real test-mode purchase journeys, funding,
+email inbox verification and complete final-runtime trading remain open. These
+facts supersede earlier compiler/table counts and snapshot-pending observations;
+they do not remove the launch gates.
+
+Later in the same follow-up, isolated cold-start/restart checks passed on the
+recovery host using the exact production image: health, tenant-header enforcement,
+empty provider keys, upstream auth rejection, scheduler auth, and persisted
+halt-new-trades after restart. Cold start was 7.75 seconds and idle memory 262.7 MiB.
+The fixture had no customer keys or external network access; all fixture containers
+were removed. This is not yet a complete restored-database application failover.
+
+Refund handling now fetches current charge totals for delayed refund events and
+does not reactivate a fully refunded order after a won dispute. Commit `7f516b1`
+is live as `dpl_8y6DwNPhhuHFTFgM7wCZVKt8HU6f`; 118 storefront tests pass. Both billing
+fix commits are pushed to the existing customer-flow branch.
+
+
+## Runtime deployment and remaining execution gate — 20 September UTC
+
+The immutable hosted repair `03d8a1e` is deployed to all three active workspaces.
+Image SHA-256: `670e461219ef5d2a6c0a9fa05b3b514f3d1c90fac0b147157b28acc3e9cd7554`.
+The host command queue recorded graceful stops; the reconciler restarted all three.
+Explicit start commands raced the reconciler and were refused as already claimed;
+subsequent Docker and control-plane checks verified all three running on the new
+image. Both local and control-plane new-entry halts remain enabled.
+
+The pilot ownership query incorrectly excluded closed fill records and calculated
+0.139 BNB owned exposure instead of the actual 0.312 short. Verified venue entry
+IDs and two historical partial-close fill IDs were repaired in the tenant ledger.
+The deployed status API now attributes 0.312 BNB to the agent and does not claim
+ETH, AVAX or SUI. Full-size reduce-only stop/target coverage was verified at the
+existing prices before obsolete exact order IDs were canceled. No position was
+closed by this repair. This is position/protection reconciliation, not a completed
+trade lifecycle or permission to clear the new-entry halt.
+
+Follow-up guardian fixes passed 17 targeted tests and were pushed as `87dace6`;
+their image build is in progress. They reject failed venue snapshots, preserve
+existing protection during replacement, request only missing protection types,
+and flag duplicates for exact-order reconciliation instead of canceling the coin.
+
+Core passed fresh Linux npm installation, 27 tests, strict TypeScript and build,
+plus repeated Windows checks after dependency fixes. Production dependency audit:
+0 critical, 0 high, 5 moderate, 13 low. Remaining findings are SDK dependencies;
+this is not a claim of vulnerability-free software. Core remains unpublished.
+The separate operations SNS subscription still needs recipient confirmation;
+one confirmation email was resent. Lightsail's own contact remains valid.
