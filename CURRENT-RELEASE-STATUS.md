@@ -13,7 +13,7 @@ Keep new entries paused and Core unpublished until the acceptance gates below pa
 - The customer dashboard exposed a legacy agent creation gap. Runtime `680ffe226144fdd060e0faa80d22080933ea84ab` now uses installed entitled slots, starts agents/farms paused at zero allocation, blocks the old hosted POST and direct browser creation RPC, and rejects database failure instead of inventing success. Twelve focused API/proxy tests, focused TypeScript, and local PostgreSQL creation/capacity/idempotency/entitlement/cancellation/isolation checks passed. Production-schema rollback-only tests passed without retaining fixture changes.
 - Migration 0038 is applied and checksum tracked (`4be21de336a65718`). Publication CI 35499456662 and private transfer 35499994832 passed. Image sha256:acb8e95b911a4c5bf649f2a24288f8fa97f73f8f806faa77575acabcc4ce384a is now deployed to all three active customer containers. All three process-health checks passed. Browser verification confirmed the new setup form and a refreshed pilot position display. Entry halts remain true; the canceled fixture remains suspended/stopped.
 - Candidate also includes c5cd003 fill-history pagination and complete timestamp-batch processing. c5 publication and transport passed, but c5 was not rolled out separately.
-- Hosting source HEAD `e604b44`; storefront source HEAD `26dadf6`. Application storefront deployment remains fad5c81. Core remains unpublished.
+- Hosting source HEAD `b36e90f`; storefront source HEAD `26dadf6`. Application storefront deployment remains fad5c81. Core remains unpublished.
 
 - Cancellation exposed missing HTTPS routes for suspended customers. Gateway fix 0bad519 is deployed: known unavailable workspaces retain TLS and return a responsive 503 page with a hosting-account link, without an upstream connection. Eight generator tests passed; Caddy validated/reloaded; browser confirmed the repaired page. Active pilot still returns authenticated 401 for anonymous requests.
 - Fresh backup 20260920T083106Z completed after migrations 0037/0038. Offsite upload completed at 08:32:29 UTC: four files, 473,162,591 bytes.
@@ -22,6 +22,9 @@ Keep new entries paused and Core unpublished until the acceptance gates below pa
 - Final-image restore and setup acceptance passed all 15 checks in 98.99 seconds. Evidence: `/var/backups/cival/integrated-setup-680ffe2-20260920/report.json`. Restored PostgreSQL grants/RLS, real compiled API create/retry/cancellation, blocked legacy and browser-direct writes, cross-tenant isolation, and persistent halt/unresolved intent after container restart were verified. A synthetic hold-only plugin and unfunded sandbox tenant were used offline; this does not prove catalog strategy performance or live execution.
 - Read-only venue verification after rollout: BNB short 0.312; both original reduce-only TP/SL orders remain present. ETH 0.0345, AVAX 6.08 and SUI -23.1 remain unchanged. No new orders or fund transfers were submitted during this work.
 - The isolated localhost checkout server on port 3107 was stopped after sandbox acceptance. Owner development servers were left alone.
+
+- Hosting CI 35500577147 passed application checks and Terraform validation. Its clean-database fixture now includes the checkout and agent-setup schema contracts; all migrations also passed a separate fresh disposable PostgreSQL test. Production migration history/checksums were not rewritten.
+- Temporary private transport release runtime-transfer-35499994832-1 was removed after the image was hash-verified, restored-tested, deployed, and browser-checked. The immutable registry image and prior rollback image remain available.
 
 ## Earlier verification (historical; see latest state above)
 
@@ -60,7 +63,7 @@ Runtime commit `4b3914b121d27a37cefaed0a1ef65e0d2eba4960`, publication run **354
 ## Working locations
 
 - Runtime: `C:\GWDS\dashboard-runtime`, branch `fix/hosted-order-reconciliation`, PR captainplanet9000/cival-dashboard-runtime#1.
-- Hosting: `C:\GWDS\hosting`, master `47d5028`; its CI 35487545502 passed.
+- Hosting: `C:\GWDS\hosting`, master `b36e90f`; its CI 35500577147 passed.
 - Storefront: `C:\GWDS\storefront-customer-release`, branch `fix/store-release-customer-flow`, PR captainplanet9000/gwds-website#8.
 - Core/private acceptance tools: `C:\GWDS\selfhost-release-20260918`. Private audit proposals and backups contain financial data and must never be packaged in products.
 - Leave the owner's separate `C:\TradingFarm\Cival-Dashboard-v9` and localhost:9005 untouched. Preserve unrelated runtime working-tree edits.
