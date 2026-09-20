@@ -223,3 +223,7 @@ No mainnet operation or position closure was performed by this repair.
 The source archive remains private. Storefront billing fixes are live. Public
 HTTPS checks passed; the dashboard refused an unauthenticated request with 401.
 This update supersedes the earlier follow-up-image-building note.
+
+Fresh post-deployment backup `20260920T023745Z` completed locally and offsite at
+02:39 UTC: four payload files, 473,085,444 bytes. Both systemd services returned
+success/exit 0. This preserves the repaired ledger and deployed configuration.
