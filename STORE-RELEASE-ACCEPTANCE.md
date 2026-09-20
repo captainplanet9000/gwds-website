@@ -2,13 +2,30 @@
 
 ## Verification update — 20 September 2026
 
-The Core repair candidate now passes 33 tests, strict TypeScript checking, a
-production build, and seven production-server startup/access checks. The latest
+The Core repair candidate now passes 35 tests, strict TypeScript checking, a
+production build, and eight production-server startup/access checks. The latest
 repairs make eight market/risk/strategy consumers use the configured Hyperliquid
 network. Market-data failures and malformed prices return HTTP 502 with an
 explicit stale indicator. This supersedes the earlier 74-diagnostic candidate
 count below; it does not approve the old published ZIP or a replacement sale.
 Candidate evidence is in `C:/GWDS/selfhost-release-20260918/core/.acceptance/`.
+
+The hosted runtime release at commit
+`6e9f9833769bc576b193fd1915c945a28568ab78` passes its allocation, exposure
+reconciliation, tenant-boundary, provider-key, durable-execution, production
+configuration, dependency-policy and isolated-container gates. It also fixes
+production loading of installed strategy plugins and proves that customer
+strategy configuration reaches the plugin evaluator. The dependency policy has
+no critical findings; it records one reviewed high-severity Langsmith advisory
+that still requires a coordinated LangChain upgrade.
+
+The immutable image for that commit was loaded as digest
+`sha256:eb498083422b1aed0df522c153458aaee83759773100cfe2e72db54704e4e1db`
+and rolled through all three active tenant containers with audited, non-forced
+stop/start commands. The host reconciler subsequently reported all three as
+`confirmed_running`; the host agent and Caddy were active. Each loopback and
+public TLS dashboard route answered `401` without a customer session, which is
+the expected fail-closed response and confirms routing reached the new runtime.
 
 All 118 storefront tests pass. The local database activation checks pass for
 test/live price binding, replay idempotency, conflicting events, mismatched
@@ -19,10 +36,19 @@ All 47 existing synthetic strategy-package cases pass; these are not evidence of
 profits or complete live execution.
 
 The read-only Stripe check verified active live USD prices, enabled charges and
-payouts, and the enabled production webhook. It does not verify successful
+payouts, a complete public business profile, and the enabled production webhook
+with the required checkout, invoice and trial events. The downloads bucket is
+private and reachable, and production Auth is reachable. It does not verify successful
 customer payment or webhook delivery end to end. The legacy sandbox harness now
 refuses remote customer databases before catalog mutations, even when given a
 Stripe test key. A complete isolated purchase-to-install journey remains required.
+
+Live capacity on 20 September reports three active tenant instances. The primary
+host admits work with five configured slots, four used or reserved and one
+available. The recovery host remains fenced from new admissions; its recovery
+procedure is tested, but production credentials, public cutover, exchange
+reconnection and load acceptance have not been completed. This is adequate for
+one additional placement, not broad customer scale.
 
 Source sales remain held pending exact-artifact installation, fresh trade
 lifecycle/fault acceptance, bundle acceptance and replacement archive publication.
