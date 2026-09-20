@@ -170,3 +170,56 @@ plus repeated Windows checks after dependency fixes. Production dependency audit
 this is not a claim of vulnerability-free software. Core remains unpublished.
 The separate operations SNS subscription still needs recipient confirmation;
 one confirmation email was resent. Lightsail's own contact remains valid.
+
+
+The recovery acceptance now includes the real dashboard reading its restored
+PostgreSQL data through pinned PostgREST. Tenant-scoped agent reads, empty
+cross-tenant reads, mismatched header rejection and persistent halt after restart
+passed in an isolated clean run (70.84 seconds including restore, excluding image
+download). No customer signing keys, public ports or external network access.
+Procedure is committed in hosting `e48d6d4`. Public failover, execution fencing,
+exchange reconciliation and loaded multi-host placement remain unverified.
+
+Core bootstrap upgrade plus repeated application passed against the dedicated
+acceptance database: 35 tables, 5 recorded schema/migration steps. This resolves
+the repeated-installer check, not the whole customer setup journey.
+
+### Execution work still required before broad automation
+
+- Persist an entry intent and client order ID before exchange submission; reconcile
+  ambiguous network responses before any retry. A saved row after acknowledgement
+  does not cover a crash between venue acceptance and database persistence.
+- Implement hosted pending-entry reconciliation and partial-fill/cancel races.
+  The separate Core candidate contains helpers, but those are not evidence that
+  the hosted scheduler runs them.
+- Replace the agent-card positions endpoint's historical latest-trader/5% heuristic
+  and execution-thought fallback with the same reconciled ownership ledger.
+  It currently queries only 500 entry-like rows and can misattribute old exposure.
+- Verify all alternate close, emergency, DCA, protection and maker paths against
+  agent ownership; no coin-wide cancellation or inferred fill/P&L may substitute
+  for matched venue order and fill evidence.
+- Prove the final runtime's open -> protect -> manage -> close -> reconcile cycle,
+  including restart and duplicate delivery, before clearing the pilot entry halt.
+
+Remaining business acceptance: actual isolated Stripe test-mode checkout through
+fulfillment/provisioning and cancellation/refund recovery; delivered onboarding
+and billing email; customer funding/withdrawal rejection and reconciliation;
+public failover and execution fencing; loaded capacity/placement; exact install
+and plugin acceptance for each source product. Existing mocked/unit tests do not
+replace those journeys. Source downloads remain held.
+
+## Latest deployed state — 20 September 2026, 02:38 UTC
+
+Guardian follow-up `87dace6e6f45b9c121599088ab1b7653648a9fac` is now running in all
+three active hosted workspaces, image
+`sha256:66b0830ae72c0b084c72438ae1865886c359e9dfe6f49fe29b85ebc74d020fe3`.
+Build, dependency policy, CI isolation tests and the exact-image AWS smoke passed.
+Fresh venue verification still showed exactly one reduce-only stop and one target,
+both 0.312 BNB. The runtime ownership response matched the -0.312 BNB venue position.
+The pilot's local halt is true and control-plane halt is true at state version 8;
+the recorded reason now identifies the remaining submission/lifecycle gates.
+No mainnet operation or position closure was performed by this repair.
+
+The source archive remains private. Storefront billing fixes are live. Public
+HTTPS checks passed; the dashboard refused an unauthenticated request with 401.
+This update supersedes the earlier follow-up-image-building note.
