@@ -421,9 +421,14 @@ export async function POST(req: NextRequest) {
       }
       case 'customer.subscription.created':
       case 'customer.subscription.updated':
-      case 'customer.subscription.deleted':
-        await syncHostingSubscription(event, event.data.object, payloadHash);
+      case 'customer.subscription.deleted': {
+        if (event.data.object.metadata?.commerce_kind !== 'hosting') break;
+        // Delivery order is not guaranteed. A delayed active event must not
+        // resume a canceled tenant, or an old past_due event suspend a paid one.
+        const current = await getStripe().subscriptions.retrieve(event.data.object.id);
+        await syncHostingSubscription(event, current, payloadHash);
         break;
+      }
       case 'customer.subscription.trial_will_end': {
         if (event.data.object.metadata?.commerce_kind !== 'hosting') break;
         const current = await getStripe().subscriptions.retrieve(event.data.object.id);

@@ -6,6 +6,7 @@ const state = vi.hoisted(() => ({
   upsert: vi.fn(),
   deliver: vi.fn(),
   rowError: null as null | { message: string },
+  rpc: vi.fn(),
 }));
 vi.mock("@/lib/stripe", () => ({
   getStripe: () => ({
@@ -22,6 +23,7 @@ vi.mock("@/lib/commerce", async (original) => ({
 }));
 vi.mock("@/lib/supabase", () => ({
   createServerClient: () => ({
+    rpc: state.rpc,
     from: () => {
       const q: Record<string, unknown> = {};
       q.select = () => q;
@@ -31,6 +33,7 @@ vi.mock("@/lib/supabase", () => ({
         error: state.rowError,
       });
       q.upsert = state.upsert;
+      q.maybeSingle = async () => ({ data: null, error: null });
       return q;
     },
   }),
@@ -78,6 +81,7 @@ describe("hosting trial reminder webhook", () => {
     });
     state.upsert.mockResolvedValue({ error: null });
     state.deliver.mockResolvedValue(undefined);
+    state.rpc.mockResolvedValue({ data: [], error: null });
   });
   it("queues a deduplicated reminder with the actual renewal price", async () => {
     expect((await request()).status).toBe(200);
@@ -120,5 +124,32 @@ describe("hosting trial reminder webhook", () => {
     };
     expect((await request()).status).toBe(200);
     expect(state.retrieve).not.toHaveBeenCalled();
+  });
+  it.each([
+    ["active", "canceled", "suspend"],
+    ["past_due", "active", "resume"],
+  ])("reconciles delayed %s events against current %s billing", async (oldStatus, currentStatus, command) => {
+    state.event = {
+      id: "evt_delayed", type: "customer.subscription.updated", livemode: false,
+      data: { object: { id: "sub_fixture", status: oldStatus, metadata: { commerce_kind: "hosting" } } },
+    };
+    state.retrieve.mockResolvedValue({
+      id: "sub_fixture", status: currentStatus, cancel_at_period_end: false,
+      metadata: { commerce_kind: "hosting", hosting_subscription_id: id },
+      items: { data: [] },
+    });
+    expect((await request()).status).toBe(200);
+    expect(state.retrieve).toHaveBeenCalledWith("sub_fixture");
+    expect(state.rpc).toHaveBeenCalledWith("sync_hosting_subscription", expect.objectContaining({ p_status: currentStatus }));
+    expect(state.rpc).toHaveBeenCalledWith("sync_hosting_tenant_lifecycle_command", expect.objectContaining({ p_command: command }));
+  });
+  it("retries delivery when current subscription state cannot be retrieved", async () => {
+    state.event = {
+      id: "evt_unavailable", type: "customer.subscription.deleted", livemode: false,
+      data: { object: { id: "sub_fixture", metadata: { commerce_kind: "hosting" } } },
+    };
+    state.retrieve.mockRejectedValue(new Error("Stripe unavailable"));
+    expect((await request()).status).toBe(500);
+    expect(state.rpc).not.toHaveBeenCalled();
   });
 });
