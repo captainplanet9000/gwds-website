@@ -22,6 +22,12 @@ if (!env.STRIPE_SECRET_KEY?.startsWith('sk_test_')) throw new Error('A Stripe sa
 if (!env.NEXT_PUBLIC_SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
   throw new Error('Supabase test prerequisites are missing.');
 }
+// A test Stripe key does not make the connected database disposable. This
+// harness changes catalog rows and creates/deletes users and fulfillment rows.
+const databaseUrl = new URL(env.NEXT_PUBLIC_SUPABASE_URL);
+if (!['127.0.0.1', 'localhost', '[::1]'].includes(databaseUrl.hostname)) {
+  throw new Error('Run the sandbox gauntlet against a disposable local Supabase database, never the customer database.');
+}
 
 const stripe = new Stripe(env.STRIPE_SECRET_KEY);
 const supabase = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
