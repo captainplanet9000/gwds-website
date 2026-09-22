@@ -1,3 +1,4 @@
+import { productMedia } from './product-media';
 export type ProductCategory = "trading";
 
 /** Product tier — drives store grouping/sorting. Every product declares one. */
@@ -51,14 +52,8 @@ export const products: Product[] = [
     id: "trading-dashboard-template",
     stripePriceId: "price_1U09vdLLyk0oaesNmjX9ZSDL",
     name: "Core Edition",
-    description: "The trading platform with one strategy agent pre-installed and running. Seven dashboard sections, 66 API routes, the Postgres schema, and the plugin system every other agent in this store drops into.",
-    longDescription: `This is the system, not a mockup of one. It ships with the Darvas Box Breakout agent already installed: it identifies consolidation boxes, waits for a breakout confirmed by volume, and sizes the entry against a stop below the box floor.
-
-The archive ships in paper mode. Going live is an explicit change to TRADING_MODE plus a wallet address — nothing places a real order until you decide it should.
-
-Everything else is scaffolding you'd otherwise spend a quarter writing: reconciled position state, an order lifecycle that survives a reload, agent supervision, and a UI that stays legible on a bad day.
-
-Add strategies when you want them. Each agent in the store drops into the same runtime with no code changes.`,
+    description: "A trading dashboard you install and customize yourself. Includes editable source code and the Darvas Box strategy, with support for additional strategy plugins.",
+    longDescription: "Core is the starting point for building your own trading workspace. It brings dashboard screens, the Darvas Box strategy and the code that connects them into one downloadable project.\n\nUse it to develop your workflow: configure agents, review trading activity and adapt the interface to your needs. Open the TypeScript source in your preferred editor or AI coding tool to change strategy rules, add features or build your own integrations.\n\nThis edition is for people comfortable installing and maintaining web applications, or working with a developer. If you prefer a dashboard with the server managed for you, choose managed hosting instead.",
     price: 99,
     category: "trading",
     badge: "EDITION",
@@ -66,28 +61,19 @@ Add strategies when you want them. Each agent in the store drops into the same r
     isFeatured: true,
     productType: "flagship",
     features: [
-      "Darvas Box Breakout agent, pre-installed and ready to run",
-      "Seven dashboard sections: agents, farms, trades, backtest, risk, P&L analytics, settings",
-      "66 API routes and 213 TypeScript files — nothing compiled, nothing obfuscated",
-      "Backtest engine that replays real candles through the same strategy code that trades",
-      "Multi-strategy farms with shared risk limits and a shared scratchpad",
-      "Plugin system — every agent in this store installs by dropping a folder in plugins/",
-      "Consolidated Postgres schema included; one command to provision",
-      "Ships in paper mode. Live trading requires an explicit, deliberate switch",
+      "Editable dashboard and application source code",
+      "Darvas Box strategy included — no separate purchase needed",
+      "Screens for agents, trades, risk settings and analytics",
+      "Additional screens for agent groups and backtesting",
+      "Support for compatible strategy plugins",
+      "Supabase connection code for accounts and stored data",
+      "Database setup files and example configuration"
     ],
     techStack: ["Next.js 15", "TypeScript", "Supabase", "Hyperliquid SDK", "TailwindCSS"],
-    image: "/images/cival/gw-shot-overview.png",
-    images: [
-      "/images/cival/gw-shot-overview.png",
-      "/images/cival/gw-shot-live-trading.png",
-      "/images/cival/gw-shot-agents.png",
-      "/images/cival/gw-shot-performance.png",
-      "/images/cival/gw-shot-farms.png",
-      "/images/cival/gw-shot-analytics.png",
-      "/images/cival/gw-shot-coordination.png",
-    ],
+    image: "/images/guides/customer-journey-v1.png",
+    images: [],
     downloadUrl: "downloads/ai-trading-dashboard-v2.0.0.zip",
-    videoUrl: "/videos/products/cival-promo-v3.mp4",
+    videoUrl: undefined,
   },
   {
     id: "meme-trading-suite",
@@ -168,210 +154,187 @@ Because it borrows through Aave V3 flash loans, positions open and close in one 
     stripePriceId: "price_1U09vdLLyk0oaesNIb1MgxJh",
     requiresDashboard: true,
     name: "Darvas Box Breakout Agent",
-    description: "Nicolas Darvas' box method, automated: finds consolidation ranges, waits for a volume-confirmed break, then trails the stop up the ladder.",
-    longDescription: `Darvas boxes are a discipline problem: the pattern is easy to see and easy to jump early. The agent doesn't jump — it needs the range, the break, and the volume before it commits.
-
-It runs inside the dashboard's farm system, so it shares position limits with your other agents instead of quietly doubling your exposure.`,
+    description: "Look for price breakouts from a defined trading range, with a volume check before a signal. A strategy add-on for a compatible Cival dashboard; already included in Core and Trader.",
+    longDescription: "Darvas Box looks for periods when price stays within a range, then checks for a breakout supported by trading volume. You can adjust the rules used to identify the range and confirm the move.\n\nThe download includes editable strategy code and configuration. It produces trade signals and suggested protection levels; your dashboard handles order placement and position management.\n\nCore and Trader already include Darvas. If you own either edition, use the included strategy rather than purchasing it again.",
     price: 49,
     category: "trading",
     badge: "AGENT",
     emoji: "📦",
     productType: "agent",
     features: [
-      "Automatic consolidation-box detection",
-      "Volume confirmation before entry",
-      "Multi-timeframe analysis across 15m, 1H and 4H",
-      "Trailing stops that step with each new box",
-      "Configurable box tolerance and breakout thresholds",
-      "Full entry and exit logging into the trade journal",
-    ],
+      "Identifies trading ranges from price highs and lows",
+      "Checks trading volume when price breaks out",
+      "Tracks more than one detected range",
+      "Adjustable range and volume settings",
+      "Explains the conditions behind each signal",
+      "Editable TypeScript strategy code"
+],
     techStack: ["TypeScript", "Hyperliquid SDK"],
-    image: "/images/products/store/darvas-agent-signals.png",
-    images: ["/images/products/store/darvas-agent-signals.png", "/images/cival/gw-shot-agents.png"],
+    image: "/images/products/verified-copy/darvas-indicator.svg",
+    images: [],
     downloadUrl: "downloads/darvas-indicator-v2.0.0.zip",
-    videoUrl: "/videos/products/darvas-agent.mp4",
+    videoUrl: undefined,
   },
   {
     id: "elliott-wave-agent",
     stripePriceId: "price_1U09veLLyk0oaesNLxwlRQ8l",
     requiresDashboard: true,
     name: "Elliott Wave Pattern Agent",
-    description: "Automated wave counting with Fibonacci extension targets — impulse waves 1–5, corrective A-B-C, validated against ratio tolerances before any entry.",
-    longDescription: `Wave counting is famously subjective. This agent makes it mechanical: a count only stands if its retracement and extension ratios stay inside tolerance, and the count invalidates itself when price says otherwise.
-
-You get the entry logic and the drawn overlay, so you can see exactly why it took a trade.`,
+    description: "Look for potential Elliott Wave setups using price swings and Fibonacci ratios. An editable strategy add-on for a compatible Cival dashboard; included in Trader.",
+    longDescription: "This strategy identifies swing highs and lows, then checks whether their sequence matches its Elliott Wave rules. Fibonacci ratios help it assess the size of retracements and possible wave completion.\n\nThe rules produce candidate setups, not a definitive interpretation of every wave. Review the signal reasoning and test the settings against your chosen market and timeframe.\n\nThe download includes strategy code and configuration. Your dashboard supplies charts, market data, order placement and position management. It does not include a separate chart-overlay tool.",
     price: 49,
     category: "trading",
     badge: "AGENT",
     emoji: "🌊",
     productType: "agent",
     features: [
-      "Impulse wave (1-5) and corrective (A-B-C) detection",
-      "Fibonacci ratio validation on every count",
-      "Automatic extension targets for exits",
-      "Entries restricted to high-probability wave positions",
-      "Invalidation levels that flatten the position",
-      "Wave overlay drawn into the dashboard chart",
-    ],
+      "Finds swing highs and lows in candle data",
+      "Checks sequences against Elliott impulse-wave rules",
+      "Uses adjustable Fibonacci retracement tolerances",
+      "Evaluates potential entries as patterns develop",
+      "Provides the reasoning behind signals",
+      "Editable strategy code and settings"
+],
     techStack: ["TypeScript", "Hyperliquid SDK"],
-    image: "/images/products/store/elliott-wave-signals.png",
-    images: ["/images/products/store/elliott-wave-signals.png", "/images/cival/gw-shot-agents.png"],
+    image: "/images/products/verified-copy/elliott-wave-agent.svg",
+    images: [],
     downloadUrl: "downloads/elliott-wave-agent-v2.0.0.zip",
-    videoUrl: "/videos/products/elliott-wave.mp4",
+    videoUrl: undefined,
   },
   {
     id: "vwap-momentum-agent",
     stripePriceId: "price_1U09veLLyk0oaesNBbMPGIFW",
     requiresDashboard: true,
-    name: "VWAP Pro Agent",
-    description: "Volume-weighted average price with standard-deviation bands, multi-timeframe confirmation and dynamic confidence sizing. Installs into Core Edition as a plugin.",
-    longDescription: `The dashboard's included agent trades VWAP breakouts competently. This one trades them properly: it reads which side is absorbing, sizes by confidence rather than a fixed fraction, and refuses breaks that lack flow behind them.
-
-Install it alongside the basic agent or replace it outright — the config shape is compatible.`,
+    name: "VWAP Strategy Agent",
+    description: "Compare price with its volume-weighted average to evaluate breakouts and possible reversals. A strategy add-on for a compatible Cival dashboard; included in Trader.",
+    longDescription: "VWAP is the average price weighted by trading volume. This strategy compares price with VWAP and surrounding bands to look for breakouts or unusually large moves away from the average.\n\nYou can configure the calculation period, band width and anchored VWAP settings. Volume estimates come from price candles; they are not a live order-book or individual-trade feed.\n\nThe download includes editable strategy code and configuration. Your dashboard supplies market data, places orders and manages positions. The current release remains unavailable while configuration and integration issues are being corrected.",
     price: 49,
     category: "trading",
     badge: "AGENT",
     emoji: "📊",
     productType: "agent",
     features: [
-      "Multi-timeframe VWAP band analysis",
-      "Order flow and delta tracking",
-      "Accumulation and distribution zone detection",
-      "Dynamic confidence scoring that scales position size",
-      "Roughly six-hour average hold time",
-      "Session, daily and anchored VWAP modes",
-      "Divergence filters to skip low-quality breaks",
-      "Drop-in replacement for the bundled agent",
-    ],
+      "Volume-weighted average price calculation",
+      "Adjustable calculation period and price bands",
+      "Anchored VWAP support",
+      "Price-and-volume estimates from candles",
+      "Breakout and reversal signal rules",
+      "Editable strategy code and settings"
+],
     techStack: ["TypeScript", "Next.js 15", "Hyperliquid SDK", "Supabase"],
-    image: "/images/products/store/vwap-agent-signals.png",
-    images: ["/images/products/store/vwap-agent-signals.png", "/images/cival/gw-shot-agents.png"],
+    image: "/images/products/verified-copy/vwap-momentum-agent.svg",
+    images: [],
     downloadUrl: "downloads/vwap-momentum-agent-v2.0.0.zip",
-    videoUrl: "/videos/products/vwap-agent.mp4",
+    videoUrl: undefined,
   },
   {
     id: "heikin-ashi-agent",
     stripePriceId: "price_1U09veLLyk0oaesNtE88tL1l",
     requiresDashboard: true,
     name: "Heikin Ashi Trend Agent",
-    description: "Smoothed candles strip the noise; ADX confirms the trend is real. Enters on candle sequences and rides the move with a trailing stop.",
-    longDescription: `Trend following fails on chop, and Heikin Ashi candles exist to hide chop. The agent trades the smoothed series but sizes and stops on real prices, with ADX as the gate that keeps it out of ranges.
-
-Longer holds than the breakout agents, which makes it a useful counterweight in a farm.`,
+    description: "Use smoothed candles and trend checks to evaluate potential entries. A strategy add-on for a compatible Cival dashboard; included in Trader.",
+    longDescription: "Heikin Ashi smooths price candles to make directional trends easier to evaluate. This strategy checks consecutive candles and their wicks, then uses an exponential moving average to confirm the trend.\n\nIt uses average true range, a measure of recent price movement, to suggest protection levels. Smoothing can delay signals, so test the settings for your chosen market and timeframe.\n\nThe download includes editable strategy code and configuration. Your dashboard handles order placement and position management. This version does not include an ADX trend-strength filter.",
     price: 49,
     category: "trading",
     badge: "AGENT",
     emoji: "🕯️",
     productType: "agent",
     features: [
-      "Heikin Ashi smoothing to filter chop",
-      "Entry on consecutive bullish or bearish sequences",
-      "ADX trend-strength confirmation",
-      "Trailing stops sized to recent range",
-      "Roughly twenty-two hour average hold",
-      "Configurable sequence length and ADX floor",
-      "Optional higher-timeframe trend gate",
-      "Full journal entries with the deciding candles",
-    ],
+      "Converts price data into Heikin Ashi candles",
+      "Optional extra smoothing",
+      "Checks candle direction and wick patterns",
+      "Confirms trends with an exponential moving average",
+      "Suggests protection levels using recent volatility",
+      "Editable strategy code and settings"
+],
     techStack: ["TypeScript", "Next.js 15", "Hyperliquid SDK", "Supabase"],
-    image: "/images/products/store/heikin-ashi-signals.png",
-    images: ["/images/products/store/heikin-ashi-signals.png", "/images/cival/gw-shot-agents.png"],
+    image: "/images/products/verified-copy/heikin-ashi-agent.svg",
+    images: [],
     downloadUrl: "downloads/heikin-ashi-agent-v2.0.0.zip",
-    videoUrl: "/videos/products/heikin-ashi.mp4",
+    videoUrl: undefined,
   },
   {
     id: "mean-reversion-agent",
     stripePriceId: "price_1U09veLLyk0oaesNh2F0P5l0",
     requiresDashboard: true,
     name: "Bollinger Mean Reversion Agent",
-    description: "Buys oversold, sells overbought — RSI extremes, Bollinger touches and Z-score deviation, entered in scaled thirds rather than one brave click.",
-    longDescription: `Mean reversion dies from conviction. This agent never takes a full position at the first touch — it scales in thirds and keeps an invalidation level that admits when the move is a trend, not a stretch.
-
-Statistically conservative by design; it is the agent that quietly earns while the breakout agents are flat.`,
+    description: "Look for potential price reversals using Bollinger Bands, Keltner Channels and RSI. A strategy add-on for a compatible Cival dashboard; included in Trader.",
+    longDescription: "Mean reversion looks for price to move back toward an average after an unusually large move. This strategy combines price bands, momentum checks and reversal patterns to evaluate those conditions.\n\nIt also checks for narrow trading ranges and price repeatedly following a band. These checks help describe the setup; they cannot ensure that a strong trend will reverse.\n\nThe download includes editable strategy code and configuration. Your dashboard handles order sizing, placement and exits. The module does not place staged one-third orders by itself.",
     price: 49,
     category: "trading",
     emoji: "📉",
     productType: "agent",
     badge: "AGENT",
     features: [
-      "RSI extreme detection with adjustable bounds",
-      "Bollinger Band touch and close-outside logic",
-      "Z-score deviation sizing",
-      "Scaled one-third entries at each level",
-      "Hard invalidation when deviation keeps extending",
-      "Conservative default risk profile",
-      "Works on majors and liquid alts",
-      "Per-symbol parameter overrides",
-    ],
+      "Bollinger Bands for price relative to its average",
+      "Keltner Channels for a second volatility comparison",
+      "RSI momentum checks",
+      "Detects narrow ranges and price following a band",
+      "Checks double-top and double-bottom patterns",
+      "Editable strategy code and settings"
+],
     techStack: ["TypeScript", "Next.js 15", "Hyperliquid SDK", "Supabase"],
-    image: "/images/products/store/mean-reversion-signals.png",
-    images: ["/images/products/store/mean-reversion-signals.png", "/images/cival/gw-shot-agents.png"],
+    image: "/images/products/verified-copy/mean-reversion-agent.svg",
+    images: [],
     downloadUrl: "downloads/mean-reversion-agent-v2.0.0.zip",
-    videoUrl: "/videos/products/mean-reversion.mp4",
+    videoUrl: undefined,
   },
   {
     id: "macro-sentiment-agent",
     stripePriceId: "price_1U09vfLLyk0oaesNxQMi8wuE",
     requiresDashboard: true,
-    name: "Macro & On-Chain Sentiment Agent",
-    description: "The coordination layer: reads Fed policy, whale flows, exchange in/outflows and social sentiment, then tells every other agent whether the farm is risk-on or risk-off.",
-    longDescription: `Individual agents can't see the weather. This one does nothing but watch it, and then it changes how everything else behaves — sizing down into risk-off, releasing the brakes into risk-on.
-
-It is the single highest-leverage agent in the set precisely because it never takes a trade of its own.`,
+    name: "Sentiment Proxy Research Agent",
+    description: "An experimental strategy that uses price and volume to estimate market sentiment. For research and customization in a compatible Cival dashboard; included in Trader.",
+    longDescription: "This research module looks for extreme price and volume conditions and evaluates potential contrarian trades. Its sentiment readings are estimates derived from market candles, not measurements of investor opinions.\n\nIt does not include news, social media, central-bank policy, wallet tracking or live funding and open-interest feeds. Some code variables use names from these topics, but their values are estimates or simulations.\n\nUse it to inspect and develop your own research ideas. It can produce buy, sell or no-trade signals, but it does not coordinate all your other agents. Your dashboard supplies market data, order execution and position management.",
     price: 49,
     category: "trading",
     badge: "AGENT",
     emoji: "🧠",
     productType: "agent",
     features: [
-      "Fed policy and macro calendar ingestion",
-      "On-chain whale flow and exchange in/outflow monitoring",
-      "Social sentiment scoring",
-      "Composite risk-on / risk-off regime signal",
-      "Broadcasts regime to every agent in the farm",
-      "Automatic defensive mode on regime flip",
-      "Configurable weightings per input",
-      "Regime history charted in the dashboard",
-    ],
-    techStack: ["TypeScript", "Next.js 15", "Hyperliquid SDK", "Supabase", "OpenRouter AI"],
-    image: "/images/products/store/macro-sentiment-signals.png",
-    images: ["/images/products/store/macro-sentiment-signals.png", "/images/cival/gw-shot-agents.png"],
+      "Uses candle prices and trading volume",
+      "Inspectable sentiment estimates",
+      "Rules for extreme conditions and contrarian setups",
+      "Adjustable signal thresholds",
+      "Buy, sell and no-trade signal output",
+      "Editable research code; no external data feeds included"
+],
+    techStack: [
+  "TypeScript",
+  "OHLCV candles"
+],
+    image: "/images/products/verified-copy/macro-sentiment-agent.svg",
+    images: [],
     downloadUrl: "downloads/macro-sentiment-agent-v2.0.0.zip",
-    videoUrl: "/videos/products/macro-sentiment.mp4",
+    videoUrl: undefined,
   },
   {
     id: "multi-strat-bundle",
     stripePriceId: "price_1U09vfLLyk0oaesNmhg0rCpa",
     isBundle: true,
     name: "Trader Edition",
-    description: "All six strategy frameworks — Darvas, Elliott Wave, VWAP Pro, Heikin Ashi, Mean Reversion and Macro Sentiment — run as one coordinated farm under shared risk management.",
-    longDescription: `A single strategy has one weather condition it likes. Six strategies, coordinated by a regime signal and capped by shared risk limits, is the closest thing here to an actual book.
-
-The farm ships pre-configured — sensible correlation caps, per-agent allocation, and a defensive mode that triggers together.`,
+    description: "The Core dashboard and all six strategy frameworks in one source-code package. Install it on your own infrastructure, choose your strategies and customize the code.",
+    longDescription: "Trader includes everything in Core plus Elliott Wave, VWAP, Heikin Ashi, Bollinger Mean Reversion and Sentiment Proxy. Darvas is already part of Core, bringing the total to six strategy frameworks.\n\nUse one dashboard as a starting point for testing different approaches. Configure each strategy for your markets and timeframes, review its behavior and customize the TypeScript code as needed. The Sentiment Proxy framework is experimental and uses price and volume estimates, not external news or macroeconomic feeds.\n\nTrader is installed and maintained by you. It does not include managed hosting, trading funds or third-party service fees. At the listed prices, Core plus the five additional agents costs $344; Trader is $249, a $95 bundle saving.",
     price: 249,
-    wasPrice: 393,
     category: "trading",
-    badge: "SAVE $144",
+    badge: "SAVE $95",
     emoji: "🏭",
     isFeatured: true,
     productType: "bundle",
     features: [
-      "Everything in Core Edition",
-      "All six strategy agents",
-      "Pre-configured coordinated farm",
-      "Shared risk limits across every strategy",
-      "Macro Sentiment wired as the regime coordinator",
-      "Saves $144 against buying the agents one by one",
-    ],
-    image: "/images/cival/gw-shot-farms.png",
+      "Core dashboard and Darvas Box strategy",
+      "Elliott Wave strategy",
+      "VWAP strategy",
+      "Heikin Ashi trend strategy",
+      "Bollinger Mean Reversion strategy",
+      "Experimental Sentiment Proxy research strategy",
+      "Editable source code and strategy configuration",
+      "Save $95 against Core plus five separate add-ons"
+],
+    image: "/images/guides/customer-journey-v1.png",
     downloadUrl: "downloads/multi-strat-bundle-v2.0.0.zip",
-    images: [
-      "/images/cival/gw-shot-farms.png",
-      "/images/cival/gw-shot-coordination.png",
-      "/images/cival/gw-shot-analytics.png",
-      "/images/products/store/darvas-agent-signals.png",
-    ],
-    videoUrl: "/videos/products/multi-strat-bundle.mp4",
+    images: [],
+    videoUrl: undefined,
   },
   {
     id: "full-stack-trader-bundle",
@@ -391,6 +354,7 @@ The farm ships pre-configured — sensible correlation caps, per-agent allocatio
   },
   {
     id: "everything-bundle",
+    legacy: true, // Production catalog disables this incomplete edition.
     stripePriceId: "price_1U09vfLLyk0oaesN5dTydx9a",
     isBundle: true,
     name: "Desk Edition",
@@ -429,14 +393,20 @@ Buying the same parts individually comes to $551. This is $399, and it includes 
   },
 ];
 
+// Keep catalog, metadata, and galleries on the same authentic screenshot.
+for (const product of products) {
+  const gallery = productMedia[product.id];
+  if (gallery) { product.image = gallery[0].src; product.images = gallery.map(image => image.src); }
+}
+
 /** What each edition already contains — an add-on covered by an edition already
  * in the cart is shown as included rather than charged again. */
 const AGENT_IDS = products.filter((p) => p.productType === "agent").map((p) => p.id);
 const EXT_IDS = products.filter((p) => p.productType === "extension").map((p) => p.id);
 export const EDITION_INCLUDES: Record<string, string[]> = {
-  "trading-dashboard-template": [],
-  "multi-strat-bundle": AGENT_IDS,
-  "everything-bundle": [...AGENT_IDS, ...EXT_IDS],
+  "trading-dashboard-template": ["darvas-indicator"],
+  "multi-strat-bundle": ["trading-dashboard-template", ...AGENT_IDS],
+  "everything-bundle": ["trading-dashboard-template", "multi-strat-bundle", ...AGENT_IDS, ...EXT_IDS],
 };
 
 export function getProductsByCategory(cat: ProductCategory): Product[] {
@@ -448,7 +418,7 @@ export function getProduct(id: string): Product | undefined {
 }
 
 export function getFeaturedProducts(): Product[] {
-  return products.filter((p) => p.isFeatured);
+  return products.filter((p) => p.isFeatured && !p.legacy);
 }
 
 export function searchProducts(query: string): Product[] {

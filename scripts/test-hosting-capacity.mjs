@@ -4,13 +4,16 @@ import { readFile } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
 
 // Deliberately local-only. This script creates and destroys its OWN test database.
-const admin = new pg.Client({ host: '127.0.0.1', port: 55432, database: 'postgres', user: 'postgres', password: 'hosting' });
+const port = Number(process.env.CIVAL_TEST_POSTGRES_PORT || 55432);
+assert.ok(Number.isInteger(port) && port >= 1024 && port <= 65535, 'Invalid local test database port');
+const localConnection = { host: '127.0.0.1', port, user: 'postgres', password: process.env.CIVAL_TEST_POSTGRES_PASSWORD || 'hosting' };
+const admin = new pg.Client({ ...localConnection, database: 'postgres' });
 const name = `cival_capacity_test_${randomUUID().replaceAll('-', '')}`;
 let pool;
 await admin.connect();
 try {
   await admin.query(`create database "${name}"`);
-  pool = new pg.Pool({ host: '127.0.0.1', port: 55432, database: name, user: 'postgres', password: 'hosting', max: 25 });
+  pool = new pg.Pool({ ...localConnection, database: name, max: 25 });
   await pool.query('create table public.hosting_subscriptions(id uuid primary key default gen_random_uuid(), status text not null)');
   await pool.query(await readFile(new URL('../supabase/migrations/20260908061321_hosting_capacity_reservations.sql', import.meta.url), 'utf8'));
   await assert.rejects(pool.query("insert into hosting_subscriptions(status) values ('pending_checkout')"), /HOSTING_CAPACITY_CLOSED/);

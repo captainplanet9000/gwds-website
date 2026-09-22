@@ -8,12 +8,13 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import SocialAuthButtons from '@/components/SocialAuthButtons';
 import { useAuth } from '@/contexts/AuthContext';
+import { authDestination } from '@/lib/auth-destination';
 
 function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
   const requestedNext = params.get('next');
-  const nextPath = requestedNext?.startsWith('/account') ? requestedNext : '/account';
+  const nextPath = authDestination(requestedNext);
   const { user, loading: authLoading, signIn, signInWithMagicLink } = useAuth();
 
   const [email, setEmail] = useState(params.get('email') || '');
@@ -48,7 +49,7 @@ function LoginForm() {
     setError('');
     setLoading(true);
     try {
-      await signInWithMagicLink(email);
+      await signInWithMagicLink(email, nextPath);
       setMagicLinkSent(true);
     } catch (err: any) {
       setError(err.message || 'Failed to send magic link');
@@ -69,7 +70,7 @@ function LoginForm() {
         Sign In
       </h1>
       <p style={{ fontSize: 14.5, color: 'var(--color-neutral-700)', textAlign: 'center', marginBottom: 32 }}>
-        Access your purchases and downloads
+        Access your hosted dashboard, purchases and downloads
       </p>
 
       {magicLinkSent ? (
@@ -91,7 +92,7 @@ function LoginForm() {
       ) : (
         <>
           {/* Social login buttons */}
-          <SocialAuthButtons />
+          <SocialAuthButtons next={nextPath} />
 
           {/* Divider */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 16, margin: '24px 0' }}>
@@ -175,7 +176,7 @@ function LoginForm() {
               Forgot your password?
             </Link>
             {' · '}
-            <Link href="/account/register" style={{ fontWeight: 600 }}>
+            <Link href={`/account/register?next=${encodeURIComponent(nextPath)}`} style={{ fontWeight: 600 }}>
               Create one
             </Link>
           </div>

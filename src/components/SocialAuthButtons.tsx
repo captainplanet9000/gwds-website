@@ -64,7 +64,7 @@ const providerConfig: Record<string, { label: string; icon: React.ReactNode; bg:
   },
 };
 
-export default function SocialAuthButtons() {
+export default function SocialAuthButtons({ next }: { next?: string }) {
   const { signInWithProvider } = useAuth();
   const [loadingProvider, setLoadingProvider] = useState<string | null>(null);
   const [error, setError] = useState('');
@@ -73,7 +73,7 @@ export default function SocialAuthButtons() {
     setError('');
     setLoadingProvider(provider);
     try {
-      await signInWithProvider(provider);
+      await signInWithProvider(provider, next);
     } catch (err: any) {
       setError(err.message || `Failed to sign in with ${provider}`);
       setLoadingProvider(null);

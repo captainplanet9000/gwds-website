@@ -1,5 +1,6 @@
 "use client";
 import { createContext, useContext, useReducer, useEffect, type ReactNode } from "react";
+import { normalizeCartProducts } from "@/lib/cart-products";
 import { getProduct, type Product } from "@/lib/products";
 
 export interface CartItem {
@@ -30,7 +31,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         // Digital products — no duplicate quantity
         return state;
       }
-      return { ...state, items: [...state.items, { product: action.product, quantity: 1 }] };
+      return { ...state, items: normalizeCartProducts([...state.items.map(item => item.product.id), action.product.id]).map(product => ({ product, quantity: 1 })) };
     }
     case "REMOVE_ITEM":
       return { ...state, items: state.items.filter((i) => i.product.id !== action.productId) };
@@ -53,7 +54,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
     case "CLOSE_CART":
       return { ...state, isOpen: false };
     case "HYDRATE":
-      return { ...state, items: action.items };
+      return { ...state, items: normalizeCartProducts(action.items.map(item => item.product.id)).map(product => ({ product, quantity: 1 })) };
     default:
       return state;
   }

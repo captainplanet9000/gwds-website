@@ -1,15 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import SocialAuthButtons from '@/components/SocialAuthButtons';
 import { useAuth } from '@/contexts/AuthContext';
+import { authDestination } from '@/lib/auth-destination';
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter();
+  const params = useSearchParams();
+  const nextPath = authDestination(params.get('next'));
   const { user, loading: authLoading, signUp } = useAuth();
 
   const [email, setEmail] = useState('');
@@ -21,9 +24,9 @@ export default function RegisterPage() {
 
   useEffect(() => {
     if (!authLoading && user) {
-      router.push('/account');
+      router.push(nextPath);
     }
-  }, [user, authLoading, router]);
+  }, [user, authLoading, router, nextPath]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,11 +44,11 @@ export default function RegisterPage() {
 
     setLoading(true);
     try {
-      const result = await signUp(email, password);
+      const result = await signUp(email, password, nextPath);
       if (result.needsVerification) {
         setSuccess(true);
       } else {
-        router.push('/account');
+        router.push(nextPath);
       }
     } catch (err: any) {
       setError(err.message || 'Registration failed');
@@ -90,7 +93,7 @@ export default function RegisterPage() {
               marginBottom: 32,
             }}
           >
-            Track your purchases and access downloads
+            Manage your hosted dashboard, purchases and downloads
           </p>
 
           {success ? (
@@ -101,14 +104,14 @@ export default function RegisterPage() {
                 We sent a verification link to <strong style={{ color: 'var(--color-text)' }}>{email}</strong>.
                 Click the link to activate your account.
               </p>
-              <Link href="/account/login" className="btn btn-ghost" style={{ marginTop: 20 }}>
+              <Link href={`/account/login?next=${encodeURIComponent(nextPath)}`} className="btn btn-ghost" style={{ marginTop: 20 }}>
                 Go to login
               </Link>
             </div>
           ) : (
             <>
               {/* Social login */}
-              <SocialAuthButtons />
+              <SocialAuthButtons next={nextPath} />
 
               {/* Divider */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 16, margin: '24px 0' }}>
@@ -182,7 +185,7 @@ export default function RegisterPage() {
                 }}
               >
                 Already have an account?{' '}
-                <Link href="/account/login" style={{ fontWeight: 600 }}>
+                <Link href={`/account/login?next=${encodeURIComponent(nextPath)}`} style={{ fontWeight: 600 }}>
                   Sign in
                 </Link>
               </div>
@@ -193,4 +196,8 @@ export default function RegisterPage() {
       <Footer />
     </div>
   );
+}
+
+export default function RegisterPage() {
+  return <Suspense fallback={<p role="status">Loading account setup…</p>}><RegisterForm /></Suspense>;
 }

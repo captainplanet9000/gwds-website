@@ -1,0 +1,22 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import vm from 'node:vm';
+const root='release-assets/strategy-packages';
+for(const id of fs.readdirSync(root).filter(id=>fs.statSync(path.join(root,id)).isDirectory())){
+ const dir=path.join(root,id);
+ const manifest=JSON.parse(fs.readFileSync(path.join(dir,'manifest.json'),'utf8'));
+ const exports={}; const ctx=vm.createContext({exports,module:{exports}});
+ new vm.Script(fs.readFileSync(path.join(dir,'dist/strategy.js'),'utf8')).runInContext(ctx,{timeout:1000});
+ const strategy=ctx.module.exports.strategy;
+ manifest.compatibility={dashboard:'>=2.1.0 <2.2.0',node:'>=20'};
+ manifest.supportedTimeframes=JSON.parse(JSON.stringify(strategy.timeframes));
+ if(id==='macro-sentiment-agent'){
+  manifest.name='Sentiment Proxy Research';
+  manifest.description='OHLCV-derived proxy research; no external macro, on-chain, social, funding or open-interest feeds.';
+ }
+ fs.writeFileSync(path.join(dir,'manifest.json'),JSON.stringify(manifest,null,2)+'\n');
+ const note=id==='macro-sentiment-agent' ? 'Funding, open interest, dominance and stablecoin-flow variables are proxies or simulations derived from candles. They are not measured external data. This strategy can emit trade signals and is not an automatic farm-wide coordinator.' : id==='vwap-momentum-agent' ? 'Volume profile and cumulative delta are candle-based estimates, not order-book or aggressor-side trade data. Invalid configuration/data and collapsed bands are rejected. Protection levels must bracket the entry.' : 'Inspect the source assumptions and validate on your intended instruments; synthetic tests do not establish performance.';
+ fs.writeFileSync(path.join(dir,'README.md'),`# ${manifest.name}\n\nVersion ${manifest.version} — unpublished release candidate.\n\n${note}\n\n## What is included\n\nReadable src/strategy.ts, compiled CommonJS dist/strategy.js, manifest.json, installation instructions and the commercial source licence. This is a signal module, not an exchange connector or a standalone dashboard.\n\n## Inputs and outputs\n\nProvide time-ordered OHLCV candles with a millisecond timestamp and finite positive prices. Use completed candles at the configured interval. The module returns long, short or neutral, confidence, reasoning and indicator values; actionable signals include proposed entry/stop/target prices. The dashboard must validate and reconcile every order independently.\n\nDeclared intervals: ${manifest.supportedTimeframes.join(', ')}. The caller supplies one candle series; this does not imply automatic multi-timeframe data fetching.\n\n## Exact default configuration\n\n\`\`\`json\n${JSON.stringify(manifest.defaultConfig,null,2)}\n\`\`\`\n\nChanging parameters changes behavior. Candle counts are not wall-clock durations. Neutral is a valid decision even when capital is available.\n\n## Acceptance status\n\nOffline strict compilation and synthetic signal contract checks are recorded in the parent validation.json. Runtime loading, clean customer installation and a complete managed exchange lifecycle remain required. Not approved for distribution or unattended trading.\n`);
+ fs.writeFileSync(path.join(dir,'INSTALL.md'),`# Install ${manifest.name}\n\nThis is an unpublished candidate. Do not replace customer downloads until the exact archive passes STORE-RELEASE-ACCEPTANCE.md.\n\n1. Confirm a compatible Core/Trader 2.1 dashboard. This module does not run in the browser-only Core 2.0 template.\n2. Back up the database, configuration and plugins. Pause new entries and reconcile existing positions.\n3. Copy this directory to ${manifest.installPath}. The manifest must be directly inside that folder.\n4. Check that ${manifest.entryPoint} exists and exports strategy. Use the manifest defaults; old product manifests contained incompatible settings.\n5. Restart and check the plugin loader. Select the strategy, symbol, interval and your risk limits.\n6. Verify fresh data, signal decisions and order ownership in isolation. Then validate an open/manage/close lifecycle on testnet, including restart recovery and protection.\n7. Do not enable real-money or unattended operation based solely on a successful signal test.\n\nRemove or restore a plugin only after its managed positions and orders have been reconciled. Never run duplicate agents against the same position inadvertently.\n`);
+ fs.copyFileSync('release-assets/strategy-pack/LICENSE.md',path.join(dir,'LICENSE.md'));
+}

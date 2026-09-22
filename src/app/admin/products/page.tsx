@@ -1,4 +1,5 @@
 'use client';
+import { AppstoreOutlined } from '@ant-design/icons';
 import { useState, useEffect, useMemo } from 'react';
 
 interface DbProduct {
@@ -226,7 +227,7 @@ export default function AdminProducts() {
   const notReadyCount = products.filter((p) => !p.artifact_ready).length;
 
   const inputStyle: React.CSSProperties = {
-    width: '100%', padding: '12px 14px', background: 'var(--admin-surface-raised)', border: '1px solid #222', borderRadius: 8,
+    width: '100%', padding: '12px 14px', background: 'var(--admin-surface-raised)', border: '1px solid var(--admin-border)', borderRadius: 8,
     color: 'var(--admin-text)', fontSize: '0.85rem', fontFamily: 'var(--font-body)', outline: 'none', boxSizing: 'border-box',
     transition: 'border-color 0.15s ease',
   };
@@ -247,7 +248,7 @@ export default function AdminProducts() {
   return (
     <>
       <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 800, marginBottom: 8, letterSpacing: '-0.03em', color: 'var(--admin-text)' }}>Products</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 600, marginBottom: 8, letterSpacing: '-0.03em', color: 'var(--admin-text)' }}>Products</h1>
         <p style={{ fontSize: '0.9rem', color: 'var(--admin-text-dim)' }}>Product catalog, pricing, and release readiness</p>
       </div>
 
@@ -260,13 +261,13 @@ export default function AdminProducts() {
           { label: 'Not Artifact-Ready', value: notReadyCount, color: notReadyCount > 0 ? 'var(--admin-warning)' : 'var(--admin-text-dim)', icon: '⚠️' },
         ].map((s) => (
           <div key={s.label} style={{ background: 'var(--admin-surface)', border: '1px solid var(--admin-border)', borderRadius: 12, padding: 20, position: 'relative', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', top: 0, right: 0, width: 80, height: 80, background: `radial-gradient(circle at top right, ${s.color}15, transparent)` }} />
+            <div style={{ position: 'absolute', top: 0, right: 0, width: 80, height: 80, background: 'transparent' }} />
             <div style={{ position: 'relative' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
                 <p style={{ fontSize: '0.72rem', color: 'var(--admin-text-dim)', letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 600 }}>{s.label}</p>
-                <span style={{ fontSize: '1.3rem', opacity: 0.5 }}>{s.icon}</span>
+
               </div>
-              <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 800, color: s.color, letterSpacing: '-0.02em' }}>{s.value}</p>
+              <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 600, color: 'var(--admin-text)', letterSpacing: '-0.02em' }}>{s.value}</p>
             </div>
           </div>
         ))}
@@ -274,12 +275,12 @@ export default function AdminProducts() {
       <p style={{ fontSize: '0.75rem', color: 'var(--admin-text-dim)', marginTop: -14, marginBottom: 24 }}>Catalog value (active + inactive, at list price): ${totalValue.toLocaleString()}</p>
 
       {success && (
-        <div style={{ marginBottom: 20, padding: '14px 18px', borderRadius: 8, background: 'var(--admin-success)15', border: '1px solid var(--admin-success)40', color: 'var(--admin-success)', fontSize: '0.85rem', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ marginBottom: 20, padding: '14px 18px', borderRadius: 8, background: 'color-mix(in srgb, var(--admin-success) 8%, transparent)', border: '1px solid color-mix(in srgb, var(--admin-success) 25%, transparent)', color: 'var(--admin-success)', fontSize: '0.85rem', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{ fontSize: '1.2rem' }}>✓</span>{success}
         </div>
       )}
       {error && !showForm && (
-        <div style={{ marginBottom: 20, padding: '14px 18px', borderRadius: 8, background: '#1a0a0a', border: '1px solid var(--admin-danger)40', color: 'var(--admin-danger)', fontSize: '0.85rem', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ marginBottom: 20, padding: '14px 18px', borderRadius: 8, background: '#fff3f3', border: '1px solid color-mix(in srgb, var(--admin-danger) 25%, transparent)', color: 'var(--admin-danger)', fontSize: '0.85rem', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{ fontSize: '1.2rem' }}>⚠</span>{error}
         </div>
       )}
@@ -288,9 +289,9 @@ export default function AdminProducts() {
         <button
           onClick={startCreate}
           className="admin-btn-primary"
-          style={{ padding: '12px 24px', borderRadius: 8, border: 'none', background: 'linear-gradient(135deg, var(--admin-accent), var(--admin-accent))', color: '#fff', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer', transition: 'all 0.15s ease', letterSpacing: '0.03em' }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = 'linear-gradient(135deg, #9D6EFF, #F768AA)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(139, 92, 246, 0.3)'; }}
-          onMouseLeave={(e) => { e.currentTarget.style.background = 'linear-gradient(135deg, var(--admin-accent), var(--admin-accent))'; e.currentTarget.style.boxShadow = 'none'; }}
+          style={{ padding: '12px 24px', borderRadius: 8, border: 'none', background: 'var(--admin-accent)', color: '#fff', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer', transition: 'all 0.15s ease', letterSpacing: '0.03em' }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--admin-accent)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(54, 94, 170, 0.3)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--admin-accent)'; e.currentTarget.style.boxShadow = 'none'; }}
         >
           + New Product
         </button>
@@ -383,7 +384,7 @@ export default function AdminProducts() {
                   const next = !form.artifact_ready;
                   setForm({ ...form, artifact_ready: next, is_active: next ? form.is_active : false });
                 }} color="var(--admin-warning)" />
-                <span style={{ fontSize: '0.85rem', color: '#ccc', fontWeight: 500 }}>
+                <span style={{ fontSize: '0.85rem', color: 'var(--admin-text-muted)', fontWeight: 500 }}>
                   Artifact Ready {form.artifact_ready ? '(verified, safe to deliver)' : '(NOT staged — do not activate)'}
                 </span>
               </label>
@@ -392,7 +393,7 @@ export default function AdminProducts() {
                   if (!form.artifact_ready && !form.is_active) return;
                   setForm({ ...form, is_active: !form.is_active });
                 }} />
-                <span style={{ fontSize: '0.85rem', color: '#ccc', fontWeight: 500 }}>
+                <span style={{ fontSize: '0.85rem', color: 'var(--admin-text-muted)', fontWeight: 500 }}>
                   Active (listed &amp; purchasable) {form.is_active ? '' : ''}
                 </span>
               </label>
@@ -405,7 +406,7 @@ export default function AdminProducts() {
           </div>
 
           {error && (
-            <div style={{ marginBottom: 16, padding: '12px 16px', borderRadius: 8, background: '#1a0a0a', border: '1px solid var(--admin-danger)40', color: 'var(--admin-danger)', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ marginBottom: 16, padding: '12px 16px', borderRadius: 8, background: '#fff3f3', border: '1px solid color-mix(in srgb, var(--admin-danger) 25%, transparent)', color: 'var(--admin-danger)', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: 10 }}>
               <span style={{ fontSize: '1.1rem' }}>⚠</span>{error}
             </div>
           )}
@@ -413,7 +414,7 @@ export default function AdminProducts() {
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <button
               onClick={handleSubmit}
-              style={{ padding: '12px 28px', borderRadius: 8, border: 'none', background: 'linear-gradient(135deg, var(--admin-accent), var(--admin-accent))', color: '#fff', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer', transition: 'all 0.15s ease' }}
+              style={{ padding: '12px 28px', borderRadius: 8, border: 'none', background: 'var(--admin-accent)', color: '#fff', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer', transition: 'all 0.15s ease' }}
             >
               {editingId ? 'Save Changes' : 'Create Product'}
             </button>
@@ -443,7 +444,7 @@ export default function AdminProducts() {
               style={{
                 padding: '10px 18px', borderRadius: 8,
                 border: filter === f ? '1px solid var(--admin-accent)' : '1px solid var(--admin-border)',
-                background: filter === f ? 'var(--admin-accent)10' : 'transparent',
+                background: filter === f ? 'color-mix(in srgb, var(--admin-accent) 6%, transparent)' : 'transparent',
                 color: filter === f ? 'var(--admin-accent)' : 'var(--admin-text-muted)',
                 fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap',
               }}
@@ -468,7 +469,7 @@ export default function AdminProducts() {
           <div style={{ padding: 60, textAlign: 'center', color: 'var(--admin-text-dim)' }}>
             <div style={{ fontSize: '3rem', marginBottom: 16, opacity: 0.3 }}>📦</div>
             <p style={{ fontSize: '1rem', marginBottom: 8 }}>No products found</p>
-            <p style={{ fontSize: '0.85rem', color: '#444' }}>{search || filter !== 'all' ? 'Try adjusting your filters' : 'Create your first product to get started'}</p>
+            <p style={{ fontSize: '0.85rem', color: 'var(--admin-text-muted)' }}>{search || filter !== 'all' ? 'Try adjusting your filters' : 'Create your first product to get started'}</p>
           </div>
         ) : (
           <div className="admin-table-wrap">
@@ -487,42 +488,42 @@ export default function AdminProducts() {
                     <tr key={p.id} style={{ borderBottom: '1px solid var(--admin-surface-raised)' }}>
                       <td style={{ padding: '16px 12px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                          <span style={{ fontSize: '1.4rem' }}>{p.emoji}</span>
+                          <AppstoreOutlined style={{ fontSize: 20, color: 'var(--admin-text-muted)' }} />
                           <div>
                             <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--admin-text)' }}>{p.name}</div>
                             <div style={{ fontSize: '0.7rem', color: 'var(--admin-text-dim)', fontFamily: 'var(--font-mono, monospace)' }}>{p.id}{p.version ? ` · v${p.version}` : ''}</div>
                             {p.badge && (
-                              <span style={{ display: 'inline-block', marginTop: 4, fontSize: '0.65rem', padding: '2px 8px', borderRadius: 4, background: 'var(--admin-success)15', color: 'var(--admin-success)', fontWeight: 600 }}>{p.badge}</span>
+                              <span style={{ display: 'inline-block', marginTop: 4, fontSize: '0.65rem', padding: '2px 8px', borderRadius: 4, background: 'color-mix(in srgb, var(--admin-success) 8%, transparent)', color: 'var(--admin-success)', fontWeight: 600 }}>{p.badge}</span>
                             )}
                           </div>
                         </div>
                       </td>
-                      <td style={{ padding: '16px 12px', fontSize: '1rem', fontWeight: 700, color: 'var(--admin-warning)', fontFamily: 'var(--font-display)', whiteSpace: 'nowrap' }}>
+                      <td style={{ padding: '16px 12px', fontSize: '0.9rem', fontWeight: 500, color: 'var(--admin-text)', fontFamily: 'var(--font-display)', whiteSpace: 'nowrap' }}>
                         ${(p.price_cents / 100).toFixed(2)}
                       </td>
                       <td style={{ padding: '16px 12px' }}>
-                        <span style={{ padding: '4px 10px', borderRadius: 6, fontSize: '0.7rem', fontWeight: 600, background: p.artifact_ready ? 'var(--admin-success)15' : 'var(--admin-danger)15', color: p.artifact_ready ? 'var(--admin-success)' : 'var(--admin-danger)', whiteSpace: 'nowrap' }}>
+                        <span style={{ padding: '4px 10px', borderRadius: 6, fontSize: '0.7rem', fontWeight: 600, background: p.artifact_ready ? 'color-mix(in srgb, var(--admin-success) 8%, transparent)' : 'color-mix(in srgb, var(--admin-danger) 8%, transparent)', color: p.artifact_ready ? 'var(--admin-success)' : 'var(--admin-danger)', whiteSpace: 'nowrap' }}>
                           {p.artifact_ready ? '✓ Ready' : '✕ Not Ready'}
                         </span>
                       </td>
                       <td style={{ padding: '16px 12px' }}>
-                        <span style={{ padding: '4px 10px', borderRadius: 6, fontSize: '0.7rem', fontWeight: 600, background: p.stripe_price_id ? 'var(--admin-success)15' : 'var(--admin-text-dim)20', color: p.stripe_price_id ? 'var(--admin-success)' : 'var(--admin-text-dim)', whiteSpace: 'nowrap' }}>
+                        <span style={{ padding: '4px 10px', borderRadius: 6, fontSize: '0.7rem', fontWeight: 600, background: p.stripe_price_id ? 'color-mix(in srgb, var(--admin-success) 8%, transparent)' : 'color-mix(in srgb, var(--admin-text-dim) 13%, transparent)', color: p.stripe_price_id ? 'var(--admin-success)' : 'var(--admin-text-dim)', whiteSpace: 'nowrap' }}>
                           {p.stripe_price_id ? '✓ Linked' : '— None'}
                         </span>
                       </td>
                       <td style={{ padding: '16px 12px' }}>
-                        <span style={{ padding: '5px 12px', borderRadius: 6, fontSize: '0.7rem', fontWeight: 600, background: p.is_active ? 'var(--admin-success)20' : 'var(--admin-text-dim)20', color: p.is_active ? 'var(--admin-success)' : 'var(--admin-text-muted)', textTransform: 'uppercase', whiteSpace: 'nowrap', letterSpacing: '0.03em' }}>
+                        <span style={{ padding: '5px 12px', borderRadius: 6, fontSize: '0.7rem', fontWeight: 600, background: p.is_active ? 'color-mix(in srgb, var(--admin-success) 13%, transparent)' : 'color-mix(in srgb, var(--admin-text-dim) 13%, transparent)', color: p.is_active ? 'var(--admin-success)' : 'var(--admin-text-muted)', textTransform: 'uppercase', whiteSpace: 'nowrap', letterSpacing: '0.03em' }}>
                           {p.is_active ? 'Active' : 'Inactive'}
                         </span>
                       </td>
                       <td style={{ padding: '16px 12px' }}>
-                        <span title={safe ? 'artifact_ready + stripe_price_id + is_active are all set' : 'Missing one of: artifact_ready, stripe_price_id, is_active'} style={{ padding: '5px 12px', borderRadius: 6, fontSize: '0.7rem', fontWeight: 700, background: safe ? 'var(--admin-success)20' : 'var(--admin-warning)15', color: safe ? 'var(--admin-success)' : 'var(--admin-warning)', whiteSpace: 'nowrap' }}>
-                          {safe ? '🛡️ Safe' : '— Not Sellable'}
+                        <span title={safe ? 'artifact_ready + stripe_price_id + is_active are all set' : 'Missing one of: artifact_ready, stripe_price_id, is_active'} style={{ padding: '5px 12px', borderRadius: 6, fontSize: '0.7rem', fontWeight: 700, background: safe ? 'color-mix(in srgb, var(--admin-success) 13%, transparent)' : 'color-mix(in srgb, var(--admin-warning) 8%, transparent)', color: safe ? 'var(--admin-success)' : 'var(--admin-warning)', whiteSpace: 'nowrap' }}>
+                          {safe ? 'Ready' : 'Not ready'}
                         </span>
                       </td>
                       <td style={{ padding: '16px 12px' }}>
                         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                          <button onClick={() => startEdit(p)} className="admin-btn" style={{ padding: '6px 14px', borderRadius: 6, border: '1px solid var(--admin-border-strong)', background: 'transparent', color: '#ccc', fontSize: '0.72rem', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}>Edit</button>
+                          <button onClick={() => startEdit(p)} className="admin-btn" style={{ padding: '6px 14px', borderRadius: 6, border: '1px solid var(--admin-border-strong)', background: 'transparent', color: 'var(--admin-text-muted)', fontSize: '0.72rem', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}>Edit</button>
                           <button
                             disabled={busyId === p.id}
                             onClick={() => toggleActive(p)}

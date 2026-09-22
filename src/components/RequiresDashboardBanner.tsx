@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export default function RequiresDashboardBanner() {
+export default function RequiresDashboardBanner({ includedInCore = false }: { includedInCore?: boolean }) {
   return (
     <div
       style={{
@@ -14,10 +14,10 @@ export default function RequiresDashboardBanner() {
         <div style={{ fontSize: "20px", lineHeight: "1", flexShrink: 0, marginTop: "2px" }}>⚠️</div>
         <div style={{ flex: 1 }}>
           <div style={{ color: "var(--color-accent-2-900)", fontSize: "14px", lineHeight: "1.6", marginBottom: "8px" }}>
-            This add-on requires Core Edition to function. It cannot be used standalone.
+            {includedInCore ? "Already included in Core and Trader. If you own either edition, you do not need to buy Darvas separately." : "Requires a compatible Cival dashboard installation. Trader already includes this strategy; do not buy it again if you own Trader."}
           </div>
           <Link href="/store/trading-dashboard-template" style={{ color: "var(--color-accent-2-700)", fontSize: "13.5px", fontWeight: 600 }}>
-            View Core Edition →
+            Compare Core Edition →
           </Link>
         </div>
       </div>

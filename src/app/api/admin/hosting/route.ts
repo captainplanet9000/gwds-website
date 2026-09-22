@@ -71,7 +71,7 @@ export async function GET(req: NextRequest) {
       acceptingHosts: hostRows.filter((item) => item.admissions_enabled && Number(item.available_slots) > 0).length,
       availableHostSlots: hostRows.reduce((sum, item) => sum + (item.admissions_enabled ? Number(item.available_slots) : 0), 0),
       activeSubscriptions: rows.filter((item) => ['active', 'trialing'].includes(item.status)).length,
-      recurringRevenueCents: rows.filter((item) => ['active', 'trialing'].includes(item.status)).reduce((sum, item) => sum + item.price_cents, 0),
+      recurringRevenueCents: rows.filter((item) => item.status === 'active' && item.livemode === true).reduce((sum, item) => sum + item.price_cents, 0),
       activeInstances: instanceRows.filter((item) => item.status === 'active').length,
       unhealthyInstances: instanceRows.filter((item) => ['degraded', 'unreachable'].includes(item.health_status)).length,
       onboardingQueue: (onboarding.data || []).filter((item) => ['customer_input', 'operator_review', 'approved', 'blocked'].includes(item.status)).length,

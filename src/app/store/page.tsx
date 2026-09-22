@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import StoreCatalogue from './StoreCatalogue';
+import { HostingAccessProvider, HostingAccessButton } from '@/components/HostingAccess';
 import { planExecutionMode } from '@/lib/hosting';
 import { createServerClient } from '@/lib/supabase';
 
@@ -68,7 +69,9 @@ function Tick() {
   );
 }
 
-export default async function StorePage() {
+export default async function StorePage({ searchParams }: { searchParams: Promise<{ cat?: string }> }) {
+  const { cat } = await searchParams;
+  const initialCategory = cat === 'edition' ? 'flagship' : cat === 'agent' ? 'agent' : 'all';
   const salesEnabled = process.env.NEXT_PUBLIC_HOSTING_SALES_ENABLED === 'true';
   const plans = (await getHostingPlans()).filter((plan) => plan.executionMode === 'live');
 
@@ -76,9 +79,9 @@ export default async function StorePage() {
     <div className="cival">
       <Navbar />
       <main className="cival-fade" style={{ maxWidth: 1200, margin: '0 auto', padding: '56px 28px 96px' }}>
-        <StoreCatalogue />
+        <StoreCatalogue key={initialCategory} initialCategory={initialCategory} />
 
-        {plans.length > 0 && (
+        <HostingAccessProvider>{plans.length > 0 && (
           <section style={{ marginTop: 88, paddingTop: 56, borderTop: '1px solid var(--color-divider)' }}>
             <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 24, flexWrap: 'wrap', marginBottom: 28 }}>
               <div>
@@ -110,21 +113,21 @@ export default async function StorePage() {
                   <span className="tag tag-neutral" style={{ width: 'fit-content' }}>{agentLabel(plan)}</span>
                   <p style={{ fontSize: 14.5, lineHeight: 1.55, color: 'var(--color-neutral-800)', margin: 0 }}>{plan.description}</p>
                   <div style={{ display: 'grid', gap: 9, marginTop: 6 }}>
-                    {plan.features.map((feature) => (
+                    {plan.features.filter(feature => !/(source|licen[cs]e|free|paper.only)/i.test(feature)).map((feature) => (
                       <div key={feature} style={{ display: 'flex', gap: 9, alignItems: 'flex-start', fontSize: 14, lineHeight: 1.4 }}>
                         <Tick />
                         <span>{feature}</span>
                       </div>
                     ))}
                   </div>
-                  <Link href="/account/hosting" className="btn btn-secondary" style={{ marginTop: 'auto', textAlign: 'center' }}>
+                  <HostingAccessButton>
                     {salesEnabled ? `Choose ${plan.name}` : 'View activation status'}
-                  </Link>
+                  </HostingAccessButton>
                 </article>
               ))}
             </div>
           </section>
-        )}
+        )}</HostingAccessProvider>
       </main>
       <Footer />
     </div>

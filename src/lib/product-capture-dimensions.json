@@ -1,0 +1,98 @@
+{
+  "customer-agent-detail-testnet.jpg": {
+    "width": 3832,
+    "height": 2160
+  },
+  "customer-agents-testnet.jpg": {
+    "width": 3832,
+    "height": 2160
+  },
+  "customer-farms-testnet.jpg": {
+    "width": 3832,
+    "height": 2160
+  },
+  "customer-goals-testnet.jpg": {
+    "width": 3832,
+    "height": 2160
+  },
+  "customer-overview-testnet.jpg": {
+    "width": 3832,
+    "height": 2160
+  },
+  "demo-agents-detail.jpg": {
+    "width": 3832,
+    "height": 3457
+  },
+  "demo-agents.jpg": {
+    "width": 3832,
+    "height": 2160
+  },
+  "demo-analytics.jpg": {
+    "width": 3832,
+    "height": 2160
+  },
+  "demo-darvas-detail.jpg": {
+    "width": 3832,
+    "height": 2337
+  },
+  "demo-darvas.jpg": {
+    "width": 3832,
+    "height": 2160
+  },
+  "demo-elliott-detail.jpg": {
+    "width": 3832,
+    "height": 2337
+  },
+  "demo-elliott.jpg": {
+    "width": 3832,
+    "height": 2160
+  },
+  "demo-farms.jpg": {
+    "width": 3832,
+    "height": 2160
+  },
+  "demo-heikin-ashi-detail.jpg": {
+    "width": 3832,
+    "height": 2337
+  },
+  "demo-heikin-ashi.jpg": {
+    "width": 3832,
+    "height": 2160
+  },
+  "demo-journal.jpg": {
+    "width": 3832,
+    "height": 2160
+  },
+  "demo-mean-reversion-detail.jpg": {
+    "width": 3832,
+    "height": 2337
+  },
+  "demo-mean-reversion.jpg": {
+    "width": 3832,
+    "height": 2160
+  },
+  "demo-overview.jpg": {
+    "width": 3832,
+    "height": 2160
+  },
+  "demo-plugins.jpg": {
+    "width": 3832,
+    "height": 2160
+  },
+  "demo-sentiment-detail.jpg": {
+    "width": 3832,
+    "height": 2337
+  },
+  "demo-sentiment.jpg": {
+    "width": 3832,
+    "height": 2160
+  },
+  "demo-vwap-detail.jpg": {
+    "width": 3832,
+    "height": 2337
+  },
+  "demo-vwap.jpg": {
+    "width": 3832,
+    "height": 2160
+  }
+}

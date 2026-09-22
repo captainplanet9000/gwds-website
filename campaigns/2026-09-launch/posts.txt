@@ -1,0 +1,139 @@
+Meet Cival|/about|EDUCATION
+Cival Systems brings trading strategies, a dashboard and an automation workspace into one product family. Explore the idea before choosing how you want to run it.
+Your strategy needs somewhere to operate. Cival Systems is built around the workspace: agents, positions, risk settings and the information you need to monitor them.
+Curious about automated trading? Start with the workflow, not a return forecast. See what Cival Systems is building and how the pieces fit together.
+We built Cival Systems to make trading automation more approachable: a place to configure strategies, inspect activity and understand what your software is doing.
+An autonomous trading journey starts with understanding the system. Explore Cival Systems, compare the options and read the setup requirements before committing.
+
+Explore the demo|/docs/setup|EDUCATION
+Before choosing software, explore its interface. The Cival demo shows the broader dashboard with sample data. Demo results are illustrative, not expected returns.
+What should an agent dashboard tell you? Its status, allocation and recent activity are a useful start. Explore those ideas in the Cival demo. Sample data only.
+A product screenshot should help you understand the product. Our galleries identify demo and hosted testnet captures so you can tell what you are looking at.
+Take the Cival demo for a walkthrough: inspect the overview, open an agent and explore the surrounding workspace. The demo uses sample data.
+Prefer to look before you read? Start with the dashboard screenshots, then check the package contents. The broader demo includes features beyond individual source packages.
+
+Hosting explained|/hosted|HOSTING_REVIEW
+Want a hosted workspace instead of maintaining your own server? Compare Cival hosting plans, agent capacity and setup requirements. Trading involves risk.
+Cival hosting and source-code purchases are separate offerings. Hosting provides a managed workspace; source software is for people who want to run and modify their own installation.
+Choose hosting by the number of agents you need, then configure your workspace. More agents do not guarantee better results. See the current plans and terms.
+A hosted dashboard still needs an operator. Choose your strategy, connect the right account, set limits and review activity. Read how Cival hosting works.
+Infrastructure is only part of automated trading. Your account connection, strategy configuration and risk decisions matter too. Start with the Cival hosting guide.
+
+Solo trial|/hosted|HOSTING_REVIEW
+Eligible new Cival hosting customers can start Solo with a seven-day trial. A payment method is required. Review the renewal amount and date at checkout; cancel before renewal to avoid the charge.
+The Solo trial is a chance to evaluate the workspace and setup flow. It does not include trading capital or promise a return. Check eligibility and billing terms before starting.
+One strategy is enough to learn the workflow: configure, connect, validate and monitor. Explore Solo hosting and the seven-day trial terms.
+Before starting a trial, know what happens next. Cival hosting explains provisioning, account connection and renewal. Stripe shows billing details before confirmation.
+Use your trial to ask practical questions: Can I understand the settings? Can I inspect activity? Do I know how to stop? Explore Solo hosting and its current terms.
+
+Setup workflow|/docs/setup|EDUCATION
+Four useful setup questions: Which edition am I using? Which network is selected? Which account is connected? What limits are configured? Start with the Cival setup guide.
+Installation is the beginning. Validate configuration, account access and the order lifecycle before relying on automation. Our setup guide lays out the checks.
+Keep your software version and its documentation together. A screenshot of a broader edition is not a substitute for the instructions shipped with your package.
+Before enabling an agent, understand its inputs and settings. Cival documentation explains the product paths and the checks to make before a first run.
+Need help choosing between a hosted workspace and source software? Start with the setup guide. The responsibilities and requirements are different.
+
+Risk and monitoring|/docs/setup|EDUCATION
+Automation does not remove risk. Position sizing, exposure limits and monitoring still matter. Explore the Cival workflow with that responsibility in mind.
+A running process is not proof of a healthy strategy. Check data freshness, orders and venue positions. Learn the setup and monitoring workflow before enabling automation.
+Before your first automated trade, know how to pause new entries and inspect existing exposure. Read the Cival setup guide and validate the behavior you depend on.
+Risk controls are useful only when you understand their scope. Ask what each limit measures, when it takes effect and what happens to existing positions.
+Start with a clear operating plan: what you will monitor, when you will intervene and how you will verify the result. Trading software still needs supervision.
+
+Network clarity|/docs/setup|EDUCATION
+Testnet and mainnet are different environments. Check the selected network and connected account before funding or enabling a strategy. Test funds are not real trading capital.
+A testnet trade can help validate an order workflow. It does not establish how a strategy will perform with real liquidity, fees or market conditions.
+When reviewing a trading screenshot, ask which network it came from. Cival galleries label hosted testnet captures and demo sample data.
+A useful first milestone is a verified order lifecycle: entry, protection, management and exit. A balance display alone does not establish that automation works.
+Before changing networks, recheck addresses, permissions and configuration. Treat a successful testnet run as a technical check, not a profitability forecast.
+
+Account permissions|/docs/setup|EDUCATION
+Understand the permissions you approve. A trading key and your main wallet are not the same thing. Read the account-connection instructions before authorizing an agent.
+Never share a seed phrase in a support chat. Use the documented account-connection flow and verify the domain before approving a wallet request.
+Connecting an account is a meaningful step. Confirm the network, wallet and requested permissions, then verify the connection in your workspace.
+Trade-only permissions limit what a key can do; they do not prevent trading losses. Review account permissions and strategy risk together.
+Keep account access understandable. Know which key is authorized, what it can do and where to revoke it. Begin with the connection guide.
+
+Agent selection|/store|EDUCATION
+Breakout, trend and mean-reversion strategies make different assumptions. Compare the rules before comparing the names. Cival product pages explain each approach and its limitations.
+An agent is a set of rules running inside a system. Learn what data it uses, how it forms a signal and what configuration it expects before choosing one.
+Which strategy fits your research question? Explore the Cival catalog, read the requirements and check availability. No strategy guarantees a profit.
+A bundle offers more approaches to investigate, not a guarantee of diversification. Different agents can still produce correlated exposure.
+Choose an agent because you understand its behavior. Product pages should help you evaluate inputs, assumptions and requirements, not just a name or an image.
+
+Core edition|/store/trading-dashboard-template|SOURCE_HOLD
+Core Edition is the starting point for Cival source software: the dashboard foundation with Darvas included. Review its contents and setup requirements. Source sales remain on hold pending release validation.
+Want to modify your trading workspace? Explore Core Edition and its TypeScript source offering. It requires your own setup. New source sales are currently on hold.
+Core and hosting serve different needs. Core is source software to install and maintain yourself; hosting is a separate service. Check the release notice before purchasing.
+Core includes Darvas, so you do not need to buy that agent separately for the same installation. Review the product contents. Source sales remain on hold.
+Before choosing Core, read the installation requirements and license. The goal is an understandable starting point for customization. Release validation is still in progress.
+
+Trader edition|/store/multi-strat-bundle|SOURCE_HOLD
+Trader Edition brings Core and six strategy frameworks into one source package. Read the included-agent list and requirements. New source sales are on hold pending validation.
+Want to compare multiple programmed approaches? Explore Trader Edition: the source bundle includes breakout, trend, reversion and research strategies. Availability is subject to release validation.
+Trader includes Core. Check bundle contents before adding separate agents so you do not purchase overlapping licenses. Source sales are currently on hold.
+A strategy collection gives you more rules to study and customize. It does not provide a guaranteed edge. Explore the Trader contents and current release notice.
+Trader is a source bundle, not a managed hosting subscription. Plan for installation, configuration and maintenance. Review the requirements and release status.
+
+Darvas|/store/darvas-indicator|SOURCE_HOLD
+Darvas Box Breakout Agent uses programmed box-breakout rules. Learn what the package includes and which dashboard it requires. New source sales are currently on hold.
+A breakout can fail. Darvas research begins with the box rules, entry conditions and invalidation, not an assumption that every breakout will continue.
+Darvas is already included in Core and Trader. Compare package contents before buying an individual agent. Source release validation is still in progress.
+Interested in rule-based breakout trading? Read the Darvas product page, review its requirements and understand its limitations before considering deployment.
+Agent selection starts with a question: what market behavior am I trying to capture? Darvas focuses on box breakouts. Read the rules and current release notice.
+
+Elliott|/store/elliott-wave-agent|SOURCE_HOLD
+The Elliott Wave Pattern Agent uses programmed price-swing rules. It does not guarantee wave identification. Explore the approach and requirements; source sales are on hold.
+Pattern-based strategies depend on how a pattern is defined. Read the Elliott agent description with that in mind, then review its configuration and release status.
+Wave labels are an interpretation, not certainty. Explore the Cival Elliott framework as a set of explicit rules to inspect and evaluate.
+Elliott is one of the six frameworks listed in Trader Edition. Compare the bundle before choosing an individual license. Source sales await release validation.
+A useful strategy description explains its assumptions. The Elliott agent page describes a programmed swing-pattern approach, with limitations visible alongside the offering.
+
+VWAP|/store/vwap-momentum-agent|SOURCE_HOLD
+The VWAP Strategy Agent uses volume-weighted price rules. Review its inputs, configuration and dashboard requirements. Source sales remain on hold pending validation.
+Volume-weighted signals need reliable data and clear configuration. Explore the VWAP agent description before deciding whether it fits your research.
+A familiar indicator is not a complete operating plan. Understand how the VWAP package turns its inputs into signals, then validate the surrounding execution workflow.
+VWAP is included in Trader Edition. Read the bundle contents before choosing the individual agent. Current source availability is shown on the product page.
+Interested in volume-weighted strategy research? Start with the VWAP product details and limitations. No indicator guarantees a profitable entry.
+
+Heikin Ashi|/store/heikin-ashi-agent|SOURCE_HOLD
+Heikin Ashi Trend Agent explores trend-following rules using transformed candles. Read its requirements and limitations. Source sales are currently on hold.
+Smoothed candles can make a trend easier to inspect; they do not remove reversals or execution risk. Explore the Heikin Ashi strategy description.
+Trend-following systems can struggle in changing conditions. Study the Heikin Ashi rules and evaluate the behavior you expect before using an agent.
+Heikin Ashi is included in Trader Edition. Compare the source bundle and individual package contents. New sales await release validation.
+Prefer explicit trend rules to discretionary chart interpretation? Explore the Heikin Ashi framework, its setup requirements and current release notice.
+
+Mean reversion|/store/mean-reversion-agent|SOURCE_HOLD
+Bollinger Mean Reversion Agent uses Bollinger-based rules. A move away from a mean can continue. Read the approach and requirements; source sales are on hold.
+Mean reversion is a hypothesis to test, not a promise that price must come back. Explore the Cival strategy page and its limitations.
+Before using a reversion strategy, understand the conditions that can invalidate it. The product page is the starting point for reviewing the programmed approach.
+The Bollinger Mean Reversion Agent is included in Trader Edition. Check bundle contents and release status before choosing a package.
+Different market conditions can challenge the same rules. Explore mean-reversion research with clear limits and a plan to evaluate behavior, not just an attractive chart.
+
+Sentiment research|/store/macro-sentiment-agent|SOURCE_HOLD
+The Sentiment Proxy Research Agent uses price and volume proxies. It does not include a live news or macroeconomic feed. Read those limitations first. Source sales are on hold.
+A proxy is an estimate based on available inputs. Explore the Sentiment Proxy Research Agent with a clear understanding of what its data does and does not represent.
+The broader demo uses a Macro Sentiment label. The downloadable research product has a narrower scope: candle-derived proxies, not a live macro data service.
+The Sentiment Proxy Research Agent can issue trade signals. Research branding does not make its outputs risk-free. Read the package details and release notice.
+Data provenance matters. Before choosing a sentiment strategy, ask whether it uses news, external feeds or price-derived estimates. Our product page makes that distinction explicit.
+
+Customization|/docs/setup|EDUCATION
+Your trading software should be understandable. Cival source offerings are designed for inspection and customization. Check the license, requirements and current release availability.
+AI coding tools can help you explore a codebase. They do not replace testing. Review any strategy change before trusting it with account access or capital.
+Make changes deliberately: keep a versioned baseline, test the new behavior and document how to roll back. The same discipline applies to trading software.
+A useful starting point saves setup work while leaving room to learn. Explore the Cival source offering and read the installation requirements before deciding.
+Changing a strategy means changing assumptions. Document the inputs, expected behavior and failure cases alongside the code. Start with the setup guide.
+
+Support and trust|/contact|EDUCATION
+Questions before choosing a Cival product? Tell us whether you want hosting or source software and which workflow you need. That context makes support more useful.
+When reporting a setup issue, include the product version, selected network and the error message. Leave out secrets, private keys and seed phrases.
+Good product decisions start with clear questions. Ask about package contents, setup requirements and current availability before paying for software.
+Need clarification on an agent or hosting plan? Use the Cival contact page. We would rather help you understand the requirements before you commit.
+Your feedback helps identify confusing steps. If a Cival page leaves you unsure what you receive or how setup works, tell us which page and what is unclear.
+
+Launch conversations|/about|EDUCATION
+What is the first thing you look for in a trading dashboard: positions, agent decisions, risk settings or system health? We are building Cival around an understandable operating workflow.
+If you have tried automated trading, which setup step needed the clearest explanation? Account connection, strategy configuration or monitoring? Explore the Cival approach.
+Would you rather manage your own trading infrastructure or use a hosted workspace? Cival has separate product paths for those needs. Compare responsibilities before choosing.
+What would make an agent easier to trust operationally? Clear inputs, visible decisions and a tested stop procedure are a useful starting point. Trading still involves risk.
+Explore Cival Systems at your own pace. Read the product details, try the demo and understand the requirements. Choose a workflow you can operate and monitor.

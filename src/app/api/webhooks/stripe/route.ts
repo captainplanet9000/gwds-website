@@ -3,7 +3,7 @@ import type Stripe from 'stripe';
 import { createServerClient } from '@/lib/supabase';
 import { sendOrderReadyEmail, type OrderEmailData } from '@/lib/email';
 import { deliverHostingNotification } from '@/lib/hosting-notifications';
-import { hashPayload, type OrderItemRow } from '@/lib/commerce';
+import { hashPayload, isLiveStripeKey, type OrderItemRow } from '@/lib/commerce';
 import { parsePeriod } from '@/lib/hosting';
 import { getStripe } from '@/lib/stripe';
 
@@ -105,7 +105,7 @@ async function fulfillSession(event: Stripe.Event, session: Stripe.Checkout.Sess
     || order.total_cents !== session.amount_total) {
     throw new Error('ORDER_SESSION_MISMATCH');
   }
-  const keyIsLive = process.env.STRIPE_SECRET_KEY?.startsWith('sk_live_') ?? false;
+  const keyIsLive = isLiveStripeKey();
   if (event.livemode !== keyIsLive) throw new Error('LIVEMODE_MISMATCH');
 
   const { data, error } = await supabase.rpc('fulfill_store_order', {
@@ -368,7 +368,7 @@ export async function POST(req: NextRequest) {
 
   const payloadHash = hashPayload(payload);
   try {
-    const keyIsLive = process.env.STRIPE_SECRET_KEY?.startsWith('sk_live_') ?? false;
+    const keyIsLive = isLiveStripeKey();
     if (event.livemode !== keyIsLive) throw new Error('LIVEMODE_MISMATCH');
 
     switch (event.type) {
@@ -401,7 +401,7 @@ export async function POST(req: NextRequest) {
         break;
       }
       case 'charge.refunded': {
-        const charge = event.data.object;
+        const charge = await getStripe().charges.retrieve(event.data.object.id);
         const fullyRefunded = charge.amount_refunded >= charge.amount;
         await applyStatusEvent({ event, payloadHash, paymentIntentId: objectId(charge.payment_intent), status: fullyRefunded ? 'refunded' : 'partially_refunded', reason: event.type, revoke: fullyRefunded });
         break;
@@ -416,14 +416,40 @@ export async function POST(req: NextRequest) {
         const dispute = event.data.object;
         const charge = await getStripe().charges.retrieve(objectId(dispute.charge)!);
         const won = dispute.status === 'won';
-        await applyStatusEvent({ event, payloadHash, paymentIntentId: objectId(charge.payment_intent), status: won ? 'paid' : 'dispute_lost', reason: `dispute_${dispute.status}`, revoke: !won, restore: won });
+        const fullyRefunded = charge.amount_refunded >= charge.amount;
+        await applyStatusEvent({ event, payloadHash, paymentIntentId: objectId(charge.payment_intent), status: fullyRefunded ? 'refunded' : won ? 'paid' : 'dispute_lost', reason: `dispute_${dispute.status}`, revoke: fullyRefunded || !won, restore: won && !fullyRefunded });
         break;
       }
       case 'customer.subscription.created':
       case 'customer.subscription.updated':
-      case 'customer.subscription.deleted':
-        await syncHostingSubscription(event, event.data.object, payloadHash);
+      case 'customer.subscription.deleted': {
+        if (event.data.object.metadata?.commerce_kind !== 'hosting') break;
+        // Delivery order is not guaranteed. A delayed active event must not
+        // resume a canceled tenant, or an old past_due event suspend a paid one.
+        const current = await getStripe().subscriptions.retrieve(event.data.object.id);
+        await syncHostingSubscription(event, current, payloadHash);
         break;
+      }
+      case 'customer.subscription.trial_will_end': {
+        if (event.data.object.metadata?.commerce_kind !== 'hosting') break;
+        const current = await getStripe().subscriptions.retrieve(event.data.object.id);
+        if (current.status !== 'trialing' || current.cancel_at_period_end || !current.trial_end) break;
+        const id = requireMetadataId(current.metadata.hosting_subscription_id, 'HOSTING_SUBSCRIPTION_ID');
+        const db = createServerClient();
+        const { data: row, error: rowError } = await db.from('hosting_subscriptions')
+          .select('customer_email,plan_id').eq('id', id).eq('stripe_subscription_id', current.id).single();
+        if (rowError || !row) throw new Error('TRIAL_REMINDER_SUBSCRIPTION_NOT_FOUND');
+        const price = current.items.data[0]?.price;
+        const amount = price?.unit_amount == null ? 'the price shown in your billing account' : new Intl.NumberFormat('en-US', { style: 'currency', currency: price.currency }).format(price.unit_amount / 100);
+        const dedupKey = `trial-ending-${current.id}-${current.trial_end}`;
+        const { error: notificationError } = await db.from('hosting_notifications').upsert({
+          subscription_id: id, template: 'hosting_started', recipient_email: row.customer_email,
+          dedup_key: dedupKey, payload: { title: 'Your Solo trial ends soon', detail: `Your trial ends ${new Date(current.trial_end * 1000).toUTCString()}. Your saved payment method will then be charged ${amount} per ${price?.recurring?.interval || 'billing period'} unless you cancel before that time. Open Account > Hosting > Manage billing to review or cancel. Trading funds are separate.` },
+        }, { onConflict: 'dedup_key', ignoreDuplicates: true });
+        if (notificationError) throw new Error('TRIAL_REMINDER_QUEUE_FAILED');
+        await deliverHostingNotification(id, dedupKey);
+        break;
+      }
       case 'invoice.paid':
       case 'invoice.payment_failed':
         await syncHostingInvoice(event, event.data.object, payloadHash);

@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
-import { products, getProduct, categories } from '@/lib/products';
-import { STORE_SALES_ENABLED } from '@/lib/store-config';
+import { products, getProduct, categories, EDITION_INCLUDES } from '@/lib/products';
 import ProductDetailClient from './ProductDetailClient';
 import { notFound } from 'next/navigation';
 
@@ -46,7 +45,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   if (!product || product.legacy) notFound();
 
   const related = products
-    .filter(p => p.category === product.category && p.id !== product.id && !p.legacy)
+    .filter(p => p.category === product.category && p.id !== product.id && !p.legacy && !(EDITION_INCLUDES[product.id] || []).includes(p.id) && !(EDITION_INCLUDES[p.id] || []).includes(product.id))
     .sort((a, b) => Math.abs(a.price - product.price) - Math.abs(b.price - product.price))
     .slice(0, 3);
 
@@ -65,7 +64,6 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
       "@type": "Offer",
       price: product.price,
       priceCurrency: "USD",
-      availability: STORE_SALES_ENABLED ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       url: `${siteUrl}/store/${product.id}`,
       seller: { "@type": "Organization", name: "Cival Systems" },
     },

@@ -16,6 +16,7 @@ export interface HostingEmailData {
   template: 'hosting_started' | 'hosting_payment_failed' | 'hosting_canceled' | 'hosting_activated' | 'hosting_incident' | 'hosting_provisioning_failed';
   title?: string;
   detail?: string;
+  deliveryId?: string;
 }
 
 function escapeHtml(value: string): string {
@@ -48,6 +49,7 @@ export async function sendOrderReadyEmail(email: string, order: OrderEmailData) 
       <p style="font-size:16px;line-height:1.6;color:#5d554a">Your Cival Systems license is attached to the account used at checkout. Sign in to create a short-lived download link whenever you need the files.</p>
       <ul style="padding-left:20px;line-height:1.5">${list}</ul>
       <a href="${accountUrl}" style="display:inline-block;margin-top:16px;background:#c67139;color:#fff;text-decoration:none;font-weight:700;padding:14px 22px;border-radius:999px">Open my account</a>
+      <p style="font-size:15px;line-height:1.7">Next: identify the version in your download, follow the <a href="${siteUrl}/docs/setup">purchase-to-setup guide</a>, and complete the first-run checks before operating.</p>
       <div style="margin-top:28px;padding-top:20px;border-top:1px solid #e8dbc5;font-size:13px;line-height:1.7;color:#6f665a">
         Order ${escapeHtml(order.id)}<br>${escapeHtml(date)} · ${escapeHtml(total)}
       </div>
@@ -67,6 +69,9 @@ ${productNames.map((name) => `- ${name}`).join('\n')}
 
 Open your account to create a short-lived download link:
 ${accountUrl}
+
+Installation and first-run guide:
+${siteUrl}/docs/setup
 
 Order: ${order.id}
 Date: ${date}
@@ -95,7 +100,7 @@ export async function sendHostingEmail(email: string, message: HostingEmailData)
   const siteUrl = getSiteUrl();
   const accountUrl = `${siteUrl}/account/hosting`;
   const copy = {
-    hosting_started: ['Your managed workspace is queued', `Your ${message.planName} subscription is confirmed. Complete onboarding so Cival Operations can review and provision the workspace.`],
+    hosting_started: [message.title || 'Your managed workspace is queued', message.detail || `Your ${message.planName} subscription is confirmed. Open your hosting account to follow provisioning and complete your workspace setup.`],
     hosting_payment_failed: ['Action needed: hosting payment failed', 'Stripe could not collect the latest hosting invoice. Update your payment method to avoid or resolve a service suspension.'],
     hosting_canceled: ['Your hosting cancellation is recorded', 'Your subscription has been canceled. Runtime teardown and credential deletion will follow the service lifecycle shown in your account.'],
     hosting_activated: ['Your managed workspace is active', 'Provisioning, health, backup and recovery checks passed. Open your account to review runtime status before enabling any live strategy.'],
@@ -105,7 +110,7 @@ export async function sendHostingEmail(email: string, message: HostingEmailData)
   const subject = `Cival Systems — ${copy[0]}`;
   const html = `<!doctype html><html><body style="margin:0;background:#020806;color:#e8fff5;font-family:Arial,sans-serif"><div style="max-width:620px;margin:0 auto;padding:40px 20px"><div style="font-size:24px;font-weight:800;margin-bottom:24px;color:#4ade9f">Cival Systems</div><div style="background:#07120e;border:1px solid #1d4d3b;border-radius:22px;padding:32px"><div style="font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#4ade9f;font-weight:800">Managed hosting</div><h1 style="font-size:30px;line-height:1.15;margin:12px 0 14px">${escapeHtml(copy[0])}</h1><p style="font-size:16px;line-height:1.65;color:#b5d6c8">${escapeHtml(copy[1])}</p><a href="${accountUrl}" style="display:inline-block;margin-top:14px;background:#4ade9f;color:#03110b;text-decoration:none;font-weight:800;padding:14px 22px;border-radius:999px">Open hosting account</a><div style="margin-top:26px;padding-top:18px;border-top:1px solid #173a2e;font-size:12px;line-height:1.7;color:#7fa694">Subscription ${escapeHtml(message.subscriptionId)}</div></div><p style="font-size:12px;line-height:1.6;color:#76998a;margin:20px 6px">Managed hosting does not reduce market risk or guarantee results. Use a dedicated trade-only API wallet and keep withdrawals disabled. Need help? <a href="${siteUrl}/contact" style="color:#4ade9f">Contact support</a>.</p></div></body></html>`;
   const text = `Cival Systems — Managed hosting\n\n${copy[0]}\n\n${copy[1]}\n\nOpen your hosting account: ${accountUrl}\n\nSubscription: ${message.subscriptionId}`;
-  const { data, error } = await resend.emails.send({ from, to: email, replyTo: process.env.SUPPORT_EMAIL || 'support@civalsystems.com', subject, html, text }, { idempotencyKey: `${message.template}-${message.subscriptionId}` });
+  const { data, error } = await resend.emails.send({ from, to: email, replyTo: process.env.SUPPORT_EMAIL || 'support@civalsystems.com', subject, html, text }, { idempotencyKey: message.deliveryId ? `hosting-notification-${message.deliveryId}` : `${message.template}-${message.subscriptionId}` });
   if (error) throw new Error(`Email delivery failed: ${error.message}`);
   return data;
 }

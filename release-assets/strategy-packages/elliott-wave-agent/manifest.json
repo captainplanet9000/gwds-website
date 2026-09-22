@@ -1,0 +1,49 @@
+{
+  "id": "elliott-wave",
+  "name": "Elliott Wave Pattern Recognition",
+  "version": "2.1.1",
+  "description": "Automated Elliott Wave counting and Fibonacci-based trade entries",
+  "author": "GWDS",
+  "category": "strategy",
+  "strategy": "elliott-wave",
+  "entryPoint": "dist/strategy.js",
+  "configurable": true,
+  "defaultConfig": {
+    "swingLookback": 5,
+    "minWaveSize": 1.5,
+    "maxWaveDeviation": 15,
+    "wave3MinMultiplier": 1,
+    "wave3IdealMultiplier": 1.618,
+    "wave5IdealRatio": 1,
+    "fibRetrace618": 0.618,
+    "fibRetrace50": 0.5,
+    "fibRetrace382": 0.382,
+    "minConfidence": 60,
+    "degreeLabels": [
+      "Minute",
+      "Minor",
+      "Intermediate"
+    ]
+  },
+  "requiredIndicators": [
+    "high",
+    "low",
+    "close",
+    "rsi",
+    "macd"
+  ],
+  "supportedTimeframes": [
+    "1h",
+    "4h",
+    "1d"
+  ],
+  "riskProfile": "moderate",
+  "compatibility": {
+    "dashboard": ">=2.1.0 <2.2.0",
+    "node": ">=20"
+  },
+  "installPath": "plugins/elliott-wave-agent",
+  "source": "src/strategy.ts",
+  "productId": "elliott-wave-agent",
+  "releaseStatus": "candidate"
+}

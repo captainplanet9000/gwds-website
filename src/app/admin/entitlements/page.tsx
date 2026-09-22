@@ -118,7 +118,7 @@ export default function AdminEntitlements() {
         <h1 style={{
           fontFamily: 'var(--font-display)',
           fontSize: '2rem',
-          fontWeight: 800,
+          fontWeight: 600,
           marginBottom: 8,
           letterSpacing: '-0.03em',
           color: 'var(--admin-text)',
@@ -136,20 +136,20 @@ export default function AdminEntitlements() {
           { label: 'Revoked (page)', value: revokedCount, color: 'var(--admin-danger)', icon: '🚫' },
         ].map((s) => (
           <div key={s.label} style={{ background: 'var(--admin-surface)', border: '1px solid var(--admin-border)', borderRadius: 12, padding: 20, position: 'relative', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', top: 0, right: 0, width: 80, height: 80, background: `radial-gradient(circle at top right, ${s.color}15, transparent)` }} />
+            <div style={{ position: 'absolute', top: 0, right: 0, width: 80, height: 80, background: 'transparent' }} />
             <div style={{ position: 'relative' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
                 <p style={{ fontSize: '0.72rem', color: 'var(--admin-text-dim)', letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 600 }}>{s.label}</p>
-                <span style={{ fontSize: '1.3rem', opacity: 0.5 }}>{s.icon}</span>
+
               </div>
-              <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 800, color: s.color, letterSpacing: '-0.02em' }}>{s.value}</p>
+              <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 600, color: 'var(--admin-text)', letterSpacing: '-0.02em' }}>{s.value}</p>
             </div>
           </div>
         ))}
       </div>
 
       {error && (
-        <div style={{ background: 'var(--admin-danger)15', border: '1px solid var(--admin-danger)40', borderRadius: 10, padding: '12px 16px', color: 'var(--admin-danger)', fontSize: '0.85rem', marginBottom: 16 }}>
+        <div style={{ background: 'color-mix(in srgb, var(--admin-danger) 8%, transparent)', border: '1px solid color-mix(in srgb, var(--admin-danger) 25%, transparent)', borderRadius: 10, padding: '12px 16px', color: 'var(--admin-danger)', fontSize: '0.85rem', marginBottom: 16 }}>
           {error}
         </div>
       )}
@@ -181,7 +181,7 @@ export default function AdminEntitlements() {
                 padding: '10px 18px',
                 borderRadius: 8,
                 border: statusFilter === s.key ? '1px solid var(--admin-accent)' : '1px solid var(--admin-border)',
-                background: statusFilter === s.key ? 'var(--admin-accent)10' : 'transparent',
+                background: statusFilter === s.key ? 'color-mix(in srgb, var(--admin-accent) 6%, transparent)' : 'transparent',
                 color: statusFilter === s.key ? 'var(--admin-accent)' : 'var(--admin-text-muted)',
                 fontSize: '0.8rem',
                 fontWeight: 600,
@@ -207,7 +207,7 @@ export default function AdminEntitlements() {
           <div style={{ padding: 60, textAlign: 'center', color: 'var(--admin-text-dim)' }}>
             <div style={{ fontSize: '3rem', marginBottom: 16, opacity: 0.3 }}>🔑</div>
             <p style={{ fontSize: '1rem', marginBottom: 8 }}>No entitlements found</p>
-            <p style={{ fontSize: '0.85rem', color: '#444' }}>{search || statusFilter ? 'Try a different search or filter' : 'Purchases will appear here'}</p>
+            <p style={{ fontSize: '0.85rem', color: 'var(--admin-text-muted)' }}>{search || statusFilter ? 'Try a different search or filter' : 'Purchases will appear here'}</p>
           </div>
         ) : (
           <div className="admin-table-wrap">
@@ -225,7 +225,7 @@ export default function AdminEntitlements() {
                     <td style={{ padding: '16px' }}>
                       <div style={{ fontSize: '0.85rem', color: 'var(--admin-text)', fontWeight: 500, marginBottom: 2 }}>{e.customerName || 'Guest'}</div>
                       <div style={{ fontSize: '0.75rem', color: 'var(--admin-text-dim)' }}>{e.customerEmail || '—'}</div>
-                      <div style={{ fontSize: '0.68rem', color: '#444', marginTop: 2, fontFamily: 'monospace' }}>{e.orderId ? `${e.orderId.slice(0, 8)}…` : '—'}</div>
+                      <div style={{ fontSize: '0.68rem', color: 'var(--admin-text-muted)', marginTop: 2, fontFamily: 'monospace' }}>{e.orderId ? `${e.orderId.slice(0, 8)}…` : '—'}</div>
                     </td>
                     <td style={{ padding: '16px' }}>
                       <span style={{ fontSize: '0.85rem', color: 'var(--admin-text)' }}>{e.productEmoji ? `${e.productEmoji} ` : ''}{e.productName}</span>
@@ -239,8 +239,8 @@ export default function AdminEntitlements() {
                         borderRadius: 6,
                         textTransform: 'uppercase',
                         color: e.active ? 'var(--admin-success)' : 'var(--admin-danger)',
-                        background: e.active ? 'var(--admin-success)15' : 'var(--admin-danger)15',
-                        border: `1px solid ${e.active ? 'var(--admin-success)40' : 'var(--admin-danger)40'}`,
+                        background: e.active ? 'color-mix(in srgb, var(--admin-success) 8%, transparent)' : 'color-mix(in srgb, var(--admin-danger) 8%, transparent)',
+                        border: `1px solid ${e.active ? 'color-mix(in srgb, var(--admin-success) 25%, transparent)' : 'color-mix(in srgb, var(--admin-danger) 25%, transparent)'}`,
                       }}>
                         {e.active ? 'Active' : 'Revoked'}
                       </span>
@@ -268,7 +268,7 @@ export default function AdminEntitlements() {
                         <button
                           disabled={busyId === e.id}
                           onClick={() => doReissue(e)}
-                          style={{ padding: '6px 12px', borderRadius: 6, border: '1px solid var(--admin-accent)40', background: 'var(--admin-accent)15', color: 'var(--admin-accent)', fontSize: '0.75rem', fontWeight: 600, cursor: busyId === e.id ? 'wait' : 'pointer', opacity: busyId === e.id ? 0.6 : 1 }}
+                          style={{ padding: '6px 12px', borderRadius: 6, border: '1px solid color-mix(in srgb, var(--admin-accent) 25%, transparent)', background: 'color-mix(in srgb, var(--admin-accent) 8%, transparent)', color: 'var(--admin-accent)', fontSize: '0.75rem', fontWeight: 600, cursor: busyId === e.id ? 'wait' : 'pointer', opacity: busyId === e.id ? 0.6 : 1 }}
                         >
                           Reissue
                         </button>
@@ -276,7 +276,7 @@ export default function AdminEntitlements() {
                           <button
                             disabled={busyId === e.id}
                             onClick={() => { setRevokeTarget(e); setRevokeReason(''); }}
-                            style={{ padding: '6px 12px', borderRadius: 6, border: '1px solid var(--admin-danger)40', background: 'var(--admin-danger)15', color: 'var(--admin-danger)', fontSize: '0.75rem', fontWeight: 600, cursor: busyId === e.id ? 'wait' : 'pointer', opacity: busyId === e.id ? 0.6 : 1 }}
+                            style={{ padding: '6px 12px', borderRadius: 6, border: '1px solid color-mix(in srgb, var(--admin-danger) 25%, transparent)', background: 'color-mix(in srgb, var(--admin-danger) 8%, transparent)', color: 'var(--admin-danger)', fontSize: '0.75rem', fontWeight: 600, cursor: busyId === e.id ? 'wait' : 'pointer', opacity: busyId === e.id ? 0.6 : 1 }}
                           >
                             Revoke
                           </button>
@@ -286,7 +286,7 @@ export default function AdminEntitlements() {
                         <div style={{ marginTop: 8, padding: 10, background: 'var(--admin-surface-raised)', border: '1px solid var(--admin-border)', borderRadius: 8, maxWidth: 320 }}>
                           <div style={{ fontSize: '0.68rem', color: 'var(--admin-text-dim)', marginBottom: 4 }}>One-time link (expires {fmtDate(reissueResult.expiresAt)}):</div>
                           <div style={{ display: 'flex', gap: 6 }}>
-                            <input readOnly value={reissueResult.url} onFocus={(ev) => ev.target.select()} style={{ flex: 1, minWidth: 0, fontSize: '0.7rem', padding: '6px 8px', background: '#000', border: '1px solid var(--admin-border)', borderRadius: 6, color: 'var(--admin-text-muted)' }} />
+                            <input readOnly value={reissueResult.url} onFocus={(ev) => ev.target.select()} style={{ flex: 1, minWidth: 0, fontSize: '0.7rem', padding: '6px 8px', background: 'var(--admin-surface)', border: '1px solid var(--admin-border)', borderRadius: 6, color: 'var(--admin-text-muted)' }} />
                             <button
                               onClick={() => navigator.clipboard?.writeText(reissueResult.url).catch(() => undefined)}
                               style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid var(--admin-border)', background: 'transparent', color: 'var(--admin-text-muted)', fontSize: '0.7rem', cursor: 'pointer' }}

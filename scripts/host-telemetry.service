@@ -1,0 +1,12 @@
+[Unit]
+Description=Cival allowlisted host telemetry collector
+After=docker.service
+[Service]
+Type=oneshot
+User=root
+ExecStart=/usr/bin/python3 /usr/local/sbin/cival-host-telemetry.py
+TimeoutStartSec=90
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true

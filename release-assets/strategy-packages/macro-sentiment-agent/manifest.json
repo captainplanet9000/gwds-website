@@ -1,0 +1,44 @@
+{
+  "id": "macro-sentiment",
+  "name": "Sentiment Proxy Research",
+  "version": "2.1.1",
+  "description": "OHLCV-derived proxy research; no external macro, on-chain, social, funding or open-interest feeds.",
+  "author": "GWDS",
+  "category": "strategy",
+  "strategy": "macro-sentiment",
+  "entryPoint": "dist/strategy.js",
+  "configurable": true,
+  "defaultConfig": {
+    "fundingThreshold": 0.01,
+    "oiChangePeriod": 24,
+    "oiChangeThreshold": 20,
+    "sentimentSmoothing": 7,
+    "extremeFear": 20,
+    "extremeGreed": 80,
+    "volumeSpikeMultiplier": 3,
+    "priceChangeThreshold": 5,
+    "correlationPeriod": 30,
+    "dominanceChangeThreshold": 2
+  },
+  "requiredIndicators": [
+    "funding-rate",
+    "open-interest",
+    "fear-greed-index",
+    "liquidations",
+    "stablecoin-supply"
+  ],
+  "supportedTimeframes": [
+    "1h",
+    "4h",
+    "1d"
+  ],
+  "riskProfile": "moderate",
+  "compatibility": {
+    "dashboard": ">=2.1.0 <2.2.0",
+    "node": ">=20"
+  },
+  "installPath": "plugins/macro-sentiment-agent",
+  "source": "src/strategy.ts",
+  "productId": "macro-sentiment-agent",
+  "releaseStatus": "candidate"
+}

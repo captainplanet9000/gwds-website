@@ -132,24 +132,24 @@ interface AdminIdentity {
 // Declared locally, matching the palette of src/app/admin/hosting/page.tsx. Every admin surface in
 // this repo carries its own style constants (see AdminAccessGate.tsx); there is no shared module
 // to reuse.
-const card: CSSProperties = { background: '#07100d', border: '1px solid #17352b', borderRadius: 12, padding: 20 };
-const input: CSSProperties = { width: '100%', background: '#030806', color: '#e5f7ef', border: '1px solid #21483b', borderRadius: 8, padding: '10px 12px' };
-const button: CSSProperties = { background: '#4ade9f', color: '#03110b', border: 0, borderRadius: 7, padding: '9px 12px', fontWeight: 800, cursor: 'pointer' };
-const secondary: CSSProperties = { ...button, background: '#10251e', color: '#a7f3d0', border: '1px solid #245443' };
-const dangerButton: CSSProperties = { ...button, background: '#2a0f12', color: '#fda4af', border: '1px solid #7f1d1d' };
+const card: CSSProperties = { background: 'var(--admin-surface)', border: '1px solid var(--admin-border)', borderRadius: 12, padding: 20 };
+const input: CSSProperties = { width: '100%', background: 'var(--admin-surface)', color: 'var(--admin-text)', border: '1px solid var(--admin-border)', borderRadius: 8, padding: '10px 12px' };
+const button: CSSProperties = { background: 'var(--admin-accent)', color: '#ffffff', border: 0, borderRadius: 7, padding: '9px 12px', fontWeight: 600, cursor: 'pointer' };
+const secondary: CSSProperties = { ...button, background: 'var(--admin-border)', color: 'var(--admin-success)', border: '1px solid var(--admin-border)' };
+const dangerButton: CSSProperties = { ...button, background: '#fff3f3', color: 'var(--admin-danger)', border: '1px solid #e8bdc0' };
 const mono: CSSProperties = { fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', fontSize: 12 };
-const th: CSSProperties = { textAlign: 'left', padding: 10, color: '#789488', fontSize: 11, whiteSpace: 'nowrap' };
+const th: CSSProperties = { textAlign: 'left', padding: 10, color: 'var(--admin-text-muted)', fontSize: 11, whiteSpace: 'nowrap' };
 const td: CSSProperties = { padding: 10, verticalAlign: 'top', fontSize: 13 };
 
 function Pill({ text, tone }: { text: string; tone: 'good' | 'bad' | 'warn' | 'neutral' }) {
   const palette = {
-    good: { background: '#0e3b2b', color: '#6ee7b7' },
-    bad: { background: '#441b22', color: '#fda4af' },
-    warn: { background: '#3a2f0c', color: '#fde68a' },
-    neutral: { background: '#25291f', color: '#d9d59b' },
+    good: { background: '#edf6f1', color: 'var(--admin-success)' },
+    bad: { background: '#e8bdc0', color: 'var(--admin-danger)' },
+    warn: { background: '#fff8eb', color: 'var(--admin-warning)' },
+    neutral: { background: 'var(--admin-surface-raised)', color: 'var(--admin-text-muted)' },
   }[tone];
   return (
-    <span style={{ display: 'inline-flex', padding: '4px 8px', borderRadius: 999, fontSize: 11, fontWeight: 800, ...palette }}>
+    <span style={{ display: 'inline-flex', padding: '4px 8px', borderRadius: 999, fontSize: 11, fontWeight: 600, ...palette }}>
       {text}
     </span>
   );
@@ -158,7 +158,7 @@ function Pill({ text, tone }: { text: string; tone: 'good' | 'bad' | 'warn' | 'n
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div>
-      <div style={{ color: '#789488', fontSize: 11, textTransform: 'uppercase', letterSpacing: '.08em' }}>{label}</div>
+      <div style={{ color: 'var(--admin-text-muted)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '.08em' }}>{label}</div>
       <div style={{ marginTop: 4, wordBreak: 'break-word' }}>{children}</div>
     </div>
   );
@@ -230,11 +230,11 @@ export function AsOf({ fetchedAt, staleAfterMs = 60_000 }: { fetchedAt: number |
     return () => clearInterval(timer);
   }, []);
 
-  if (!fetchedAt) return <span style={{ color: '#fda4af', fontSize: 12 }}>never loaded</span>;
+  if (!fetchedAt) return <span style={{ color: 'var(--admin-danger)', fontSize: 12 }}>never loaded</span>;
   const ageMs = now === null ? null : Math.max(0, now - fetchedAt);
   const stale = ageMs !== null && ageMs > staleAfterMs;
   return (
-    <span style={{ color: stale ? '#fda4af' : '#789488', fontSize: 12 }}>
+    <span style={{ color: stale ? 'var(--admin-danger)' : 'var(--admin-text-muted)', fontSize: 12 }}>
       as of {new Date(fetchedAt).toLocaleTimeString()}
       {ageMs !== null ? ` · ${Math.round(ageMs / 1000)}s ago` : ''}
       {stale ? ' · STALE — refresh before acting' : ''}
@@ -541,8 +541,8 @@ export default function HostingFleet({ fleet }: { fleet: FleetState }) {
       <section style={card}>
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 14, flexWrap: 'wrap', alignItems: 'baseline' }}>
           <div>
-            <h2 style={{ marginTop: 0, marginBottom: 4 }}>Fleet — real tenant processes</h2>
-            <p style={{ color: '#789488', margin: 0, fontSize: 13, maxWidth: 760, lineHeight: 1.5 }}>
+            <h2 style={{ marginTop: 0, marginBottom: 4 }}>Tenant workspaces</h2>
+            <p style={{ color: 'var(--admin-text-muted)', margin: 0, fontSize: 13, maxWidth: 760, lineHeight: 1.5 }}>
               <code>control.tenants</code> on the owner&apos;s host. This is not the service-record list below it: a
               service record is the billing and onboarding paperwork for a subscription, while these are the
               processes that hold ports, pids and wallets. Commands are queued into{' '}
@@ -557,7 +557,7 @@ export default function HostingFleet({ fleet }: { fleet: FleetState }) {
         </div>
 
         {fleet.error && (
-          <div style={{ ...card, borderColor: '#7f1d1d', color: '#fecaca', marginTop: 14 }}>
+          <div style={{ ...card, borderColor: '#e8bdc0', color: 'var(--admin-danger)', marginTop: 14 }}>
             Fleet: {fleet.error} — the rows below are the last successful read. Check the age above before acting.
           </div>
         )}
@@ -585,14 +585,14 @@ export default function HostingFleet({ fleet }: { fleet: FleetState }) {
                   key={row.id}
                   onClick={() => select(row.slug)}
                   style={{
-                    borderTop: '1px solid #17352b',
+                    borderTop: '1px solid var(--admin-border)',
                     cursor: 'pointer',
-                    background: row.slug === selectedSlug ? '#10251e' : 'transparent',
+                    background: row.slug === selectedSlug ? 'var(--admin-border)' : 'transparent',
                   }}
                 >
                   <td style={td}>
                     <strong>{row.slug}</strong>
-                    <div style={{ color: '#789488', fontSize: 12 }}>{row.displayName || '—'}</div>
+                    <div style={{ color: 'var(--admin-text-muted)', fontSize: 12 }}>{row.displayName || '—'}</div>
                   </td>
                   <td style={td}>
                     <Pill
@@ -608,14 +608,14 @@ export default function HostingFleet({ fleet }: { fleet: FleetState }) {
                       text={row.processState}
                       tone={row.processState === 'running' ? 'good' : row.processState === 'failed' ? 'bad' : 'neutral'}
                     />
-                    <div style={{ ...mono, color: '#789488', marginTop: 4 }}>pid {row.pid ?? '—'}</div>
+                    <div style={{ ...mono, color: 'var(--admin-text-muted)', marginTop: 4 }}>pid {row.pid ?? '—'}</div>
                   </td>
                   <td style={td}>
-                    {row.restartAttempts === null ? <span style={{ color: '#789488' }}>unknown</span> : row.restartAttempts}
+                    {row.restartAttempts === null ? <span style={{ color: 'var(--admin-text-muted)' }}>unknown</span> : row.restartAttempts}
                   </td>
                   <td style={td}>
                     {row.needsAttention === null ? (
-                      <span style={{ color: '#789488', fontSize: 12 }}>unknown</span>
+                      <span style={{ color: 'var(--admin-text-muted)', fontSize: 12 }}>unknown</span>
                     ) : row.needsAttention ? (
                       <Pill text="needs attention" tone="bad" />
                     ) : (
@@ -624,10 +624,10 @@ export default function HostingFleet({ fleet }: { fleet: FleetState }) {
                   </td>
                   <td style={td}>
                     {row.halt.active ? <Pill text="halted" tone="warn" /> : <Pill text="trading" tone="good" />}
-                    <div style={{ color: '#789488', fontSize: 11, marginTop: 4 }}>{row.halt.setBy || '—'}</div>
+                    <div style={{ color: 'var(--admin-text-muted)', fontSize: 11, marginTop: 4 }}>{row.halt.setBy || '—'}</div>
                   </td>
                   <td style={{ ...td, ...mono }}>{row.stateVersion ?? '—'}</td>
-                  <td style={{ ...td, ...mono, color: '#b6cbc2' }}>
+                  <td style={{ ...td, ...mono, color: 'var(--admin-text-muted)' }}>
                     <div title={row.mainWalletAddress || 'no main wallet'}>M {shortAddress(row.mainWalletAddress)}</div>
                     <div title={row.apiWalletAddress || 'no API wallet'}>A {shortAddress(row.apiWalletAddress)}</div>
                   </td>
@@ -636,8 +636,8 @@ export default function HostingFleet({ fleet }: { fleet: FleetState }) {
             </tbody>
           </table>
         </div>
-        {tenants !== null && tenants.length === 0 && <p style={{ color: '#789488' }}>No tenants in the control plane.</p>}
-        {tenants === null && !fleet.error && <p style={{ color: '#789488' }}>Loading fleet…</p>}
+        {tenants !== null && tenants.length === 0 && <p style={{ color: 'var(--admin-text-muted)' }}>No tenants in the control plane.</p>}
+        {tenants === null && !fleet.error && <p style={{ color: 'var(--admin-text-muted)' }}>Loading fleet…</p>}
       </section>
 
       {selected && (
@@ -650,20 +650,20 @@ export default function HostingFleet({ fleet }: { fleet: FleetState }) {
             </div>
           </div>
 
-          {detailError && <div style={{ ...card, borderColor: '#7f1d1d', color: '#fecaca', marginBottom: 14 }}>{detailError}</div>}
+          {detailError && <div style={{ ...card, borderColor: '#e8bdc0', color: 'var(--admin-danger)', marginBottom: 14 }}>{detailError}</div>}
 
           <div
             style={{
               ...card,
-              borderColor: selected.halt.active ? '#806b22' : '#245443',
-              background: selected.halt.active ? '#1c1808' : '#0a1a14',
+              borderColor: selected.halt.active ? '#e4d5b2' : 'var(--admin-border)',
+              background: selected.halt.active ? '#fff8eb' : 'var(--admin-surface)',
               marginBottom: 16,
             }}
           >
             {selected.halt.active ? (
               <>
-                <strong style={{ color: '#fde68a' }}>Trading is HALTED — no new position opens.</strong>
-                <div style={{ color: '#cbbf8c', marginTop: 7, lineHeight: 1.6 }}>
+                <strong style={{ color: 'var(--admin-warning)' }}>Trading is HALTED — no new position opens.</strong>
+                <div style={{ color: 'var(--admin-warning)', marginTop: 7, lineHeight: 1.6 }}>
                   Reason: {selected.halt.reason || <em>none recorded</em>}
                   <br />
                   Set by: <strong>{selected.halt.setBy || 'unknown'}</strong> at {stamp(selected.halt.setAt)}
@@ -673,8 +673,8 @@ export default function HostingFleet({ fleet }: { fleet: FleetState }) {
               </>
             ) : (
               <>
-                <strong style={{ color: '#6ee7b7' }}>Trading is ENABLED — this tenant may open new positions.</strong>
-                <div style={{ color: '#9bb3a9', marginTop: 7 }}>
+                <strong style={{ color: 'var(--admin-success)' }}>Trading is ENABLED — this tenant may open new positions.</strong>
+                <div style={{ color: 'var(--admin-text-muted)', marginTop: 7 }}>
                   Last halt change by {selected.halt.setBy || 'unknown'} at {stamp(selected.halt.setAt)} · state_version{' '}
                   {selected.stateVersion ?? '—'}
                 </div>
@@ -683,9 +683,9 @@ export default function HostingFleet({ fleet }: { fleet: FleetState }) {
           </div>
 
           {selected.needsAttention === true && (
-            <div style={{ ...card, borderColor: '#7f1d1d', background: '#2a0f12', marginBottom: 16 }}>
-              <strong style={{ color: '#fda4af' }}>The fleet reconciler has given up on this tenant.</strong>
-              <div style={{ color: '#f3b4bb', marginTop: 7, lineHeight: 1.6 }}>
+            <div style={{ ...card, borderColor: '#e8bdc0', background: '#fff3f3', marginBottom: 16 }}>
+              <strong style={{ color: 'var(--admin-danger)' }}>The fleet reconciler has given up on this tenant.</strong>
+              <div style={{ color: 'var(--admin-danger)', marginTop: 7, lineHeight: 1.6 }}>
                 {selected.needsAttentionReason || 'No reason recorded.'} — flagged {stamp(selected.needsAttentionAt)} after{' '}
                 {selected.restartAttempts ?? 0} restart attempt{selected.restartAttempts === 1 ? '' : 's'}. Nothing will
                 restart it on its own while this breaker is set, and clearing the breaker is{' '}
@@ -745,14 +745,14 @@ export default function HostingFleet({ fleet }: { fleet: FleetState }) {
           </div>
 
           {selected.lastError && (
-            <div style={{ ...card, borderColor: '#7f1d1d', color: '#fecaca', marginBottom: 16 }}>
+            <div style={{ ...card, borderColor: '#e8bdc0', color: 'var(--admin-danger)', marginBottom: 16 }}>
               Last runtime error: {selected.lastError}
             </div>
           )}
 
           {/* ── command console ─────────────────────────────────────────────────────────────── */}
           <h3 style={{ fontSize: 15, marginBottom: 4 }}>Commands</h3>
-          <p style={{ color: '#789488', fontSize: 12, margin: '0 0 12px', lineHeight: 1.6 }}>
+          <p style={{ color: 'var(--admin-text-muted)', fontSize: 12, margin: '0 0 12px', lineHeight: 1.6 }}>
             {admin ? (
               <>
                 Every command below is attributed to <strong>{admin.email}</strong> ({admin.role}) — the API takes the
@@ -764,7 +764,7 @@ export default function HostingFleet({ fleet }: { fleet: FleetState }) {
             )}
           </p>
           {admin && !canCommand && (
-            <p style={{ color: '#fde68a', fontSize: 13 }}>
+            <p style={{ color: 'var(--admin-warning)', fontSize: 13 }}>
               Your role ({admin.role}) can read the fleet but not command it. Commands require owner or operator.
             </p>
           )}
@@ -773,7 +773,7 @@ export default function HostingFleet({ fleet }: { fleet: FleetState }) {
             <div style={{ display: 'grid', gap: 12 }}>
               {(['process', 'lifecycle', 'trading'] as const).map((group) => (
                 <div key={group}>
-                  <div style={{ color: '#789488', fontSize: 11, textTransform: 'uppercase', letterSpacing: '.1em', marginBottom: 6 }}>
+                  <div style={{ color: 'var(--admin-text-muted)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '.1em', marginBottom: 6 }}>
                     {GROUP_LABELS[group]}
                   </div>
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -816,29 +816,29 @@ export default function HostingFleet({ fleet }: { fleet: FleetState }) {
             </div>
           )}
 
-          {commandResult && <div style={{ ...card, borderColor: '#245443', color: '#a7f3d0', marginTop: 14 }}>{commandResult}</div>}
-          {commandError && <div style={{ ...card, borderColor: '#7f1d1d', color: '#fecaca', marginTop: 14 }}>{commandError}</div>}
+          {commandResult && <div style={{ ...card, borderColor: 'var(--admin-border)', color: 'var(--admin-success)', marginTop: 14 }}>{commandResult}</div>}
+          {commandError && <div style={{ ...card, borderColor: '#e8bdc0', color: 'var(--admin-danger)', marginTop: 14 }}>{commandError}</div>}
 
           {spec && pending && (
             <div
               style={{
                 ...card,
                 marginTop: 16,
-                borderColor: spec.danger ? '#7f1d1d' : '#245443',
-                background: spec.danger ? '#2a0f12' : '#0a1a14',
+                borderColor: spec.danger ? '#e8bdc0' : 'var(--admin-border)',
+                background: spec.danger ? '#fff3f3' : 'var(--admin-surface)',
               }}
             >
-              <h3 style={{ marginTop: 0, color: spec.danger ? '#fda4af' : '#a7f3d0' }}>
+              <h3 style={{ marginTop: 0, color: spec.danger ? 'var(--admin-danger)' : 'var(--admin-success)' }}>
                 {spec.label} — {selected.slug}
               </h3>
-              <p style={{ color: '#cfe3da', lineHeight: 1.6, marginTop: 0 }}>{spec.effect}</p>
+              <p style={{ color: 'var(--admin-text)', lineHeight: 1.6, marginTop: 0 }}>{spec.effect}</p>
 
               {pending === 'unhalt' && (
                 // "Show what is about to resume": the identity, the money and the halt this
                 // clears, so the decision is never made from a button label alone.
-                <div style={{ ...card, borderColor: '#806b22', background: '#1c1808', marginBottom: 14 }}>
-                  <strong style={{ color: '#fde68a' }}>About to re-arm live trading for:</strong>
-                  <div style={{ color: '#cbbf8c', marginTop: 8, lineHeight: 1.7 }}>
+                <div style={{ ...card, borderColor: '#e4d5b2', background: '#fff8eb', marginBottom: 14 }}>
+                  <strong style={{ color: 'var(--admin-warning)' }}>About to re-arm live trading for:</strong>
+                  <div style={{ color: 'var(--admin-warning)', marginTop: 8, lineHeight: 1.7 }}>
                     {selected.slug} ({selected.displayName || 'no display name'}) · owner {selected.ownerEmail || 'unknown'}
                     <br />
                     status {selected.status} · process {selected.processState} · {selected.host || '—'}:{selected.port ?? '—'}
@@ -860,17 +860,17 @@ export default function HostingFleet({ fleet }: { fleet: FleetState }) {
 
               {pending === 'deprovision' && (
                 <div style={{ display: 'grid', gap: 12, marginBottom: 14 }}>
-                  <div style={{ ...card, borderColor: '#7f1d1d', background: '#20090c' }}>
-                    <strong style={{ color: '#fda4af' }}>This ends the customer&apos;s workspace:</strong>
-                    <ul style={{ color: '#f3b4bb', margin: '8px 0 0', paddingLeft: 18, lineHeight: 1.6 }}>
+                  <div style={{ ...card, borderColor: '#e8bdc0', background: '#fff3f3' }}>
+                    <strong style={{ color: 'var(--admin-danger)' }}>This ends the customer&apos;s workspace:</strong>
+                    <ul style={{ color: 'var(--admin-danger)', margin: '8px 0 0', paddingLeft: 18, lineHeight: 1.6 }}>
                       {DEPROVISION_ENDS.map((line) => (
                         <li key={line}>{line}</li>
                       ))}
                     </ul>
                   </div>
-                  <div style={{ ...card, borderColor: '#245443', background: '#0a1a14' }}>
-                    <strong style={{ color: '#a7f3d0' }}>Nothing is deleted. Retained:</strong>
-                    <ul style={{ color: '#9bb3a9', margin: '8px 0 0', paddingLeft: 18, lineHeight: 1.6 }}>
+                  <div style={{ ...card, borderColor: 'var(--admin-border)', background: 'var(--admin-surface)' }}>
+                    <strong style={{ color: 'var(--admin-success)' }}>Nothing is deleted. Retained:</strong>
+                    <ul style={{ color: 'var(--admin-text-muted)', margin: '8px 0 0', paddingLeft: 18, lineHeight: 1.6 }}>
                       {DEPROVISION_RETAINED.map((line) => (
                         <li key={line}>{line}</li>
                       ))}
@@ -880,7 +880,7 @@ export default function HostingFleet({ fleet }: { fleet: FleetState }) {
               )}
 
               {pending === 'provision' && tenantDetail && !tenantDetail.tenant.hasHostingSubscription && (
-                <div style={{ ...card, borderColor: '#806b22', background: '#1c1808', marginBottom: 14, color: '#cbbf8c', lineHeight: 1.6 }}>
+                <div style={{ ...card, borderColor: '#e4d5b2', background: '#fff8eb', marginBottom: 14, color: 'var(--admin-warning)', lineHeight: 1.6 }}>
                   This tenant has no linked subscription, so there is no customer-verified wallet address for the route
                   to attach. The host agent requires one and will fail the command rather than accept an address typed
                   by an operator — that refusal is the custody guard working, not something to route around from here.
@@ -888,7 +888,7 @@ export default function HostingFleet({ fleet }: { fleet: FleetState }) {
               )}
 
               {spec.reason !== 'none' && (
-                <label style={{ display: 'block', fontSize: 12, color: '#789488', marginBottom: 12 }}>
+                <label style={{ display: 'block', fontSize: 12, color: 'var(--admin-text-muted)', marginBottom: 12 }}>
                   Reason {spec.reason === 'required' ? '(required — it is written to the audit trail)' : '(optional)'}
                   <input
                     style={{ ...input, marginTop: 5 }}
@@ -900,7 +900,7 @@ export default function HostingFleet({ fleet }: { fleet: FleetState }) {
               )}
 
               {spec.allowsForce && (
-                <label style={{ display: 'flex', gap: 8, alignItems: 'flex-start', fontSize: 12, color: '#cbbf8c', marginBottom: 12 }}>
+                <label style={{ display: 'flex', gap: 8, alignItems: 'flex-start', fontSize: 12, color: 'var(--admin-warning)', marginBottom: 12 }}>
                   <input type="checkbox" checked={force} onChange={(event) => setForce(event.target.checked)} />
                   <span>
                     Force — stop the process even if a cycle is still in flight. That cycle is left unreconciled; use it
@@ -910,10 +910,10 @@ export default function HostingFleet({ fleet }: { fleet: FleetState }) {
               )}
 
               {spec.typedConfirm && (
-                <label style={{ display: 'block', fontSize: 12, color: '#789488', marginBottom: 12 }}>
+                <label style={{ display: 'block', fontSize: 12, color: 'var(--admin-text-muted)', marginBottom: 12 }}>
                   Type the tenant slug to confirm
                   <input
-                    style={{ ...input, marginTop: 5, borderColor: typed && !typedOk ? '#7f1d1d' : '#21483b' }}
+                    style={{ ...input, marginTop: 5, borderColor: typed && !typedOk ? '#e8bdc0' : 'var(--admin-border)' }}
                     value={typed}
                     onChange={(event) => setTyped(event.target.value)}
                     // No default value, no slug in the placeholder, no autofill: the point is that a
@@ -941,7 +941,7 @@ export default function HostingFleet({ fleet }: { fleet: FleetState }) {
                 <button style={secondary} disabled={busy} onClick={() => setPending(null)}>
                   Cancel
                 </button>
-                <span style={{ color: '#789488', fontSize: 12, display: 'inline-flex', gap: 6 }}>
+                <span style={{ color: 'var(--admin-text-muted)', fontSize: 12, display: 'inline-flex', gap: 6 }}>
                   Queued as {admin?.email || 'unknown actor'} · acting on state <AsOf fetchedAt={fetchedAt} />
                 </span>
               </div>
@@ -961,7 +961,7 @@ export default function HostingFleet({ fleet }: { fleet: FleetState }) {
               </thead>
               <tbody>
                 {(tenantDetail?.commands || []).map((row) => (
-                  <tr key={row.id} style={{ borderTop: '1px solid #17352b' }}>
+                  <tr key={row.id} style={{ borderTop: '1px solid var(--admin-border)' }}>
                     <td style={td}>
                       <strong>{row.command}</strong>
                     </td>
@@ -971,28 +971,28 @@ export default function HostingFleet({ fleet }: { fleet: FleetState }) {
                       <Pill text={row.status} tone={row.status === 'done' ? 'good' : row.status === 'failed' ? 'bad' : 'neutral'} />
                     </td>
                     <td style={td}>{stamp(row.finished_at)}</td>
-                    <td style={{ ...td, color: '#fda4af' }}>{row.error || ''}</td>
+                    <td style={{ ...td, color: 'var(--admin-danger)' }}>{row.error || ''}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          {tenantDetail && tenantDetail.commands.length === 0 && <p style={{ color: '#789488' }}>No commands have been queued for this tenant.</p>}
+          {tenantDetail && tenantDetail.commands.length === 0 && <p style={{ color: 'var(--admin-text-muted)' }}>No commands have been queued for this tenant.</p>}
 
           <h3 style={{ fontSize: 15, marginTop: 22 }}>Recent events</h3>
           {(tenantDetail?.events || []).slice(0, 15).map((event) => (
             <div
               key={event.id}
-              style={{ borderTop: '1px solid #17352b', padding: '9px 0', fontSize: 12, display: 'grid', gridTemplateColumns: '170px 150px 1fr', gap: 12 }}
+              style={{ borderTop: '1px solid var(--admin-border)', padding: '9px 0', fontSize: 12, display: 'grid', gridTemplateColumns: '170px 150px 1fr', gap: 12 }}
             >
-              <span style={{ color: '#789488' }}>{stamp(event.at)}</span>
+              <span style={{ color: 'var(--admin-text-muted)' }}>{stamp(event.at)}</span>
               <strong>{event.kind}</strong>
-              <span style={{ color: '#b6cbc2' }}>
+              <span style={{ color: 'var(--admin-text-muted)' }}>
                 {event.actor || '—'} {event.reason ? `· ${event.reason}` : ''}
               </span>
             </div>
           ))}
-          {tenantDetail && tenantDetail.events.length === 0 && <p style={{ color: '#789488' }}>No events recorded.</p>}
+          {tenantDetail && tenantDetail.events.length === 0 && <p style={{ color: 'var(--admin-text-muted)' }}>No events recorded.</p>}
         </section>
       )}
     </div>

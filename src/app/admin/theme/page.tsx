@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import ThemePicker, { ThemeInspector } from '@/components/ThemePicker'
+
 
 // NOTE: no `export const metadata` here. This page became a Client Component when it was wired to
 // /api/admin/settings, and Next.js forbids exporting metadata from a client component (it must be
@@ -86,48 +86,48 @@ export default function ThemeAdminPage() {
   };
 
   return (
-    <main
+    <div
       style={{
-        minHeight: '100vh',
-        padding: '5vw',
-        background: 'var(--gwds-color-bg)',
-        color: 'var(--gwds-color-text)',
-        fontFamily: 'var(--gwds-font-body)',
+        minHeight: 'auto',
+        padding: 0,
+        background: 'var(--admin-bg)',
+        color: 'var(--admin-text)',
+        fontFamily: 'var(--font-body)',
       }}
     >
       <header style={{ marginBottom: '3rem' }}>
-        <h1 style={{ fontFamily: 'var(--gwds-font-display)', fontSize: '3rem', letterSpacing: '-0.03em' }}>
-          Theme & Storefront Settings
+        <h1 style={{ fontFamily: 'var(--font-body)', fontSize: '3rem', letterSpacing: '-0.03em' }}>
+          Storefront settings
         </h1>
-        <p style={{ color: 'var(--gwds-color-text-secondary)', marginTop: '0.5rem', maxWidth: 640 }}>
+        <p style={{ color: 'var(--admin-text-muted)', marginTop: '0.5rem', maxWidth: 640 }}>
           Configure theme, banners, announcements, and maintenance settings. Theme changes are reflected live across the storefront.
         </p>
       </header>
 
       {/* Settings Panel */}
       {loading ? (
-        <div style={{ padding: '2rem', color: 'var(--gwds-color-text-secondary)' }}>Loading settings...</div>
+        <div style={{ padding: '24px', color: 'var(--admin-text-muted)' }}>Loading settings...</div>
       ) : (
         <section style={{ marginBottom: '3rem', maxWidth: 640 }}>
           <form onSubmit={handleSave} style={{
-            background: 'var(--gwds-color-card)',
-            border: '1px solid var(--gwds-color-border)',
+            background: 'var(--admin-surface)',
+            border: '1px solid var(--admin-border)',
             borderRadius: 'var(--gwds-radius-md)',
-            padding: '2rem',
-            boxShadow: 'var(--gwds-shadow-md)',
+            padding: '24px',
+            boxShadow: 'var(--admin-shadow)',
           }}>
             <h2 style={{
-              fontFamily: 'var(--gwds-font-display)',
+              fontFamily: 'var(--font-body)',
               fontSize: '1.5rem',
               marginBottom: '1.5rem',
               letterSpacing: '-0.03em',
             }}>
-              Storefront Configuration
+              Appearance and announcements
             </h2>
 
             {error && (
               <div style={{
-                background: 'var(--admin-danger)20',
+                background: 'color-mix(in srgb, var(--admin-danger) 13%, transparent)',
                 border: '1px solid var(--admin-danger)',
                 color: 'var(--admin-danger)',
                 padding: '0.75rem 1rem',
@@ -141,7 +141,7 @@ export default function ThemeAdminPage() {
 
             {success && (
               <div style={{
-                background: 'var(--admin-success)20',
+                background: 'color-mix(in srgb, var(--admin-success) 13%, transparent)',
                 border: '1px solid var(--admin-success)',
                 color: 'var(--admin-success)',
                 padding: '0.75rem 1rem',
@@ -159,7 +159,7 @@ export default function ThemeAdminPage() {
                 display: 'block',
                 fontWeight: 'var(--gwds-font-w-semibold)',
                 marginBottom: '0.5rem',
-                color: 'var(--gwds-color-text)',
+                color: 'var(--admin-text)',
               }}>
                 Active Theme
               </label>
@@ -169,10 +169,10 @@ export default function ThemeAdminPage() {
                 style={{
                   width: '100%',
                   padding: '0.75rem 1rem',
-                  fontFamily: 'var(--gwds-font-body)',
-                  color: 'var(--gwds-color-text)',
-                  background: 'var(--gwds-color-bg)',
-                  border: '1px solid var(--gwds-color-border)',
+                  fontFamily: 'var(--font-body)',
+                  color: 'var(--admin-text)',
+                  background: 'var(--admin-bg)',
+                  border: '1px solid var(--admin-border)',
                   borderRadius: 'var(--gwds-radius-sm)',
                   fontSize: 'var(--gwds-text-sm)',
                 }}
@@ -181,7 +181,7 @@ export default function ThemeAdminPage() {
                 <option value="dark">Dark</option>
                 <option value="light">Light</option>
               </select>
-              <p style={{ fontSize: 'var(--gwds-text-xs)', color: 'var(--gwds-color-text-muted)', marginTop: '0.25rem' }}>
+              <p style={{ fontSize: 'var(--gwds-text-xs)', color: 'var(--admin-text-muted)', marginTop: '0.25rem' }}>
                 Choose the default theme for storefront visitors
               </p>
             </div>
@@ -192,7 +192,7 @@ export default function ThemeAdminPage() {
                 display: 'block',
                 fontWeight: 'var(--gwds-font-w-semibold)',
                 marginBottom: '0.5rem',
-                color: 'var(--gwds-color-text)',
+                color: 'var(--admin-text)',
               }}>
                 Banner Text
               </label>
@@ -204,16 +204,16 @@ export default function ThemeAdminPage() {
                 style={{
                   width: '100%',
                   padding: '0.75rem 1rem',
-                  fontFamily: 'var(--gwds-font-body)',
-                  color: 'var(--gwds-color-text)',
-                  background: 'var(--gwds-color-bg)',
-                  border: '1px solid var(--gwds-color-border)',
+                  fontFamily: 'var(--font-body)',
+                  color: 'var(--admin-text)',
+                  background: 'var(--admin-bg)',
+                  border: '1px solid var(--admin-border)',
                   borderRadius: 'var(--gwds-radius-sm)',
                   fontSize: 'var(--gwds-text-sm)',
                   boxSizing: 'border-box',
                 }}
               />
-              <p style={{ fontSize: 'var(--gwds-text-xs)', color: 'var(--gwds-color-text-muted)', marginTop: '0.25rem' }}>
+              <p style={{ fontSize: 'var(--gwds-text-xs)', color: 'var(--admin-text-muted)', marginTop: '0.25rem' }}>
                 Prominent banner at top of storefront (leave empty to hide)
               </p>
             </div>
@@ -224,7 +224,7 @@ export default function ThemeAdminPage() {
                 display: 'block',
                 fontWeight: 'var(--gwds-font-w-semibold)',
                 marginBottom: '0.5rem',
-                color: 'var(--gwds-color-text)',
+                color: 'var(--admin-text)',
               }}>
                 Announcement Bar
               </label>
@@ -235,10 +235,10 @@ export default function ThemeAdminPage() {
                 style={{
                   width: '100%',
                   padding: '0.75rem 1rem',
-                  fontFamily: 'var(--gwds-font-body)',
-                  color: 'var(--gwds-color-text)',
-                  background: 'var(--gwds-color-bg)',
-                  border: '1px solid var(--gwds-color-border)',
+                  fontFamily: 'var(--font-body)',
+                  color: 'var(--admin-text)',
+                  background: 'var(--admin-bg)',
+                  border: '1px solid var(--admin-border)',
                   borderRadius: 'var(--gwds-radius-sm)',
                   fontSize: 'var(--gwds-text-sm)',
                   minHeight: '60px',
@@ -246,7 +246,7 @@ export default function ThemeAdminPage() {
                   boxSizing: 'border-box',
                 }}
               />
-              <p style={{ fontSize: 'var(--gwds-text-xs)', color: 'var(--gwds-color-text-muted)', marginTop: '0.25rem' }}>
+              <p style={{ fontSize: 'var(--gwds-text-xs)', color: 'var(--admin-text-muted)', marginTop: '0.25rem' }}>
                 Secondary announcement area (leave empty to hide)
               </p>
             </div>
@@ -257,7 +257,7 @@ export default function ThemeAdminPage() {
                 display: 'block',
                 fontWeight: 'var(--gwds-font-w-semibold)',
                 marginBottom: '0.5rem',
-                color: 'var(--gwds-color-text)',
+                color: 'var(--admin-text)',
               }}>
                 Maintenance Pause Message
               </label>
@@ -268,10 +268,10 @@ export default function ThemeAdminPage() {
                 style={{
                   width: '100%',
                   padding: '0.75rem 1rem',
-                  fontFamily: 'var(--gwds-font-body)',
-                  color: 'var(--gwds-color-text)',
-                  background: 'var(--gwds-color-bg)',
-                  border: '1px solid var(--gwds-color-border)',
+                  fontFamily: 'var(--font-body)',
+                  color: 'var(--admin-text)',
+                  background: 'var(--admin-bg)',
+                  border: '1px solid var(--admin-border)',
                   borderRadius: 'var(--gwds-radius-sm)',
                   fontSize: 'var(--gwds-text-sm)',
                   minHeight: '60px',
@@ -279,15 +279,15 @@ export default function ThemeAdminPage() {
                   boxSizing: 'border-box',
                 }}
               />
-              <p style={{ fontSize: 'var(--gwds-text-xs)', color: 'var(--gwds-color-text-muted)', marginTop: '0.25rem' }}>
+              <p style={{ fontSize: 'var(--gwds-text-xs)', color: 'var(--admin-text-muted)', marginTop: '0.25rem' }}>
                 Shown when store sales are paused (leave empty for default message)
               </p>
             </div>
 
             {/* Sales Enabled Status */}
             <div style={{
-              background: 'var(--gwds-color-bg)',
-              border: '1px solid var(--gwds-color-border)',
+              background: 'var(--admin-bg)',
+              border: '1px solid var(--admin-border)',
               borderRadius: 'var(--gwds-radius-sm)',
               padding: '0.75rem 1rem',
               marginBottom: '1.5rem',
@@ -301,20 +301,20 @@ export default function ThemeAdminPage() {
                 <div>
                   <div style={{
                     fontWeight: 'var(--gwds-font-w-semibold)',
-                    color: 'var(--gwds-color-text)',
+                    color: 'var(--admin-text)',
                     marginBottom: '0.25rem',
                   }}>
                     Store Sales Status
                   </div>
-                  <p style={{ fontSize: 'var(--gwds-text-xs)', color: 'var(--gwds-color-text-muted)' }}>
-                    Controlled by server environment variable (read-only)
+                  <p style={{ fontSize: 'var(--gwds-text-xs)', color: 'var(--admin-text-muted)' }}>
+                    Effective source-sales status, including release-readiness restrictions (read-only)
                   </p>
                 </div>
                 <div style={{
                   display: 'inline-block',
-                  background: settings?.sales_enabled ? 'var(--admin-success)20' : '#F5A62320',
-                  border: `1px solid ${settings?.sales_enabled ? 'var(--admin-success)' : '#F5A623'}`,
-                  color: settings?.sales_enabled ? 'var(--admin-success)' : '#F5A623',
+                  background: settings?.sales_enabled ? 'color-mix(in srgb, var(--admin-success) 13%, transparent)' : '#fff8eb',
+                  border: `1px solid ${settings?.sales_enabled ? 'var(--admin-success)' : 'var(--admin-warning)'}`,
+                  color: settings?.sales_enabled ? 'var(--admin-success)' : 'var(--admin-warning)',
                   padding: '0.5rem 0.75rem',
                   borderRadius: 'var(--gwds-radius-sm)',
                   fontSize: 'var(--gwds-text-sm)',
@@ -332,11 +332,11 @@ export default function ThemeAdminPage() {
               style={{
                 width: '100%',
                 padding: '0.75rem 1.5rem',
-                fontFamily: 'var(--gwds-font-display)',
+                fontFamily: 'var(--font-body)',
                 fontWeight: 'var(--gwds-font-w-semibold)',
-                color: saving ? 'var(--gwds-color-text-muted)' : 'var(--gwds-color-text-inverse)',
-                background: saving ? 'var(--gwds-color-muted)' : 'var(--gwds-color-accent)',
-                border: `1px solid ${saving ? 'var(--gwds-color-border)' : 'var(--gwds-color-accent)'}`,
+                color: saving ? 'var(--admin-text-muted)' : 'var(--admin-button-text)',
+                background: saving ? 'var(--admin-surface-raised)' : 'var(--admin-accent)',
+                border: `1px solid ${saving ? 'var(--admin-border)' : 'var(--admin-accent)'}`,
                 borderRadius: 'var(--gwds-radius-sm)',
                 cursor: saving ? 'not-allowed' : 'pointer',
                 fontSize: 'var(--gwds-text-base)',
@@ -348,7 +348,7 @@ export default function ThemeAdminPage() {
             {settings?.updated_at && (
               <p style={{
                 fontSize: 'var(--gwds-text-xs)',
-                color: 'var(--gwds-color-text-muted)',
+                color: 'var(--admin-text-muted)',
                 marginTop: '1rem',
                 textAlign: 'center',
               }}>
@@ -359,164 +359,11 @@ export default function ThemeAdminPage() {
         </section>
       )}
 
-      {/* Theme Preview Section */}
-      <section style={{ marginBottom: '3rem' }}>
-        <h2 style={{
-          fontFamily: 'var(--gwds-font-display)',
-          fontSize: '2rem',
-          marginBottom: '1rem',
-          letterSpacing: '-0.03em',
-        }}>
-          Theme Preview
-        </h2>
-        <ThemePicker />
+      <section>
+        <h2>Review your storefront</h2>
+        <p style={{ color: 'var(--admin-text-muted)', marginBottom: 12 }}>After saving, open the storefront to check the appearance and announcements customers will see.</p>
+        <a href="/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--admin-accent)' }}>Open storefront ↗</a>
       </section>
-
-      <section
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-          gap: '1.5rem',
-          marginBottom: '4rem',
-        }}
-      >
-        {[
-          { label: 'bg', var: 'gwds-color-bg' },
-          { label: 'bg elevated', var: 'gwds-color-bg-elevated' },
-          { label: 'card', var: 'gwds-color-card' },
-          { label: 'muted', var: 'gwds-color-muted' },
-          { label: 'accent', var: 'gwds-color-accent' },
-          { label: 'accent warm', var: 'gwds-color-accent-warm' },
-          { label: 'text', var: 'gwds-color-text' },
-          { label: 'text secondary', var: 'gwds-color-text-secondary' },
-          { label: 'text muted', var: 'gwds-color-text-muted' },
-          { label: 'border', var: 'gwds-color-border' },
-        ].map((s) => (
-          <div
-            key={s.var}
-            style={{
-              border: '1px solid var(--gwds-color-border)',
-              borderRadius: 'var(--gwds-radius-md)',
-              overflow: 'hidden',
-              background: 'var(--gwds-color-card)',
-            }}
-          >
-            <div style={{ height: 96, background: `var(--${s.var})` }} />
-            <div style={{ padding: '0.75rem 1rem' }}>
-              <div style={{ fontFamily: 'var(--gwds-font-mono)', fontSize: 'var(--gwds-text-sm)' }}>
-                {s.label}
-              </div>
-              <div
-                style={{
-                  fontFamily: 'var(--gwds-font-mono)',
-                  fontSize: 'var(--gwds-text-xs)',
-                  color: 'var(--gwds-color-text-muted)',
-                }}
-              >
-                --{s.var}
-              </div>
-            </div>
-          </div>
-        ))}
-      </section>
-
-      <section style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '3rem', alignItems: 'start' }}>
-        <div>
-          <h2
-            style={{
-              fontFamily: 'var(--gwds-font-display)',
-              fontSize: '2rem',
-              marginBottom: '1rem',
-              letterSpacing: '-0.03em',
-            }}
-          >
-            Component samples
-          </h2>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '2rem' }}>
-            <button
-              style={{
-                padding: '0.75rem 1.5rem',
-                fontFamily: 'var(--gwds-font-display)',
-                fontWeight: 'var(--gwds-font-w-semibold)',
-                color: 'var(--gwds-color-text-inverse)',
-                background: 'var(--gwds-color-accent)',
-                border: '1px solid var(--gwds-color-accent)',
-                borderRadius: 'var(--gwds-radius-sm)',
-                cursor: 'pointer',
-              }}
-            >
-              Primary button
-            </button>
-            <button
-              style={{
-                padding: '0.75rem 1.5rem',
-                fontFamily: 'var(--gwds-font-display)',
-                fontWeight: 'var(--gwds-font-w-semibold)',
-                color: 'var(--gwds-color-text)',
-                background: 'transparent',
-                border: '1px solid var(--gwds-color-border)',
-                borderRadius: 'var(--gwds-radius-sm)',
-                cursor: 'pointer',
-              }}
-            >
-              Secondary button
-            </button>
-            <input
-              placeholder="Email"
-              style={{
-                padding: '0.75rem 1rem',
-                fontFamily: 'var(--gwds-font-body)',
-                color: 'var(--gwds-color-text)',
-                background: 'var(--gwds-color-card)',
-                border: '1px solid var(--gwds-color-border)',
-                borderRadius: 'var(--gwds-radius-sm)',
-                minWidth: 240,
-              }}
-            />
-          </div>
-
-          <article
-            style={{
-              padding: '1.5rem',
-              background: 'var(--gwds-color-card)',
-              border: '1px solid var(--gwds-color-border)',
-              borderRadius: 'var(--gwds-radius-md)',
-              boxShadow: 'var(--gwds-shadow-md)',
-              maxWidth: 520,
-              marginBottom: '2rem',
-            }}
-          >
-            <h3 style={{ fontFamily: 'var(--gwds-font-display)', marginBottom: '0.5rem' }}>Card title</h3>
-            <p style={{ color: 'var(--gwds-color-text-secondary)', lineHeight: 'var(--gwds-leading-relaxed)' }}>
-              Typography, surface, and border all respond to the active theme. Swap themes above and watch
-              this panel re-skin in real time — no bundler involved.
-            </p>
-          </article>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '0.75rem', maxWidth: 720 }}>
-            <h1 style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', lineHeight: 1.05 }}>The quick brown fox</h1>
-            <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', lineHeight: 1.1 }}>jumps over the lazy dog</h2>
-            <p style={{ color: 'var(--gwds-color-text-secondary)', fontSize: 'var(--gwds-text-lg)' }}>
-              Body copy in DM Sans — kept stable at 16–20px for legibility while display type scales with the
-              viewport.
-            </p>
-          </div>
-        </div>
-
-        <aside>
-          <h2
-            style={{
-              fontFamily: 'var(--gwds-font-display)',
-              fontSize: '1.5rem',
-              marginBottom: '1rem',
-              letterSpacing: '-0.03em',
-            }}
-          >
-            Resolved tokens
-          </h2>
-          <ThemeInspector />
-        </aside>
-      </section>
-    </main>
-  )
+    </div>
+  );
 }

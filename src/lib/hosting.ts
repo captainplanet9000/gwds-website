@@ -1,7 +1,22 @@
 import type Stripe from 'stripe';
 import { CommerceError } from '@/lib/commerce';
 
-export const HOSTING_SERVICE_TERMS_VERSION = '2026-08-20';
+export const HOSTING_SERVICE_TERMS_VERSION = '2026-09-19';
+export const SOLO_TRIAL_DAYS = 7;
+
+export function hostingTrialDays(planId: string, hasPreviousSubscription: boolean): number {
+  return planId === 'solo' && !hasPreviousSubscription ? SOLO_TRIAL_DAYS : 0;
+}
+
+export function hostingSubscriptionOptions(metadata: Record<string, string>, trialDays: number): Stripe.Checkout.SessionCreateParams.SubscriptionData {
+  return {
+    metadata,
+    ...(trialDays > 0 ? {
+      trial_period_days: trialDays,
+      trial_settings: { end_behavior: { missing_payment_method: 'cancel' as const } },
+    } : {}),
+  };
+}
 
 // HOSTING_PLAN_COPY used to live here: a hardcoded second copy of the four plans' names, prices,
 // descriptions and features. Removed rather than corrected. Nothing rendered it (only a test read
@@ -76,5 +91,6 @@ export function publicHostingConfig() {
   return {
     salesEnabled: hostingSalesEnabled(),
     serviceTermsVersion: HOSTING_SERVICE_TERMS_VERSION,
+    soloTrialDays: SOLO_TRIAL_DAYS,
   };
 }

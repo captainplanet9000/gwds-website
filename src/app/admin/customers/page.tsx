@@ -10,15 +10,15 @@ export default function AdminCustomers() {
   useEffect(() => {
     fetch('/api/admin/customers')
       .then(r => r.json())
-      .then(d => { 
-        setCustomers(d.customers || []); 
-        setLoading(false); 
+      .then(d => {
+        setCustomers(d.customers || []);
+        setLoading(false);
       })
       .catch(() => setLoading(false));
   }, []);
 
-  const filteredCustomers = customers.filter(c => 
-    search === '' || 
+  const filteredCustomers = customers.filter(c =>
+    search === '' ||
     c.email?.toLowerCase().includes(search.toLowerCase()) ||
     c.name?.toLowerCase().includes(search.toLowerCase())
   );
@@ -38,10 +38,10 @@ export default function AdminCustomers() {
   return (
     <>
       <div style={{ marginBottom: 32 }}>
-        <h1 style={{ 
-          fontFamily: 'var(--font-display)', 
-          fontSize: '2rem', 
-          fontWeight: 800, 
+        <h1 style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: '2rem',
+          fontWeight: 600,
           marginBottom: 8,
           letterSpacing: '-0.03em',
           color: 'var(--admin-text)'
@@ -73,14 +73,14 @@ export default function AdminCustomers() {
               right: 0,
               width: 80,
               height: 80,
-              background: `radial-gradient(circle at top right, ${s.color}15, transparent)`
+              background: 'transparent'
             }}></div>
             <div style={{ position: 'relative' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
                 <p style={{ fontSize: '0.72rem', color: 'var(--admin-text-dim)', letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 600 }}>{s.label}</p>
-                <span style={{ fontSize: '1.3rem', opacity: 0.5 }}>{s.icon}</span>
+
               </div>
-              <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 800, color: s.color, letterSpacing: '-0.02em' }}>{s.value}</p>
+              <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 600, color: 'var(--admin-text)', letterSpacing: '-0.02em' }}>{s.value}</p>
             </div>
           </div>
         ))}
@@ -133,7 +133,7 @@ export default function AdminCustomers() {
                 padding: '10px 18px',
                 borderRadius: 8,
                 border: sortBy === s.key ? '1px solid var(--admin-accent)' : '1px solid var(--admin-border)',
-                background: sortBy === s.key ? 'var(--admin-accent)10' : 'transparent',
+                background: sortBy === s.key ? 'color-mix(in srgb, var(--admin-accent) 6%, transparent)' : 'transparent',
                 color: sortBy === s.key ? 'var(--admin-accent)' : 'var(--admin-text-muted)',
                 fontSize: '0.8rem',
                 fontWeight: 600,
@@ -169,10 +169,10 @@ export default function AdminCustomers() {
         {loading ? (
           <div style={{ padding: 40, textAlign: 'center' }}>
             <div style={{ display: 'inline-flex', gap: 12, alignItems: 'center' }}>
-              <div style={{ 
-                width: 24, 
-                height: 24, 
-                border: '3px solid var(--admin-border)', 
+              <div style={{
+                width: 24,
+                height: 24,
+                border: '3px solid var(--admin-border)',
                 borderTopColor: 'var(--admin-accent)',
                 borderRadius: '50%',
                 animation: 'spin 0.8s linear infinite'
@@ -184,7 +184,7 @@ export default function AdminCustomers() {
           <div style={{ padding: 60, textAlign: 'center', color: 'var(--admin-text-dim)' }}>
             <div style={{ fontSize: '3rem', marginBottom: 16, opacity: 0.3 }}>👥</div>
             <p style={{ fontSize: '1rem', marginBottom: 8 }}>No customers found</p>
-            <p style={{ fontSize: '0.85rem', color: '#444' }}>
+            <p style={{ fontSize: '0.85rem', color: 'var(--admin-text-muted)' }}>
               {search ? 'Try a different search term' : 'Your first customer will appear here'}
             </p>
           </div>
@@ -194,13 +194,13 @@ export default function AdminCustomers() {
               <thead>
                 <tr style={{ borderBottom: '1px solid var(--admin-border)', background: 'var(--admin-surface)' }}>
                   {['Customer', 'Orders', 'Total Spent', 'Avg Order', 'Last Order'].map(h => (
-                    <th key={h} style={{ 
-                      padding: '16px', 
-                      textAlign: 'left', 
-                      fontSize: '0.7rem', 
-                      color: 'var(--admin-text-dim)', 
-                      fontWeight: 600, 
-                      letterSpacing: '0.1em', 
+                    <th key={h} style={{
+                      padding: '16px',
+                      textAlign: 'left',
+                      fontSize: '0.7rem',
+                      color: 'var(--admin-text-dim)',
+                      fontWeight: 600,
+                      letterSpacing: '0.1em',
                       textTransform: 'uppercase',
                       position: 'sticky',
                       top: 0,
@@ -213,15 +213,15 @@ export default function AdminCustomers() {
                 {sortedCustomers.map((c: any) => {
                   const avgOrder = c.order_count > 0 ? Number(c.total_spent) / c.order_count : 0;
                   const isVIP = Number(c.total_spent) >= 500;
-                  
+
                   return (
-                    <tr 
-                      key={c.id} 
-                      style={{ 
+                    <tr
+                      key={c.id}
+                      style={{
                         borderBottom: '1px solid var(--admin-surface-raised)',
                         transition: 'background 0.15s ease'
                       }}
-                      onMouseEnter={e => e.currentTarget.style.background = '#0d0d0d'}
+                      onMouseEnter={e => e.currentTarget.style.background = 'var(--admin-surface)'}
                       onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                     >
                       <td style={{ padding: '16px' }}>
@@ -230,7 +230,7 @@ export default function AdminCustomers() {
                             width: 40,
                             height: 40,
                             borderRadius: '50%',
-                            background: 'linear-gradient(135deg, var(--admin-accent), var(--admin-accent))',
+                            background: 'var(--admin-accent)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -241,9 +241,9 @@ export default function AdminCustomers() {
                             {(c.name || c.email || '?')[0].toUpperCase()}
                           </div>
                           <div>
-                            <div style={{ 
-                              fontSize: '0.88rem', 
-                              color: 'var(--admin-text)', 
+                            <div style={{
+                              fontSize: '0.88rem',
+                              color: 'var(--admin-text)',
                               fontWeight: 500,
                               marginBottom: 2,
                               display: 'flex',
@@ -256,7 +256,7 @@ export default function AdminCustomers() {
                                   fontSize: '0.65rem',
                                   padding: '2px 6px',
                                   borderRadius: 4,
-                                  background: 'linear-gradient(135deg, var(--admin-warning), var(--admin-danger))',
+                                  background: 'var(--admin-accent)',
                                   color: '#fff',
                                   fontWeight: 700,
                                   letterSpacing: '0.05em'
@@ -272,9 +272,9 @@ export default function AdminCustomers() {
                         </div>
                       </td>
                       <td style={{ padding: '16px' }}>
-                        <span style={{ 
-                          fontSize: '0.9rem', 
-                          fontWeight: 700, 
+                        <span style={{
+                          fontSize: '0.9rem',
+                          fontWeight: 700,
                           color: 'var(--admin-accent)',
                           fontFamily: 'var(--font-display)'
                         }}>
@@ -282,9 +282,9 @@ export default function AdminCustomers() {
                         </span>
                       </td>
                       <td style={{ padding: '16px' }}>
-                        <span style={{ 
-                          fontSize: '0.95rem', 
-                          fontWeight: 700, 
+                        <span style={{
+                          fontSize: '0.95rem',
+                          fontWeight: 700,
                           color: 'var(--admin-success)',
                           fontFamily: 'var(--font-display)'
                         }}>
@@ -297,8 +297,8 @@ export default function AdminCustomers() {
                         </span>
                       </td>
                       <td style={{ padding: '16px', fontSize: '0.82rem', color: 'var(--admin-text-dim)' }}>
-                        {c.last_order_at ? new Date(c.last_order_at).toLocaleDateString('en-US', { 
-                          month: 'short', 
+                        {c.last_order_at ? new Date(c.last_order_at).toLocaleDateString('en-US', {
+                          month: 'short',
                           day: 'numeric',
                           year: 'numeric'
                         }) : '—'}
