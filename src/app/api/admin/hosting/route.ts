@@ -73,7 +73,7 @@ export async function GET(req: NextRequest) {
       activeSubscriptions: rows.filter((item) => ['active', 'trialing'].includes(item.status)).length,
       recurringRevenueCents: rows.filter((item) => item.status === 'active' && item.livemode === true).reduce((sum, item) => sum + item.price_cents, 0),
       activeInstances: instanceRows.filter((item) => item.status === 'active').length,
-      unhealthyInstances: instanceRows.filter((item) => ['degraded', 'unreachable'].includes(item.health_status)).length,
+      unhealthyInstances: instanceRows.filter((item) => item.status === 'active' && ['degraded', 'unreachable'].includes(item.health_status)).length,
       onboardingQueue: (onboarding.data || []).filter((item) => ['customer_input', 'operator_review', 'approved', 'blocked'].includes(item.status)).length,
       openTasks: taskRows.filter((item) => ['queued', 'in_progress', 'blocked', 'failed'].includes(item.status)).length,
       openIncidents: (incidents.data || []).filter((item) => item.status !== 'resolved').length,

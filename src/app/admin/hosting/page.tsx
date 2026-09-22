@@ -479,7 +479,7 @@ export default function HostingOperationsPage() {
               // disabled behind HOSTING_AUTOMATION_ENABLED; a real tenant running on the box has
               // never been counted here and never should be.
               ["Active service records", data.stats.activeInstances],
-              ["Unhealthy service records", data.stats.unhealthyInstances],
+              ["Unhealthy active service records", data.stats.unhealthyInstances],
               ["Onboarding queue", data.stats.onboardingQueue],
               ["Open tasks", data.stats.openTasks],
               ["Open incidents", data.stats.openIncidents],
@@ -566,7 +566,7 @@ export default function HostingOperationsPage() {
                   data.plans.some((p) => p.launch_ready) ? "passed" : "blocked",
                 ],
                 [
-                  "No unhealthy service records",
+                  "No unhealthy active service records",
                   data.stats.unhealthyInstances === 0 ? "passed" : "blocked",
                 ],
                 [
