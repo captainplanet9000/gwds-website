@@ -7,7 +7,7 @@ import Footer from '@/components/Footer';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   useConnect, useConnectors, useConnection, useDisconnect, useSignMessage, useSignTypedData,
-  useSwitchChain, useChainId,
+  useSwitchChain,
 } from 'wagmi';
 import { walletConnectAvailable } from '@/lib/wagmi-config';
 import { buildApproveAgentRequest } from '@/lib/hyperliquid-agent';
@@ -113,7 +113,6 @@ function WalletConnectPanel({
   const { mutateAsync: connectAsync, isPending: connecting, error: connectError } = useConnect();
   const { disconnect } = useDisconnect();
   const account = useConnection();
-  const chainId = useChainId();
   const { mutateAsync: switchChainAsync, isPending: switching } = useSwitchChain();
   const { mutateAsync: signMessageAsync } = useSignMessage();
   const { mutateAsync: signTypedDataAsync } = useSignTypedData();
@@ -124,7 +123,9 @@ function WalletConnectPanel({
   const [approveError, setApproveError] = useState('');
 
   const targetChainId = arbitrumChainId();
-  const wrongChain = account.isConnected && chainId !== targetChainId;
+  // useChainId reports wagmi's configured chain, which can remain Arbitrum while
+  // the connected wallet is actually on HyperEVM (999). Read the connection.
+  const wrongChain = account.isConnected && account.chainId !== targetChainId;
 
   const verifyOwnership = async () => {
     if (!account.address || !token) return;
@@ -165,8 +166,12 @@ function WalletConnectPanel({
     try {
       // Hyperliquid's user-signed approval uses the Arbitrum EIP-712 domain even
       // when the wallet was last connected to HyperEVM (chain 999).
-      if (chainId !== targetChainId) {
+      if (account.chainId !== targetChainId) {
         await switchChainAsync({ chainId: targetChainId });
+      }
+      const activeChainId = await account.connector?.getChainId();
+      if (activeChainId !== targetChainId) {
+        throw new Error(`Your wallet is still on chain ${activeChainId ?? 'unknown'}. Switch it to Arbitrum ${targetChainId === 421614 ? 'Sepolia' : 'One'}, then retry approval.`);
       }
       const { action, nonce, typedData } = buildApproveAgentRequest(
         agentAddress as `0x${string}`,
