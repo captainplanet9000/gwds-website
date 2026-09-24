@@ -8,7 +8,8 @@ describe('buildApproveAgentRequest', () => {
       'a customer-facing name that is much too long',
     );
 
-    expect(action.agentName).toHaveLength(16);
+    expect(action.agentName).toMatch(/^[A-Za-z0-9_-]{1,12}$/);
+    expect(Buffer.byteLength(action.agentName, 'utf8')).toBeLessThanOrEqual(12);
     expect(typedData.message.agentName).toBe(action.agentName);
   });
 
@@ -18,6 +19,15 @@ describe('buildApproveAgentRequest', () => {
       '   ',
     );
 
-    expect(action.agentName).toBe('cival-agent');
+    expect(action.agentName).toBe('CivalAgent');
+  });
+
+  it('removes multibyte punctuation from a provisioned customer display name', () => {
+    const { action } = buildApproveAgentRequest(
+      '0x1111111111111111111111111111111111111111',
+      'solo — lee.anthony1089@gmail.com',
+    );
+    expect(action.agentName).toBe('sololeeantho');
+    expect(Buffer.byteLength(action.agentName, 'utf8')).toBe(12);
   });
 });

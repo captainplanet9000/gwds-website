@@ -52,8 +52,8 @@ export async function POST(req: NextRequest) {
     if (action.hyperliquidChain !== hyperliquidChainName() || action.signatureChainId !== hyperliquidSignatureChainId()) {
       throw new CommerceError('WRONG_NETWORK', 'That approval was signed for a different Hyperliquid network than this account uses.');
     }
-    if (typeof action.agentName !== 'string') {
-      throw new CommerceError('INVALID_ACTION', 'Missing agent name.');
+    if (typeof action.agentName !== 'string' || !/^[A-Za-z0-9_-]{1,16}$/.test(action.agentName)) {
+      throw new CommerceError('INVALID_AGENT_NAME', 'The trading agent name must be 1–16 ASCII characters. Refresh the funding page and try again.');
     }
 
     const subscriptionId = body.subscriptionId ?? null;

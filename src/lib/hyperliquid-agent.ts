@@ -44,6 +44,11 @@ export interface ApproveAgentAction {
   nonce: number;
 }
 
+/** Hyperliquid's 16-character limit is enforced on the encoded name; keep it ASCII. */
+export function safeAgentName(name: string): string {
+  return name.normalize('NFKD').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 12) || 'CivalAgent';
+}
+
 /** Builds the action object AND the exact typed-data payload wagmi's useSignTypedData needs to
  *  produce a signature Hyperliquid's /exchange endpoint will accept. Call this fresh right
  *  before signing — the nonce is a timestamp and Hyperliquid rejects stale/reused nonces. */
@@ -56,7 +61,7 @@ export function buildApproveAgentRequest(agentAddress: `0x${string}`, agentName:
     agentAddress,
     // Hyperliquid enforces a 1–16 character agent name. Keeping the exact exchange limit
     // here prevents the UI from collecting a valid signature for an action the venue rejects.
-    agentName: agentName.trim().slice(0, 16) || 'cival-agent',
+    agentName: safeAgentName(agentName),
     nonce,
   };
   const typedData = {
