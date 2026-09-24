@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { CommerceError, errorResponseBody, requireVerifiedUser } from '@/lib/commerce';
 import { publicHostingConfig } from '@/lib/hosting';
+import { getHostingAvailability } from '@/lib/hosting-availability';
 import { createServerClient } from '@/lib/supabase';
 
 export const runtime = 'nodejs';
@@ -21,7 +22,7 @@ export async function GET(req: NextRequest) {
     if (userHistoryError) throw new CommerceError('TRIAL_ELIGIBILITY_UNAVAILABLE', 'Trial eligibility could not be loaded.', 503);
 
     const subscriptionIds = (subscriptions || []).map((row) => row.id);
-    const [{ data: plans }, { data: onboarding }, { data: instances }, { data: incidents }, { data: usage }, { data: audit }] = await Promise.all([
+    const [plansResult, onboardingResult, instancesResult, incidentsResult, usageResult, auditResult] = await Promise.all([
       supabase.from('hosting_plans').select('id,name,description,price_cents,billing_interval,agent_limit,agent_hours,workspace_limit,seat_limit,support_tier,features,is_active,launch_ready').order('sort_order'),
       subscriptionIds.length ? supabase.from('hosting_onboarding').select('subscription_id,workspace_name,environment,region,exchange,account_address,requested_agents,risk_profile,max_drawdown_pct,max_position_usd,status,customer_notes,submitted_at,reviewed_at,updated_at').eq('user_id', user.id) : Promise.resolve({ data: [] }),
       subscriptionIds.length ? supabase.from('hosting_instances').select('id,subscription_id,plan_id,tenant_key,status,provider,region,deployment_url,release_version,health_status,last_heartbeat_at,backup_status,last_backup_at,last_recovery_test_at,activated_at,suspended_at,updated_at').eq('user_id', user.id) : Promise.resolve({ data: [] }),
@@ -29,11 +30,18 @@ export async function GET(req: NextRequest) {
       subscriptionIds.length ? supabase.from('hosting_usage_daily').select('subscription_id,usage_date,agent_hours,peak_agents,runtime_events').eq('user_id', user.id).order('usage_date', { ascending: false }).limit(62) : Promise.resolve({ data: [] }),
       subscriptionIds.length ? supabase.from('hosting_audit').select('id,subscription_id,instance_id,actor_type,action,metadata,created_at').eq('user_id', user.id).neq('actor_type', 'admin').order('created_at', { ascending: false }).limit(40) : Promise.resolve({ data: [] }),
     ]);
+    const failedRead = [plansResult, onboardingResult, instancesResult, incidentsResult, usageResult, auditResult]
+      .find((result) => 'error' in result && result.error);
+    if (failedRead && 'error' in failedRead && failedRead.error) {
+      console.error('Hosting account read failed', { code: failedRead.error.code });
+      throw new CommerceError('HOSTING_ACCOUNT_UNAVAILABLE', 'Your hosting account could not be loaded. Please retry.', 503);
+    }
 
+    const availability = await getHostingAvailability();
     return NextResponse.json({
-      config: { ...publicHostingConfig(), trialEligible: !previous?.length && !userHistory?.length }, plans: plans || [], subscriptions: subscriptions || [],
-      onboarding: onboarding || [], instances: instances || [], incidents: incidents || [],
-      usage: usage || [], audit: audit || [],
+      config: { ...publicHostingConfig(), salesEnabled: availability.available, availabilityReason: availability.reason, trialEligible: !previous?.length && !userHistory?.length }, plans: plansResult.data || [], subscriptions: subscriptions || [],
+      onboarding: onboardingResult.data || [], instances: instancesResult.data || [], incidents: incidentsResult.data || [],
+      usage: usageResult.data || [], audit: auditResult.data || [],
     }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (error) {
     const status = error instanceof CommerceError ? error.status : 500;

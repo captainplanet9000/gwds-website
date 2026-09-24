@@ -5,6 +5,7 @@ import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { hostingSalesEnabled, SOLO_TRIAL_DAYS } from "@/lib/hosting";
+import { getHostingAvailability } from "@/lib/hosting-availability";
 import { createServerClient } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
@@ -24,7 +25,8 @@ export default async function HostedPage() {
     .gt("price_cents", 0)
     .order("sort_order");
   const plans = error ? [] : data || [];
-  const sales = hostingSalesEnabled();
+  const availability = await getHostingAvailability();
+  const sales = hostingSalesEnabled() && availability.available;
   const solo = plans.find((p) => p.id === "solo");
   const money = (p: (typeof plans)[number]) =>
     new Intl.NumberFormat("en-US", {
@@ -42,12 +44,12 @@ export default async function HostedPage() {
       "Eligible new customers get seven days free. Stripe displays the renewal amount and date before you confirm.",
     ],
     [
-      "Open your private dashboard",
-      "Watch provisioning status in your account. Complete workspace setup, choose your strategy and configure risk limits.",
+      "Verify your wallet",
+      "Connect the wallet you want to use and sign an ownership message. This starts dashboard provisioning; it does not move funds or enable trading.",
     ],
     [
-      "Connect and validate",
-      "Connect your own Hyperliquid account and approve its trade-only key. Fund it separately and verify the network before enabling agents. Testnet uses test funds.",
+      "Open your private dashboard",
+      "Follow provisioning in your account. Once ready, choose your agents, set risk limits and approve a trade-only key. Fund your venue account separately before enabling automation.",
     ],
   ];
   const faqs = [
@@ -164,8 +166,9 @@ export default async function HostedPage() {
           </p>
           {!sales && (
             <p role="status">
-              New activations are temporarily unavailable. Existing customers
-              can manage their workspace from their account.
+              {availability.reason === 'full'
+                ? 'Hosted workspaces are currently at capacity. Existing customers can manage their workspace from their account; new trials will reopen when another host is ready.'
+                : 'New activations are temporarily unavailable. Existing customers can manage their workspace from their account.'}
             </p>
           )}
           {!plans.length && (

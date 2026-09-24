@@ -163,6 +163,11 @@ function WalletConnectPanel({
     if (!agentAddress || !token) return;
     setApproveState('busy'); setApproveError('');
     try {
+      // Hyperliquid's user-signed approval uses the Arbitrum EIP-712 domain even
+      // when the wallet was last connected to HyperEVM (chain 999).
+      if (chainId !== targetChainId) {
+        await switchChainAsync({ chainId: targetChainId });
+      }
       const { action, nonce, typedData } = buildApproveAgentRequest(
         agentAddress as `0x${string}`,
         fundingData.tenant?.displayName || fundingData.tenant?.slug || 'cival-agent',
@@ -265,12 +270,13 @@ function WalletConnectPanel({
         </p>
         <button
           className="btn btn-primary"
-          disabled={!account.isConnected || wrongChain || !fundingData.tenant?.apiWalletAddress || approveState === 'busy'}
+          disabled={!account.isConnected || !fundingData.tenant?.apiWalletAddress || approveState === 'busy' || switching}
           onClick={approveAgent}
         >
           {approveState === 'busy' ? 'Waiting for signature…' : approveState === 'done' ? 'Agent approved ✓' : 'Sign to approve trading agent'}
         </button>
         {approveState === 'error' && <div style={{ color: '#ffb4b4', marginTop: 10, fontSize: 13 }}>{approveError}</div>}
+        {wrongChain && <div style={{ color: 'var(--color-neutral-600)', marginTop: 10, fontSize: 13 }}>Approval will ask your wallet to switch to Arbitrum {targetChainId === 421614 ? 'Sepolia' : 'One'} before signing.</div>}
         {!fundingData.tenant?.apiWalletAddress && (
           <div style={{ color: 'var(--color-neutral-600)', marginTop: 10, fontSize: 13 }}>
             No agent wallet has been provisioned for this tenant yet.

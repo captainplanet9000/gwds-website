@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { COMMERCE_VERSIONS, CommerceError, errorResponseBody, getSiteUrl, requireVerifiedUser } from '@/lib/commerce';
 import { HOSTING_SERVICE_TERMS_VERSION, hostingLaunchMessage, hostingSalesEnabled, hostingTrialDays, hostingSubscriptionOptions } from '@/lib/hosting';
 import { getStripe } from '@/lib/stripe';
+import { getHostingAvailability } from '@/lib/hosting-availability';
 import { createServerClient } from '@/lib/supabase';
 
 export const runtime = 'nodejs';
@@ -12,6 +13,9 @@ export async function POST(req: NextRequest) {
   try {
     if (!hostingSalesEnabled()) {
       throw new CommerceError('HOSTING_PAUSED', hostingLaunchMessage(), 503);
+    }
+    if (!(await getHostingAvailability()).available) {
+      throw new CommerceError('HOSTING_CAPACITY_UNAVAILABLE', 'Hosted workspaces are currently at capacity. Please check back shortly.', 409);
     }
     if (Number(req.headers.get('content-length') || '0') > 8_192) {
       throw new CommerceError('REQUEST_TOO_LARGE', 'The request is too large.', 413);

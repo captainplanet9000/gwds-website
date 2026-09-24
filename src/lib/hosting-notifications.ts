@@ -17,7 +17,7 @@ export async function deliverHostingNotification(subscriptionId: string, dedupKe
     const { data: subscription } = await supabase.from('hosting_subscriptions').select('plan_id,status,trial_end').eq('id', subscriptionId).single();
     const { data: plan } = await supabase.from('hosting_plans').select('name,price_cents,currency,billing_interval').eq('id', subscription?.plan_id || '').maybeSingle();
     const trialDetail = subscription?.status === 'trialing' && subscription.trial_end && plan
-      ? `Your seven-day Solo trial ends ${new Date(subscription.trial_end).toUTCString()}. Afterward your saved payment method will be charged ${new Intl.NumberFormat('en-US', { style: 'currency', currency: plan.currency || 'USD' }).format(plan.price_cents / 100)} per ${plan.billing_interval} unless you cancel before the trial ends. Open Account > Hosting > Manage billing to cancel. Follow provisioning and finish setup in your hosting account. Trading capital is separate.` : undefined;
+      ? `Your seven-day Solo trial ends ${new Date(subscription.trial_end).toUTCString()}. Afterward your saved payment method will be charged ${new Intl.NumberFormat('en-US', { style: 'currency', currency: plan.currency || 'USD' }).format(plan.price_cents / 100)} per ${plan.billing_interval} unless you cancel before the trial ends. Open Account > Hosting > Manage billing to cancel. To create your dashboard, open Account > Hosting and connect and verify the wallet you want to use. No funds are transferred and trading is not enabled by verification. Trading capital is separate.` : undefined;
     const result = await sendHostingEmail(notification.recipient_email, {
       subscriptionId,
       deliveryId: notification.id,

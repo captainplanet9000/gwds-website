@@ -5,7 +5,9 @@ const state = vi.hoisted(() => ({
   history: [] as { id: string }[], historyError: null as null | { message: string },
   plan: { id: 'solo', name: 'Solo', price_cents: 2900, currency: 'usd', billing_interval: 'month', stripe_price_id_test: 'price_test_solo', stripe_price_id_live: 'price_live_solo', is_active: true, launch_ready: true },
   create: vi.fn(), expire: vi.fn(), retrieve: vi.fn(), rpc: vi.fn(),
+  availability: { available: true, reason: 'open' },
 }));
+vi.mock('@/lib/hosting-availability', () => ({ getHostingAvailability: async () => state.availability }));
 vi.mock('@/lib/commerce', async importOriginal => ({
   ...await importOriginal<typeof import('@/lib/commerce')>(),
   requireVerifiedUser: vi.fn().mockResolvedValue({ id: '10000000-0000-4000-8000-000000000001', email: 'buyer@example.com' }),
@@ -31,6 +33,7 @@ describe('hosting checkout trial and billing boundaries', () => {
   const env = { ...process.env };
   beforeEach(() => {
     vi.clearAllMocks(); state.history = []; state.historyError = null;
+    state.availability = { available: true, reason: 'open' };
     Object.assign(state.plan, { id: 'solo', price_cents: 2900, is_active: true, launch_ready: true });
     process.env.NEXT_PUBLIC_HOSTING_SALES_ENABLED = 'true'; process.env.STRIPE_SECRET_KEY = 'sk_test_fixture';
     state.retrieve.mockResolvedValue({ active: true, livemode: false, type: 'recurring', currency: 'usd', unit_amount: 2900, recurring: { interval: 'month' } });
@@ -58,6 +61,11 @@ describe('hosting checkout trial and billing boundaries', () => {
   });
   it('requires affirmative recurring-billing terms acceptance', async () => {
     expect((await request({acceptedTerms:false})).status).toBe(400);
+    expect(state.create).not.toHaveBeenCalled();
+  });
+  it('does not send a customer to Stripe when hosting has no verified free host slot', async () => {
+    state.availability = { available: false, reason: 'full' };
+    expect((await request()).status).toBe(409);
     expect(state.create).not.toHaveBeenCalled();
   });
   it('fails closed when trial history cannot be checked', async () => {

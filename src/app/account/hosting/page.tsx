@@ -14,6 +14,7 @@ type Row = Record<string, any>;
 type AccountData = {
   config: {
     salesEnabled: boolean;
+    availabilityReason?: "open" | "full" | "paused" | "unavailable";
     serviceTermsVersion: string;
     soloTrialDays: number;
     trialEligible: boolean;
@@ -154,6 +155,11 @@ export default function HostingAccountPage() {
   }, [subscriptionId, subscription?.status, session?.access_token, refresh]);
   const onboarding = data?.onboarding.find(
     (row) => row.subscription_id === subscription?.id,
+  );
+  const walletVerificationNeeded = Boolean(
+    subscription && ["active", "trialing"].includes(subscription.status)
+      && !onboarding?.account_address && provision?.tenant
+      && !provision.command,
   );
   const plan = data?.plans.find((row) => row.id === subscription?.plan_id);
   useEffect(() => {
@@ -329,11 +335,11 @@ export default function HostingAccountPage() {
                 color: "#e7d991",
               }}
             >
-              <strong>Hosted checkout is not open yet.</strong>
+              <strong>{data.config.availabilityReason === "full" ? "Hosted workspaces are at capacity." : "Hosted checkout is not open yet."}</strong>
               <div style={{ marginTop: 6, lineHeight: 1.5 }}>
-                You can review the complete service and prepare your account. No
-                payment or subscription can be created until every runtime
-                launch gate passes.
+                {data.config.availabilityReason === "full"
+                  ? "Existing subscriptions remain available. New trials and subscriptions will reopen when a verified host slot is available. No payment will be taken while checkout is closed."
+                  : "You can review the service and prepare your account. No new payment or subscription can be created until hosting is available."}
               </div>
             </div>
           )}
@@ -364,6 +370,15 @@ export default function HostingAccountPage() {
             >
               {notice}
             </div>
+          )}
+          {walletVerificationNeeded && (
+            <section role="status" style={{ padding: 20, border: "1px solid var(--color-accent)", borderRadius: "var(--radius-lg)", background: "var(--color-surface)", marginBottom: 20 }}>
+              <strong>Action needed: verify your wallet to create your dashboard</strong>
+              <p style={{ margin: "8px 0 14px", color: "var(--color-neutral-700)" }}>
+                Your Solo trial is active, but hosting cannot start until you prove ownership of the wallet you want to use. This does not transfer funds or enable trading. Provisioning resumes automatically after verification.
+              </p>
+              <Link className="btn btn-primary" href="/account/funding">Connect and verify wallet</Link>
+            </section>
           )}
 
           {!subscription ? (
@@ -517,7 +532,7 @@ export default function HostingAccountPage() {
                   ["Billing", subscription.status],
                   [
                     "Runtime",
-                    runtime?.processState ||
+                    walletVerificationNeeded ? "awaiting wallet" : runtime?.processState ||
                       provision?.tenant?.status ||
                       "not provisioned",
                   ],
@@ -641,6 +656,7 @@ export default function HostingAccountPage() {
                   <div
                     style={{ display: "flex", gap: 10, alignItems: "center" }}
                   >
+                    {walletVerificationNeeded && <Status value="awaiting wallet" />}
                     {provision?.command && (
                       <Status
                         value={
@@ -720,6 +736,7 @@ export default function HostingAccountPage() {
                   </p>
                 ) : (
                   <div style={{ display: "grid", gap: 10 }}>
+                    {walletVerificationNeeded && <p style={{ margin: "4px 0" }}>No server setup has been queued yet. <Link href="/account/funding">Verify your wallet</Link> to start it automatically.</p>}
                     {[
                       ["Workspace", provision.tenant.slug],
                       ["Runtime status", provision.tenant.status],
