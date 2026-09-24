@@ -54,3 +54,16 @@ export async function readHyperliquidAccount(apiUrl: string, address: `0x${strin
     return null;
   }
 }
+
+/** Confirm that this API wallet is authorized for this specific customer wallet. */
+export async function readAgentApproval(apiUrl: string, agent: `0x${string}`, owner: `0x${string}`): Promise<boolean | null> {
+  try {
+    const role = await info(apiUrl, { type: 'userRole', user: agent });
+    if (role?.role === 'missing') return false;
+    if (role?.role === 'agent') return typeof role.data?.user === 'string'
+      && role.data.user.toLowerCase() === owner.toLowerCase();
+    return false;
+  } catch {
+    return null;
+  }
+}

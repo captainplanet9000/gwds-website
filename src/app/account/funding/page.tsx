@@ -33,6 +33,7 @@ type FundingData = {
   subscriptionStatus?: string | null;
   declaredAddress?: string | null;
   addressMismatch?: boolean;
+  agentApproved?: boolean | null;
   network?: Network;
   tenant: {
     slug: string; displayName: string | null; status: string;
@@ -195,6 +196,7 @@ function WalletConnectPanel({
       const relayBody = await relayRes.json();
       if (!relayRes.ok) throw new Error(relayBody.error || 'Hyperliquid rejected the approval');
       setApproveState('done');
+      onVerified();
     } catch (reason) {
       setApproveState('error');
       setApproveError(reason instanceof Error ? reason.message : 'Approval failed');
@@ -275,11 +277,12 @@ function WalletConnectPanel({
         </p>
         <button
           className="btn btn-primary"
-          disabled={!account.isConnected || !fundingData.tenant?.apiWalletAddress || approveState === 'busy' || switching}
+          disabled={!account.isConnected || !fundingData.tenant?.apiWalletAddress || fundingData.agentApproved === true || approveState === 'busy' || switching}
           onClick={approveAgent}
         >
-          {approveState === 'busy' ? 'Waiting for signature…' : approveState === 'done' ? 'Agent approved ✓' : 'Sign to approve trading agent'}
+          {approveState === 'busy' ? 'Waiting for signature…' : fundingData.agentApproved === true ? 'Agent approved on Hyperliquid ✓' : approveState === 'done' ? 'Checking venue approval…' : 'Sign to approve trading agent'}
         </button>
+        {fundingData.agentApproved === null && <div style={{ color: 'var(--color-neutral-600)', marginTop: 10, fontSize: 13 }}>Venue approval status is temporarily unavailable. Retry after it refreshes.</div>}
         {approveState === 'error' && <div style={{ color: '#ffb4b4', marginTop: 10, fontSize: 13 }}>{approveError}</div>}
         {wrongChain && <div style={{ color: 'var(--color-neutral-600)', marginTop: 10, fontSize: 13 }}>Approval will ask your wallet to switch to Arbitrum {targetChainId === 421614 ? 'Sepolia' : 'One'} before signing.</div>}
         {!fundingData.tenant?.apiWalletAddress && (

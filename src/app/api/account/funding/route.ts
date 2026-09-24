@@ -8,7 +8,7 @@ import {
   arbitrumChainId, arbitrumRpcUrl, bridgeAddress, currentNetwork, hyperliquidApiUrl,
   usdcAddress, USDC_DECIMALS,
 } from '@/lib/hyperliquid-network';
-import { readHyperliquidAccount } from '@/lib/hyperliquid-account';
+import { readAgentApproval, readHyperliquidAccount } from '@/lib/hyperliquid-account';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -111,9 +111,10 @@ export async function GET(req: NextRequest) {
     const apiWallet = tenant.api_wallet_address && /^0x[a-fA-F0-9]{40}$/.test(tenant.api_wallet_address)
       ? getAddress(tenant.api_wallet_address) : null;
 
-    const [arb, hlAccount] = await Promise.all([
+    const [arb, hlAccount, agentApproved] = await Promise.all([
       mainWallet ? readArbitrumBalances(mainWallet) : Promise.resolve({ usdc: null, gasEth: null }),
       mainWallet ? readHyperliquidAccount(hyperliquidApiUrl(), mainWallet) : Promise.resolve(null),
+      mainWallet && apiWallet ? readAgentApproval(hyperliquidApiUrl(), apiWallet, mainWallet) : Promise.resolve(null),
     ]);
 
     return NextResponse.json({
@@ -123,6 +124,7 @@ export async function GET(req: NextRequest) {
       network,
       declaredAddress,
       addressMismatch: Boolean(declaredAddress && mainWallet && declaredAddress.toLowerCase() !== mainWallet.toLowerCase()),
+      agentApproved,
       tenant: {
         slug: tenant.slug,
         displayName: tenant.display_name,
