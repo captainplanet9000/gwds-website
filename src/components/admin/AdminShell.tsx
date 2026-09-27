@@ -80,21 +80,40 @@ export default function AdminShell({
   );
   useEffect(() => {
     const controller = new AbortController();
-    fetch("/api/admin/auth", { cache: "no-store", signal: controller.signal })
+    let pending = false;
+    const checkSession = () => {
+      if (pending || controller.signal.aborted) return;
+      pending = true;
+      fetch("/api/admin/auth", { cache: "no-store", signal: controller.signal })
       .then(async (r) => {
+        if (controller.signal.aborted) return;
         if (!r.ok) {
           setState("guest");
           setAdmin(null);
           return;
         }
         const b = await r.json();
+        if (controller.signal.aborted) return;
         setAdmin(b.admin);
         setState("authenticated");
       })
       .catch((e) => {
-        if (e.name !== "AbortError") setState("guest");
-      });
-    return () => controller.abort();
+        if (e.name !== "AbortError") {
+          setState("guest");
+          setAdmin(null);
+        }
+      }).finally(() => { pending = false; });
+    };
+    // An open operator screen must notice expiry without a route change.
+    // This reads session validity; it does not extend the signed admin cookie.
+    checkSession();
+    const timer = window.setInterval(checkSession, 60000);
+    window.addEventListener("focus", checkSession);
+    return () => {
+      controller.abort();
+      window.clearInterval(timer);
+      window.removeEventListener("focus", checkSession);
+    };
   }, [path]);
   useEffect(() => {
     if (state === "guest" && path !== "/admin") router.replace("/admin");
