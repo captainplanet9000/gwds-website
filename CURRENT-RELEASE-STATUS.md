@@ -1,3 +1,9 @@
+# Latest acceptance update — 2026-09-27
+
+All four hosted runtimes run 64a9e01, immutable image sha256:da355f3389de674fbd4cb814b07cf247aa8ae21198b0563ed89dd4f150db57ea. A fresh BTC testnet lifecycle passed entry/protection/modification-recovery/restart/exit/fill import, ending with zero canary positions, orders or active claims. Net P&L -0.011457 test USDC reconciles with account equity. Entry pauses were restored. See LAUNCH-ACCEPTANCE-20260927.md and C:/GWDS/artifacts/lifecycle-summary-64a9e01-20260927.json for evidence and limitations.
+
+A subsequent agent-control repair d4a1554 passes six regression tests and focused TypeScript. Publication run 36355724455 is in progress; that repair is not yet deployed. Embedded funding/mobile, complete commerce/refund/email acceptance, public failover, measured fleet capacity and exact self-hosted product acceptance/publication remain open. Stripe browser session is signed out; owner sign-in requested. Do not treat historical entries below as the current fleet state.
+
 # Current release status — 27 September 2026 UTC
 
 See [the current launch acceptance report](LAUNCH-ACCEPTANCE-20260927.md) for exact candidate hashes, new tests, canary deployment and outstanding gates. All six workstreams remain incomplete; entries remain paused and source products remain held.
