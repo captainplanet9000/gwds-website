@@ -348,12 +348,10 @@ export default function FundingPage() {
                     <div style={{ ...mono, fontSize: 12, color: 'var(--color-neutral-600)', marginTop: 2 }}>{data.network?.usdcContract}</div>
                   </div>
                   <div>
-                    <div style={label}>Hyperliquid deposit bridge</div>
-                    {data.network?.bridgeAddress ? (
-                      <div style={{ ...mono, fontSize: 12, marginTop: 4 }}>{data.network.bridgeAddress}</div>
-                    ) : (
-                      <div style={{ marginTop: 4, color: '#e7d991' }}>Not configured yet — contact support before depositing.</div>
-                    )}
+                    <div style={label}>Deposit and withdraw</div>
+                    <a className="btn btn-secondary" style={{ marginTop: 8 }}
+                      href={data.network?.name === 'mainnet' ? 'https://app.hyperliquid.xyz/portfolio/deposit' : 'https://app.hyperliquid-testnet.xyz/portfolio/deposit'}
+                      target="_blank" rel="noopener noreferrer">Open Hyperliquid funding ↗</a>
                   </div>
                 </div>
               </div>
@@ -368,12 +366,11 @@ export default function FundingPage() {
                     </button>
                   )}
                   <p style={{ color: 'var(--color-neutral-700)', fontSize: 13, marginTop: 12, lineHeight: 1.5 }}>
-                    Send USDC on {data.network?.chain} to this address, then bridge it into Hyperliquid
-                    (deposit destination above). Only USDC on the exact network shown will be credited —
-                    anything else, or the wrong network, is unrecoverable. Each bridge deposit must be at
-                    least 5 USDC: Hyperliquid never credits smaller deposits, and they are lost. Once your
-                    dashboard is live, its Deposit &amp; Withdraw page does all of this in one step from
-                    your wallet, and blocks amounts under the minimum.
+                    Open Hyperliquid funding and connect this same wallet. Choose Deposit or Withdraw,
+                    then review the network, token, destination, fee and amount before signing.
+                    Hyperliquid displays the current route and limits. After the transfer completes,
+                    return here and refresh balances. Sending USDC to your wallet alone does not fund
+                    your trading account. Do not send native USDC to the deprecated USDC2 bridge.
                   </p>
                 </div>
                 {data.tenant.mainWalletAddress && <QrCode value={data.tenant.mainWalletAddress} />}

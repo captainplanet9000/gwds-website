@@ -5,7 +5,7 @@ import { CommerceError, errorResponseBody, requireVerifiedUser } from '@/lib/com
 import { createServerClient } from '@/lib/supabase';
 import { controlClient, resolveOwnedTenant, TenantOwnershipError } from '@/lib/control-plane';
 import {
-  arbitrumChainId, arbitrumRpcUrl, bridgeAddress, currentNetwork, hyperliquidApiUrl,
+  arbitrumChainId, arbitrumRpcUrl, currentNetwork, hyperliquidApiUrl,
   usdcAddress, USDC_DECIMALS,
 } from '@/lib/hyperliquid-network';
 import { readAgentApproval, readHyperliquidAccount } from '@/lib/hyperliquid-account';
@@ -58,7 +58,7 @@ export async function GET(req: NextRequest) {
       chainId: arbitrumChainId(),
       settlementAsset: 'USDC',
       usdcContract: usdcAddress(),
-      bridgeAddress: bridgeAddress(), // verified Hyperliquid Bridge2 address for this network (env can override)
+      bridgeAddress: null, // Deprecated Bridge2 must not be presented as a native-USDC destination.
     };
 
     const subRow = await supabase.from('hosting_subscriptions').select('id,status,created_at').eq('user_id', user.id)

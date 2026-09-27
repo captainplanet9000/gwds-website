@@ -50,7 +50,10 @@ export const ARBITRUM_USDC_MAINNET = '0xaf88d065e77c8cC2239327C5EDb3A432268e5831
  *  token would not reach the customer's testnet account. Source:
  *  https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/usdc (checked on-chain:
  *  6 decimals). Used only when NEXT_PUBLIC_HYPERLIQUID_NETWORK=testnet. */
-export const ARBITRUM_USDC_TESTNET = '0x1baAbB04529D43a73232B713C0FE471f7c7334d5' as const;
+export const LEGACY_ARBITRUM_USDC2_TESTNET = '0x1baAbB04529D43a73232B713C0FE471f7c7334d5' as const;
+/** Circle native USDC used by the current CCTP route. Never send this token to
+ * the legacy USDC2 bridge. https://developers.circle.com/stablecoins/usdc-contract-addresses */
+export const ARBITRUM_USDC_TESTNET = '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d' as const;
 export const USDC_DECIMALS = 6;
 
 export function usdcAddress(): `0x${string}` {
