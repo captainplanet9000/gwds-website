@@ -1,3 +1,9 @@
+# Current release status — 27 September 2026 UTC
+
+See [the current launch acceptance report](LAUNCH-ACCEPTANCE-20260927.md) for exact candidate hashes, new tests, canary deployment and outstanding gates. All six workstreams remain incomplete; entries remain paused and source products remain held.
+
+---
+
 # Current release status — 20 September 2026 UTC
 
 **Restricted testnet pilot; not ready for unrestricted customer automation or source release.**
@@ -126,3 +132,4 @@ Runtime commit `4b3914b121d27a37cefaed0a1ef65e0d2eba4960`, publication run **354
 - Leave the owner's separate `C:\TradingFarm\Cival-Dashboard-v9` and localhost:9005 untouched. Preserve unrelated runtime working-tree edits.
 
 See DURABLE-EXECUTION-ACCEPTANCE.md in the runtime repository and LAUNCH-READINESS-2026-09-19.md here for historical evidence. This file separates current verified deployment from outstanding work; it is not a launch certification.
+

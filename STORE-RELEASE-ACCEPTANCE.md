@@ -1,3 +1,9 @@
+# Latest evidence — 27 September 2026 UTC
+
+See [LAUNCH-ACCEPTANCE-20260927.md](LAUNCH-ACCEPTANCE-20260927.md). Core and Trader r4 now pass clean install/build/runtime checks; full trading/recovery acceptance and publication remain outstanding. The older dated findings below are history, not the current test counts.
+
+---
+
 # Store release audit — 19 September 2026
 
 ## Verification update — 20 September 2026
@@ -98,3 +104,4 @@ Six vector strategy covers are reproducible using `scripts/create-strategy-cover
 The store now uses browser captures from the user-selected demo and hosted testnet workspace. Core, Trader and all six standalone strategies retain their product IDs and contents. Product-specific captions, source labels, full-detail images, thumbnails and a keyboard-accessible native dialog replace conceptual hero art. See PRODUCT-SCREENSHOT-AUDIT.md for provenance and remaining findings. This is presentation evidence from broader editions, not acceptance of the currently held archives.
 
 Validation: 78 tests passed (including image type/dimensions and complete product coverage); production build and TypeScript check passed. Browser checks covered desktop and 390px mobile width, no horizontal overflow, full-size viewer navigation, Escape and focus restoration, plus all six corrected demo agent profiles. No orders, funding or withdrawals were submitted.
+

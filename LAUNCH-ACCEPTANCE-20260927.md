@@ -1,0 +1,72 @@
+# Launch acceptance update — 27 September 2026 UTC
+
+**Not approved for unrestricted launch, 100 running dashboards, or source publication.**
+This report supersedes the older verification counts, but does not mark any of the six launch workstreams fully complete.
+
+## 1. Exact source products
+
+Candidate directory: `C:/GWDS/selfhost-release-20260918/acceptance-20260927-r4`.
+Core SHA-256: `1f5f86a6217404c6f1fb15182d0de07d3a73f67964726180975df4ba7fbe790a`.
+Trader SHA-256: `262a38d5826091db4eac6fdcc68f8bd3da0b6f58ba597ef5b5631efadf8fe43b`.
+All eight archives have byte counts and hashes in `archives.json`; none was uploaded or registered as a replacement paid download.
+
+Completed:
+- Core clean Windows npm installation, full typecheck, 35 tests, production build, dependency audit with zero known findings.
+- Trader independent clean Node 22/Linux installation, full typecheck, 35 tests, production build, dependency audit with zero known findings.
+- Exact Core production server: anonymous and wrong-owner access denied, authorized dashboard/API access passed.
+- Each of the six exact plugin ZIPs loaded through the production Core catalog and API. Created each agent and farm paused, disabled and unfunded; replay returned the same agent; saved strategy defaults and market restriction were honored; analysis preserved paused state. Trader independently passed those six strategy runtime checks.
+- Atomic agent creation migration: eight concurrent retries create only one agent/farm, conflicting request rejected, failure rolls back, direct customer RPC execution denied.
+- Fresh disposable database bootstrap and repeat-bootstrap check passed for the r2 candidate, which contains the same bootstrap and migration as r4. Do not confuse this with a new r4 bootstrap run.
+- Real database paper-ledger checks: partial/full fills, duplicate protection, short-position P&L, persisted history, trailing state reload and closed-state non-reactivation.
+- Removed unused simulated custody/transfer modules and the vulnerable unused Alchemy dependency graph from the source candidate. Backups retained outside the release.
+
+Remaining: exact-artifact customer browser setup/install/edit/uninstall, durable live execution parity, internal scheduler and alternate-path audit, fresh testnet lifecycle and recovery, documentation/screenshots on the final artifacts, independent final bundle acceptance, immutable registration and publication. Passing paper tests does not approve live execution.
+
+## 2. Hosted runtime
+
+Runtime commit `768154b75bdd17be05524c6dba1b32f107a16436`:
+`sha256:ff8747342931065e7ed5ca2af75179678fe3f09654f116c2f5f610c9dce5a848`.
+Publication 36282812939 and transport 36284220055 passed.
+Deployed as a canary to tenant `cival-860b9dad18f04b2284f7`; other three containers remain on the previous image. The host image setting now points to the new immutable image for subsequent starts.
+
+Browser acceptance: Analyze produced only the configured BTC analysis; the existing agent remained paused with zero allocation and the operator halt enabled. The previous hardcoded ETH analysis was historical, not repeated.
+All four tenant entry halts were verified enabled. No new order, close or funding transfer was submitted in this acceptance pass.
+
+Remaining: fresh eligible-account entry/protection/modify/exit plus real-venue restart/partial-fill/cancel/lost-response acceptance. Isolated fault tests are not substitute evidence. Pilot account quota restrictions must be respected.
+
+## 3. Commerce
+
+122 storefront tests, typecheck and focused lint passed. Real PostgreSQL activation checks passed test/live price binding, replay/conflict, wrong session, null/mismatched price, rollback and customer privilege refusal.
+Production storefront commit `718cbdd` deployed to `https://cival-systems-store-603lfqin1-civals-projects.vercel.app`, verified on www.civalsystems.com: installed strategies now say INSTALLED instead of claiming they are running/trading.
+
+Remaining: actual sandbox purchase/setup journeys for every plan, failed/abandoned checkout, eligibility, production webhook delivery evidence, delayed events/refunds/entitlements and final customer installation. Existing paid-history evidence is not a normal paid customer lifecycle.
+
+## 4. Funding
+
+Customer screenshot and dashboard show ownership verified, trading agent approved, 999 testnet USDC venue equity; the screenshot showed zero Arbitrum Sepolia USDC and gas. No fresh signed funding movement has been accepted in this run.
+Fresh database deposit/withdrawal tests passed concurrent claims, durable replay, pending locks, conflicting identities, restricted mutation, tenant isolation, ambiguous-state retention and evidence-gated settlement.
+Remaining: customer wallet signature for a small testnet withdrawal and return deposit, chain/venue settlement, reload reconciliation, error and mobile flow. No private key or signature may be fabricated or substituted.
+
+## 5. Recovery and capacity
+
+Fresh production backup: `/var/backups/cival/daily/20260927T011033Z`.
+Exact new image passed 15 isolated recovery checks in 86.65 seconds; report: `/var/backups/cival/integrated-768154b-20260927/report.json`.
+These cover actual runtime/database restore, cross-tenant boundaries, restricted journal writes and restart retention of halts/unresolved execution/funding records. Signing keys were not loaded and external networking was disabled.
+Fresh reservation stress: exactly 100 accepted and 20 rejected from 120 concurrent attempts at a configured capacity of 100; expiry freed one slot and customer writes were denied.
+
+This is NOT a 100-dashboard runtime load test or public failover. Production admission remains four. Remaining: host fencing/authority under public failover, real loaded multi-host placement, measured CPU/RAM/latency/fan-out and capacity provisioning.
+
+## 6. Customer/operator operations
+
+Read-only provider verification of the ten latest hosting notifications:
+- Eight provider-confirmed delivered, spanning hosting_started, hosting_activated, hosting_canceled and provisioning_failed.
+- One hosting_started bounced despite the local outbox saying sent.
+- One hosting_activated remains pending, attempts zero.
+Evidence: `C:/GWDS/artifacts/hosting-email-delivery-20260927.json` (message IDs/status only; no keys).
+A sent outbox state means provider submission, not delivery. Inbox arrival was not independently read.
+
+Newly identified gap: hosting notifications have no scheduled general outbox drain, and a process crash after setting sending has no lease recovery. Failed delivery/bounce needs actionable admin status and controlled retry, not blind resending. Verification/purchase/payment-failure delivery, support/refund procedure and remaining operator incident alerts still require acceptance.
+
+## Operator constraints
+
+Keep source sales held and broad new entries paused. The user's customer wallet must complete the outstanding signature actions. Do not raise the admission limit to 100 based on reservation-only evidence. Preserve exact image/artifact hashes and historical entitlements. Do not treat earlier status notes as current production evidence.
