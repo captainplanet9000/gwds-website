@@ -1,3 +1,9 @@
+# Deployed update — 2026-09-27 22:59 UTC
+
+All four hosted tenants now run d4a1554, immutable image sha256:705391f357c8b114d8e029fb612f6d79b07496f9fca29aaca7e7b829a10e9419. Publication36355724455 and transfer36356477424 passed. The exact image passed32 isolated compiled restore/control/restart checks; sequential production rollout passed health200 on all four tenants with entry pauses retained. Pause and Stop All now persist scheduler permissions and report write failures instead of false success. Local evidence: C:/GWDS/artifacts/durable-controls-d4a1554-report.json and durable-controls-rollout-d4a1554-20260927.json.
+
+The fresh testnet lifecycle below was completed on the preceding64a9e01 image; d4a1554 changes control persistence, not venue submission or reconciliation. No mainnet certification is claimed. Complete payment/refund/email acceptance, embedded/mobile funding, public failover, measured fleet capacity and exact self-hosted publication remain outstanding. Browser Stripe sign-in requested; no sandbox key location supplied yet. Source holds and entry pauses remain enabled.
+
 # Latest acceptance update — 2026-09-27
 
 All four hosted runtimes run 64a9e01, immutable image sha256:da355f3389de674fbd4cb814b07cf247aa8ae21198b0563ed89dd4f150db57ea. A fresh BTC testnet lifecycle passed entry/protection/modification-recovery/restart/exit/fill import, ending with zero canary positions, orders or active claims. Net P&L -0.011457 test USDC reconciles with account equity. Entry pauses were restored. See LAUNCH-ACCEPTANCE-20260927.md and C:/GWDS/artifacts/lifecycle-summary-64a9e01-20260927.json for evidence and limitations.
