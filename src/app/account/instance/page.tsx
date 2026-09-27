@@ -133,7 +133,7 @@ const RUNTIME_COPY: Record<RuntimeState, { label: string; good: boolean; detail:
     good: false,
     detail: "Installed, but your workspace is not running, so it is not trading.",
   },
-  running: { label: "running", good: true, detail: "Confirmed running by your workspace." },
+  running: { label: "installed", good: true, detail: "Loaded in your dashboard. Create an agent, allocate a budget and enable trading separately." },
   blocked: { label: "blocked", good: false, detail: "Your workspace could not start this agent." },
 };
 

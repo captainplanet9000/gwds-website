@@ -372,7 +372,7 @@ const CAPACITY_NOT_READY =
 
 const SYNC_NOTE =
   'Saving records what you have authorized to run and is fully audited. The host installs it into ' +
-  'your workspace separately -- an agent only shows as running once the host has confirmed it.';
+  'your workspace separately. Installed means the strategy is loaded; it does not mean an agent is trading. Check its budget and trading status in your dashboard.';
 
 export async function GET(req: NextRequest) {
   try {
