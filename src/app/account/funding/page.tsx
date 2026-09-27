@@ -34,6 +34,7 @@ type FundingData = {
   declaredAddress?: string | null;
   addressMismatch?: boolean;
   agentApproved?: boolean | null;
+  walletVerification?: { address: string | null; verifiedAt: string | null; status: 'verified' | 'unverified' | 'unavailable' };
   network?: Network;
   tenant: {
     slug: string; displayName: string | null; status: string;
@@ -118,6 +119,7 @@ function WalletConnectPanel({
 
   const [verifyState, setVerifyState] = useState<'idle' | 'busy' | 'done' | 'error'>('idle');
   const [verifyError, setVerifyError] = useState('');
+  const [signedAddress, setSignedAddress] = useState<string | null>(null);
   const [approveState, setApproveState] = useState<'idle' | 'busy' | 'done' | 'error'>('idle');
   const [approveError, setApproveError] = useState('');
 
@@ -125,6 +127,10 @@ function WalletConnectPanel({
   // useChainId reports wagmi's configured chain, which can remain Arbitrum while
   // the connected wallet is actually on HyperEVM (999). Read the connection.
   const wrongChain = account.isConnected && account.chainId !== targetChainId;
+  const verifiedAddress = fundingData.walletVerification?.status === 'verified'
+    ? fundingData.walletVerification.address : signedAddress;
+  const ownershipVerified = Boolean(verifiedAddress && account.address &&
+    verifiedAddress.toLowerCase() === account.address.toLowerCase());
 
   const verifyOwnership = async () => {
     if (!account.address || !token) return;
@@ -151,6 +157,7 @@ function WalletConnectPanel({
       const verifyBody = await verifyRes.json();
       if (!verifyRes.ok) throw new Error(verifyBody.error || 'Verification failed');
       setVerifyState('done');
+      setSignedAddress(verifyBody.address);
       onVerified();
     } catch (reason) {
       setVerifyState('error');
@@ -230,11 +237,17 @@ function WalletConnectPanel({
         </p>
         <button
           className="btn btn-primary"
-          disabled={!account.isConnected || verifyState === 'busy'}
+          disabled={!account.isConnected || ownershipVerified || verifyState === 'busy'}
           onClick={verifyOwnership}
         >
-          {verifyState === 'busy' ? 'Waiting for signature…' : verifyState === 'done' ? 'Verified ✓' : 'Sign to verify ownership'}
+          {verifyState === 'busy' ? 'Waiting for signature…' : ownershipVerified ? 'Verified ✓' : 'Sign to verify ownership'}
         </button>
+        {fundingData.walletVerification?.status === 'verified' && !account.isConnected && (
+          <p style={{ fontSize: 13, marginTop: 10 }}>Ownership verified for {short(fundingData.walletVerification.address)}. Connect that wallet to continue.</p>
+        )}
+        {fundingData.walletVerification?.status === 'unavailable' && (
+          <p role="status" style={{ fontSize: 13, marginTop: 10 }}>Saved verification status is temporarily unavailable. Refresh to check again.</p>
+        )}
         {verifyState === 'error' && <div style={{ color: '#ffb4b4', marginTop: 10, fontSize: 13 }}>{verifyError}</div>}
         {fundingData.addressMismatch && (
           <div style={{ color: '#e7d991', marginTop: 12, fontSize: 13, lineHeight: 1.5 }}>

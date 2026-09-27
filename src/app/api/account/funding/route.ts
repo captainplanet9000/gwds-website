@@ -111,6 +111,19 @@ export async function GET(req: NextRequest) {
     const apiWallet = tenant.api_wallet_address && /^0x[a-fA-F0-9]{40}$/.test(tenant.api_wallet_address)
       ? getAddress(tenant.api_wallet_address) : null;
 
+    // A saved onboarding address alone is not a signed ownership proof.
+    // Only return evidence written by the signature-verification route for this user.
+    const proof = mainWallet ? await supabase.from('hosting_audit')
+      .select('created_at').eq('user_id', user.id).eq('actor_id', user.id)
+      .eq('actor_type', 'customer').eq('action', 'funding_wallet_verified')
+      .contains('metadata', { address: mainWallet })
+      .order('created_at', { ascending: false }).limit(1).maybeSingle() : null;
+    const walletVerification = {
+      address: mainWallet,
+      verifiedAt: proof?.error ? null : proof?.data?.created_at ?? null,
+      status: proof?.error ? 'unavailable' : proof?.data ? 'verified' : 'unverified',
+    };
+
     const [arb, hlAccount, agentApproved] = await Promise.all([
       mainWallet ? readArbitrumBalances(mainWallet) : Promise.resolve({ usdc: null, gasEth: null }),
       mainWallet ? readHyperliquidAccount(hyperliquidApiUrl(), mainWallet) : Promise.resolve(null),
@@ -125,6 +138,7 @@ export async function GET(req: NextRequest) {
       declaredAddress,
       addressMismatch: Boolean(declaredAddress && mainWallet && declaredAddress.toLowerCase() !== mainWallet.toLowerCase()),
       agentApproved,
+      walletVerification,
       tenant: {
         slug: tenant.slug,
         displayName: tenant.display_name,
