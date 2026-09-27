@@ -6,10 +6,10 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useAuth } from '@/contexts/AuthContext';
 import {
-  useConnect, useConnectors, useConnection, useDisconnect, useSignMessage, useSignTypedData,
+  useConnection, useDisconnect, useSignMessage, useSignTypedData,
   useSwitchChain,
 } from 'wagmi';
-import { walletConnectAvailable } from '@/lib/wagmi-config';
+import WalletConnectionOptions from '@/components/WalletConnectionOptions';
 import { buildApproveAgentRequest } from '@/lib/hyperliquid-agent';
 import { arbitrumChainId } from '@/lib/hyperliquid-network';
 
@@ -110,8 +110,6 @@ function QrCode({ value, size = 176 }: { value: string; size?: number }) {
 function WalletConnectPanel({
   fundingData, token, onVerified,
 }: { fundingData: FundingData; token: string | undefined; onVerified: () => void }) {
-  const connectors = useConnectors();
-  const { mutateAsync: connectAsync, isPending: connecting, error: connectError } = useConnect();
   const { disconnect } = useDisconnect();
   const account = useConnection();
   const { mutateAsync: switchChainAsync, isPending: switching } = useSwitchChain();
@@ -208,23 +206,7 @@ function WalletConnectPanel({
       <div style={card}>
         <div style={label}>Step 1 — connect the wallet you already control</div>
         {!account.isConnected ? (
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 14 }}>
-            {connectors.map((c) => (
-              <button
-                key={c.uid}
-                className="btn btn-secondary"
-                disabled={connecting}
-                onClick={() => connectAsync({ connector: c })}
-              >
-                {connecting ? 'Connecting…' : `Connect ${c.name}`}
-              </button>
-            ))}
-            {!walletConnectAvailable && (
-              <span style={{ fontSize: 12, color: 'var(--color-neutral-600)', alignSelf: 'center' }}>
-                WalletConnect is not configured on this deployment — browser extension wallets only.
-              </span>
-            )}
-          </div>
+          <WalletConnectionOptions />
         ) : (
           <div style={{ marginTop: 14 }}>
             <div style={mono}>{account.address}</div>
@@ -238,7 +220,6 @@ function WalletConnectPanel({
             </div>
           </div>
         )}
-        {connectError && <div style={{ color: '#ffb4b4', marginTop: 10, fontSize: 13 }}>{connectError.message}</div>}
       </div>
 
       <div style={card}>
