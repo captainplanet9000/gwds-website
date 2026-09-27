@@ -1,6 +1,11 @@
 # Latest evidence — 27 September 2026 UTC
 
-See [LAUNCH-ACCEPTANCE-20260927.md](LAUNCH-ACCEPTANCE-20260927.md). Core and Trader r4 now pass clean install/build/runtime checks; full trading/recovery acceptance and publication remain outstanding. The older dated findings below are history, not the current test counts.
+See [LAUNCH-ACCEPTANCE-20260927.md](LAUNCH-ACCEPTANCE-20260927.md). The current candidates are Core and Trader r7. Exact Windows Core and independent Linux Trader installations passed 49 tests, strict types, production builds and compiled-server checks for all six strategies. Core also passed all-six plugin removal/restoration checks across restart. Full venue lifecycle, fault and customer purchase acceptance remain outstanding; these artifacts are unpublished. The older dated findings below are history, not the current test counts.
+
+Exact archive manifest: `C:/GWDS/selfhost-release-20260918/acceptance-20260927-r7/archives.json`.
+Core SHA-256: `cda4150f3bcaa637c79de9e6e32de9fb34e7cdb9ef6ed81cc9f4edb36007b120`.
+Trader SHA-256: `f102e43ff1293a09641b2e5a25c368b919a0d912160fb3a5aa192dec4d57a3e7`.
+Hosted recovery evidence is separate: the current deployed hosted image passed 28 fresh isolated backup/restore/setup/allocation/restart checks on 27 September. That does not establish source-package venue acceptance or public failover.
 
 ---
 
