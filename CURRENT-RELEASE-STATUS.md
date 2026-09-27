@@ -133,3 +133,17 @@ Runtime commit `4b3914b121d27a37cefaed0a1ef65e0d2eba4960`, publication run **354
 
 See DURABLE-EXECUTION-ACCEPTANCE.md in the runtime repository and LAUNCH-READINESS-2026-09-19.md here for historical evidence. This file separates current verified deployment from outstanding work; it is not a launch certification.
 
+
+### Recovery host replacement and fresh offsite acceptance (2026-09-27 08:30 UTC)
+
+Recovered infrastructure access by creating `cival-cloud-02-recovery-v2` (18.221.55.222, private172.26.10.180) from the fresh available snapshot `cival-cloud-02-rescue-20260927`. AWS enforced a three-instance limit. Before freeing that slot, the already-stopped, unaddressed old production-v2 was preserved in available snapshot `cival-production-v2-retirement-20260927`, then retired. Active production-v3 was not cut over or restarted. The original broken cloud-02 remains preserved/running; its static IP is still attached to it. The replacement has SSH-only restricted ingress, no public customer ports and no tenant admissions.
+
+A fresh primary backup `20260927T081433Z` completed and uploaded to the recovery S3 bucket. All four manifest files were transferred to the replacement and verified by size and SHA-256. Exact current runtime image `sha256:f9eb04ab20e143034e3117560f253194e9facbb0626d4af8d2ba8f2ca7473505` was transferred with verified immutable transport chunks.
+
+Fresh isolated acceptance passed 28 checks in98.97seconds: restored grants/RLS, tenant isolation, paused zero-allocation agent creation, duplicate creation, canceled-subscription refusal, mutation boundaries, P&L-preserving idempotent allocation, and restart persistence of halt/unresolved order/unknown withdrawal/pending deposit. The sandbox fixture initially lacked a selected strategy slot; refusal was correct. Only the offline restored fixture was given an entitled Darvas BTC slot before rerunning. Failed reports were retained. Final evidence: `/var/backups/cival/current-runtime-selected-fixture-20260927/report.json` on the replacement, and `C:/GWDS/artifacts/recovery-selected-fixture-report-20260927.json`. Containers/network were removed by the harness cleanup. No signing keys or external network were available to the test.
+
+Primary now pulls read-only telemetry every minute using a dedicated source-restricted forced-command SSH key; the replacement holds no database credentials for this collector. Authenticated Comet Admin Servers readback confirmed both hosts current. Replacement customer services intentionally remain inactive; its admin note now identifies the replacement and admissions remain closed/max0. Added CPU, status-check and burst-capacity alarms on the replacement using the existing Valid Email contact. This is configured alarm coverage, not a new delivered-alert test.
+
+Store commit4c10526 checks admin-session validity on route changes, window focus and a60-second interval. Production deployment `dpl_8AzkYcUrKCDE3sN31zdPX8ufW3BK` is Ready. Build/typecheck and targeted lint passed. Owner-session browser reload succeeded without weakening MFA or extending cookie validity.
+
+Not completed by this recovery test: public failover/database authority/fencing, actual100-dashboard capacity, fresh venue lifecycle/fault acceptance, native embedded CCTP/mobile acceptance, full Stripe purchase/refund/every-plan/email acceptance, final source publication. Entry pauses and source sales holds remain unchanged. A sandbox Stripe key configuration location was requested; no credentials should be sent in chat.
