@@ -70,3 +70,11 @@ Newly identified gap: hosting notifications have no scheduled general outbox dra
 ## Operator constraints
 
 Keep source sales held and broad new entries paused. The user's customer wallet must complete the outstanding signature actions. Do not raise the admission limit to 100 based on reservation-only evidence. Preserve exact image/artifact hashes and historical entitlements. Do not treat earlier status notes as current production evidence.
+
+## Owner release decision and subsequent repairs
+
+The owner explicitly selected **finish operational acceptance first**. There is no authorization to relabel the paid offering as early access to bypass acceptance.
+
+All eight r4 ZIPs were staged privately and remotely hash-verified during publication preparation, with no product delivery pointers or checkout gates changed. Subsequent local source repairs make those ZIPs stale candidates. Details: `C:/GWDS/selfhost-release-20260918/core/OPERATIONAL-ACCEPTANCE-20260927.md`.
+
+The newer source passes 38 regression tests and strict types. Real PostgreSQL checks cover a persistent emergency latch and atomic agent/farm state changes. Production runtime internal-authentication and owner-isolation checks passed before the final hosted-only scheduler cleanup; the final build/run log is under the Core `.acceptance` directory. Full durable execution/venue acceptance is still required.
