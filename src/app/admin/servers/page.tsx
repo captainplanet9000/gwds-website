@@ -31,8 +31,10 @@ type Host = {
     backup: Record<string, string>;
   };
 };
+type RegisteredHost = { host: string; admissions_enabled: boolean; max_tenants: number; note: string | null };
 export default function ServersPage() {
   const [hosts, setHosts] = useState<Host[]>([]);
+  const [inventory, setInventory] = useState<RegisteredHost[]>([]);
   const [error, setError] = useState("");
   const [asOf, setAsOf] = useState("");
   const [busy, setBusy] = useState(false);
@@ -44,6 +46,7 @@ export default function ServersPage() {
       const b = await r.json();
       if (!r.ok) throw Error(b.error || "Server data unavailable");
       setHosts(b.hosts);
+      setInventory(b.inventory);
       setAsOf(b.asOf);
       setError("");
     } catch (e) {
@@ -107,6 +110,28 @@ export default function ServersPage() {
           description="Check the host collector before accepting customers."
         />
       )}
+      {asOf && (
+        <Card title="Registered hosts" style={{ marginBottom: 24 }}>
+          <p>Admission limits are configured limits, not measured capacity. A host without current telemetry requires review before accepting work.</p>
+          <Table<RegisteredHost> rowKey="host" dataSource={inventory} pagination={false} scroll={{ x: 600 }} columns={[
+            { title: 'Host', dataIndex: 'host' },
+            { title: 'New dashboards', dataIndex: 'admissions_enabled', render: (enabled: boolean) => <Tag color={enabled ? 'blue' : 'default'}>{enabled ? 'Allowed' : 'Closed'}</Tag> },
+            { title: 'Configured limit', dataIndex: 'max_tenants' },
+            { title: 'Telemetry', render: (_, registered) => {
+              const sample = hosts.find(host => host.host === registered.host);
+              const age = sample ? clock - Date.parse(sample.observed_at) : NaN;
+              const fresh = Number.isFinite(age) && age >= -60000 && age <= 180000;
+              return <Tag color={fresh ? 'success' : 'warning'}>{!sample ? 'Missing — check collector' : fresh ? 'Current' : 'Stale — check collector'}</Tag>;
+            } },
+            { title: 'Operator note', dataIndex: 'note', render: (note: string | null) => note || '—' },
+          ]}/>
+        </Card>
+      )}
+      {inventory.filter(registered => !hosts.some(host => host.host === registered.host)).map(registered => (
+        <Alert key={registered.host} type="warning" showIcon style={{ marginBottom: 20 }}
+          title={`${registered.host}: no telemetry received`}
+          description="This registered host has not reported health metrics. Check its collector and database reporting path; registration alone does not prove recovery readiness." />
+      ))}
       {hosts.map((h) => {
         const m = h.metrics,
           age = clock - Date.parse(h.observed_at),
