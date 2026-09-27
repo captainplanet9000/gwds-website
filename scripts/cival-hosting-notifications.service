@@ -1,0 +1,14 @@
+[Unit]
+Description=Cival hosting email recovery and delivery verification
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=/usr/bin/python3 /usr/local/sbin/cival-hosting-notifications.py
+TimeoutStartSec=80
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true

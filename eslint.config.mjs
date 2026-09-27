@@ -6,6 +6,7 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   {
+    files: ["**/*.{js,jsx,ts,tsx}"],
     // The Claude Design import includes animation/admin code that predates the
     // newest React compiler lint rules. Keep these visible without blocking a
     // production build; strict TypeScript remains mandatory.

@@ -7,3 +7,6 @@ src/migrations
 *.zip
 
 campaigns
+.notification*.log
+notification-acceptance.json
+.env*

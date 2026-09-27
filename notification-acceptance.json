@@ -1,0 +1,12 @@
+{
+  "at": "2026-09-27T04:03:59.977Z",
+  "checks": [
+    "eight workers obtain one send lease",
+    "expired lease recovers exact frozen message",
+    "superseded worker cannot acknowledge",
+    "provider acceptance recorded separately from delivery",
+    "expired provider idempotency window requires review",
+    "browser role cannot claim sends"
+  ],
+  "externalEmailsSent": 0
+}

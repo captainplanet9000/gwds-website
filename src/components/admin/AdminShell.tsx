@@ -49,6 +49,7 @@ const groups = [
       ["Release artifacts", "/admin/artifacts", FileZipOutlined],
       ["Access & licenses", "/admin/entitlements", KeyOutlined],
       ["Audit log", "/admin/audit", AuditOutlined],
+      ["Notifications", "/admin/notifications", AuditOutlined],
     ],
   },
   {

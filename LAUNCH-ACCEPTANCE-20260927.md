@@ -78,3 +78,27 @@ The owner explicitly selected **finish operational acceptance first**. There is 
 All eight r4 ZIPs were staged privately and remotely hash-verified during publication preparation, with no product delivery pointers or checkout gates changed. Subsequent local source repairs make those ZIPs stale candidates. Details: `C:/GWDS/selfhost-release-20260918/core/OPERATIONAL-ACCEPTANCE-20260927.md`.
 
 The newer source passes 38 regression tests and strict types. Real PostgreSQL checks cover a persistent emergency latch and atomic agent/farm state changes. Production runtime internal-authentication and owner-isolation checks passed before the final hosted-only scheduler cleanup; the final build/run log is under the Core `.acceptance` directory. Full durable execution/venue acceptance is still required.
+
+### Continued acceptance: farm setup and roster correctness
+
+The newer local Core source now passes 40 tests, strict typecheck, production build and built-server setup/readback checks. Farm creation and add-agent use the atomic installed-strategy transaction; concurrent retries do not duplicate agents. Server farm/trade-history reads no longer use anonymous credentials or hide their permission failures as successful empty data. New farms and their agents appear immediately after creation in the acceptance API tests. None of this has been packaged into the staged r4 ZIPs or published.
+
+Browser acceptance found additional Overview/network-health discrepancies and remaining farm allocation/control paths to consolidate; these are recorded in Core `OPERATIONAL-ACCEPTANCE-20260927.md`. The six launch workstreams remain incomplete. The live funding page still shows an approved agent and $999 testnet balance, but no signing provider or Arbitrum Sepolia gas in this browser, so no signed settlement has been proven.
+
+### Durable Core execution repairs (local, unpublished)
+
+Core now has a PostgreSQL order journal, serialized reservations, exact identity recovery, journaled protection modification, and ownership checks shared by self-hosted and hosted-style execution paths. Goal exits, emergency closes, and protection recovery use the durable route. Installed strategy signals now have an explicit live-mode execution path instead of only recording analysis or falling back to an unrelated farm LLM strategy. Forty-eight regression tests and strict typecheck pass; real disposable PostgreSQL concurrency/lost-response tests pass with simulated venue acknowledgements.
+
+This is not fresh venue acceptance and does not close any of the six launch workstreams. Final build/runtime evidence and remaining source gaps are in `C:/GWDS/selfhost-release-20260918/core/OPERATIONAL-ACCEPTANCE-20260927.md`. These changes are not in the private r4 candidate archives and have not changed source product checkout gates or hosted entry halts.
+
+### Continued launch acceptance: allocation and control boundaries
+
+Local Core now uses serialized, idempotent allocation transactions; service-side fresh account capacity; browser mutation denial; durable farm controls; and preservation of agent financial history. Agent and farm allocation dialogs show failures and use stable retry IDs. All 48 unit tests, strict types, production build, final built-server owner/setup/allocation tests and real PostgreSQL allocation/journal fault tests passed. See the Core operational acceptance record for exact evidence and limits. These changes remain outside the older staged ZIPs and have not been deployed to hosted tenants.
+
+The live customer funding page still has no connected signing provider and no Arbitrum Sepolia USDC/gas, though the approved Hyperliquid testnet account has $999. User wallet connection/signatures remain necessary for fresh settlement acceptance. Source publication and broad automation have not been enabled; the six overall workstreams are not yet complete.
+
+### Hosting email recovery deployed
+
+Production deployment `dpl_9GJ4hNsQfuSPKGPizXAW375C32WU` adds leased queue recovery, frozen message retries, bounded deduplication-aware retry windows, provider delivery checks, and Admin → Notifications. The primary host now runs the authenticated drain every five minutes. Initial production run completed with zero failures and nine provider checks: eight delivered and one bounced. The old pending activation email was held for operator review rather than sent with stale content.
+
+126 tests, strict types, production build and real PostgreSQL notification concurrency/recovery acceptance passed. Full lint has zero errors and 145 warnings. Authenticated admin visual acceptance is blocked by the active browser account lacking admin access. Details, rollback, and operator procedure are in `HOSTING-NOTIFICATIONS-RUNBOOK.md`. This repair does not complete the six overall launch workstreams or authorize publication of the older unaccepted source archives.
