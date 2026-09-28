@@ -30,6 +30,7 @@ vi.mock("@/lib/supabase", () => ({
       const q: Record<string, unknown> = {};
       q.select = () => q;
       q.eq = () => q;
+      q.update = () => q;
       q.single = async () => ({
         data: { customer_email: "fixture@example.com", plan_id: "solo" },
         error: state.rowError,
@@ -144,6 +145,9 @@ describe("hosting trial reminder webhook", () => {
     expect(state.retrieve).toHaveBeenCalledWith("sub_fixture");
     expect(state.rpc).toHaveBeenCalledWith("sync_hosting_subscription", expect.objectContaining({ p_status: currentStatus }));
     expect(state.rpc).toHaveBeenCalledWith("sync_hosting_tenant_lifecycle_command", expect.objectContaining({ p_command: command }));
+    if (currentStatus === 'active') {
+      expect(state.rpc).toHaveBeenCalledWith('provision_hosting_tenant', expect.objectContaining({ p_hosting_subscription_id: id, p_plan: 'solo' }));
+    }
   });
   it("retries delivery when current subscription state cannot be retrieved", async () => {
     state.event = {
@@ -153,6 +157,16 @@ describe("hosting trial reminder webhook", () => {
     state.retrieve.mockRejectedValue(new Error("Stripe unavailable"));
     expect((await request()).status).toBe(500);
     expect(state.rpc).not.toHaveBeenCalled();
+  });
+  it.each(['canceled', 'incomplete_expired', 'past_due', 'unpaid', 'paused'])("does not provision a delayed checkout whose current billing is %s", async (status) => {
+    const metadata = { commerce_kind: 'hosting', hosting_subscription_id: id, hosting_plan_id: 'solo', user_id: id };
+    state.event = { id: 'evt_checkout_delayed', type: 'checkout.session.completed', livemode: false,
+      data: { object: { id: 'cs_fixture', mode: 'subscription', metadata, customer_email: 'fixture@example.com', subscription: 'sub_fixture', customer: 'cus_fixture' } } };
+    state.retrieve.mockResolvedValue({ id: 'sub_fixture', status, metadata, cancel_at_period_end: false, items: { data: [{ price: { id: 'price_fixture' } }] } });
+    state.rpc.mockResolvedValue({ data: [{ subscription_id: id, instance_id: null, processed: true }], error: null });
+    expect((await request()).status).toBe(200);
+    expect(state.rpc.mock.calls.some(([name]) => name === 'provision_hosting_tenant')).toBe(false);
+    expect(state.rpc).toHaveBeenCalledWith('sync_hosting_tenant_lifecycle_command', expect.objectContaining({ p_command: 'suspend' }));
   });
   it("does not restore a fully refunded purchase after a won dispute", async () => {
     state.event = {id:"evt_dispute",type:"charge.dispute.closed",livemode:false,data:{object:{charge:"ch_fixture",status:"won"}}};

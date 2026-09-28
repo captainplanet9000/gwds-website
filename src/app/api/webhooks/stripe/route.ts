@@ -195,6 +195,12 @@ async function activateHostingSession(event: Stripe.Event, session: Stripe.Check
   // Any throw here fails the whole webhook (see POST handler's catch), which is deliberate: Stripe
   // retries a non-2xx delivery with backoff for days, and a failed delivery is visible in the
   // Stripe dashboard — that is the alert. This must never be caught-and-swallowed.
+  if (!['active', 'trialing'].includes(subscription.status)) {
+    // A completed checkout can be delivered after billing has already ended.
+    // Reconcile the existing runtime, but never provision a canceled/unpaid one.
+    await syncHostingSubscription(event, subscription, payloadHash);
+    return;
+  }
   await provisionHostingTenant(hostingSubscriptionId, planId, customerEmail, event.id);
 
   await deliverHostingNotification(hostingSubscriptionId);
@@ -230,10 +236,21 @@ async function syncHostingSubscription(event: Stripe.Event, subscription: Stripe
   const internalId = subscription.metadata?.hosting_subscription_id;
   if (internalId && /^[0-9a-f-]{36}$/i.test(internalId)) {
     const supabase = createServerClient();
-    const { data: instance } = await supabase.from('hosting_instances')
+    const { data: instance, error: instanceError } = await supabase.from('hosting_instances')
       .select('id,provider_project_id')
       .eq('subscription_id', internalId)
       .maybeSingle();
+    if (instanceError) throw new Error(`HOSTING_INSTANCE_LOOKUP_FAILED:${instanceError.message}`);
+    if (['active', 'trialing'].includes(subscription.status) && !instance?.provider_project_id) {
+      const { data: billing, error: billingError } = await supabase.from('hosting_subscriptions')
+        .select('plan_id,customer_email').eq('id', internalId).single();
+      if (billingError || !billing?.plan_id || !billing?.customer_email) {
+        throw new Error(`HOSTING_PROVISION_RECOVERY_FAILED:${billingError?.message || 'missing subscription'}`);
+      }
+      // Recover a checkout that arrived while unpaid or whose provisioning failed.
+      // The control-plane RPC validates billing and is idempotent per subscription.
+      await provisionHostingTenant(internalId, billing.plan_id, billing.customer_email, event.id);
+    }
     if (instance?.provider_project_id) {
       const taskType = ['active', 'trialing'].includes(subscription.status) ? 'resume' : 'suspend';
       await supabase.from('hosting_provisioning_tasks').upsert({

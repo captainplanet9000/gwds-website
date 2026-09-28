@@ -20,6 +20,7 @@ CREATE TABLE hosting_notifications(subscription_id uuid,template text,recipient_
 INSERT INTO hosting_plans VALUES ('solo',2900,'deprecated-do-not-use','price_test','price_live');
   `);
   sql(readFileSync(new URL('../supabase/migrations/20260920075940_bind_hosting_activation_price_mode.sql',import.meta.url),'utf8'));
+  sql(readFileSync(new URL('../supabase/migrations/20260928043155_reconcile_delayed_hosting_activation.sql',import.meta.url),'utf8'));
   sql(`
 CREATE FUNCTION pg_temp.activate(p_id uuid,p_price text,p_live boolean,p_session text DEFAULT 'cs_fixture',p_hash text DEFAULT 'fixture-hash') RETURNS void LANGUAGE sql AS $$
  SELECT * FROM activate_hosting_checkout('evt_'||p_id,'checkout.session.completed',p_hash,p_id,
@@ -64,7 +65,41 @@ DO $$ DECLARE v_id uuid; price text; live boolean; rejected boolean; result inte
  IF has_function_privilege('authenticated','public.activate_hosting_checkout(text,text,text,uuid,uuid,text,text,text,text,text,text,text,timestamptz,timestamptz,timestamptz,boolean,boolean)','EXECUTE') THEN RAISE EXCEPTION 'Customer may activate billing'; END IF;
 END $$;
   `);
-  console.log('PASS: test/live prices, stale legacy column, duplicate replay, conflicting replay, null/mismatched prices, wrong session, rollback and customer execution denial.');
+  sql(`
+DO $$ DECLARE v_id uuid; v_status text; v_plan text; rejected boolean; BEGIN
+ UPDATE hosting_plans SET stripe_price_id_test='price_test' WHERE id='solo';
+ INSERT INTO hosting_plans SELECT 'desk',7900,'old','price_test_desk','price_live_desk';
+ INSERT INTO hosting_plans SELECT 'fund',19900,'old','price_test_fund','price_live_fund';
+ FOREACH v_plan IN ARRAY ARRAY['solo','desk','fund'] LOOP
+  FOREACH v_status IN ARRAY ARRAY['active','trialing','canceled','incomplete_expired','past_due','unpaid','paused','incomplete'] LOOP
+   v_id=gen_random_uuid();
+   INSERT INTO hosting_subscriptions(id,user_id,plan_id,customer_email,price_cents,stripe_checkout_session_id,status)
+   SELECT v_id,'11111111-1111-4111-8111-111111111111',id,'fixture@example.invalid',price_cents,'cs_'||v_id,'pending_checkout' FROM hosting_plans WHERE id=v_plan;
+   PERFORM * FROM activate_hosting_checkout('evt_'||v_id,'checkout.session.completed','hash',v_id,
+    '11111111-1111-4111-8111-111111111111',v_plan,'cs_'||v_id,'cus_fixture','sub_'||v_id,
+    (SELECT stripe_price_id_test FROM hosting_plans WHERE id=v_plan),'fixture@example.invalid',v_status,
+    now(),now()+interval '1 month',null,false,false);
+   IF (SELECT status FROM hosting_subscriptions WHERE id=v_id)<>v_status THEN RAISE EXCEPTION 'Wrong billing state'; END IF;
+   IF v_status IN ('active','trialing') THEN
+    IF NOT EXISTS(SELECT 1 FROM hosting_instances WHERE subscription_id=v_id) THEN RAISE EXCEPTION 'Paid plan missing instance'; END IF;
+   ELSE
+    IF EXISTS(SELECT 1 FROM hosting_instances WHERE subscription_id=v_id) THEN RAISE EXCEPTION 'Inactive checkout provisioned'; END IF;
+    IF EXISTS(SELECT 1 FROM hosting_notifications WHERE subscription_id=v_id) THEN RAISE EXCEPTION 'Inactive checkout sent start email'; END IF;
+   END IF;
+   IF v_status IN ('canceled','incomplete_expired') THEN
+    rejected=false;
+    BEGIN
+     PERFORM * FROM activate_hosting_checkout('evt_stale_'||v_id,'checkout.session.completed','hash2',v_id,
+      '11111111-1111-4111-8111-111111111111',v_plan,'cs_'||v_id,'cus_fixture','sub_'||v_id,
+      (SELECT stripe_price_id_test FROM hosting_plans WHERE id=v_plan),'fixture@example.invalid','active',now(),now()+interval '1 month',null,false,false);
+    EXCEPTION WHEN OTHERS THEN IF SQLERRM<>'HOSTING_TERMINAL_STATE_CONFLICT' THEN RAISE; END IF; rejected=true; END;
+    IF NOT rejected THEN RAISE EXCEPTION 'Terminal subscription reactivated'; END IF;
+   END IF;
+  END LOOP;
+ END LOOP;
+END $$;
+  `);
+  console.log('PASS: all three plans across eight billing states; inactive checkout never provisions; terminal states reject stale activation; test/live prices, replay, rollback and customer execution denial.');
 } finally {
   sql(`DROP DATABASE IF EXISTS ${database};`,'postgres');
 }
