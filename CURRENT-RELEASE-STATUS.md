@@ -1,3 +1,9 @@
+# Source store OPEN — 2026-09-28 UTC
+
+The owner explicitly authorized UI/source/framework sales independently of hosted trading acceptance. Commit fa1440c is promoted as dpl_2wdddDF1suNPxecwtnBo47Gwy4qo. The public catalog returns available=true for Core, Trader and all six standalone strategies. All eight immutable ZIPs were uploaded, downloaded and SHA-256/size checked against src/lib/source-releases.json, and matched to active live Stripe prices. Non-document source files match the previously tested r7 packages byte for byte. Product copy and package READMEs distinguish source software from managed hosting and require installation and paper/testnet validation.
+
+The real Stripe sandbox application flow passed successful checkout, exactly-once fulfillment, customer signed archive delivery, provider-accepted confirmation email, duplicate event delivery, invalid-signature rejection, decline/expiry and partial/full refund entitlement changes. Webhooks in this isolated test are locally signed fixtures using real Stripe objects; this does not establish production delivery or inbox arrival. Hosted entry pauses remain enabled. Embedded/mobile funding, public failover and measured 100-runtime capacity remain separate unfinished operational work. Older source-sale hold statements below are historical and superseded by this release decision.
+
 # Deployed update — 2026-09-28 00:20 UTC
 
 The signed-in Stripe browser session is available. The obsolete AWS pilot webhook was retired after the UI showed 37/37 failed deliveries and server logs confirmed invalid database credentials. The main website webhook remains enabled, covers all pilot events, and has completed records for the pending financial events. No live payment/refund was performed.

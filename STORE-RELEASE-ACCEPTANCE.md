@@ -1,4 +1,8 @@
-# Latest evidence — 27 September 2026 UTC
+# Source/framework publication — 28 September 2026 UTC
+
+The owner has explicitly authorized sales of the UI/source/framework offerings independently of hosted trading acceptance. Core, Trader and the six strategy packages are now registered and purchasable. Exact published identities are in src/lib/source-releases.json; immutable upload/download verification is recorded in C:/GWDS/selfhost-release-20260918/source-release-20260928/publication-report.json. Executable files match tested r7 packages byte for byte; documentation now clearly states installation, paper/testnet validation and outstanding venue/recovery limitations. The storefront passed 140 tests, strict types and a production build. The isolated real Stripe sandbox application checkout/download/refund flow passed. This source release does not certify unrestricted automation, mainnet readiness or 100 hosted dashboards. Earlier blanket sale holds below are superseded; their uncompleted operational tests remain open.
+
+# Historical evidence — 27 September 2026 UTC
 
 See [LAUNCH-ACCEPTANCE-20260927.md](LAUNCH-ACCEPTANCE-20260927.md). The current candidates are Core and Trader r7. Exact Windows Core and independent Linux Trader installations passed 49 tests, strict types, production builds and compiled-server checks for all six strategies. Core also passed all-six plugin removal/restoration checks across restart. Full venue lifecycle, fault and customer purchase acceptance remain outstanding; these artifacts are unpublished. The older dated findings below are history, not the current test counts.
 

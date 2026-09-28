@@ -1,6 +1,16 @@
 # Launch acceptance — 28 September 2026 UTC
 
-This is continued operational acceptance, not unrestricted launch approval.
+Source/UI/framework sales are now open under the owner's explicit instruction. Hosted operational acceptance remains separate; this is not unrestricted trading launch approval.
+
+## Source publication and application commerce — final update
+
+- Promoted fa1440c as dpl_2wdddDF1suNPxecwtnBo47Gwy4qo. Public catalog independently reports all eight registered products available. Comet confirms the customer-facing catalog and purchase controls.
+- Eight immutable ZIPs were uploaded and downloaded with exact checksum/size verification. Live Stripe prices match. Package code is byte-identical to the tested r7 builds; documentation now describes source/framework scope and installation/validation requirements. Published identities: src/lib/source-releases.json.
+- Real sandbox Stripe Checkout completed through the actual local application, creating exactly one order item/entitlement. The customer regenerated a download, followed its signed Storage URL, and received bytes matching the exact published Core SHA-256 and size.
+- Same-payload webhook replay preserved state; invalid signatures were rejected. A declined card stayed unpaid and its expired checkout had no entitlement. Partial refunds retained access and permitted fresh download generation. Full refunds revoked access and blocked the old link. A new delayed checkout success did not restore the refunded entitlement.
+- The fixture initially rebuilt a duplicate event with a changed creation timestamp; the replay guard correctly rejected it. The test now resends the original payload, matching a real retry.
+- Email outbox reached sent/provider acceptance. Actual recipient inbox arrival is not established. Webhook requests in this isolated test are signed test fixtures with real Stripe objects, not proof of production Stripe delivery. Production customers and payment rows were not used for the gauntlet; all charges/refunds were sandbox.
+- Full source venue/recovery acceptance remains outside this source-framework sale approval. Hosted entry pauses remain enabled. Embedded/mobile funding, complete hosted-plan application journeys, public failover and measured 100-runtime capacity remain unfinished. Earlier blanket source-sale holds below are historical and superseded.
 
 ## Completed in this pass
 

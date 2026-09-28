@@ -1,0 +1,16 @@
+import fs from 'node:fs';import {createClient} from '@supabase/supabase-js';import {execFileSync} from 'node:child_process';
+const root='C:/GWDS/launch-acceptance-20260926/';
+const local=JSON.parse(fs.readFileSync(root+'local-status.private.json','utf8').replace(/^\uFEFF/,''));
+if(!new URL(local.API_URL).hostname.match(/^(127\.0\.0\.1|localhost)$/))throw Error('Not isolated');
+const secret=JSON.parse(fs.readFileSync(root+'stripe-sandbox.private.json','utf8')).stripeSecretKey;
+process.loadEnvFile('.env.production.local');
+const settings={NEXT_PUBLIC_SUPABASE_URL:local.API_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY:local.ANON_KEY,SUPABASE_SERVICE_ROLE_KEY:local.SERVICE_ROLE_KEY,STRIPE_SECRET_KEY:secret,RESEND_API_KEY:process.env.RESEND_API_KEY?.trim(),RESEND_FROM_EMAIL:process.env.RESEND_FROM_EMAIL?.trim(),SUPPORT_EMAIL:process.env.SUPPORT_EMAIL?.trim()};
+fs.writeFileSync(root+'commerce.private.env',Object.entries(settings).filter(([,v])=>v).map(([k,v])=>k+'='+JSON.stringify(v)).join('\n'));
+execFileSync('docker',['exec','-i','supabase_db_launch-acceptance-20260926','psql','-X','-v','ON_ERROR_STOP=1','-U','postgres','-d','postgres'],{input:fs.readFileSync('supabase/migrations/20260911150000_split_product_stripe_price_by_mode.sql','utf8')+'\n'+fs.readFileSync('supabase/migrations/20260928001555_prevent_refund_access_reactivation.sql','utf8')+'\nNOTIFY pgrst, \'reload schema\';',stdio:['pipe','pipe','pipe']});
+const db=createClient(local.API_URL,local.SERVICE_ROLE_KEY,{auth:{persistSession:false}});
+const release=JSON.parse(fs.readFileSync('C:/GWDS/selfhost-release-20260918/source-release-20260928/archives.json','utf8')).archives.find(a=>a.productId==='trading-dashboard-template');
+await db.storage.createBucket('downloads',{public:false});
+const zip=fs.readFileSync('C:/GWDS/selfhost-release-20260918/source-release-20260928/'+release.file);
+const upload=await db.storage.from('downloads').upload(release.file,zip,{upsert:true,contentType:'application/zip'});if(upload.error)throw upload.error;
+const {error}=await db.from('products').update({artifact_path:release.file,artifact_sha256:release.sha256,artifact_size_bytes:release.bytes,artifact_ready:true,version:release.version,is_active:true,stripe_price_id_live:'price_1U09vdLLyk0oaesNmjX9ZSDL',price_cents:9900}).eq('id',release.productId);if(error)throw error;
+console.log('Isolated commerce fixture prepared with the exact release archive; production customer database unchanged.');

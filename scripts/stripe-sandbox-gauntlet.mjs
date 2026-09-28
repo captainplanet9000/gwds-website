@@ -1,4 +1,4 @@
-import { createHmac, randomBytes, randomUUID } from 'node:crypto';
+import { createHash, createHmac, randomBytes, randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { spawn } from 'node:child_process';
 import Stripe from 'stripe';
@@ -7,7 +7,7 @@ import { chromium } from 'playwright';
 
 const root = new URL('../', import.meta.url).pathname.replace(/^\/(.:)/, '$1');
 const envFile = Object.fromEntries(
-  readFileSync(new URL('../.env.local', import.meta.url), 'utf8')
+  readFileSync(process.env.GAUNTLET_ENV_FILE || new URL('../.env.local', import.meta.url), 'utf8')
     .split(/\r?\n/)
     .filter((line) => line && !line.startsWith('#') && line.includes('='))
     .map((line) => {
@@ -61,8 +61,8 @@ async function waitForServer() {
   throw new Error('Local Next.js server did not become ready.');
 }
 
-async function signedWebhook(type, object, eventId = `evt_cival_${randomUUID().replaceAll('-', '')}`) {
-  const payload = JSON.stringify({
+async function signedWebhook(type, object, eventId = `evt_cival_${randomUUID().replaceAll('-', '')}`, originalPayload = null) {
+  const payload = originalPayload ?? JSON.stringify({
     id: eventId,
     object: 'event',
     api_version: null,
@@ -205,7 +205,7 @@ async function cleanup() {
   }
   if (userId) await supabase.auth.admin.deleteUser(userId).catch(() => undefined);
   if (originalProduct) {
-    await supabase.from('products').update({ stripe_price_id: originalProduct.stripe_price_id, is_active: originalProduct.is_active }).eq('id', originalProduct.id);
+    await supabase.from('products').update({ stripe_price_id: originalProduct.stripe_price_id, stripe_price_id_test: originalProduct.stripe_price_id_test, is_active: originalProduct.is_active }).eq('id', originalProduct.id);
   }
   if (checkoutCustomer) await stripe.customers.del(checkoutCustomer).catch(() => undefined);
   if (testPrice) await stripe.prices.update(testPrice.id, { active: false }).catch(() => undefined);
@@ -219,7 +219,7 @@ try {
 
   testProduct = await stripe.products.create({ name: 'Cival Core 2.0 — automated sandbox gauntlet', metadata: { cival_gauntlet: runId } });
   testPrice = await stripe.prices.create({ product: testProduct.id, currency: 'usd', unit_amount: 9900, metadata: { cival_gauntlet: runId } });
-  const { error: catalogUpdateError } = await supabase.from('products').update({ stripe_price_id: testPrice.id, is_active: true }).eq('id', catalog.id);
+  const { error: catalogUpdateError } = await supabase.from('products').update({ stripe_price_id: testPrice.id, stripe_price_id_test: testPrice.id, is_active: true }).eq('id', catalog.id);
   if (catalogUpdateError) throw catalogUpdateError;
 
   const { data: created, error: userError } = await supabase.auth.admin.createUser({ email: testEmail, password: testPassword, email_confirm: true, user_metadata: { cival_gauntlet: runId } });
@@ -269,12 +269,17 @@ try {
   const regenerated = await regenerate.json();
   assert(regenerate.ok && typeof regenerated.downloadUrl === 'string', `Download token regeneration failed (${regenerate.status}).`);
   const download = await fetch(regenerated.downloadUrl, { redirect: 'manual' });
-  assert(download.status === 303 && download.headers.get('location')?.startsWith('https://'), 'Customer download did not redirect to a signed artifact.');
+  assert(download.status === 303 && new URL(download.headers.get('location')).origin === databaseUrl.origin, 'Customer download did not redirect to the isolated signed artifact.');
+  const archive = await fetch(download.headers.get('location'));
+  assert(archive.ok, 'The signed download did not deliver archive bytes.');
+  const archiveBytes = Buffer.from(await archive.arrayBuffer());
+  assert(archiveBytes.length === originalProduct.artifact_size_bytes, 'Downloaded archive size differs from the purchased release.');
+  assert(createHash('sha256').update(archiveBytes).digest('hex') === originalProduct.artifact_sha256, 'Downloaded archive checksum differs from the purchased release.');
   const downloadableEvidence = await orderEvidence(successful.orderId);
   assert(downloadableEvidence.downloads.length === 1, 'Customer download token was not recorded exactly once.');
 
   const replayBefore = JSON.stringify(downloadableEvidence);
-  await signedWebhook('checkout.session.completed', paidSession, fulfillment.eventId);
+  await signedWebhook('checkout.session.completed', paidSession, fulfillment.eventId, fulfillment.payload);
   const replayAfter = JSON.stringify(await orderEvidence(successful.orderId));
   assert(replayBefore === replayAfter, 'Webhook replay changed fulfillment state.');
 
@@ -298,12 +303,22 @@ try {
   await signedWebhook('charge.refunded', charge);
   const partialEvidence = await orderEvidence(successful.orderId);
   assert(partialEvidence.order.status === 'partially_refunded' && partialEvidence.entitlements[0].status === 'active', 'Partial refund did not preserve access.');
+  const partialDownload = await fetch(`${baseUrl}/api/account/regenerate-download`, {
+    method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${signedIn.session.access_token}` },
+    body: JSON.stringify({ orderId: successful.orderId, productId: 'trading-dashboard-template' }),
+  });
+  assert(partialDownload.ok, 'Partially refunded customer could not regenerate a download.');
 
   await stripe.refunds.create({ payment_intent: paymentIntentId, amount: 7400, metadata: { cival_gauntlet: runId } });
   charge = await stripe.charges.retrieve(chargeId);
   await signedWebhook('charge.refunded', charge);
   const refundEvidence = await orderEvidence(successful.orderId);
   assert(refundEvidence.order.status === 'refunded' && refundEvidence.entitlements[0].status === 'revoked', 'Full refund did not revoke access.');
+  const revokedDownload = await fetch(regenerated.downloadUrl, { redirect: 'manual' });
+  assert(!revokedDownload.ok && revokedDownload.status !== 303, 'Fully refunded customer retained download access.');
+  await signedWebhook('checkout.session.completed', paidSession);
+  const delayedEvidence = await orderEvidence(successful.orderId);
+  assert(delayedEvidence.order.status === 'refunded' && delayedEvidence.entitlements[0].status === 'revoked', 'Delayed payment event resurrected refunded access.');
 
   console.log(JSON.stringify({
     result: 'PASS',
@@ -317,6 +332,9 @@ try {
     expiredCheckoutClosed: true,
     partialRefundPreservedAccess: true,
     fullRefundRevokedAccess: true,
+    downloadedArchiveChecksumVerified: true,
+    partialRefundDownloadRegeneration: true,
+    delayedPaymentCannotRestoreRefundedAccess: true,
     cleanup: 'running',
   }, null, 2));
 } catch (error) {
