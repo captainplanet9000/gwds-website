@@ -1,3 +1,11 @@
+# Hosted billing recovery deployed — 2026-09-28 04:38 UTC
+
+Commit 03064e4 is live as dpl_CuNmPDdKfQHp7LGtRfXAuLUrZpGi. Delayed checkout completion now records canceled/unpaid billing without allocating a workspace or sending a start notification. Terminal subscription state rejects stale reactivation. Subsequent active billing retries idempotent provisioning if a prior attempt did not produce a tenant. The production function was backed up before transactional replacement; readback confirms the guard and denied anonymous/customer execution. All 145 tests, strict types and production build pass; real PostgreSQL tests cover Solo/Desk/Fund across eight statuses. Source sales remain open.
+
+Comet customer hosting inspection confirms healthy running service, enabled cycles and paused new entries. Recovery host 3.151.88.151 contains the immutable runtime images and restore evidence, but no installed/running host-agent or gateway and no commissioned persistent tenant mount. It is not a public failover host. AWS instance quota increase request cc7cb67b5927404590051ec439182533Hp49RIKd remains CASE_OPENED (case 179006243200988). cloud-01 has five non-archived tenant assignments against five slots; cloud-02 admissions=false and max_tenants=0. Do not raise capacity based on idle memory or reservation-only tests.
+
+Remaining: complete hosted application journeys beyond the isolated billing tests; embedded/mobile customer-signed funding; commission recovery services, database authority, fencing and public routing; measure runtime load and add verified host capacity. No customer positions or mainnet execution were changed.
+
 # Source store OPEN — 2026-09-28 UTC
 
 The owner explicitly authorized UI/source/framework sales independently of hosted trading acceptance. Commit fa1440c is promoted as dpl_2wdddDF1suNPxecwtnBo47Gwy4qo. The public catalog returns available=true for Core, Trader and all six standalone strategies. All eight immutable ZIPs were uploaded, downloaded and SHA-256/size checked against src/lib/source-releases.json, and matched to active live Stripe prices. Non-document source files match the previously tested r7 packages byte for byte. Product copy and package READMEs distinguish source software from managed hosting and require installation and paper/testnet validation.
