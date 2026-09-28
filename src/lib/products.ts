@@ -32,7 +32,7 @@ export interface Product {
 }
 
 export const categories: { id: ProductCategory; label: string; emoji: string; color: string; description: string }[] = [
-  { id: "trading", label: "Trading", emoji: "📈", color: "#1D4ED8", description: "Indicators, agents, and systems for real-money execution." },
+  { id: "trading", label: "Trading", emoji: "📈", color: "#1D4ED8", description: "Editable trading dashboards and strategy frameworks for your own installation." },
 ];
 
 /**
@@ -207,7 +207,7 @@ Because it borrows through Aave V3 flash loans, positions open and close in one 
     requiresDashboard: true,
     name: "VWAP Strategy Agent",
     description: "Compare price with its volume-weighted average to evaluate breakouts and possible reversals. A strategy add-on for a compatible Cival dashboard; included in Trader.",
-    longDescription: "VWAP is the average price weighted by trading volume. This strategy compares price with VWAP and surrounding bands to look for breakouts or unusually large moves away from the average.\n\nYou can configure the calculation period, band width and anchored VWAP settings. Volume estimates come from price candles; they are not a live order-book or individual-trade feed.\n\nThe download includes editable strategy code and configuration. Your dashboard supplies market data, places orders and manages positions. The current release remains unavailable while configuration and integration issues are being corrected.",
+    longDescription: "VWAP is the average price weighted by trading volume. This strategy compares price with VWAP and surrounding bands to look for breakouts or unusually large moves away from the average.\n\nYou can configure the calculation period, band width and anchored VWAP settings. Volume estimates come from price candles; they are not a live order-book or individual-trade feed.\n\nThe download includes editable strategy code and configuration. Your dashboard supplies market data, places orders and manages positions. Start in paper mode and validate the strategy in your own setup before enabling exchange execution.",
     price: 49,
     category: "trading",
     badge: "AGENT",

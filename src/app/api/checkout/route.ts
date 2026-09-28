@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type Stripe from 'stripe';
-import { needsReleaseAcceptance } from '@/lib/release-readiness';
+import { needsReleaseAcceptance, matchesSourceRelease } from '@/lib/release-readiness';
 import { redundantCartProducts } from '@/lib/cart-products';
 import { getProduct } from '@/lib/products';
 import { createServerClient } from '@/lib/supabase';
@@ -92,7 +92,7 @@ async function requireCatalog(items: CheckoutItemInput[]): Promise<CatalogProduc
     if (!configured || !row.is_active) {
       throw new CommerceError('CATALOG_MISMATCH', 'A product is being updated. Please try again later.', 503);
     }
-    if (!row.artifact_ready || !row.artifact_path || !row.artifact_sha256 || !row.artifact_size_bytes) {
+    if (!row.artifact_ready || !row.artifact_path || !matchesSourceRelease(row.id, row.artifact_sha256, row.artifact_size_bytes, row.version)) {
       throw new CommerceError(
         'RELEASE_NOT_READY',
         `${row.name} is not on sale while its release archive is being verified. No payment was taken.`,

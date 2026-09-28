@@ -69,6 +69,7 @@ export default function ProductDetailClient({ product, related }: { product: Pro
               </div>
               <h1 style={{ fontSize: 'clamp(31px,3.4vw,44px)', lineHeight: 1.1, letterSpacing: '-0.015em', margin: '0 0 16px' }}>{product.name}</h1>
               <p style={{ fontSize: 16.5, lineHeight: 1.6, color: 'var(--color-neutral-800)', margin: '0 0 24px' }}>{product.description}</p>
+              <p style={{fontSize:14,lineHeight:1.65,color:'var(--color-neutral-800)'}}>Downloadable source code and strategy frameworks. Installation and configuration required. Hosting and trading funds are separate. Start in paper mode; validate testnet execution and recovery before using real funds.</p>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 22 }}>
                 <span style={{ fontFamily: 'var(--font-mono)', fontSize: 38, fontWeight: 500, letterSpacing: '-0.02em' }}>{money(product.price)}</span>
                 {product.wasPrice && <span style={{ fontSize: 14, color: 'var(--color-neutral-600)', textDecoration: 'line-through', fontFamily: 'var(--font-mono)' }}>{money(product.wasPrice)}</span>}
@@ -200,7 +201,7 @@ export default function ProductDetailClient({ product, related }: { product: Pro
             ['Is this a ready-to-use hosted dashboard?', 'No. Core is downloadable source code that you install and maintain. Managed hosting is a separate subscription for customers who want the server operated for them.'],
             ['Do I need coding experience?', 'You should be comfortable installing a web application and configuring its database, or have a developer help you. AI coding tools can help with customization, but you still need to review and test changes.'],
             ['Which strategy comes with Core?', 'Darvas Box is included. You do not need to buy the Darvas add-on again. Other strategies are available separately, or together with Core in Trader.'],
-            ['Can it start trading as soon as I download it?', 'No. Installation, account connection, strategy configuration and testing are required. The current release has unresolved installation and trading issues, so new purchases remain paused.'],
+            ['Can it start trading as soon as I download it?', 'No. Installation, account connection, strategy configuration and testing are required. The source release passes installation and build checks. Complete testnet execution and recovery validation for your installation before using real funds.'],
             ['Is the $99 price a monthly fee?', 'No. It is a one-time software license fee. You pay separately for your server, database and any paid services you choose to use.'],
           ].map(([question,answer])=><details key={question} style={{padding:'20px 0',borderBottom:'1px solid var(--color-divider)'}}><summary style={{fontSize:16,fontWeight:600,lineHeight:1.5,cursor:'pointer'}}>{question}</summary><p style={{fontSize:15,lineHeight:1.7,color:'var(--color-neutral-800)',maxWidth:800,marginTop:16}}>{answer}</p></details>)}
           <p style={{marginTop:24,fontSize:15,lineHeight:1.6}}>Prefer managed hosting? <Link href="/hosted">Compare hosted plans →</Link></p>
@@ -218,7 +219,7 @@ export default function ProductDetailClient({ product, related }: { product: Pro
             ['Do I also need to buy Core or the individual agents?', 'No. Trader includes Core, Darvas and the other five strategy frameworks. Buying them again would duplicate what is already included.'],
             ['How is the $95 saving calculated?', 'Core is listed at $99 and includes Darvas. The other five add-ons are $49 each, making $344 separately. Trader is $249. The $344 comparison is not a previous sale price.'],
             ['Does Trader include a hosted dashboard?', 'No. You install and maintain Trader on your own infrastructure. Managed hosting is a separate subscription.'],
-            ['Can all six strategies trade immediately?', 'No. You must complete installation, configure the strategies and verify order handling and risk controls. New purchases remain paused while release issues are corrected.'],
+            ['Can all six strategies trade immediately?', 'No. You must complete installation, configure the strategies and verify order handling and risk controls. These are editable strategy frameworks; they do not include a validated unattended trading service.'],
             ['Does Sentiment Proxy include news or macroeconomic data?', 'No. It is an experimental research strategy based on price and volume estimates. External news, social and macroeconomic feeds are not included.'],
           ]).map(([question,answer])=><details key={question} style={{padding:'20px 0',borderBottom:'1px solid var(--color-divider)'}}><summary style={{fontSize:16,fontWeight:600,lineHeight:1.5,cursor:'pointer'}}>{question}</summary><p style={{fontSize:15,lineHeight:1.7,color:'var(--color-neutral-800)',maxWidth:800,marginTop:16}}>{answer}</p></details>)}
           <p style={{fontSize:15,lineHeight:1.6,marginTop:24}}><Link href="/terms">Read software license terms</Link> · <Link href="/hosted">Explore managed hosting</Link></p>

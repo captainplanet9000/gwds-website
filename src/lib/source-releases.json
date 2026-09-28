@@ -1,0 +1,42 @@
+{
+  "trading-dashboard-template": {
+    "sha256": "4f66bd179734c69c6f73ecd183ee6506b7fe6ff25feebc58500d8980b4c29180",
+    "bytes": 1167730,
+    "version": "2.1.0-source.20260928"
+  },
+  "darvas-indicator": {
+    "sha256": "409d0361ac74290de4093d047b5a29905cd01486ccac117121a10b42dc59eeb4",
+    "bytes": 11295,
+    "version": "2.1.1-source.20260928"
+  },
+  "elliott-wave-agent": {
+    "sha256": "32f85ae0a257a486d3c29df982dd905a7a64f8032969852c549e3f9624ff7f87",
+    "bytes": 12735,
+    "version": "2.1.1-source.20260928"
+  },
+  "heikin-ashi-agent": {
+    "sha256": "048da4c4d79aeb57cb45d083cb312cc8de93bb9e41fe0a8858c63865f6ba9692",
+    "bytes": 11779,
+    "version": "2.1.1-source.20260928"
+  },
+  "macro-sentiment-agent": {
+    "sha256": "5ca0b439dc1b2988b8429158624ca56ab565b7aa6ca1ef2d91b8bc4ec74d816a",
+    "bytes": 12999,
+    "version": "2.1.1-source.20260928"
+  },
+  "mean-reversion-agent": {
+    "sha256": "dcdcd74fd55e4d4921314066dbe2743739e69679e31763b0b6b5ed3ada97432e",
+    "bytes": 12065,
+    "version": "2.1.1-source.20260928"
+  },
+  "vwap-momentum-agent": {
+    "sha256": "0ef904fa9d6644ad6e0f45c93a75b2ca3c78bf4a22a49ccdc3ca42487774c6d4",
+    "bytes": 12763,
+    "version": "2.1.1-source.20260928"
+  },
+  "multi-strat-bundle": {
+    "sha256": "bd2ca79878d18b509732a8e584d9107a2ce0d952a8becd0a76a893c1dfdc8798",
+    "bytes": 1220618,
+    "version": "2.1.0-source.20260928"
+  }
+}
