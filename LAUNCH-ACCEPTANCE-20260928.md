@@ -2,6 +2,18 @@
 
 Source/UI/framework sales are now open under the owner's explicit instruction. Hosted operational acceptance remains separate; this is not unrestricted trading launch approval.
 
+## Latest evidence — 07:00 UTC
+
+See the first section of CURRENT-RELEASE-STATUS.md for the current state. Subsequent work supersedes older unfinished/publication/pause statements below:
+
+- Three-plan application acceptance passed against the isolated local database with real sandbox Stripe Checkout. Wallet proofs use new unfunded fixture wallets. Webhooks are locally signed using actual Stripe objects; provisioning commands are checked but not executed by a host in this harness.
+- A declined Solo renewal and paid recovery exposed stale queued billing suspension. Hosting commit 60af252 fixes execution against obsolete billing state; 63 host-agent tests, full hosting types and the real-database stale-command check pass. Deployed on the primary without changing tenant containers; all four health endpoints returned 200.
+- Purchase, trial, queued workspace, cancellation and failed-payment emails have provider-confirmed delivered examples. Inbox placement is not asserted.
+- Recovery disk and installed inactive services survive a reboot. Authoritative database/public failover is not accepted. AWS instance quota request remains open; 100-runtime operation remains unmeasured.
+- Owner testnet pilot is unpaused by explicit instruction, but its request quota is exhausted and withdrawable balance is zero. No request-capacity fee was submitted.
+
+Additional evidence: hosting-app-acceptance-20260928.json, hosting-app-acceptance-solo-20260928.json, customer-email-delivery-20260928.json, recovery-preparation-20260928.json and host-agent-billing-recovery-20260928.json in C:/GWDS/artifacts.
+
 ## Source publication and application commerce — final update
 
 - All eight live product pages passed 390px mobile and 1440px desktop checks: HTTP 200, no horizontal overflow, loaded images, source/framework disclosures and no obsolete sale-hold copy. Core mobile was also visually inspected. Evidence: C:/GWDS/artifacts/published-source-pages-20260928.json.
