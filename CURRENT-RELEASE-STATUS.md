@@ -1,3 +1,15 @@
+# Limited hosting admissions OPEN — 2026-09-28 07:55 UTC
+
+Hosting signup is available again within the existing subscription cap of four, with two occupied subscriptions and two remaining slots. Primary host admissions remain enabled with max_tenants=5; recovery admissions remain disabled. This is a limited release, not evidence of 100-dashboard capacity or completed public failover. All eight source products remain available.
+
+Three canceled/unused sandbox fixtures were archived through canonical deprovision commands after verifying zero agents, zero execution history and no pending commands. The real test Stripe subscription was canceled through the test API; no live subscription was canceled. Data, keys and history were retained. A private pre-change backup is on the primary at /var/backups/cival/empty-sandbox-retirement-20260928.json. Both remaining customer containers returned health HTTP 200 at 07:53 UTC; these are liveness checks, not trading acceptance.
+
+Live notification acceptance now proves receiving-server delivery of signup verification, password reset and a support request. A separate signup fixture redeemed its confirmation token and rejected replay; password recovery completed on another fixture and also rejected token reuse. The support request is persisted in the admin queue. Evidence: C:/GWDS/artifacts/remaining-notification-acceptance-20260928.json. These checks used owner-controlled email aliases, not customer accounts. Mail-server delivery does not prove inbox placement or every browser/mobile journey.
+
+Remaining operational work: native embedded CCTP/mobile funding, complete final-runtime hosted setup and venue fault cases, public failover with authoritative database/fencing, and measured multi-host runtime capacity. No broad mainnet certification is claimed. The owner pilot remains in its previously authorized unpaused state; other customer execution settings were not changed.
+
+At 08:00 UTC, host-agent e844025b9999ab30ec0fa80472430a17653d8b55 replaced 60af252 on the primary after 64 installation tests, 63 host-agent tests and full hosting typecheck passed on the server. It fixes customer config.instances market selections being ignored by the legacy perInstance installer. Invalid/ambiguous slot arrays are refused; legacy configuration remains supported. No customer container was restarted. Server evidence: /var/lib/cival/customer-slot-release-20260928.json.
+
 # Customer billing acceptance and host-agent repair — 2026-09-28 07:00 UTC
 
 All eight source/UI/framework products remain open for purchases. The owner testnet pilot was explicitly unpaused by command 2277c74b-568a-475c-953e-b8e51f812076 and its local scheduler resumed. Older blanket pause/publication statements below are historical. No other tenant was unpaused and no mainnet activation was performed.
