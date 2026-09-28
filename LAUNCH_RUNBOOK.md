@@ -1,6 +1,12 @@
 # Cival Systems launch runbook
 
-The store is launchable only when every blocking item below is complete. A green website build alone is not permission to accept payment.
+## Current release decision — 28 September 2026 UTC
+
+The owner explicitly authorized sales of the UI/source/framework products independently of hosted trading acceptance. All eight registered source releases are now available. The current evidence and exact deployment are in CURRENT-RELEASE-STATUS.md and LAUNCH-ACCEPTANCE-20260928.md; exact artifact identities are in src/lib/source-releases.json. Successful sandbox application purchase, exact signed download, decline/expiry, replay, partial/full refund and delayed-payment recovery are verified. This supersedes the historical blanket source sale gates below.
+
+Hosted entry pauses and capacity restrictions remain. Do not represent source sales as mainnet, public failover, embedded/mobile funding or 100-running-dashboard certification. The historical managed-hosting paragraph below predates trade-only wallet approval and is not a current requirement to make every plan paper-only. Current hosting supports customer-approved trade-only wallets; acceptance remains incomplete.
+
+The remaining checklist below is retained for operational follow-through and historical context. A green website build alone is not proof of acceptance.
 
 ## 1. Verify account and download infrastructure
 

@@ -4,6 +4,8 @@ Source/UI/framework sales are now open under the owner's explicit instruction. H
 
 ## Source publication and application commerce — final update
 
+- All eight live product pages passed 390px mobile and 1440px desktop checks: HTTP 200, no horizontal overflow, loaded images, source/framework disclosures and no obsolete sale-hold copy. Core mobile was also visually inspected. Evidence: C:/GWDS/artifacts/published-source-pages-20260928.json.
+- Fresh local hosting checks passed mode-bound activation/replay rejection; eight competing notification workers acquired one send lease with recovery/acknowledgement protections; and 120 concurrent reservation attempts admitted exactly 100. This verifies reservation concurrency, not capacity to run 100 dashboards. No external email was sent by the notification lease test.
 - Promoted fa1440c as dpl_2wdddDF1suNPxecwtnBo47Gwy4qo. Public catalog independently reports all eight registered products available. Comet confirms the customer-facing catalog and purchase controls.
 - Eight immutable ZIPs were uploaded and downloaded with exact checksum/size verification. Live Stripe prices match. Package code is byte-identical to the tested r7 builds; documentation now describes source/framework scope and installation/validation requirements. Published identities: src/lib/source-releases.json.
 - Real sandbox Stripe Checkout completed through the actual local application, creating exactly one order item/entitlement. The customer regenerated a download, followed its signed Storage URL, and received bytes matching the exact published Core SHA-256 and size.
