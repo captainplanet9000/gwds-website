@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
 
     const supabase = createServerClient();
     const { data: order } = await supabase.from('orders').select('id,total_cents,created_at,status')
-      .eq('id', orderId).eq('user_id', user.id).in('status', ['paid', 'completed']).maybeSingle();
+      .eq('id', orderId).eq('user_id', user.id).in('status', ['paid', 'completed', 'partially_refunded']).maybeSingle();
     if (!order) throw new CommerceError('ORDER_NOT_FOUND', 'Eligible order not found.', 404);
 
     const { data: existing } = await supabase.from('refund_requests').select('id,status')

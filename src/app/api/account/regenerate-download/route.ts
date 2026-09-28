@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
       .select('id,status')
       .eq('id', body.orderId)
       .eq('user_id', user.id)
-      .in('status', ['paid', 'completed'])
+      .in('status', ['paid', 'completed', 'partially_refunded'])
       .maybeSingle();
     if (!order) throw new CommerceError('ORDER_NOT_FOUND', 'This paid order was not found.', 404);
 

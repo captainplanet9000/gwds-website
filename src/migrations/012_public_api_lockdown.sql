@@ -46,20 +46,29 @@ to authenticated;
 
 -- Deliberately public, read-only paper-demo data. RLS SELECT policies were
 -- created in migration 011; there are no mutation grants or policies.
-grant select on table
-  public.trade_journal,
-  public.paper_accounts,
-  public.paper_positions,
-  public.paper_orders,
-  public.paper_fills,
-  public.paper_equity_curve,
-  public.protections
-to anon, authenticated;
+do $$
+declare table_name text;
+begin
+  foreach table_name in array array['trade_journal','paper_accounts','paper_positions','paper_orders','paper_fills','paper_equity_curve','protections'] loop
+    if to_regclass(format('public.%I', table_name)) is not null then
+      execute format('grant select on table public.%I to anon, authenticated', table_name);
+    end if;
+  end loop;
+end $$;
 
 -- Treasury views must evaluate with the caller's permissions and are not part
 -- of the public API.
-alter view public.treasury_secured_today set (security_invoker = true);
-alter view public.treasury_realized_pnl set (security_invoker = true);
-
-alter function public.provision_account_schema(text) set search_path = public, pg_temp;
-alter function public.seed_account_roster(text) set search_path = public, pg_temp;
+do $$
+declare view_name text; function_name text;
+begin
+  foreach view_name in array array['treasury_secured_today','treasury_realized_pnl'] loop
+    if to_regclass(format('public.%I', view_name)) is not null then
+      execute format('alter view public.%I set (security_invoker = true)', view_name);
+    end if;
+  end loop;
+  foreach function_name in array array['provision_account_schema','seed_account_roster'] loop
+    if to_regprocedure(format('public.%I(text)', function_name)) is not null then
+      execute format('alter function public.%I(text) set search_path = public, pg_temp', function_name);
+    end if;
+  end loop;
+end $$;

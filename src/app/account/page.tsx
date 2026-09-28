@@ -279,7 +279,7 @@ export default function AccountPage() {
                         const product = getProduct(item.product_id);
                         const download = item.download;
                         const canDownload = item.entitlementStatus === 'active' && item.artifactReady
-                          && (order.status === 'paid' || order.status === 'completed');
+                          && ['paid', 'completed', 'partially_refunded'].includes(order.status);
                         const regKey = `${order.id}-${item.product_id}`;
 
                         return (

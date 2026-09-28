@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
       .select('id,created_at')
       .is('user_id', null)
       .eq('customer_email', email)
-      .in('status', ['paid', 'completed']);
+      .in('status', ['paid', 'completed', 'partially_refunded']);
 
     for (const legacy of legacyOrders || []) {
       const { data: claimed } = await supabase
