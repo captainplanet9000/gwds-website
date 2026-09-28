@@ -12,6 +12,9 @@ This is continued operational acceptance, not unrestricted launch approval.
 - Found and fixed customer access after a partial refund: account download eligibility, regeneration, legacy order claiming, and refund requests now accept `partially_refunded`. Active entitlement and owner checks remain required. Full refunds and revoked/disputed licenses remain blocked.
 - Found and fixed clean commerce installation failures in migrations 011/012. Optional legacy objects are hardened only when present. Thirteen base migrations pass against a new disposable PostgreSQL database; repeated legacy hardening, RLS, grants, view invoker, and function-access checks pass.
 - All 140 storefront tests and strict TypeScript checks pass.
+- A second refund defect was confirmed in the deployed PostgreSQL function: a different, delayed success event could reactivate a refunded entitlement and count the purchase twice. The new migration preserves prior paid/refunded/disputed state, validates payment-intent identity, and rejects conflicting event replay. Real PostgreSQL tests prove partial-refund downloads still work, full-refund tokens remain revoked, delayed success cannot reactivate access, and revenue remains counted once.
+- Applied `20260928001555_prevent_refund_access_reactivation.sql` transactionally to the authoritative AWS `supabase-db`, after saving the prior function in `C:/GWDS/artifacts/fulfill-store-order-before-20260928.sql`. Production readback confirms both guards and denied `anon`/`authenticated` execution. No production order rows were changed by this DDL.
+- Storefront ca929b6 built Ready and was promoted as `dpl_8jLoe4GBuSvXMTXhDFPa1ayDqFXR`, https://cival-systems-store-b21bfqoro-civals-projects.vercel.app. Public store/hosted/account return 200, anonymous download regeneration 401, unsigned webhook 400. Focused lint has zero errors and two pre-existing `any` warnings in the account page.
 
 ## Evidence
 

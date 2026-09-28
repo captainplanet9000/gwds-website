@@ -1,3 +1,11 @@
+# Deployed update — 2026-09-28 00:20 UTC
+
+The signed-in Stripe browser session is available. The obsolete AWS pilot webhook was retired after the UI showed 37/37 failed deliveries and server logs confirmed invalid database credentials. The main website webhook remains enabled, covers all pilot events, and has completed records for the pending financial events. No live payment/refund was performed.
+
+Storefront ca929b6 is production Ready and promoted as dpl_8jLoe4GBuSvXMTXhDFPa1ayDqFXR. Partial-refund customer download access is repaired. All 140 tests and strict types pass. The production database also has the new refund replay guard: a delayed success cannot resurrect revoked access or duplicate revenue. Anonymous/customer execution remains denied. Clean commerce bootstrap and real PostgreSQL refund/replay checks pass. Real Stripe sandbox provider checks passed Solo/Desk/Fund billing, exact Solo trial, abandonment, decline, refunds and cancellation; these are not complete application customer journeys.
+
+See LAUNCH-ACCEPTANCE-20260928.md for evidence and remaining scope. Full application purchase/setup/email acceptance, embedded/mobile funding, public failover, measured 100-dashboard capacity, and exact source publication still remain. Hosted new-entry pauses and source sale holds remain unchanged.
+
 # Deployed update — 2026-09-27 22:59 UTC
 
 All four hosted tenants now run d4a1554, immutable image sha256:705391f357c8b114d8e029fb612f6d79b07496f9fca29aaca7e7b829a10e9419. Publication36355724455 and transfer36356477424 passed. The exact image passed32 isolated compiled restore/control/restart checks; sequential production rollout passed health200 on all four tenants with entry pauses retained. Pause and Stop All now persist scheduler permissions and report write failures instead of false success. Local evidence: C:/GWDS/artifacts/durable-controls-d4a1554-report.json and durable-controls-rollout-d4a1554-20260927.json.
