@@ -10,6 +10,8 @@ Remaining operational work: native embedded CCTP/mobile funding, complete final-
 
 At 08:00 UTC, host-agent e844025b9999ab30ec0fa80472430a17653d8b55 replaced 60af252 on the primary after 64 installation tests, 63 host-agent tests and full hosting typecheck passed on the server. It fixes customer config.instances market selections being ignored by the legacy perInstance installer. Invalid/ambiguous slot arrays are refused; legacy configuration remains supported. No customer container was restarted. Server evidence: /var/lib/cival/customer-slot-release-20260928.json.
 
+Production readback after reconciliation returned Heikin Ashi / BTC from the real trial's agent-setup endpoint (previously market=null). The same release passed those checks on the recovery host and is staged there, inactive. The independent signup email is now provider-delivered as well as successfully redeemed. At 08:01 UTC the owner testnet wallet still had nRequestsUsed=274335 against cap=153134, surplus=0 and withdrawable=0; its three existing positions were untouched. This remains a concrete blocker to further normal venue fault testing with that wallet.
+
 # Customer billing acceptance and host-agent repair — 2026-09-28 07:00 UTC
 
 All eight source/UI/framework products remain open for purchases. The owner testnet pilot was explicitly unpaused by command 2277c74b-568a-475c-953e-b8e51f812076 and its local scheduler resumed. Older blanket pause/publication statements below are historical. No other tenant was unpaused and no mainnet activation was performed.
