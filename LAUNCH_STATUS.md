@@ -1,0 +1,45 @@
+# Cival Systems launch status — 2026-09-30 19:25 UTC
+
+For Bossman. This is a point-in-time operational handoff. “Passed” means the specific check below was observed; it does not imply full production certification. No credentials or wallet secrets are recorded here.
+
+## Deployed and available — verified
+
+- The public source store is open for purchases of eight products: Core, Trader, and six standalone strategy packages. Their registered immutable archives were downloaded and checked against recorded SHA-256 hashes and live Stripe price bindings. Source software sales are distinct from hosted trading readiness. Evidence: `C:/GWDS/selfhost-release-20260918/source-release-20260928/publication-report.json` and `STORE-RELEASE-ACCEPTANCE.md`.
+- Managed hosting is admitting a limited number of subscriptions: cap four, with two occupied at the last production readback. The primary host allows up to five tenant placements and currently has two active customer containers. The recovery host has admissions disabled and no active customer container. This is **not** 100-dashboard capacity.
+- The trial canary tenant now runs immutable runtime `sha256:4e9b6a6a8e56837d7266225fa9c96f5d850e8bd430b102bbd9a3bf72b3353dcf` (`b65b68a`) after passing the exact-image recovery suite. Its process returned health HTTP 200; its database new-entry halt remains true and no active execution claims were returned. The separate owner tenant was not restarted and remains on its prior image and trading setting. Evidence: `/var/backups/cival/canary-rollout-b65b68a-20260930.json` on primary.
+- The authenticated trial account opened its workspace and private testnet dashboard from `/account/instance`. The installed Heikin Ashi/BTC slot was visible. The venue showed zero open positions and approximately 999 test USDC. The trial tenant’s new-entry halt was restored after the bounded lifecycle test.
+- Primary hosting and website services were healthy at the last readback. Production website deployment and primary host remain the current public path; no public recovery cutover has occurred.
+
+## Checks passed — bounded evidence
+
+- Runtime image for commit `7599fc3` completed a real testnet BTC entry, confirmed stop/target protection, protection replacement and lost-ack recovery, restart, partial reduction, early-fill import, position management, final exit, and reservation release. It ended flat with zero orders and active execution claims. Evidence: `C:/GWDS/artifacts/testnet-partial-lifecycle-7599fc3-20260930.json`. This was one bounded testnet lifecycle, not mainnet certification or coverage of every venue fault.
+- A protection-database failure that could previously allow a new entry now fails closed in commit `8984e84`; focused tests and execution typecheck passed. Runtime `b65b68a` also fixes the dashboard’s false active-trade count, includes reconciled closing fills in activity and realized P&L, and rejects malformed venue position data. Three focused venue snapshot tests passed. Publication CI run `36761998202` and private transfer `36763763628` passed. The exact image passed **32 isolated recovery checks** on the recovery host in 104.53 seconds. It is now deployed to the **halted trial canary only**; the owner tenant remains on its earlier image.
+- Fresh Sep 30 primary backup completed and was copied to recovery. Files were hash-verified and privately staged, including database dumps, service configuration, TLS state, strategy catalog, and generated gateway routing. A separate full physical PostgreSQL backup passed `pg_verifybackup`, booted in an isolated container, retained auth/commerce/journal records and RLS, and preserved a write through restart. Neither test is a public failover. Evidence: `/srv/cival/standby-physical-20260928/acceptance.json` and `/srv/cival/recovery-staging-gateway-20260930` on recovery.
+- Stripe sandbox application checks covered Solo/Desk/Fund checkout and provisioning, Solo trial eligibility and failed renewal recovery, cancellations, refunds, delayed/duplicate events, and entitlement handling. Selected customer email events reached the receiving mail server. These do not prove a normal live paid customer cycle or inbox arrival for every notification.
+- A historical customer-signed testnet withdrawal and deposit reconciled with venue/chain records. The new embedded deposit/withdraw interface and mobile wallet journey have not passed acceptance.
+- Authenticated canary browser readback after the deployment showed Active Trades **0**, Open Positions **0**, Hyperliquid testnet equity approximately **998.90 USDC**, last-24-hour notional volume **$47**, and realized P&L **$0.01**. The previous false “1 active trade” card is corrected. Recent Activity still displayed “No recent activity.” Investigation found that its PostgREST query requested an `agent_id` relationship that the production `app.trades` table does not have. Commit `4cedff3` removes that join and uses the recorded trade owner. Focused execution typecheck and 12 tests pass, but this follow-up is **not yet published or deployed**; publication CI was dispatched.
+- A temporary isolated 16-vCPU/64-GiB EC2 host started 100/100 paper-mode dashboard processes with no keys or public app ports. All 100 process-liveness probes passed, 10/10 restarted processes returned healthy, zero OOM kills were recorded, and aggregate container memory at the sample was 25,109.7 MiB. Time to all healthy was 50.99 seconds. Evidence: `C:/GWDS/artifacts/capacity-100-runtime-20260930.json`. This measures process density only: it does not test live customer provisioning, realistic data fan-out, order execution, database contention, or a durable fleet. The temporary host was terminated; its dedicated security group and EC2 key pair were deleted.
+
+## Launch gates and blockers — not yet passed
+
+1. **Runtime release:** The halted trial canary deployment and initial browser readback passed. Publish, restore-test, deploy and browser-verify the `4cedff3` Recent Activity fix, then check the full accounting against the venue and widen deployment only after the canary proves stable. The owner tenant still uses its earlier image.
+2. **Trading fault coverage:** Repeat final-image venue tests for partial fills, failed cancellation, restart, lost response, protection replacement, and flat-state reconciliation. One bounded testnet cycle has passed; unrestricted mainnet or broad automated trading remains unproven.
+3. **Customer funding:** Implement and accept embedded customer-signed deposit/withdraw settlement and error recovery, including mobile wallet and post-reload balance reconciliation. Existing external Hyperliquid funding links are the current supported path.
+4. **Public failover:** Prove primary fencing, authoritative database checkpoint/restore, single writer, TLS/gateway/routing transfer, customer access, and rollback on the recovery host. Current recovery proofs are isolated and staged; no public cutover was attempted.
+5. **Capacity:** The isolated 100-runtime process-density probe passed. Still measure realistic concurrent control-plane/market-data load and demonstrate safe multi-host placement, database authority, and admission limits. The temporary test instance and its dedicated access resources were deleted. This temporary host is not production capacity.
+6. **Commerce/operations:** Verify a normal live paid purchase through webhook, provisioning, account access and notification arrival; finish mobile customer journeys, operator alerts, support/refund handling, and incident drills. Sandbox and mail-server delivery are partial evidence, not full production acceptance.
+
+## Work in progress now
+
+- Publish and validate the `4cedff3` Recent Activity fix, and monitor the canary through additional scheduled cycles before a wider rollout.
+- Preserve the capacity report and plan a realistic load test across the permanent customer fleet once a recurring budget is approved.
+- Keep the recovery host uncommissioned and customer admissions limited until public failover and fleet capacity are actually demonstrated.
+
+## Decisions needed from Bossman
+
+- Set a monthly AWS budget for a permanent multi-host fleet and 100-dashboard target. A temporary, capped-cost benchmark does not authorize recurring host capacity. Options previously requested: up to $600/month, up to $1,200/month, or no additional paid hosts yet.
+- Confirm the risk policy and release criteria for moving beyond limited testnet hosting to broader customer automation and eventual mainnet. Existing approval to perform testing does not substitute for measured acceptance.
+
+## Operating posture
+
+The **source store is open**, and **hosting is open only at limited admission**. The trial canary’s new entries are halted after testing. Do not describe the service as certified for 100 concurrent customer dashboards, public failover, embedded mobile funding, or mainnet trading until the respective gates above pass.
