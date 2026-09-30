@@ -1,4 +1,4 @@
-# Cival Systems launch status — 2026-09-30 19:50 UTC
+# Cival Systems launch status — 2026-09-30 20:06 UTC
 
 For Bossman. This is a point-in-time operational handoff. “Passed” means the specific check below was observed; it does not imply full production certification. No credentials or wallet secrets are recorded here.
 
@@ -9,6 +9,7 @@ For Bossman. This is a point-in-time operational handoff. “Passed” means the
 - The trial canary tenant now runs immutable runtime `sha256:38df6345a6c8626fe9b1e7af02d8fc7982193b489a35536fd17300cf9a3ae915` (`4cedff3`) after passing the exact-image recovery suite. Its process returned health HTTP 200; its database new-entry halt remains true and no active execution claims were returned. The separate owner tenant was not restarted and remains on its prior image and trading setting. Evidence: `/var/backups/cival/canary-rollout-4cedff3-20260930.json` on primary.
 - The authenticated trial account opened its workspace and private testnet dashboard from `/account/instance`. The installed Heikin Ashi/BTC slot was visible. The venue showed zero open positions and approximately 999 test USDC. The trial tenant’s new-entry halt was restored after the bounded lifecycle test.
 - Primary hosting and website services were healthy at the last readback. Production website deployment and primary host remain the current public path; no public recovery cutover has occurred.
+- The host agent now supports immutable image pins per tenant (hosting commit `8ec0e1e`). This repaired a real heartbeat incident caused by its former single global image setting during a canary rollout. The exact release was staged, typechecked, and tested on primary and recovery. Primary activated it without restarting either tenant: the owner kept image `705391f`, the halted trial kept `38df634`, both heartbeat ages were 9 seconds at activation and 28 seconds on a later readback, and two reconciler passes reported `confirmed_running:2`. CloudWatch alarm `cival-production-host-tenant-heartbeat-stale` returned to **OK** at 20:05 UTC. Evidence: `/var/backups/cival/host-agent-image-pins-20260930.json` on primary. Continue watching the alarm during later canary updates.
 
 ## Checks passed — bounded evidence
 
@@ -18,11 +19,12 @@ For Bossman. This is a point-in-time operational handoff. “Passed” means the
 - Stripe sandbox application checks covered Solo/Desk/Fund checkout and provisioning, Solo trial eligibility and failed renewal recovery, cancellations, refunds, delayed/duplicate events, and entitlement handling. Selected customer email events reached the receiving mail server. These do not prove a normal live paid customer cycle or inbox arrival for every notification.
 - A historical customer-signed testnet withdrawal and deposit reconciled with venue/chain records. The new embedded deposit/withdraw interface and mobile wallet journey have not passed acceptance.
 - Authenticated canary browser readback after deployment showed Active Trades **0**, Open Positions **0**, Hyperliquid testnet equity approximately **998.90 USDC**, last-24-hour notional volume **$47**, and realized P&L **$0.01**. The previous false “1 active trade” card is corrected. Recent Activity now lists the BTC entry and closing fills. The missing feed was caused by a PostgREST join requiring a foreign key absent from the production `app.trades` table. Commit `4cedff3` removes that join and uses the recorded trade owner. Focused execution typecheck and 12 tests, publication run `36765839100`, transfer run `36767222076`, and **32 exact-image recovery checks** all passed. The feed still displays the raw agent UUID for some opening trades and rounds sub-cent P&L to `$0.00`; those are presentation defects, not missing trade records.
+- A follow-up presentation change (`7582551`) formats strategy names and sub-cent P&L. Its focused tests, typecheck, and publication CI run `36768527813` passed. At this handoff time, private transfer run `36770070540` is still in progress; this polish image has **not** been deployed or recovery-tested yet.
 - A temporary isolated 16-vCPU/64-GiB EC2 host started 100/100 paper-mode dashboard processes with no keys or public app ports. All 100 process-liveness probes passed, 10/10 restarted processes returned healthy, zero OOM kills were recorded, and aggregate container memory at the sample was 25,109.7 MiB. Time to all healthy was 50.99 seconds. Evidence: `C:/GWDS/artifacts/capacity-100-runtime-20260930.json`. This measures process density only: it does not test live customer provisioning, realistic data fan-out, order execution, database contention, or a durable fleet. The temporary host was terminated; its dedicated security group and EC2 key pair were deleted.
 
 ## Launch gates and blockers — not yet passed
 
-1. **Runtime release:** The halted trial canary and history browser readback passed. Check accounting across additional scheduled cycles and widen deployment only after the canary proves stable. Improve the raw UUID and sub-cent display in Recent Activity. The owner tenant still uses its earlier image.
+1. **Runtime release:** The halted trial canary and history browser readback passed. Complete transfer, exact-image recovery testing, and a halted-canary rollout for `7582551`; then check accounting across additional scheduled cycles. Widen deployment only after the canary proves stable. The owner tenant still uses its earlier image.
 2. **Trading fault coverage:** Repeat final-image venue tests for partial fills, failed cancellation, restart, lost response, protection replacement, and flat-state reconciliation. One bounded testnet cycle has passed; unrestricted mainnet or broad automated trading remains unproven.
 3. **Customer funding:** Implement and accept embedded customer-signed deposit/withdraw settlement and error recovery, including mobile wallet and post-reload balance reconciliation. Existing external Hyperliquid funding links are the current supported path.
 4. **Public failover:** Prove primary fencing, authoritative database checkpoint/restore, single writer, TLS/gateway/routing transfer, customer access, and rollback on the recovery host. Current recovery proofs are isolated and staged; no public cutover was attempted.
@@ -31,7 +33,7 @@ For Bossman. This is a point-in-time operational handoff. “Passed” means the
 
 ## Work in progress now
 
-- Monitor the verified `4cedff3` canary through additional scheduled cycles, polish the remaining trade-feed presentation, and plan a later wider rollout.
+- Monitor the repaired tenant heartbeats and CloudWatch alarm; finish transferring, recovery-testing, and canary-deploying the `7582551` trade-feed presentation release if each gate passes.
 - Preserve the capacity report and plan a realistic load test across the permanent customer fleet once a recurring budget is approved.
 - Keep the recovery host uncommissioned and customer admissions limited until public failover and fleet capacity are actually demonstrated.
 
