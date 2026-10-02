@@ -56,9 +56,10 @@ export default function Footer() {
           <h6 style={{ color: 'var(--color-neutral-500)', marginBottom: 14 }}>Connect</h6>
           <div data-cv-linklist style={{ display: 'grid', gap: 9, fontSize: 14 }}>
             <a href="https://discord.gg/EZk6gTx57k" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Discord</a>
-            <a href="https://x.com/GWDSofficial" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>X · @GWDSofficial</a>
+            <a href="https://x.com/civalsystems" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>X · @civalsystems</a>
+            <a href="https://www.youtube.com/@civalsystems" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>YouTube · @civalsystems</a>
             <a href="https://github.com/captainplanet9000" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>GitHub</a>
-            <a href="mailto:gammawavesdesign@gmail.com" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Email</a>
+            <a href="mailto:civalsystems@gmail.com" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Email</a>
           </div>
         </div>
       </div>

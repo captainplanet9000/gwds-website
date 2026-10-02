@@ -12,7 +12,7 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import { OrganizationJsonLd } from "@/components/JsonLd";
 import TrackingPixels from "@/components/TrackingPixels";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gwds-website.vercel.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.civalsystems.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -62,7 +62,7 @@ export const metadata: Metadata = {
     title: "Cival Systems — AI Agent Hedge Fund, Ready to Deploy",
     description: "Dashboard, execution layer, risk engine, and six autonomous agents on Hyperliquid. Editions from $99.",
     images: ["/images/og-image.png"],
-    creator: "@GWDSofficial",
+    creator: "@civalsystems",
   },
   icons: {
     icon: "/favicon.ico",
@@ -100,13 +100,14 @@ const jsonLd = {
       },
       description: "Trading infrastructure and autonomous agents, sold as source. An AI agent hedge fund starting point for Hyperliquid.",
       sameAs: [
-        "https://x.com/GWDSofficial",
+        "https://x.com/civalsystems",
+        "https://www.youtube.com/@civalsystems",
         "https://github.com/captainplanet9000",
         "https://discord.gg/EZk6gTx57k",
       ],
       contactPoint: {
         "@type": "ContactPoint",
-        email: "gammawavesdesign@gmail.com",
+        email: "civalsystems@gmail.com",
         contactType: "Customer Service",
       },
     },

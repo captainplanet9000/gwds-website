@@ -173,7 +173,7 @@ export default function ProductDetailClient({ product, related }: { product: Pro
 
         <section style={{ maxWidth: 1200, margin: '0 auto', padding: '80px 28px 0' }}>
           <h2 style={{ fontSize: 'clamp(26px,2.6vw,34px)', letterSpacing: '-0.02em', margin: '0 0 8px' }}>{isAgent ? "How to install this strategy" : "How you get started"}</h2>
-          <p style={{ fontSize: 15.5, color: 'var(--color-neutral-700)', margin: '0 0 28px' }}>{isAgent ? "Install the add-on into a working dashboard that supports its version. Read the included installation guide before changing your setup." : "When purchases reopen, download your edition from your account. You will need a compatible Node.js environment, a Supabase project and the ability to configure and maintain both."}</p>
+          <p style={{ fontSize: 15.5, color: 'var(--color-neutral-700)', margin: '0 0 28px' }}>{isAgent ? "Install the add-on into a working dashboard that supports its version. Read the included installation guide before changing your setup." : "Download editions you own from your account. You will need a compatible Node.js environment, a Supabase project and the ability to configure and maintain both."}</p>
           <div data-cv-2col style={{ display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 1, background: 'var(--color-divider)', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
             {(!isAgent ? [
               { n: '01', t: 'Download your software', d: 'After payment is confirmed, download your edition from your account and extract it into a new folder.' },
