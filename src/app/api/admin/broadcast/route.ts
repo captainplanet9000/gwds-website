@@ -12,7 +12,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Subject and HTML content required' }, { status: 400 });
     }
 
-    const sb = createServerClient();
     const apiKey = process.env.RESEND_API_KEY;
     const from = process.env.RESEND_FROM_EMAIL;
     if (!apiKey || !from) {
@@ -21,19 +20,17 @@ export async function POST(req: NextRequest) {
     const { Resend } = await import('resend');
     const resend = new Resend(apiKey);
 
-    // Get active subscribers
-    const { data: subscribers } = await sb.from('newsletter_subscribers')
-      .select('email')
-      .eq('is_active', true);
-
-    if (!subscribers?.length) {
-      return NextResponse.json({ error: 'No active subscribers' }, { status: 400 });
+    // A preview does not depend on the production subscriber list.
+    let recipients: string[];
+    if (test === true) {
+      recipients = [process.env.SUPPORT_EMAIL || 'support@civalsystems.com'];
+    } else {
+      const { data: subscribers, error } = await createServerClient().from('newsletter_subscribers')
+        .select('email').eq('is_active', true);
+      if (error) return NextResponse.json({ error: 'Subscribers could not be loaded' }, { status: 503 });
+      if (!subscribers?.length) return NextResponse.json({ error: 'No active subscribers' }, { status: 400 });
+      recipients = subscribers.map(s => s.email);
     }
-
-    // If test mode, only send to owner
-    const recipients = test
-      ? [process.env.SUPPORT_EMAIL || 'support@civalsystems.com']
-      : subscribers.map(s => s.email);
 
     let sent = 0;
     let failed = 0;

@@ -5,7 +5,7 @@ import WaveCanvas from './WaveCanvas';
 
 export default function Newsletter() {
   const [email, setEmail] = useState('');
-  const [status, setStatus] = useState<'idle' | 'sending' | 'done'>('idle');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'done' | 'error'>('idle');
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-60px' });
 
@@ -22,7 +22,7 @@ export default function Newsletter() {
       if (!res.ok) throw new Error('Failed');
       setStatus('done');
     } catch {
-      setStatus('done'); // Show success anyway — email was likely saved
+      setStatus('error');
     }
   };
 
@@ -98,6 +98,11 @@ export default function Newsletter() {
             New products, early access drops, and AI insights — transmitted directly to your inbox.
           </p>
 
+          {status === 'error' && (
+            <p role="alert" style={{ color: 'var(--color-neutral-100)' }}>
+              We couldn&apos;t complete your subscription. Please try again.
+            </p>
+          )}
           {status === 'done' ? (
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}

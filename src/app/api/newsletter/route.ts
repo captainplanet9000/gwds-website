@@ -20,13 +20,14 @@ export async function POST(req: NextRequest) {
     if (apiKey && from) {
       const unsubscribeUrl = `${getSiteUrl()}/api/newsletter/unsubscribe?email=${encodeURIComponent(email)}&token=${encodeURIComponent(newsletterToken(email))}`;
       const resend = new Resend(apiKey);
-      await resend.emails.send({
+      const { error: deliveryError } = await resend.emails.send({
         from,
         to: email,
         subject: 'Welcome to Cival Systems',
         html: `<div style="font-family:Arial,sans-serif;max-width:580px;margin:auto;padding:32px"><h1>Cival Systems</h1><p>You opted in to product updates and release notes.</p><p><a href="${getSiteUrl()}/store">Visit the store</a></p><p style="font-size:12px;color:#666"><a href="${unsubscribeUrl}">Unsubscribe</a></p></div>`,
         text: `You opted in to Cival Systems product updates.\n\nStore: ${getSiteUrl()}/store\nUnsubscribe: ${unsubscribeUrl}`,
       }, { idempotencyKey: `newsletter-welcome-${newsletterToken(email).slice(0, 32)}` });
+      if (deliveryError) throw new CommerceError('NEWSLETTER_WELCOME_FAILED', 'Your subscription was saved, but the welcome email could not be sent. Please try again.', 503);
     }
     return NextResponse.json({ ok: true }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (error) {
