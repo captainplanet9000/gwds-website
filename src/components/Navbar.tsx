@@ -13,7 +13,7 @@ const navLinks = [
   // source licences and the managed subscription - and only one of them was navigable.
   { href: '/hosted', label: 'Hosting' },
   { href: '/store?cat=edition', label: 'Pricing' },
-  { href: '/docs/setup', label: 'Docs' },
+  { href: '/docs/products', label: 'Docs' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
 ];

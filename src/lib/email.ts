@@ -1,6 +1,7 @@
 import { Resend } from 'resend';
 import { getProduct } from '@/lib/products';
 import { getSiteUrl } from '@/lib/commerce';
+import { productGuideHref } from '@/lib/product-learning';
 
 export interface OrderEmailData {
   id: string;
@@ -37,7 +38,7 @@ export async function sendOrderReadyEmail(email: string, order: OrderEmailData) 
   const productNames = order.items.map((item) => getProduct(item.product_id)?.name || item.product_id);
   const total = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(order.total_cents / 100);
   const date = new Intl.DateTimeFormat('en-US', { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(order.created_at));
-  const list = productNames.map((name) => `<li style="margin:8px 0">${escapeHtml(name)}</li>`).join('');
+  const list = productNames.map((name, index) => `<li style="margin:8px 0">${escapeHtml(name)} — <a href="${siteUrl}${productGuideHref(order.items[index].product_id)}">Manual and tutorials</a></li>`).join('');
 
   const html = `<!doctype html>
 <html><body style="margin:0;background:#f5ead8;color:#29251f;font-family:Arial,sans-serif">
@@ -65,7 +66,7 @@ Hi ${displayName},
 Your license is attached to the account used at checkout.
 
 Products:
-${productNames.map((name) => `- ${name}`).join('\n')}
+${productNames.map((name, index) => `- ${name}\n  Guide: ${siteUrl}${productGuideHref(order.items[index].product_id)}`).join('\n')}
 
 Open your account to create a short-lived download link:
 ${accountUrl}

@@ -1,0 +1,93 @@
+WEBVTT
+
+1
+00:00:01.200 --> 00:00:05.680
+A farm organizes strategy agents under a shared workspace structure.
+
+2
+00:00:06.260 --> 00:00:09.420
+Review the agents associated with it before changing settings.
+
+3
+00:00:10.440 --> 00:00:16.480
+The public demo illustrates coordination; it is not evidence that your edition includes every displayed feature.
+
+4
+00:00:17.140 --> 00:00:19.860
+Use the controls available in your own installed release.
+
+5
+00:00:24.320 --> 00:00:28.420
+Different strategies can enter the same market or closely related markets.
+
+6
+00:00:29.300 --> 00:00:32.260
+Grouping agents does not automatically create diversification.
+
+7
+00:00:32.980 --> 00:00:36.680
+Review total account exposure as well as each agent budget.
+
+8
+00:00:37.520 --> 00:00:42.600
+Confirm shared limits and do not assume separate cards represent separate pools of trading funds.
+
+9
+00:00:46.320 --> 00:00:49.680
+Configure limits deliberately and document their intended behavior.
+
+10
+00:00:50.820 --> 00:00:54.080
+An account drawdown limit differs from a single position stop.
+
+11
+00:00:54.800 --> 00:00:58.360
+Limits can reject entries while existing positions remain open.
+
+12
+00:00:59.140 --> 00:01:05.720
+Validate the actual behavior in testnet and inspect the venue rather than assuming a toggle eliminated exposure.
+
+13
+00:01:09.740 --> 00:01:14.440
+Where your edition includes Goals, use them to organize targets and review progress.
+
+14
+00:01:15.200 --> 00:01:18.900
+Read whether the goal is descriptive or connected to an actual control.
+
+15
+00:01:19.680 --> 00:01:22.180
+A profit target does not make a strategy find safe trades.
+
+16
+00:01:23.300 --> 00:01:26.560
+Avoid increasing position size simply to catch up with a target.
+
+17
+00:01:30.400 --> 00:01:34.140
+Before pausing, read the confirmation and understand its scope.
+
+18
+00:01:34.840 --> 00:01:39.120
+Stopping new entries can leave open orders or positions that still need management.
+
+19
+00:01:39.860 --> 00:01:42.720
+Closing exposure is a separate consequential action.
+
+20
+00:01:43.520 --> 00:01:48.140
+Confirm the venue state after any maintenance step and retain a record of what you changed.
+
+21
+00:01:51.980 --> 00:01:59.040
+Your checkpoint is to identify the farm membership, shared exposure, each allocation and the effect of your controls.
+
+22
+00:01:59.880 --> 00:02:02.080
+Keep a record of the settings before changing them.
+
+23
+00:02:02.520 --> 00:02:07.880
+Start with a test configuration you can explain, rather than many agents with overlapping risks.

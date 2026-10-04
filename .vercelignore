@@ -5,6 +5,7 @@ release-assets
 scripts
 src/migrations
 *.zip
+!public/docs/products/**/documentation.zip
 
 campaigns
 .notification*.log

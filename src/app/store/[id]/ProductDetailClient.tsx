@@ -6,6 +6,7 @@ import { productMedia } from '@/lib/product-media';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ProductVideo from '@/components/ProductVideo';
+import ProductLearningResources from '@/components/ProductLearningResources';
 import RequiresDashboardBanner from '@/components/RequiresDashboardBanner';
 import { useCart } from '@/contexts/CartContext';
 import { EDITION_INCLUDES, type Product } from '@/lib/products';
@@ -173,7 +174,7 @@ export default function ProductDetailClient({ product, related }: { product: Pro
 
         <section style={{ maxWidth: 1200, margin: '0 auto', padding: '80px 28px 0' }}>
           <h2 style={{ fontSize: 'clamp(26px,2.6vw,34px)', letterSpacing: '-0.02em', margin: '0 0 8px' }}>{isAgent ? "How to install this strategy" : "How you get started"}</h2>
-          <p style={{ fontSize: 15.5, color: 'var(--color-neutral-700)', margin: '0 0 28px' }}>{isAgent ? "Install the add-on into a working dashboard that supports its version. Read the included installation guide before changing your setup." : "Download editions you own from your account. You will need a compatible Node.js environment, a Supabase project and the ability to configure and maintain both."}</p>
+          <p style={{ fontSize: 15.5, color: 'var(--color-neutral-700)', margin: '0 0 28px' }}>{isAgent ? "Install the add-on into a working dashboard that supports its version. Read the included installation guide before changing your setup." : "After payment is confirmed, download your edition from your account. You will need a compatible Node.js environment, a Supabase project and the ability to configure and maintain both."}</p>
           <div data-cv-2col style={{ display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 1, background: 'var(--color-divider)', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
             {(!isAgent ? [
               { n: '01', t: 'Download your software', d: 'After payment is confirmed, download your edition from your account and extract it into a new folder.' },
@@ -225,7 +226,7 @@ export default function ProductDetailClient({ product, related }: { product: Pro
           <p style={{fontSize:15,lineHeight:1.6,marginTop:24}}><Link href="/terms">Read software license terms</Link> · <Link href="/hosted">Explore managed hosting</Link></p>
         </section>}
 
-        <p style={{maxWidth: 1200, margin: '28px auto', padding: '0 28px'}}><Link href={`/docs/setup?product=${product.id}`}>Open the complete setup guide →</Link></p>
+        <ProductLearningResources productId={product.id} />
         <section style={{ maxWidth: 800, margin: '80px auto 0', padding: '0 28px' }}>
           <div style={{ padding: '24px 28px', background: 'var(--color-accent-100)', borderRadius: 'var(--radius-lg)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap' }}>
             <div style={{ flex: 1, minWidth: 200 }}>

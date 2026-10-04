@@ -1,0 +1,15 @@
+{
+  "sessionLength": 24,
+  "bandMultiplier": [
+    1,
+    2,
+    3
+  ],
+  "volumeThreshold": 2,
+  "cumulativeDeltaPeriod": 20,
+  "pocBinSize": 0.5,
+  "anchoredPeriod": 50,
+  "meanReversionBand": 2,
+  "minSessionVolume": 100000,
+  "priceMovementThreshold": 0.5
+}

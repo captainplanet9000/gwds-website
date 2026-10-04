@@ -1,0 +1,17 @@
+{
+  "swingLookback": 5,
+  "minWaveSize": 1.5,
+  "maxWaveDeviation": 15,
+  "wave3MinMultiplier": 1,
+  "wave3IdealMultiplier": 1.618,
+  "wave5IdealRatio": 1,
+  "fibRetrace618": 0.618,
+  "fibRetrace50": 0.5,
+  "fibRetrace382": 0.382,
+  "minConfidence": 60,
+  "degreeLabels": [
+    "Minute",
+    "Minor",
+    "Intermediate"
+  ]
+}

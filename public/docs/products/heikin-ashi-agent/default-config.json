@@ -1,0 +1,12 @@
+{
+  "smoothingPeriod": 1,
+  "minConsecutiveCandles": 3,
+  "wickFilter": true,
+  "emaConfirmation": true,
+  "emaPeriod": 20,
+  "trendStrengthThreshold": 5,
+  "dojiThreshold": 0.5,
+  "minBodySize": 0.3,
+  "stopLossATR": 2,
+  "takeProfitRatio": 2.5
+}

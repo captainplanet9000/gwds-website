@@ -1,0 +1,97 @@
+WEBVTT
+
+1
+00:00:01.460 --> 00:00:03.220
+An order starts as an instruction.
+
+2
+00:00:04.100 --> 00:00:08.880
+Submission is not proof of acceptance, and acceptance is not proof of a full fill.
+
+3
+00:00:09.440 --> 00:00:14.380
+A partial fill creates smaller exposure while the remaining order may still be open.
+
+4
+00:00:15.240 --> 00:00:21.380
+Track the order identifier, fill quantity and current position rather than relying on one status badge.
+
+5
+00:00:25.680 --> 00:00:30.180
+For an open position, inspect its size and the associated protective orders.
+
+6
+00:00:31.120 --> 00:00:35.420
+Confirm the intended side, quantity, stop and target on the venue.
+
+7
+00:00:36.360 --> 00:00:39.780
+Protection can fail or become stale after a size change.
+
+8
+00:00:40.600 --> 00:00:47.100
+If the dashboard and venue disagree, avoid adding exposure and investigate before modifying the order again.
+
+9
+00:00:51.360 --> 00:00:55.320
+After an exit, compare the fills and remaining position with the venue.
+
+10
+00:00:56.100 --> 00:00:59.180
+The journal should explain entry, changes and exit.
+
+11
+00:01:00.240 --> 00:01:07.300
+Separate realized profit and loss from unrealized estimates, and include fees and funding when reviewing results.
+
+12
+00:01:08.200 --> 00:01:11.380
+Sample demo performance is not a customer trading record.
+
+13
+00:01:15.320 --> 00:01:20.200
+A timeout or lost response can occur after the venue accepted an order.
+
+14
+00:01:20.980 --> 00:01:24.200
+Do not submit a duplicate simply because the page displayed an error.
+
+15
+00:01:24.920 --> 00:01:28.440
+Check open orders, fills and the known order identifier.
+
+16
+00:01:29.180 --> 00:01:34.060
+Record the time and error, then follow the recovery procedure or contact support.
+
+17
+00:01:38.140 --> 00:01:42.940
+Review drawdown, realized results, trade count and costs together.
+
+18
+00:01:44.100 --> 00:01:47.700
+One winning trade or an attractive chart does not establish performance.
+
+19
+00:01:48.560 --> 00:01:51.780
+Compare only the same account, network and time range.
+
+20
+00:01:52.540 --> 00:01:57.900
+Use the review to understand behavior and configuration, not to claim guaranteed future returns.
+
+21
+00:02:01.900 --> 00:02:10.480
+For an incident, record the workspace, network, timestamp, agent, market and order or transaction identifier.
+
+22
+00:02:11.320 --> 00:02:14.220
+Include the expected result and what actually happened.
+
+23
+00:02:15.200 --> 00:02:17.940
+Redact secrets and unnecessary account information.
+
+24
+00:02:19.020 --> 00:02:23.780
+Confirm current venue exposure and avoid repeated actions until the state is understood.

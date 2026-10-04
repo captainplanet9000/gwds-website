@@ -1,0 +1,101 @@
+WEBVTT
+
+1
+00:00:01.200 --> 00:00:06.580
+In managed hosting, select an available strategy and market in your account strategy slots.
+
+2
+00:00:07.340 --> 00:00:10.100
+Wait for installation to finish before creating an agent.
+
+3
+00:00:10.940 --> 00:00:15.120
+For source software, follow the plugin instructions shipped with your exact release.
+
+4
+00:00:16.080 --> 00:00:19.060
+A standalone add-on requires a compatible dashboard edition.
+
+5
+00:00:23.520 --> 00:00:27.040
+Open Agents and look for the installed strategy in the creation choices.
+
+6
+00:00:27.880 --> 00:00:33.060
+If none appears, check that you saved the slot for this workspace and that installation completed.
+
+7
+00:00:33.060 --> 00:00:34.860
+Refresh after completion.
+
+8
+00:00:35.920 --> 00:00:40.380
+Buying or selecting a strategy does not by itself prove it was installed successfully.
+
+9
+00:00:44.580 --> 00:00:48.280
+Create an agent using an installed strategy and a supported market.
+
+10
+00:00:48.880 --> 00:00:51.440
+Use a descriptive name so you can identify it later.
+
+11
+00:00:52.380 --> 00:00:54.360
+Read the confirmation and initial state.
+
+12
+00:00:55.160 --> 00:01:03.260
+The hosted creation workflow starts the agent and its associated farm paused, with no allocation, so configuration can be reviewed first.
+
+13
+00:01:06.260 --> 00:01:11.840
+Set the trading budget only after confirming the account balance and existing exposure.
+
+14
+00:01:12.640 --> 00:01:17.360
+Increasing allocation does not deposit funds, and decreasing it does not withdraw them.
+
+15
+00:01:18.060 --> 00:01:21.920
+Do not double count funds already committed to other agents or open positions.
+
+16
+00:01:23.140 --> 00:01:25.440
+Keep the agent paused while changing its allocation.
+
+17
+00:01:29.780 --> 00:01:34.620
+Review the risk controls exposed by your edition, including position size and drawdown settings.
+
+18
+00:01:34.620 --> 00:01:38.680
+Read the units: a percentage is different from a dollar amount.
+
+19
+00:01:39.520 --> 00:01:44.500
+Understand whether a limit blocks new entries, cancels orders or requests an exit.
+
+20
+00:01:45.160 --> 00:01:47.500
+Do not assume every stop control does all three.
+
+21
+00:01:51.360 --> 00:01:58.200
+Before starting, confirm the network, installed strategy, market data, approved key and available allocation.
+
+22
+00:01:59.200 --> 00:02:00.820
+Use test funds to validate the workflow.
+
+23
+00:02:01.780 --> 00:02:04.120
+After starting, inspect the latest decision.
+
+24
+00:02:04.120 --> 00:02:06.540
+Capital is not an entry signal.
+
+25
+00:02:07.180 --> 00:02:11.320
+If the strategy waits, read why instead of raising risk to force a trade.

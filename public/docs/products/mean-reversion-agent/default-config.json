@@ -1,0 +1,14 @@
+{
+  "bbPeriod": 20,
+  "bbStdDev": 2,
+  "kcPeriod": 20,
+  "kcMultiplier": 1.5,
+  "rsiPeriod": 14,
+  "rsiOversold": 30,
+  "rsiOverbought": 70,
+  "bandwidthThreshold": 5,
+  "walkingThreshold": 3,
+  "doubleBottomLookback": 20,
+  "minBodyPercent": 0.3,
+  "takeProfitTarget": "middle"
+}

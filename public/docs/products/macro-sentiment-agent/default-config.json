@@ -1,0 +1,12 @@
+{
+  "fundingThreshold": 0.01,
+  "oiChangePeriod": 24,
+  "oiChangeThreshold": 20,
+  "sentimentSmoothing": 7,
+  "extremeFear": 20,
+  "extremeGreed": 80,
+  "volumeSpikeMultiplier": 3,
+  "priceChangeThreshold": 5,
+  "correlationPeriod": 30,
+  "dominanceChangeThreshold": 2
+}

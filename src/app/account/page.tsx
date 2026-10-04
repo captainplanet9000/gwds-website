@@ -7,6 +7,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useAuth } from '@/contexts/AuthContext';
 import { getProduct } from '@/lib/products';
+import { productGuideHref } from '@/lib/product-learning';
 
 interface DownloadInfo {
   expiresAt: string;
@@ -327,7 +328,7 @@ export default function AccountPage() {
                             </div>
 
                             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                              <Link className="btn btn-secondary" href={`/docs/setup?product=${item.product_id}`}>Setup guide</Link>
+                              <Link className="btn btn-secondary" href={productGuideHref(item.product_id)}>Guide & tutorials</Link>
                               <button
                                 onClick={() => handleRegenerateDownload(order.id, item.product_id)}
                                 disabled={!canDownload || regenerating === regKey}

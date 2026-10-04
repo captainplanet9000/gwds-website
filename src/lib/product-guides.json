@@ -1,0 +1,1360 @@
+[
+  {
+    "id": "trading-dashboard-template",
+    "title": "Core Edition",
+    "version": "2.1.0-source.20260928",
+    "updated": "2026-10-03",
+    "sha256": "4f66bd179734c69c6f73ecd183ee6506b7fe6ff25feebc58500d8980b4c29180",
+    "kind": "edition",
+    "files": [
+      ".env.example",
+      "LICENSE.md",
+      "README.md",
+      "RELEASE-NOTES.md",
+      "RUNBOOK.md",
+      "package.json"
+    ],
+    "access": [
+      "Sign in to the account used at checkout. Open Account and locate the confirmed order. If payment is processing, wait for fulfillment rather than buying again.",
+      "Generate a fresh product Download link. Save the ZIP, receipt, release version and checksum. Expired links can be regenerated from the account.",
+      "Compare the archive SHA-256 with the release recorded below. Extract into a new directory; retain the original archive for rollback.",
+      "Open README.md, RUNBOOK.md or INSTALL.md, manifest.json where included, and LICENSE.md before changing an installation."
+    ],
+    "operations": [
+      "Keep a copy of the immutable ZIP, lockfile, private configuration and a database backup before an update. Store encrypted backups separately and prove a restore in an isolated compatible instance.",
+      "Pause new entries and reconcile existing venue orders and positions before maintenance. Pausing entries is not the same as closing positions. Removing a plugin does not close exchange positions.",
+      "Monitor the last successful cycle, data age, rejected orders, protection status, reconciliation gaps, database backups and disk space. Missing telemetry is an unknown state.",
+      "For rollback, stop the new runtime, reconcile the venue, restore a compatible application/schema pair in isolation and verify ownership and protection before resuming. A database restore cannot reverse a trade or transfer.",
+      "Customize readable source in a separate branch. Preserve the original defaults, rebuild any changed compiled module, and test the same inputs before and after. Follow LICENSE.md; source ownership does not imply unrestricted redistribution."
+    ],
+    "troubleshooting": [
+      [
+        "Payment confirmed but download missing",
+        "Check order status in Account and contact support with the order reference if fulfillment is delayed. Do not make another purchase to repair access."
+      ],
+      [
+        "Download link expired",
+        "Generate a fresh link from the purchasing account. The documentation downloads are public; the paid software archive remains entitlement-protected."
+      ],
+      [
+        "Strategy absent from the selector",
+        "Confirm manifest.json is directly inside the manifest installPath, the entryPoint exists, compatibility matches and the loader has no errors. Restart after installation; do not add another nesting level."
+      ],
+      [
+        "No trade despite available capital",
+        "Inspect the latest decision, candle history and freshness, symbol, interval, network, existing positions and risk rejection. Neutral is a valid result."
+      ],
+      [
+        "Build or database initialization fails",
+        "Keep the exact failed command and redacted diagnostic. Check Node, psql, Supabase settings and owner verification. Do not bypass types, authentication or schema integrity checks."
+      ],
+      [
+        "Balances disagree or an order outcome is unknown",
+        "Compare the same account and network at the venue, including fills, fees, margin and open orders. Reconcile before retrying; a lost response does not mean the order failed."
+      ]
+    ],
+    "settings": [],
+    "limits": "This is downloadable source software. Hosting, trading funds and external services are separate. Build and signal checks are not certification for unattended real-money execution. Complete venue and recovery validation for your installation.",
+    "summary": "Install and maintain the dashboard source with the included Darvas Box strategy.",
+    "requirements": [
+      "Node 22 LTS, version 22.3 or newer, as used by this release; npm and the shipped lockfile.",
+      "A dedicated Supabase project with Auth, REST and PostgreSQL; plain PostgreSQL alone is insufficient.",
+      "PostgreSQL client tools with psql on PATH, a verified owner account and private environment configuration.",
+      "For remote use: an authenticated HTTPS proxy, firewall, monitoring and tested backups."
+    ],
+    "install": [
+      "Extract the edition into a new directory and copy .env.example to .env.local. On Windows use Copy-Item; on Linux/macOS use cp.",
+      "Create and verify the owner in Supabase Auth. Configure ACCOUNT_OWNER_EMAIL, REQUIRE_AUTH=1, ADMIN_TOKEN, DATABASE_URL and the exact Supabase settings in the environment example. Keep server-role credentials server-only.",
+      "Keep TRADING_MODE=paper and signing keys blank during installation. Review the schema and migrations, then run the commands below. db:init installs atomically, checks migration integrity and refuses automatic owner transfer.",
+      "Start the app and open http://localhost:9005. Sign in as the owner. Verify anonymous and wrong-owner access is refused, and confirm settings persist after a restart.",
+      "Create a paused, unfunded agent from the installed strategies. Choose a market and interval, then configure position limits, allocation and drawdown controls before testing."
+    ],
+    "commands": "npm ci\nnpm run db:init\nnpm run typecheck\nnpm test\nnpm run build\nnpm start",
+    "tutorial": [
+      [
+        "Install and verify access",
+        "Finish the commands above. Sign in as the configured owner, then test a separate signed-out session. Expected result: your workspace loads, but anonymous access is rejected."
+      ],
+      [
+        "Create the first paused agent",
+        "Open Agents and choose an installed strategy. Name it clearly, select one market/interval and leave it paused with no funds allocated. Expected result: the saved strategy and status agree after reload."
+      ],
+      [
+        "Read the first decision",
+        "Use a verified paper/research path with completed candles. Record the timestamp, direction, confidence and reasoning. Expected result: a traceable signal or a valid neutral decision; no live order during this exercise."
+      ],
+      [
+        "Configure risk and ownership",
+        "Review agent and farm budgets together, maximum exposure and drawdown limits. Identify which runtime owns each position. Expected result: allocations are not counted as new deposits and duplicate strategy ownership is avoided."
+      ],
+      [
+        "Prove persistence and recovery",
+        "Pause, save settings, restart and compare the same agent and configuration. Restore a backup only in isolation. Expected result: ownership and settings survive; restoration does not create duplicate live engines."
+      ]
+    ],
+    "focus": "Core includes Darvas. Trader includes Core and all six strategies. Add-ons need the 2.1 plugin loader and are not compatible with the browser-only 2.0 template.",
+    "inspect": "Read RELEASE-NOTES.md for historical acceptance evidence. The shipped test:isolation and test:runtime commands are developer fixtures restricted to a disposable local Supabase URL (127.0.0.1:55521); they are not general customer production checks.",
+    "practice": "Use a verified paper/research path with completed candles. Record the timestamp, direction, confidence and reasoning. Expected result: a traceable signal or a valid neutral decision; no live order during this exercise.",
+    "videos": [
+      "01-dashboard-orientation",
+      "03-first-agent",
+      "04-farms-risk-goals",
+      "05-monitor-recover"
+    ],
+    "related": [
+      "darvas-indicator"
+    ],
+    "acceptance": [
+      "Archive checksum and version match the guide.",
+      "Install completes without suppressing errors; the module loads from its declared path.",
+      "Correct owner, market, network and candle interval are recorded.",
+      "Decision timestamp, direction, reasoning and parameters are captured; neutral is accepted.",
+      "Settings and ownership persist after restart; backup restore is tested in isolation.",
+      "Before live execution: entry, fill, protection, modification, exit, fees and P&L reconcile; partial fills, cancellation failure and lost responses are tested."
+    ]
+  },
+  {
+    "id": "multi-strat-bundle",
+    "title": "Trader Edition",
+    "version": "2.1.0-source.20260928",
+    "updated": "2026-10-03",
+    "sha256": "bd2ca79878d18b509732a8e584d9107a2ce0d952a8becd0a76a893c1dfdc8798",
+    "kind": "edition",
+    "files": [
+      ".env.example",
+      "LICENSE.md",
+      "README.md",
+      "RELEASE-NOTES.md",
+      "RUNBOOK.md",
+      "package.json"
+    ],
+    "access": [
+      "Sign in to the account used at checkout. Open Account and locate the confirmed order. If payment is processing, wait for fulfillment rather than buying again.",
+      "Generate a fresh product Download link. Save the ZIP, receipt, release version and checksum. Expired links can be regenerated from the account.",
+      "Compare the archive SHA-256 with the release recorded below. Extract into a new directory; retain the original archive for rollback.",
+      "Open README.md, RUNBOOK.md or INSTALL.md, manifest.json where included, and LICENSE.md before changing an installation."
+    ],
+    "operations": [
+      "Keep a copy of the immutable ZIP, lockfile, private configuration and a database backup before an update. Store encrypted backups separately and prove a restore in an isolated compatible instance.",
+      "Pause new entries and reconcile existing venue orders and positions before maintenance. Pausing entries is not the same as closing positions. Removing a plugin does not close exchange positions.",
+      "Monitor the last successful cycle, data age, rejected orders, protection status, reconciliation gaps, database backups and disk space. Missing telemetry is an unknown state.",
+      "For rollback, stop the new runtime, reconcile the venue, restore a compatible application/schema pair in isolation and verify ownership and protection before resuming. A database restore cannot reverse a trade or transfer.",
+      "Customize readable source in a separate branch. Preserve the original defaults, rebuild any changed compiled module, and test the same inputs before and after. Follow LICENSE.md; source ownership does not imply unrestricted redistribution."
+    ],
+    "troubleshooting": [
+      [
+        "Payment confirmed but download missing",
+        "Check order status in Account and contact support with the order reference if fulfillment is delayed. Do not make another purchase to repair access."
+      ],
+      [
+        "Download link expired",
+        "Generate a fresh link from the purchasing account. The documentation downloads are public; the paid software archive remains entitlement-protected."
+      ],
+      [
+        "Strategy absent from the selector",
+        "Confirm manifest.json is directly inside the manifest installPath, the entryPoint exists, compatibility matches and the loader has no errors. Restart after installation; do not add another nesting level."
+      ],
+      [
+        "No trade despite available capital",
+        "Inspect the latest decision, candle history and freshness, symbol, interval, network, existing positions and risk rejection. Neutral is a valid result."
+      ],
+      [
+        "Build or database initialization fails",
+        "Keep the exact failed command and redacted diagnostic. Check Node, psql, Supabase settings and owner verification. Do not bypass types, authentication or schema integrity checks."
+      ],
+      [
+        "Balances disagree or an order outcome is unknown",
+        "Compare the same account and network at the venue, including fills, fees, margin and open orders. Reconcile before retrying; a lost response does not mean the order failed."
+      ]
+    ],
+    "settings": [],
+    "limits": "This is downloadable source software. Hosting, trading funds and external services are separate. Build and signal checks are not certification for unattended real-money execution. Complete venue and recovery validation for your installation.",
+    "summary": "Install and maintain the dashboard source with all six strategy frameworks.",
+    "requirements": [
+      "Node 22 LTS, version 22.3 or newer, as used by this release; npm and the shipped lockfile.",
+      "A dedicated Supabase project with Auth, REST and PostgreSQL; plain PostgreSQL alone is insufficient.",
+      "PostgreSQL client tools with psql on PATH, a verified owner account and private environment configuration.",
+      "For remote use: an authenticated HTTPS proxy, firewall, monitoring and tested backups."
+    ],
+    "install": [
+      "Extract the edition into a new directory and copy .env.example to .env.local. On Windows use Copy-Item; on Linux/macOS use cp.",
+      "Create and verify the owner in Supabase Auth. Configure ACCOUNT_OWNER_EMAIL, REQUIRE_AUTH=1, ADMIN_TOKEN, DATABASE_URL and the exact Supabase settings in the environment example. Keep server-role credentials server-only.",
+      "Keep TRADING_MODE=paper and signing keys blank during installation. Review the schema and migrations, then run the commands below. db:init installs atomically, checks migration integrity and refuses automatic owner transfer.",
+      "Start the app and open http://localhost:9005. Sign in as the owner. Verify anonymous and wrong-owner access is refused, and confirm settings persist after a restart.",
+      "Create a paused, unfunded agent from the installed strategies. Choose a market and interval, then configure position limits, allocation and drawdown controls before testing."
+    ],
+    "commands": "npm ci\nnpm run db:init\nnpm run typecheck\nnpm test\nnpm run build\nnpm start",
+    "tutorial": [
+      [
+        "Install and verify access",
+        "Finish the commands above. Sign in as the configured owner, then test a separate signed-out session. Expected result: your workspace loads, but anonymous access is rejected."
+      ],
+      [
+        "Create the first paused agent",
+        "Open Agents and choose an installed strategy. Name it clearly, select one market/interval and leave it paused with no funds allocated. Expected result: the saved strategy and status agree after reload."
+      ],
+      [
+        "Read the first decision",
+        "Use a verified paper/research path with completed candles. Record the timestamp, direction, confidence and reasoning. Expected result: a traceable signal or a valid neutral decision; no live order during this exercise."
+      ],
+      [
+        "Check all six installed modules",
+        "Verify darvas-box, elliott-wave, vwap-breakout, heikin-ashi, mean-reversion and macro-sentiment in the loader. Test each separately before combining budgets. Trader supplies six frameworks; it does not imply six independently safe simultaneous venue positions."
+      ],
+      [
+        "Configure risk and ownership",
+        "Review agent and farm budgets together, maximum exposure and drawdown limits. Identify which runtime owns each position. Expected result: allocations are not counted as new deposits and duplicate strategy ownership is avoided."
+      ],
+      [
+        "Prove persistence and recovery",
+        "Pause, save settings, restart and compare the same agent and configuration. Restore a backup only in isolation. Expected result: ownership and settings survive; restoration does not create duplicate live engines."
+      ]
+    ],
+    "focus": "Core includes Darvas. Trader includes Core and all six strategies. Add-ons need the 2.1 plugin loader and are not compatible with the browser-only 2.0 template.",
+    "inspect": "Read RELEASE-NOTES.md for historical acceptance evidence. The shipped test:isolation and test:runtime commands are developer fixtures restricted to a disposable local Supabase URL (127.0.0.1:55521); they are not general customer production checks.",
+    "practice": "Use a verified paper/research path with completed candles. Record the timestamp, direction, confidence and reasoning. Expected result: a traceable signal or a valid neutral decision; no live order during this exercise.",
+    "videos": [
+      "01-dashboard-orientation",
+      "03-first-agent",
+      "04-farms-risk-goals",
+      "05-monitor-recover"
+    ],
+    "related": [
+      "darvas-indicator",
+      "elliott-wave-agent",
+      "vwap-momentum-agent",
+      "heikin-ashi-agent",
+      "mean-reversion-agent",
+      "macro-sentiment-agent"
+    ],
+    "acceptance": [
+      "Archive checksum and version match the guide.",
+      "Install completes without suppressing errors; the module loads from its declared path.",
+      "Correct owner, market, network and candle interval are recorded.",
+      "Decision timestamp, direction, reasoning and parameters are captured; neutral is accepted.",
+      "Settings and ownership persist after restart; backup restore is tested in isolation.",
+      "Before live execution: entry, fill, protection, modification, exit, fees and P&L reconcile; partial fills, cancellation failure and lost responses are tested."
+    ]
+  },
+  {
+    "id": "darvas-indicator",
+    "title": "Darvas Box Breakout Agent",
+    "version": "2.1.1-source.20260928",
+    "updated": "2026-10-03",
+    "sha256": "409d0361ac74290de4093d047b5a29905cd01486ccac117121a10b42dc59eeb4",
+    "kind": "strategy",
+    "files": [
+      "darvas-indicator/INSTALL.md",
+      "darvas-indicator/LICENSE.md",
+      "darvas-indicator/README.md",
+      "darvas-indicator/dist/strategy.js",
+      "darvas-indicator/manifest.json",
+      "darvas-indicator/src/strategy.ts"
+    ],
+    "access": [
+      "Sign in to the account used at checkout. Open Account and locate the confirmed order. If payment is processing, wait for fulfillment rather than buying again.",
+      "Generate a fresh product Download link. Save the ZIP, receipt, release version and checksum. Expired links can be regenerated from the account.",
+      "Compare the archive SHA-256 with the release recorded below. Extract into a new directory; retain the original archive for rollback.",
+      "Open README.md, RUNBOOK.md or INSTALL.md, manifest.json where included, and LICENSE.md before changing an installation."
+    ],
+    "operations": [
+      "Keep a copy of the immutable ZIP, lockfile, private configuration and a database backup before an update. Store encrypted backups separately and prove a restore in an isolated compatible instance.",
+      "Pause new entries and reconcile existing venue orders and positions before maintenance. Pausing entries is not the same as closing positions. Removing a plugin does not close exchange positions.",
+      "Monitor the last successful cycle, data age, rejected orders, protection status, reconciliation gaps, database backups and disk space. Missing telemetry is an unknown state.",
+      "For rollback, stop the new runtime, reconcile the venue, restore a compatible application/schema pair in isolation and verify ownership and protection before resuming. A database restore cannot reverse a trade or transfer.",
+      "Customize readable source in a separate branch. Preserve the original defaults, rebuild any changed compiled module, and test the same inputs before and after. Follow LICENSE.md; source ownership does not imply unrestricted redistribution."
+    ],
+    "troubleshooting": [
+      [
+        "Payment confirmed but download missing",
+        "Check order status in Account and contact support with the order reference if fulfillment is delayed. Do not make another purchase to repair access."
+      ],
+      [
+        "Download link expired",
+        "Generate a fresh link from the purchasing account. The documentation downloads are public; the paid software archive remains entitlement-protected."
+      ],
+      [
+        "Strategy absent from the selector",
+        "Confirm manifest.json is directly inside the manifest installPath, the entryPoint exists, compatibility matches and the loader has no errors. Restart after installation; do not add another nesting level."
+      ],
+      [
+        "No trade despite available capital",
+        "Inspect the latest decision, candle history and freshness, symbol, interval, network, existing positions and risk rejection. Neutral is a valid result."
+      ],
+      [
+        "Build or database initialization fails",
+        "Keep the exact failed command and redacted diagnostic. Check Node, psql, Supabase settings and owner verification. Do not bypass types, authentication or schema integrity checks."
+      ],
+      [
+        "Balances disagree or an order outcome is unknown",
+        "Compare the same account and network at the venue, including fills, fees, margin and open orders. Reconcile before retrying; a lost response does not mean the order failed."
+      ]
+    ],
+    "settings": [
+      {
+        "key": "boxFormationPeriod",
+        "value": 28,
+        "description": "Periods to confirm box top/bottom"
+      },
+      {
+        "key": "volumeMultiplier",
+        "value": 1.5,
+        "description": "Breakout volume vs average"
+      },
+      {
+        "key": "minBoxHeight",
+        "value": 2,
+        "description": "Minimum box height as %"
+      },
+      {
+        "key": "maxBoxAge",
+        "value": 140,
+        "description": "Max periods box can exist"
+      },
+      {
+        "key": "stopLossPercent",
+        "value": 5,
+        "description": "Stop below box bottom"
+      },
+      {
+        "key": "takeProfitRatio",
+        "value": 3,
+        "description": "R:R ratio"
+      },
+      {
+        "key": "lookbackPeriod",
+        "value": 28,
+        "description": "Periods to check for new highs"
+      },
+      {
+        "key": "boxConfirmationPeriod",
+        "value": 5,
+        "description": "Periods price must stay in range"
+      }
+    ],
+    "limits": "This is downloadable source software. Hosting, trading funds and external services are separate. Build and signal checks are not certification for unattended real-money execution. Complete venue and recovery validation for your installation. Some packaged agent INSTALL/manifest files retain the older word “candidate”. This guide is tied to the registered September 28 archive by checksum; publication does not certify venue performance.",
+    "summary": "Identify a defined price box, then examine a breakout or breakdown and its volume context.",
+    "focus": "Range breaks can fail. Volume context is not a guarantee, and default stop distance is not account-level risk. Darvas is already included in Core and Trader; do not install a second copy with the same strategy ID.",
+    "inspect": "Inspect boxes, currentBox or activeBox, and volumeRatio when present. Confirm stop < entry < target for a long and target < entry < stop for a short. Treat absent boxes and weak confirmation as information, not a reason to force an entry.",
+    "practice": "Use the shipped defaults on completed 4h candles. Save the reported box top, bottom, age and volume ratio. Compare a neutral consolidation decision with a later breakout decision, without submitting an order. A period is a candle: 28 four-hour candles span 112 hours, not four weeks.",
+    "strategyId": "darvas-box",
+    "installPath": "plugins/darvas-indicator",
+    "timeframes": [
+      "4h",
+      "1d",
+      "1h"
+    ],
+    "defaultConfig": {
+      "boxFormationPeriod": 28,
+      "volumeMultiplier": 1.5,
+      "minBoxHeight": 2,
+      "maxBoxAge": 140,
+      "stopLossPercent": 5,
+      "takeProfitRatio": 3,
+      "lookbackPeriod": 28,
+      "boxConfirmationPeriod": 5
+    },
+    "requirements": [
+      "A working Core/Trader dashboard in the manifest range >=2.1.0 <2.2.0. The browser-only Core 2.0 template is incompatible.",
+      "The module manifest declares Node >=20; the complete shipped dashboard requires Node 22.3 or newer.",
+      "Completed, time-ordered OHLCV candles with millisecond timestamps, finite positive prices and valid volume, supplied by your runtime.",
+      "A backup and an isolated paper/research environment. The strategy computes signals; the dashboard supplies market data, order handling and risk controls."
+    ],
+    "install": [
+      "Check whether you already own the strategy: all six are included in Trader; Darvas is also included in Core.",
+      "Back up the database, settings and plugins. Pause new entries and reconcile positions before changing the installation.",
+      "Extract the module so manifest.json sits directly at plugins/darvas-indicator/manifest.json. Check plugins/darvas-indicator/dist/strategy.js exists; do not nest the product directory twice.",
+      "Restart the dashboard and inspect loader errors. Select strategy ID darvas-box, a supported interval and the intended market. Start paused with no funds allocated.",
+      "Use the manifest defaults for the first comparison. Inspect decisions and then independently validate the runtime trade lifecycle before any unattended execution."
+    ],
+    "commands": "node -e \"const p=require('./plugins/darvas-indicator/dist/strategy.js'); if(!p.strategy) throw Error('strategy export missing'); console.log('strategy export present')\"",
+    "how": "The module builds boxes from highs, lows and confirmation periods. A breakout can return long; a breakdown can return short. Its reasoning reports the box boundaries, age and volume context. A short decision is not automatically an instruction to close a long: the runtime must apply position ownership and execution policy.",
+    "tutorial": [
+      [
+        "Verify the installed module",
+        "Follow the install steps above, then run the export check from the dashboard root. Expected result: strategy export present. This checks loading only; it does not submit an order."
+      ],
+      [
+        "Prepare comparable inputs",
+        "Select 4h, 1d, 1h as supported by the manifest. Supply one completed candle series for one symbol, retaining timestamps, OHLCV, source and network. Multiple listed intervals do not mean automatic multi-timeframe fetching."
+      ],
+      [
+        "Run the strategy-specific exercise",
+        "Use the shipped defaults on completed 4h candles. Save the reported box top, bottom, age and volume ratio. Compare a neutral consolidation decision with a later breakout decision, without submitting an order. A period is a candle: 28 four-hour candles span 112 hours, not four weeks."
+      ],
+      [
+        "Interpret the result",
+        "Inspect boxes, currentBox or activeBox, and volumeRatio when present. Confirm stop < entry < target for a long and target < entry < stop for a short. Treat absent boxes and weak confirmation as information, not a reason to force an entry."
+      ],
+      [
+        "Validate the runtime separately",
+        "Confirm ownership, sizing, fees, entry fill, stop/target, modifications, exit and realized P&L on testnet. Include restart, partial fill, rejected cancellation and lost-response reconciliation. A signal test is not an execution test."
+      ]
+    ],
+    "videos": [
+      "03-first-agent",
+      "05-monitor-recover"
+    ],
+    "related": [
+      "trading-dashboard-template",
+      "multi-strat-bundle"
+    ],
+    "acceptance": [
+      "Archive checksum and version match the guide.",
+      "Install completes without suppressing errors; the module loads from its declared path.",
+      "Correct owner, market, network and candle interval are recorded.",
+      "Decision timestamp, direction, reasoning and parameters are captured; neutral is accepted.",
+      "Settings and ownership persist after restart; backup restore is tested in isolation.",
+      "Before live execution: entry, fill, protection, modification, exit, fees and P&L reconcile; partial fills, cancellation failure and lost responses are tested."
+    ]
+  },
+  {
+    "id": "elliott-wave-agent",
+    "title": "Elliott Wave Pattern Agent",
+    "version": "2.1.1-source.20260928",
+    "updated": "2026-10-03",
+    "sha256": "32f85ae0a257a486d3c29df982dd905a7a64f8032969852c549e3f9624ff7f87",
+    "kind": "strategy",
+    "files": [
+      "elliott-wave-agent/INSTALL.md",
+      "elliott-wave-agent/LICENSE.md",
+      "elliott-wave-agent/README.md",
+      "elliott-wave-agent/dist/strategy.js",
+      "elliott-wave-agent/manifest.json",
+      "elliott-wave-agent/src/strategy.ts"
+    ],
+    "access": [
+      "Sign in to the account used at checkout. Open Account and locate the confirmed order. If payment is processing, wait for fulfillment rather than buying again.",
+      "Generate a fresh product Download link. Save the ZIP, receipt, release version and checksum. Expired links can be regenerated from the account.",
+      "Compare the archive SHA-256 with the release recorded below. Extract into a new directory; retain the original archive for rollback.",
+      "Open README.md, RUNBOOK.md or INSTALL.md, manifest.json where included, and LICENSE.md before changing an installation."
+    ],
+    "operations": [
+      "Keep a copy of the immutable ZIP, lockfile, private configuration and a database backup before an update. Store encrypted backups separately and prove a restore in an isolated compatible instance.",
+      "Pause new entries and reconcile existing venue orders and positions before maintenance. Pausing entries is not the same as closing positions. Removing a plugin does not close exchange positions.",
+      "Monitor the last successful cycle, data age, rejected orders, protection status, reconciliation gaps, database backups and disk space. Missing telemetry is an unknown state.",
+      "For rollback, stop the new runtime, reconcile the venue, restore a compatible application/schema pair in isolation and verify ownership and protection before resuming. A database restore cannot reverse a trade or transfer.",
+      "Customize readable source in a separate branch. Preserve the original defaults, rebuild any changed compiled module, and test the same inputs before and after. Follow LICENSE.md; source ownership does not imply unrestricted redistribution."
+    ],
+    "troubleshooting": [
+      [
+        "Payment confirmed but download missing",
+        "Check order status in Account and contact support with the order reference if fulfillment is delayed. Do not make another purchase to repair access."
+      ],
+      [
+        "Download link expired",
+        "Generate a fresh link from the purchasing account. The documentation downloads are public; the paid software archive remains entitlement-protected."
+      ],
+      [
+        "Strategy absent from the selector",
+        "Confirm manifest.json is directly inside the manifest installPath, the entryPoint exists, compatibility matches and the loader has no errors. Restart after installation; do not add another nesting level."
+      ],
+      [
+        "No trade despite available capital",
+        "Inspect the latest decision, candle history and freshness, symbol, interval, network, existing positions and risk rejection. Neutral is a valid result."
+      ],
+      [
+        "Build or database initialization fails",
+        "Keep the exact failed command and redacted diagnostic. Check Node, psql, Supabase settings and owner verification. Do not bypass types, authentication or schema integrity checks."
+      ],
+      [
+        "Balances disagree or an order outcome is unknown",
+        "Compare the same account and network at the venue, including fills, fees, margin and open orders. Reconcile before retrying; a lost response does not mean the order failed."
+      ]
+    ],
+    "settings": [
+      {
+        "key": "swingLookback",
+        "value": 5,
+        "description": "Periods for pivot detection"
+      },
+      {
+        "key": "minWaveSize",
+        "value": 1.5,
+        "description": "Minimum wave size as %"
+      },
+      {
+        "key": "maxWaveDeviation",
+        "value": 15,
+        "description": "Max deviation from ideal Fibonacci ratio %"
+      },
+      {
+        "key": "wave3MinMultiplier",
+        "value": 1,
+        "description": "Reserved legacy field; not read by the shipped signal calculation. Changing it does not alter decisions in this release."
+      },
+      {
+        "key": "wave3IdealMultiplier",
+        "value": 1.618,
+        "description": "Wave 3 ideal Fibonacci ratio"
+      },
+      {
+        "key": "wave5IdealRatio",
+        "value": 1,
+        "description": "Wave 5 vs wave 1 ratio"
+      },
+      {
+        "key": "fibRetrace618",
+        "value": 0.618,
+        "description": "Reserved legacy field; not read by the shipped signal calculation. Changing it does not alter decisions in this release."
+      },
+      {
+        "key": "fibRetrace50",
+        "value": 0.5,
+        "description": "Reserved legacy field; not read by the shipped signal calculation. Changing it does not alter decisions in this release."
+      },
+      {
+        "key": "fibRetrace382",
+        "value": 0.382,
+        "description": "Reserved legacy field; not read by the shipped signal calculation. Changing it does not alter decisions in this release."
+      },
+      {
+        "key": "minConfidence",
+        "value": 60,
+        "description": "Minimum confidence to signal"
+      },
+      {
+        "key": "degreeLabels",
+        "value": [
+          "Minute",
+          "Minor",
+          "Intermediate"
+        ],
+        "description": "Reserved legacy field; not read by the shipped signal calculation. Changing it does not alter decisions in this release."
+      }
+    ],
+    "limits": "This is downloadable source software. Hosting, trading funds and external services are separate. Build and signal checks are not certification for unattended real-money execution. Complete venue and recovery validation for your installation. Some packaged agent INSTALL/manifest files retain the older word “candidate”. This guide is tied to the registered September 28 archive by checksum; publication does not certify venue performance.",
+    "summary": "Review swing points and candidate wave patterns, then understand confidence and invalidation.",
+    "focus": "Fibonacci tolerances are percentages; retracement values such as 0.618 are ratios. Degree labels describe the module output and do not fetch multiple candle series. Chart overlays and guaranteed wave forecasts are not included.",
+    "inspect": "Read the returned reasoning and indicator object rather than treating every chart swing as a setup. Compare a neutral result with a pattern that satisfies the programmed rules. Check all proposed protection prices before any execution.",
+    "practice": "Use completed 1h candles and shipped defaults. Record the candidate pattern and confidence; compare it with the configured minConfidence of 60. Inspect the pivot lag: swingLookback needs candles on both sides of a candidate pivot, so the latest candle is not automatically a confirmed swing.",
+    "strategyId": "elliott-wave",
+    "installPath": "plugins/elliott-wave-agent",
+    "timeframes": [
+      "1h",
+      "4h",
+      "1d"
+    ],
+    "defaultConfig": {
+      "swingLookback": 5,
+      "minWaveSize": 1.5,
+      "maxWaveDeviation": 15,
+      "wave3MinMultiplier": 1,
+      "wave3IdealMultiplier": 1.618,
+      "wave5IdealRatio": 1,
+      "fibRetrace618": 0.618,
+      "fibRetrace50": 0.5,
+      "fibRetrace382": 0.382,
+      "minConfidence": 60,
+      "degreeLabels": [
+        "Minute",
+        "Minor",
+        "Intermediate"
+      ]
+    },
+    "requirements": [
+      "A working Core/Trader dashboard in the manifest range >=2.1.0 <2.2.0. The browser-only Core 2.0 template is incompatible.",
+      "The module manifest declares Node >=20; the complete shipped dashboard requires Node 22.3 or newer.",
+      "Completed, time-ordered OHLCV candles with millisecond timestamps, finite positive prices and valid volume, supplied by your runtime.",
+      "A backup and an isolated paper/research environment. The strategy computes signals; the dashboard supplies market data, order handling and risk controls."
+    ],
+    "install": [
+      "Check whether you already own the strategy: all six are included in Trader; Darvas is also included in Core.",
+      "Back up the database, settings and plugins. Pause new entries and reconcile positions before changing the installation.",
+      "Extract the module so manifest.json sits directly at plugins/elliott-wave-agent/manifest.json. Check plugins/elliott-wave-agent/dist/strategy.js exists; do not nest the product directory twice.",
+      "Restart the dashboard and inspect loader errors. Select strategy ID elliott-wave, a supported interval and the intended market. Start paused with no funds allocated.",
+      "Use the manifest defaults for the first comparison. Inspect decisions and then independently validate the runtime trade lifecycle before any unattended execution."
+    ],
+    "commands": "node -e \"const p=require('./plugins/elliott-wave-agent/dist/strategy.js'); if(!p.strategy) throw Error('strategy export missing'); console.log('strategy export present')\"",
+    "how": "The module finds local swing highs/lows and checks programmed impulse-wave and Fibonacci relationships. Candidate wave counts can change as more candles arrive. It is one rule-based interpretation, not a definitive count of every Elliott pattern.",
+    "tutorial": [
+      [
+        "Verify the installed module",
+        "Follow the install steps above, then run the export check from the dashboard root. Expected result: strategy export present. This checks loading only; it does not submit an order."
+      ],
+      [
+        "Prepare comparable inputs",
+        "Select 1h, 4h, 1d as supported by the manifest. Supply one completed candle series for one symbol, retaining timestamps, OHLCV, source and network. Multiple listed intervals do not mean automatic multi-timeframe fetching."
+      ],
+      [
+        "Run the strategy-specific exercise",
+        "Use completed 1h candles and shipped defaults. Record the candidate pattern and confidence; compare it with the configured minConfidence of 60. Inspect the pivot lag: swingLookback needs candles on both sides of a candidate pivot, so the latest candle is not automatically a confirmed swing."
+      ],
+      [
+        "Interpret the result",
+        "Read the returned reasoning and indicator object rather than treating every chart swing as a setup. Compare a neutral result with a pattern that satisfies the programmed rules. Check all proposed protection prices before any execution."
+      ],
+      [
+        "Validate the runtime separately",
+        "Confirm ownership, sizing, fees, entry fill, stop/target, modifications, exit and realized P&L on testnet. Include restart, partial fill, rejected cancellation and lost-response reconciliation. A signal test is not an execution test."
+      ]
+    ],
+    "videos": [
+      "03-first-agent",
+      "05-monitor-recover"
+    ],
+    "related": [
+      "trading-dashboard-template",
+      "multi-strat-bundle"
+    ],
+    "acceptance": [
+      "Archive checksum and version match the guide.",
+      "Install completes without suppressing errors; the module loads from its declared path.",
+      "Correct owner, market, network and candle interval are recorded.",
+      "Decision timestamp, direction, reasoning and parameters are captured; neutral is accepted.",
+      "Settings and ownership persist after restart; backup restore is tested in isolation.",
+      "Before live execution: entry, fill, protection, modification, exit, fees and P&L reconcile; partial fills, cancellation failure and lost responses are tested."
+    ]
+  },
+  {
+    "id": "vwap-momentum-agent",
+    "title": "VWAP Strategy Agent",
+    "version": "2.1.1-source.20260928",
+    "updated": "2026-10-03",
+    "sha256": "0ef904fa9d6644ad6e0f45c93a75b2ca3c78bf4a22a49ccdc3ca42487774c6d4",
+    "kind": "strategy",
+    "files": [
+      "vwap-momentum-agent/INSTALL.md",
+      "vwap-momentum-agent/LICENSE.md",
+      "vwap-momentum-agent/README.md",
+      "vwap-momentum-agent/dist/strategy.js",
+      "vwap-momentum-agent/manifest.json",
+      "vwap-momentum-agent/src/strategy.ts"
+    ],
+    "access": [
+      "Sign in to the account used at checkout. Open Account and locate the confirmed order. If payment is processing, wait for fulfillment rather than buying again.",
+      "Generate a fresh product Download link. Save the ZIP, receipt, release version and checksum. Expired links can be regenerated from the account.",
+      "Compare the archive SHA-256 with the release recorded below. Extract into a new directory; retain the original archive for rollback.",
+      "Open README.md, RUNBOOK.md or INSTALL.md, manifest.json where included, and LICENSE.md before changing an installation."
+    ],
+    "operations": [
+      "Keep a copy of the immutable ZIP, lockfile, private configuration and a database backup before an update. Store encrypted backups separately and prove a restore in an isolated compatible instance.",
+      "Pause new entries and reconcile existing venue orders and positions before maintenance. Pausing entries is not the same as closing positions. Removing a plugin does not close exchange positions.",
+      "Monitor the last successful cycle, data age, rejected orders, protection status, reconciliation gaps, database backups and disk space. Missing telemetry is an unknown state.",
+      "For rollback, stop the new runtime, reconcile the venue, restore a compatible application/schema pair in isolation and verify ownership and protection before resuming. A database restore cannot reverse a trade or transfer.",
+      "Customize readable source in a separate branch. Preserve the original defaults, rebuild any changed compiled module, and test the same inputs before and after. Follow LICENSE.md; source ownership does not imply unrestricted redistribution."
+    ],
+    "troubleshooting": [
+      [
+        "Payment confirmed but download missing",
+        "Check order status in Account and contact support with the order reference if fulfillment is delayed. Do not make another purchase to repair access."
+      ],
+      [
+        "Download link expired",
+        "Generate a fresh link from the purchasing account. The documentation downloads are public; the paid software archive remains entitlement-protected."
+      ],
+      [
+        "Strategy absent from the selector",
+        "Confirm manifest.json is directly inside the manifest installPath, the entryPoint exists, compatibility matches and the loader has no errors. Restart after installation; do not add another nesting level."
+      ],
+      [
+        "No trade despite available capital",
+        "Inspect the latest decision, candle history and freshness, symbol, interval, network, existing positions and risk rejection. Neutral is a valid result."
+      ],
+      [
+        "Build or database initialization fails",
+        "Keep the exact failed command and redacted diagnostic. Check Node, psql, Supabase settings and owner verification. Do not bypass types, authentication or schema integrity checks."
+      ],
+      [
+        "Balances disagree or an order outcome is unknown",
+        "Compare the same account and network at the venue, including fills, fees, margin and open orders. Reconcile before retrying; a lost response does not mean the order failed."
+      ]
+    ],
+    "settings": [
+      {
+        "key": "sessionLength",
+        "value": 24,
+        "description": "Session period in candles"
+      },
+      {
+        "key": "bandMultiplier",
+        "value": [
+          1,
+          2,
+          3
+        ],
+        "description": "Std dev multipliers"
+      },
+      {
+        "key": "volumeThreshold",
+        "value": 2,
+        "description": "Volume surge multiplier"
+      },
+      {
+        "key": "cumulativeDeltaPeriod",
+        "value": 20,
+        "description": "Periods for delta calc"
+      },
+      {
+        "key": "pocBinSize",
+        "value": 0.5,
+        "description": "Price bins for volume profile %"
+      },
+      {
+        "key": "anchoredPeriod",
+        "value": 50,
+        "description": "Lookback for anchored VWAP"
+      },
+      {
+        "key": "meanReversionBand",
+        "value": 2,
+        "description": "Band level for mean reversion"
+      },
+      {
+        "key": "minSessionVolume",
+        "value": 100000,
+        "description": "Min avg volume for valid signals"
+      },
+      {
+        "key": "priceMovementThreshold",
+        "value": 0.5,
+        "description": "Reserved legacy field; not read by the shipped signal calculation. Changing it does not alter decisions in this release."
+      }
+    ],
+    "limits": "This is downloadable source software. Hosting, trading funds and external services are separate. Build and signal checks are not certification for unattended real-money execution. Complete venue and recovery validation for your installation. Some packaged agent INSTALL/manifest files retain the older word “candidate”. This guide is tied to the registered September 28 archive by checksum; publication does not certify venue performance.",
+    "summary": "Compare candle-weighted price, bands and volume context before interpreting a setup.",
+    "focus": "Do not compare a candle-volume proxy with a live trade-delta indicator as if they were the same. pocBinSize is a price-bin percentage. A wider band or different anchor changes the setup and must be retested.",
+    "inspect": "Inspect the returned reasoning and indicators for the selected breakout or mean-reversion condition. Low volume, insufficient history or collapsed bands can yield neutral. Test a second data slice while keeping settings unchanged, then record what changed.",
+    "practice": "Use completed 1h candles and the manifest defaults. sessionLength=24 is a rolling 24-candle window, not proof of an exchange session reset. Compare reported VWAP, bands and volume with the same input candles. Check the volume units before interpreting minSessionVolume=100000.",
+    "strategyId": "vwap-breakout",
+    "installPath": "plugins/vwap-momentum-agent",
+    "timeframes": [
+      "15m",
+      "1h",
+      "4h"
+    ],
+    "defaultConfig": {
+      "sessionLength": 24,
+      "bandMultiplier": [
+        1,
+        2,
+        3
+      ],
+      "volumeThreshold": 2,
+      "cumulativeDeltaPeriod": 20,
+      "pocBinSize": 0.5,
+      "anchoredPeriod": 50,
+      "meanReversionBand": 2,
+      "minSessionVolume": 100000,
+      "priceMovementThreshold": 0.5
+    },
+    "requirements": [
+      "A working Core/Trader dashboard in the manifest range >=2.1.0 <2.2.0. The browser-only Core 2.0 template is incompatible.",
+      "The module manifest declares Node >=20; the complete shipped dashboard requires Node 22.3 or newer.",
+      "Completed, time-ordered OHLCV candles with millisecond timestamps, finite positive prices and valid volume, supplied by your runtime.",
+      "A backup and an isolated paper/research environment. The strategy computes signals; the dashboard supplies market data, order handling and risk controls."
+    ],
+    "install": [
+      "Check whether you already own the strategy: all six are included in Trader; Darvas is also included in Core.",
+      "Back up the database, settings and plugins. Pause new entries and reconcile positions before changing the installation.",
+      "Extract the module so manifest.json sits directly at plugins/vwap-momentum-agent/manifest.json. Check plugins/vwap-momentum-agent/dist/strategy.js exists; do not nest the product directory twice.",
+      "Restart the dashboard and inspect loader errors. Select strategy ID vwap-breakout, a supported interval and the intended market. Start paused with no funds allocated.",
+      "Use the manifest defaults for the first comparison. Inspect decisions and then independently validate the runtime trade lifecycle before any unattended execution."
+    ],
+    "commands": "node -e \"const p=require('./plugins/vwap-momentum-agent/dist/strategy.js'); if(!p.strategy) throw Error('strategy export missing'); console.log('strategy export present')\"",
+    "how": "VWAP uses typical candle price multiplied by candle volume. The module also derives bands, a candle-based volume profile, anchored estimates and a cumulative-delta proxy. These are not an order-book feed or actual aggressor-side trade delta.",
+    "tutorial": [
+      [
+        "Verify the installed module",
+        "Follow the install steps above, then run the export check from the dashboard root. Expected result: strategy export present. This checks loading only; it does not submit an order."
+      ],
+      [
+        "Prepare comparable inputs",
+        "Select 15m, 1h, 4h as supported by the manifest. Supply one completed candle series for one symbol, retaining timestamps, OHLCV, source and network. Multiple listed intervals do not mean automatic multi-timeframe fetching."
+      ],
+      [
+        "Run the strategy-specific exercise",
+        "Use completed 1h candles and the manifest defaults. sessionLength=24 is a rolling 24-candle window, not proof of an exchange session reset. Compare reported VWAP, bands and volume with the same input candles. Check the volume units before interpreting minSessionVolume=100000."
+      ],
+      [
+        "Interpret the result",
+        "Inspect the returned reasoning and indicators for the selected breakout or mean-reversion condition. Low volume, insufficient history or collapsed bands can yield neutral. Test a second data slice while keeping settings unchanged, then record what changed."
+      ],
+      [
+        "Validate the runtime separately",
+        "Confirm ownership, sizing, fees, entry fill, stop/target, modifications, exit and realized P&L on testnet. Include restart, partial fill, rejected cancellation and lost-response reconciliation. A signal test is not an execution test."
+      ]
+    ],
+    "videos": [
+      "03-first-agent",
+      "05-monitor-recover"
+    ],
+    "related": [
+      "trading-dashboard-template",
+      "multi-strat-bundle"
+    ],
+    "acceptance": [
+      "Archive checksum and version match the guide.",
+      "Install completes without suppressing errors; the module loads from its declared path.",
+      "Correct owner, market, network and candle interval are recorded.",
+      "Decision timestamp, direction, reasoning and parameters are captured; neutral is accepted.",
+      "Settings and ownership persist after restart; backup restore is tested in isolation.",
+      "Before live execution: entry, fill, protection, modification, exit, fees and P&L reconcile; partial fills, cancellation failure and lost responses are tested."
+    ]
+  },
+  {
+    "id": "heikin-ashi-agent",
+    "title": "Heikin Ashi Trend Agent",
+    "version": "2.1.1-source.20260928",
+    "updated": "2026-10-03",
+    "sha256": "048da4c4d79aeb57cb45d083cb312cc8de93bb9e41fe0a8858c63865f6ba9692",
+    "kind": "strategy",
+    "files": [
+      "heikin-ashi-agent/INSTALL.md",
+      "heikin-ashi-agent/LICENSE.md",
+      "heikin-ashi-agent/README.md",
+      "heikin-ashi-agent/dist/strategy.js",
+      "heikin-ashi-agent/manifest.json",
+      "heikin-ashi-agent/src/strategy.ts"
+    ],
+    "access": [
+      "Sign in to the account used at checkout. Open Account and locate the confirmed order. If payment is processing, wait for fulfillment rather than buying again.",
+      "Generate a fresh product Download link. Save the ZIP, receipt, release version and checksum. Expired links can be regenerated from the account.",
+      "Compare the archive SHA-256 with the release recorded below. Extract into a new directory; retain the original archive for rollback.",
+      "Open README.md, RUNBOOK.md or INSTALL.md, manifest.json where included, and LICENSE.md before changing an installation."
+    ],
+    "operations": [
+      "Keep a copy of the immutable ZIP, lockfile, private configuration and a database backup before an update. Store encrypted backups separately and prove a restore in an isolated compatible instance.",
+      "Pause new entries and reconcile existing venue orders and positions before maintenance. Pausing entries is not the same as closing positions. Removing a plugin does not close exchange positions.",
+      "Monitor the last successful cycle, data age, rejected orders, protection status, reconciliation gaps, database backups and disk space. Missing telemetry is an unknown state.",
+      "For rollback, stop the new runtime, reconcile the venue, restore a compatible application/schema pair in isolation and verify ownership and protection before resuming. A database restore cannot reverse a trade or transfer.",
+      "Customize readable source in a separate branch. Preserve the original defaults, rebuild any changed compiled module, and test the same inputs before and after. Follow LICENSE.md; source ownership does not imply unrestricted redistribution."
+    ],
+    "troubleshooting": [
+      [
+        "Payment confirmed but download missing",
+        "Check order status in Account and contact support with the order reference if fulfillment is delayed. Do not make another purchase to repair access."
+      ],
+      [
+        "Download link expired",
+        "Generate a fresh link from the purchasing account. The documentation downloads are public; the paid software archive remains entitlement-protected."
+      ],
+      [
+        "Strategy absent from the selector",
+        "Confirm manifest.json is directly inside the manifest installPath, the entryPoint exists, compatibility matches and the loader has no errors. Restart after installation; do not add another nesting level."
+      ],
+      [
+        "No trade despite available capital",
+        "Inspect the latest decision, candle history and freshness, symbol, interval, network, existing positions and risk rejection. Neutral is a valid result."
+      ],
+      [
+        "Build or database initialization fails",
+        "Keep the exact failed command and redacted diagnostic. Check Node, psql, Supabase settings and owner verification. Do not bypass types, authentication or schema integrity checks."
+      ],
+      [
+        "Balances disagree or an order outcome is unknown",
+        "Compare the same account and network at the venue, including fills, fees, margin and open orders. Reconcile before retrying; a lost response does not mean the order failed."
+      ]
+    ],
+    "settings": [
+      {
+        "key": "smoothingPeriod",
+        "value": 1,
+        "description": "Apply HA transformation N times"
+      },
+      {
+        "key": "minConsecutiveCandles",
+        "value": 3,
+        "description": "Min consecutive same-color candles for trend"
+      },
+      {
+        "key": "wickFilter",
+        "value": true,
+        "description": "Require wickless candles for strong trend"
+      },
+      {
+        "key": "emaConfirmation",
+        "value": true,
+        "description": "Confirm with EMA crossover"
+      },
+      {
+        "key": "emaPeriod",
+        "value": 20,
+        "description": "EMA period for confirmation"
+      },
+      {
+        "key": "trendStrengthThreshold",
+        "value": 5,
+        "description": "Min consecutive candles for high confidence"
+      },
+      {
+        "key": "dojiThreshold",
+        "value": 0.5,
+        "description": "Max body size % to be doji"
+      },
+      {
+        "key": "minBodySize",
+        "value": 0.3,
+        "description": "Min body size % for valid signal"
+      },
+      {
+        "key": "stopLossATR",
+        "value": 2,
+        "description": "Stop loss in ATR multiples"
+      },
+      {
+        "key": "takeProfitRatio",
+        "value": 2.5,
+        "description": "R:R ratio"
+      }
+    ],
+    "limits": "This is downloadable source software. Hosting, trading funds and external services are separate. Build and signal checks are not certification for unattended real-money execution. Complete venue and recovery validation for your installation. Some packaged agent INSTALL/manifest files retain the older word “candidate”. This guide is tied to the registered September 28 archive by checksum; publication does not certify venue performance.",
+    "summary": "Recognize smoothed trends and distinguish transformed candles from tradable prices.",
+    "focus": "Smoothing may delay entries and reversals. A manifest riskProfile label is descriptive, not a tested loss limit. stopLossATR=2 is a distance multiplier, not a 2% portfolio loss cap.",
+    "inspect": "Compare transformed candles with the raw close; Heikin Ashi prices are analytical values, not executable quotes. Review the EMA context and proposed stop/target. Change only smoothingPeriod in a separate test and compare the resulting lag.",
+    "practice": "Use completed 1h candles with smoothingPeriod=1, minConsecutiveCandles=3 and emaConfirmation=true. Review a sustained sequence and then a mixed or doji sequence. Record direction, reasoning and indicators without placing an order.",
+    "strategyId": "heikin-ashi",
+    "installPath": "plugins/heikin-ashi-agent",
+    "timeframes": [
+      "15m",
+      "1h",
+      "4h",
+      "1d"
+    ],
+    "defaultConfig": {
+      "smoothingPeriod": 1,
+      "minConsecutiveCandles": 3,
+      "wickFilter": true,
+      "emaConfirmation": true,
+      "emaPeriod": 20,
+      "trendStrengthThreshold": 5,
+      "dojiThreshold": 0.5,
+      "minBodySize": 0.3,
+      "stopLossATR": 2,
+      "takeProfitRatio": 2.5
+    },
+    "requirements": [
+      "A working Core/Trader dashboard in the manifest range >=2.1.0 <2.2.0. The browser-only Core 2.0 template is incompatible.",
+      "The module manifest declares Node >=20; the complete shipped dashboard requires Node 22.3 or newer.",
+      "Completed, time-ordered OHLCV candles with millisecond timestamps, finite positive prices and valid volume, supplied by your runtime.",
+      "A backup and an isolated paper/research environment. The strategy computes signals; the dashboard supplies market data, order handling and risk controls."
+    ],
+    "install": [
+      "Check whether you already own the strategy: all six are included in Trader; Darvas is also included in Core.",
+      "Back up the database, settings and plugins. Pause new entries and reconcile positions before changing the installation.",
+      "Extract the module so manifest.json sits directly at plugins/heikin-ashi-agent/manifest.json. Check plugins/heikin-ashi-agent/dist/strategy.js exists; do not nest the product directory twice.",
+      "Restart the dashboard and inspect loader errors. Select strategy ID heikin-ashi, a supported interval and the intended market. Start paused with no funds allocated.",
+      "Use the manifest defaults for the first comparison. Inspect decisions and then independently validate the runtime trade lifecycle before any unattended execution."
+    ],
+    "commands": "node -e \"const p=require('./plugins/heikin-ashi-agent/dist/strategy.js'); if(!p.strategy) throw Error('strategy export missing'); console.log('strategy export present')\"",
+    "how": "The module transforms OHLC candles into Heikin Ashi values, checks consecutive direction and wick/body characteristics, and can require EMA confirmation. Proposed stops use ATR multiples. No ADX filter is shipped.",
+    "tutorial": [
+      [
+        "Verify the installed module",
+        "Follow the install steps above, then run the export check from the dashboard root. Expected result: strategy export present. This checks loading only; it does not submit an order."
+      ],
+      [
+        "Prepare comparable inputs",
+        "Select 15m, 1h, 4h, 1d as supported by the manifest. Supply one completed candle series for one symbol, retaining timestamps, OHLCV, source and network. Multiple listed intervals do not mean automatic multi-timeframe fetching."
+      ],
+      [
+        "Run the strategy-specific exercise",
+        "Use completed 1h candles with smoothingPeriod=1, minConsecutiveCandles=3 and emaConfirmation=true. Review a sustained sequence and then a mixed or doji sequence. Record direction, reasoning and indicators without placing an order."
+      ],
+      [
+        "Interpret the result",
+        "Compare transformed candles with the raw close; Heikin Ashi prices are analytical values, not executable quotes. Review the EMA context and proposed stop/target. Change only smoothingPeriod in a separate test and compare the resulting lag."
+      ],
+      [
+        "Validate the runtime separately",
+        "Confirm ownership, sizing, fees, entry fill, stop/target, modifications, exit and realized P&L on testnet. Include restart, partial fill, rejected cancellation and lost-response reconciliation. A signal test is not an execution test."
+      ]
+    ],
+    "videos": [
+      "03-first-agent",
+      "05-monitor-recover"
+    ],
+    "related": [
+      "trading-dashboard-template",
+      "multi-strat-bundle"
+    ],
+    "acceptance": [
+      "Archive checksum and version match the guide.",
+      "Install completes without suppressing errors; the module loads from its declared path.",
+      "Correct owner, market, network and candle interval are recorded.",
+      "Decision timestamp, direction, reasoning and parameters are captured; neutral is accepted.",
+      "Settings and ownership persist after restart; backup restore is tested in isolation.",
+      "Before live execution: entry, fill, protection, modification, exit, fees and P&L reconcile; partial fills, cancellation failure and lost responses are tested."
+    ]
+  },
+  {
+    "id": "mean-reversion-agent",
+    "title": "Bollinger Mean Reversion Agent",
+    "version": "2.1.1-source.20260928",
+    "updated": "2026-10-03",
+    "sha256": "dcdcd74fd55e4d4921314066dbe2743739e69679e31763b0b6b5ed3ada97432e",
+    "kind": "strategy",
+    "files": [
+      "mean-reversion-agent/INSTALL.md",
+      "mean-reversion-agent/LICENSE.md",
+      "mean-reversion-agent/README.md",
+      "mean-reversion-agent/dist/strategy.js",
+      "mean-reversion-agent/manifest.json",
+      "mean-reversion-agent/src/strategy.ts"
+    ],
+    "access": [
+      "Sign in to the account used at checkout. Open Account and locate the confirmed order. If payment is processing, wait for fulfillment rather than buying again.",
+      "Generate a fresh product Download link. Save the ZIP, receipt, release version and checksum. Expired links can be regenerated from the account.",
+      "Compare the archive SHA-256 with the release recorded below. Extract into a new directory; retain the original archive for rollback.",
+      "Open README.md, RUNBOOK.md or INSTALL.md, manifest.json where included, and LICENSE.md before changing an installation."
+    ],
+    "operations": [
+      "Keep a copy of the immutable ZIP, lockfile, private configuration and a database backup before an update. Store encrypted backups separately and prove a restore in an isolated compatible instance.",
+      "Pause new entries and reconcile existing venue orders and positions before maintenance. Pausing entries is not the same as closing positions. Removing a plugin does not close exchange positions.",
+      "Monitor the last successful cycle, data age, rejected orders, protection status, reconciliation gaps, database backups and disk space. Missing telemetry is an unknown state.",
+      "For rollback, stop the new runtime, reconcile the venue, restore a compatible application/schema pair in isolation and verify ownership and protection before resuming. A database restore cannot reverse a trade or transfer.",
+      "Customize readable source in a separate branch. Preserve the original defaults, rebuild any changed compiled module, and test the same inputs before and after. Follow LICENSE.md; source ownership does not imply unrestricted redistribution."
+    ],
+    "troubleshooting": [
+      [
+        "Payment confirmed but download missing",
+        "Check order status in Account and contact support with the order reference if fulfillment is delayed. Do not make another purchase to repair access."
+      ],
+      [
+        "Download link expired",
+        "Generate a fresh link from the purchasing account. The documentation downloads are public; the paid software archive remains entitlement-protected."
+      ],
+      [
+        "Strategy absent from the selector",
+        "Confirm manifest.json is directly inside the manifest installPath, the entryPoint exists, compatibility matches and the loader has no errors. Restart after installation; do not add another nesting level."
+      ],
+      [
+        "No trade despite available capital",
+        "Inspect the latest decision, candle history and freshness, symbol, interval, network, existing positions and risk rejection. Neutral is a valid result."
+      ],
+      [
+        "Build or database initialization fails",
+        "Keep the exact failed command and redacted diagnostic. Check Node, psql, Supabase settings and owner verification. Do not bypass types, authentication or schema integrity checks."
+      ],
+      [
+        "Balances disagree or an order outcome is unknown",
+        "Compare the same account and network at the venue, including fills, fees, margin and open orders. Reconcile before retrying; a lost response does not mean the order failed."
+      ]
+    ],
+    "settings": [
+      {
+        "key": "bbPeriod",
+        "value": 20,
+        "description": "Bollinger Band SMA period"
+      },
+      {
+        "key": "bbStdDev",
+        "value": 2,
+        "description": "Standard deviation multiplier"
+      },
+      {
+        "key": "kcPeriod",
+        "value": 20,
+        "description": "Keltner Channel EMA period"
+      },
+      {
+        "key": "kcMultiplier",
+        "value": 1.5,
+        "description": "ATR multiplier for KC"
+      },
+      {
+        "key": "rsiPeriod",
+        "value": 14,
+        "description": "RSI period"
+      },
+      {
+        "key": "rsiOversold",
+        "value": 30,
+        "description": "RSI oversold threshold"
+      },
+      {
+        "key": "rsiOverbought",
+        "value": 70,
+        "description": "RSI overbought threshold"
+      },
+      {
+        "key": "bandwidthThreshold",
+        "value": 5,
+        "description": "Squeeze threshold %"
+      },
+      {
+        "key": "walkingThreshold",
+        "value": 3,
+        "description": "Periods at band to consider trending"
+      },
+      {
+        "key": "doubleBottomLookback",
+        "value": 20,
+        "description": "Periods to check for double bottom"
+      },
+      {
+        "key": "minBodyPercent",
+        "value": 0.3,
+        "description": "Min candle body % for valid signal"
+      },
+      {
+        "key": "takeProfitTarget",
+        "value": "middle",
+        "description": "TP at middle band or opposite band"
+      }
+    ],
+    "limits": "This is downloadable source software. Hosting, trading funds and external services are separate. Build and signal checks are not certification for unattended real-money execution. Complete venue and recovery validation for your installation. Some packaged agent INSTALL/manifest files retain the older word “candidate”. This guide is tied to the registered September 28 archive by checksum; publication does not certify venue performance.",
+    "summary": "Examine bands, RSI and trend context before treating an extreme as a reversal.",
+    "focus": "Markets can stay at an extreme. Do not remove trend checks merely to increase trading activity. Middle-band targets can move as new data arrives; runtime protection and replacement still require independent verification.",
+    "inspect": "A touch of the lower band is not automatically a buy. Read the regime and confirmation checks. bandwidthThreshold=5 is expressed in percentage points in the source calculation. Compare target choice only in a separate run.",
+    "practice": "Use completed 1h candles, bbPeriod=20, bbStdDev=2 and takeProfitTarget=\"middle\". Compare a ranging sample with a persistent move along a band. Record the RSI, band position and reason for the returned decision.",
+    "strategyId": "mean-reversion",
+    "installPath": "plugins/mean-reversion-agent",
+    "timeframes": [
+      "15m",
+      "1h",
+      "4h"
+    ],
+    "defaultConfig": {
+      "bbPeriod": 20,
+      "bbStdDev": 2,
+      "kcPeriod": 20,
+      "kcMultiplier": 1.5,
+      "rsiPeriod": 14,
+      "rsiOversold": 30,
+      "rsiOverbought": 70,
+      "bandwidthThreshold": 5,
+      "walkingThreshold": 3,
+      "doubleBottomLookback": 20,
+      "minBodyPercent": 0.3,
+      "takeProfitTarget": "middle"
+    },
+    "requirements": [
+      "A working Core/Trader dashboard in the manifest range >=2.1.0 <2.2.0. The browser-only Core 2.0 template is incompatible.",
+      "The module manifest declares Node >=20; the complete shipped dashboard requires Node 22.3 or newer.",
+      "Completed, time-ordered OHLCV candles with millisecond timestamps, finite positive prices and valid volume, supplied by your runtime.",
+      "A backup and an isolated paper/research environment. The strategy computes signals; the dashboard supplies market data, order handling and risk controls."
+    ],
+    "install": [
+      "Check whether you already own the strategy: all six are included in Trader; Darvas is also included in Core.",
+      "Back up the database, settings and plugins. Pause new entries and reconcile positions before changing the installation.",
+      "Extract the module so manifest.json sits directly at plugins/mean-reversion-agent/manifest.json. Check plugins/mean-reversion-agent/dist/strategy.js exists; do not nest the product directory twice.",
+      "Restart the dashboard and inspect loader errors. Select strategy ID mean-reversion, a supported interval and the intended market. Start paused with no funds allocated.",
+      "Use the manifest defaults for the first comparison. Inspect decisions and then independently validate the runtime trade lifecycle before any unattended execution."
+    ],
+    "commands": "node -e \"const p=require('./plugins/mean-reversion-agent/dist/strategy.js'); if(!p.strategy) throw Error('strategy export missing'); console.log('strategy export present')\"",
+    "how": "The module combines Bollinger Bands, Keltner Channels and RSI, with checks for narrow ranges, band walking and double-bottom/top patterns. It proposes a single target at the middle or opposite band; it does not submit staged one-third exits.",
+    "tutorial": [
+      [
+        "Verify the installed module",
+        "Follow the install steps above, then run the export check from the dashboard root. Expected result: strategy export present. This checks loading only; it does not submit an order."
+      ],
+      [
+        "Prepare comparable inputs",
+        "Select 15m, 1h, 4h as supported by the manifest. Supply one completed candle series for one symbol, retaining timestamps, OHLCV, source and network. Multiple listed intervals do not mean automatic multi-timeframe fetching."
+      ],
+      [
+        "Run the strategy-specific exercise",
+        "Use completed 1h candles, bbPeriod=20, bbStdDev=2 and takeProfitTarget=\"middle\". Compare a ranging sample with a persistent move along a band. Record the RSI, band position and reason for the returned decision."
+      ],
+      [
+        "Interpret the result",
+        "A touch of the lower band is not automatically a buy. Read the regime and confirmation checks. bandwidthThreshold=5 is expressed in percentage points in the source calculation. Compare target choice only in a separate run."
+      ],
+      [
+        "Validate the runtime separately",
+        "Confirm ownership, sizing, fees, entry fill, stop/target, modifications, exit and realized P&L on testnet. Include restart, partial fill, rejected cancellation and lost-response reconciliation. A signal test is not an execution test."
+      ]
+    ],
+    "videos": [
+      "03-first-agent",
+      "05-monitor-recover"
+    ],
+    "related": [
+      "trading-dashboard-template",
+      "multi-strat-bundle"
+    ],
+    "acceptance": [
+      "Archive checksum and version match the guide.",
+      "Install completes without suppressing errors; the module loads from its declared path.",
+      "Correct owner, market, network and candle interval are recorded.",
+      "Decision timestamp, direction, reasoning and parameters are captured; neutral is accepted.",
+      "Settings and ownership persist after restart; backup restore is tested in isolation.",
+      "Before live execution: entry, fill, protection, modification, exit, fees and P&L reconcile; partial fills, cancellation failure and lost responses are tested."
+    ]
+  },
+  {
+    "id": "macro-sentiment-agent",
+    "title": "Sentiment Proxy Research Agent",
+    "version": "2.1.1-source.20260928",
+    "updated": "2026-10-03",
+    "sha256": "5ca0b439dc1b2988b8429158624ca56ab565b7aa6ca1ef2d91b8bc4ec74d816a",
+    "kind": "strategy",
+    "files": [
+      "macro-sentiment-agent/INSTALL.md",
+      "macro-sentiment-agent/LICENSE.md",
+      "macro-sentiment-agent/README.md",
+      "macro-sentiment-agent/dist/strategy.js",
+      "macro-sentiment-agent/manifest.json",
+      "macro-sentiment-agent/src/strategy.ts"
+    ],
+    "access": [
+      "Sign in to the account used at checkout. Open Account and locate the confirmed order. If payment is processing, wait for fulfillment rather than buying again.",
+      "Generate a fresh product Download link. Save the ZIP, receipt, release version and checksum. Expired links can be regenerated from the account.",
+      "Compare the archive SHA-256 with the release recorded below. Extract into a new directory; retain the original archive for rollback.",
+      "Open README.md, RUNBOOK.md or INSTALL.md, manifest.json where included, and LICENSE.md before changing an installation."
+    ],
+    "operations": [
+      "Keep a copy of the immutable ZIP, lockfile, private configuration and a database backup before an update. Store encrypted backups separately and prove a restore in an isolated compatible instance.",
+      "Pause new entries and reconcile existing venue orders and positions before maintenance. Pausing entries is not the same as closing positions. Removing a plugin does not close exchange positions.",
+      "Monitor the last successful cycle, data age, rejected orders, protection status, reconciliation gaps, database backups and disk space. Missing telemetry is an unknown state.",
+      "For rollback, stop the new runtime, reconcile the venue, restore a compatible application/schema pair in isolation and verify ownership and protection before resuming. A database restore cannot reverse a trade or transfer.",
+      "Customize readable source in a separate branch. Preserve the original defaults, rebuild any changed compiled module, and test the same inputs before and after. Follow LICENSE.md; source ownership does not imply unrestricted redistribution."
+    ],
+    "troubleshooting": [
+      [
+        "Payment confirmed but download missing",
+        "Check order status in Account and contact support with the order reference if fulfillment is delayed. Do not make another purchase to repair access."
+      ],
+      [
+        "Download link expired",
+        "Generate a fresh link from the purchasing account. The documentation downloads are public; the paid software archive remains entitlement-protected."
+      ],
+      [
+        "Strategy absent from the selector",
+        "Confirm manifest.json is directly inside the manifest installPath, the entryPoint exists, compatibility matches and the loader has no errors. Restart after installation; do not add another nesting level."
+      ],
+      [
+        "No trade despite available capital",
+        "Inspect the latest decision, candle history and freshness, symbol, interval, network, existing positions and risk rejection. Neutral is a valid result."
+      ],
+      [
+        "Build or database initialization fails",
+        "Keep the exact failed command and redacted diagnostic. Check Node, psql, Supabase settings and owner verification. Do not bypass types, authentication or schema integrity checks."
+      ],
+      [
+        "Balances disagree or an order outcome is unknown",
+        "Compare the same account and network at the venue, including fills, fees, margin and open orders. Reconcile before retrying; a lost response does not mean the order failed."
+      ]
+    ],
+    "settings": [
+      {
+        "key": "fundingThreshold",
+        "value": 0.01,
+        "description": "Extreme funding rate %"
+      },
+      {
+        "key": "oiChangePeriod",
+        "value": 24,
+        "description": "Periods to measure OI change"
+      },
+      {
+        "key": "oiChangeThreshold",
+        "value": 20,
+        "description": "Significant OI change %"
+      },
+      {
+        "key": "sentimentSmoothing",
+        "value": 7,
+        "description": "Periods for sentiment MA"
+      },
+      {
+        "key": "extremeFear",
+        "value": 20,
+        "description": "Fear & Greed extreme fear threshold"
+      },
+      {
+        "key": "extremeGreed",
+        "value": 80,
+        "description": "Fear & Greed extreme greed threshold"
+      },
+      {
+        "key": "volumeSpikeMultiplier",
+        "value": 3,
+        "description": "Volume spike threshold"
+      },
+      {
+        "key": "priceChangeThreshold",
+        "value": 5,
+        "description": "Significant price move %"
+      },
+      {
+        "key": "correlationPeriod",
+        "value": 30,
+        "description": "Reserved legacy field; not read by the shipped signal calculation. Changing it does not alter decisions in this release."
+      },
+      {
+        "key": "dominanceChangeThreshold",
+        "value": 2,
+        "description": "Reserved legacy field; not read by the shipped signal calculation. Changing it does not alter decisions in this release."
+      }
+    ],
+    "limits": "This is downloadable source software. Hosting, trading funds and external services are separate. Build and signal checks are not certification for unattended real-money execution. Complete venue and recovery validation for your installation. Some packaged agent INSTALL/manifest files retain the older word “candidate”. This guide is tied to the registered September 28 archive by checksum; publication does not certify venue performance.",
+    "summary": "Explore a price/volume-derived research model without confusing proxies with external data.",
+    "focus": "Some manifest indicator names are aspirational legacy labels, not subscribed feeds. This is not a macroeconomic news service or a coordinator for other agents. Keep it in research until your modified model and runtime are independently validated.",
+    "inspect": "Inspect reasoning and the complete indicator object. Do not cite a fundingRate or openInterest field as an exchange-reported observation. If replacing a proxy with a real feed, define units, timestamps, failure behavior and tests before using it.",
+    "practice": "Use completed 1h candles and defaults. Record the derived fear/greed score and its relationship to extremeFear=20 and extremeGreed=80. Compare a quieter sample with a large price/volume move. Label every saved result as proxy research.",
+    "strategyId": "macro-sentiment",
+    "installPath": "plugins/macro-sentiment-agent",
+    "timeframes": [
+      "1h",
+      "4h",
+      "1d"
+    ],
+    "defaultConfig": {
+      "fundingThreshold": 0.01,
+      "oiChangePeriod": 24,
+      "oiChangeThreshold": 20,
+      "sentimentSmoothing": 7,
+      "extremeFear": 20,
+      "extremeGreed": 80,
+      "volumeSpikeMultiplier": 3,
+      "priceChangeThreshold": 5,
+      "correlationPeriod": 30,
+      "dominanceChangeThreshold": 2
+    },
+    "requirements": [
+      "A working Core/Trader dashboard in the manifest range >=2.1.0 <2.2.0. The browser-only Core 2.0 template is incompatible.",
+      "The module manifest declares Node >=20; the complete shipped dashboard requires Node 22.3 or newer.",
+      "Completed, time-ordered OHLCV candles with millisecond timestamps, finite positive prices and valid volume, supplied by your runtime.",
+      "A backup and an isolated paper/research environment. The strategy computes signals; the dashboard supplies market data, order handling and risk controls."
+    ],
+    "install": [
+      "Check whether you already own the strategy: all six are included in Trader; Darvas is also included in Core.",
+      "Back up the database, settings and plugins. Pause new entries and reconcile positions before changing the installation.",
+      "Extract the module so manifest.json sits directly at plugins/macro-sentiment-agent/manifest.json. Check plugins/macro-sentiment-agent/dist/strategy.js exists; do not nest the product directory twice.",
+      "Restart the dashboard and inspect loader errors. Select strategy ID macro-sentiment, a supported interval and the intended market. Start paused with no funds allocated.",
+      "Use the manifest defaults for the first comparison. Inspect decisions and then independently validate the runtime trade lifecycle before any unattended execution."
+    ],
+    "commands": "node -e \"const p=require('./plugins/macro-sentiment-agent/dist/strategy.js'); if(!p.strategy) throw Error('strategy export missing'); console.log('strategy export present')\"",
+    "how": "This experimental module computes sentiment-style estimates from OHLCV candles. Funding, open interest, liquidation risk and flow names describe proxies or simulations in this release. It does not ingest news, social posts, actual funding/open-interest feeds or wallet flows.",
+    "tutorial": [
+      [
+        "Verify the installed module",
+        "Follow the install steps above, then run the export check from the dashboard root. Expected result: strategy export present. This checks loading only; it does not submit an order."
+      ],
+      [
+        "Prepare comparable inputs",
+        "Select 1h, 4h, 1d as supported by the manifest. Supply one completed candle series for one symbol, retaining timestamps, OHLCV, source and network. Multiple listed intervals do not mean automatic multi-timeframe fetching."
+      ],
+      [
+        "Run the strategy-specific exercise",
+        "Use completed 1h candles and defaults. Record the derived fear/greed score and its relationship to extremeFear=20 and extremeGreed=80. Compare a quieter sample with a large price/volume move. Label every saved result as proxy research."
+      ],
+      [
+        "Interpret the result",
+        "Inspect reasoning and the complete indicator object. Do not cite a fundingRate or openInterest field as an exchange-reported observation. If replacing a proxy with a real feed, define units, timestamps, failure behavior and tests before using it."
+      ],
+      [
+        "Validate the runtime separately",
+        "Confirm ownership, sizing, fees, entry fill, stop/target, modifications, exit and realized P&L on testnet. Include restart, partial fill, rejected cancellation and lost-response reconciliation. A signal test is not an execution test."
+      ]
+    ],
+    "videos": [
+      "03-first-agent",
+      "05-monitor-recover"
+    ],
+    "related": [
+      "trading-dashboard-template",
+      "multi-strat-bundle"
+    ],
+    "acceptance": [
+      "Archive checksum and version match the guide.",
+      "Install completes without suppressing errors; the module loads from its declared path.",
+      "Correct owner, market, network and candle interval are recorded.",
+      "Decision timestamp, direction, reasoning and parameters are captured; neutral is accepted.",
+      "Settings and ownership persist after restart; backup restore is tested in isolation.",
+      "Before live execution: entry, fill, protection, modification, exit, fees and P&L reconcile; partial fills, cancellation failure and lost responses are tested."
+    ]
+  }
+]

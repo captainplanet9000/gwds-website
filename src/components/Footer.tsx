@@ -34,7 +34,8 @@ export default function Footer() {
         <div>
           <h6 style={{ color: 'var(--color-neutral-500)', marginBottom: 14 }}>Resources</h6>
           <div data-cv-linklist style={{ display: 'grid', gap: 9, fontSize: 14 }}>
-            <Link href="/docs/setup" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Documentation</Link>
+            <Link href="/docs/products" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Documentation & tutorials</Link>
+            <Link href="/docs/setup" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Setup & hosting guide</Link>
             <Link href="/content" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Content</Link>
             <Link href="/refunds" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Refund policy</Link>
             <Link href="/disclaimer" style={{ color: 'var(--color-neutral-300)', textDecoration: 'none' }}>Disclaimer</Link>

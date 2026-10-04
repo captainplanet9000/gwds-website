@@ -1,0 +1,10 @@
+{
+  "boxFormationPeriod": 28,
+  "volumeMultiplier": 1.5,
+  "minBoxHeight": 2,
+  "maxBoxAge": 140,
+  "stopLossPercent": 5,
+  "takeProfitRatio": 3,
+  "lookbackPeriod": 28,
+  "boxConfirmationPeriod": 5
+}

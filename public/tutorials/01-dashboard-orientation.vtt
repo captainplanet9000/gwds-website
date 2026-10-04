@@ -1,0 +1,93 @@
+WEBVTT
+
+1
+00:00:01.200 --> 00:00:06.180
+Before you use the dashboard, confirm that you opened the correct workspace and account.
+
+2
+00:00:07.120 --> 00:00:10.700
+The public demo uses sample data and shows features beyond some editions.
+
+3
+00:00:12.100 --> 00:00:16.760
+In your own workspace, check whether the environment is testnet or mainnet.
+
+4
+00:00:17.560 --> 00:00:20.500
+Never interpret the demo balances as your account balance.
+
+5
+00:00:24.080 --> 00:00:31.220
+Account value represents the trading account, while available balance shows what is available after margin and other constraints.
+
+6
+00:00:32.360 --> 00:00:36.460
+An agent allocation is a software budget, not another deposit.
+
+7
+00:00:37.700 --> 00:00:42.960
+Compare the dashboard with the same account and network on Hyperliquid before allocating funds.
+
+8
+00:00:46.480 --> 00:00:47.260
+Open Agents.
+
+9
+00:00:48.280 --> 00:00:51.040
+Each card represents a configured strategy instance.
+
+10
+00:00:52.000 --> 00:00:57.460
+Read its strategy, market, state and latest decision before using any control.
+
+11
+00:00:58.300 --> 00:01:04.160
+Active means the strategy can evaluate opportunities; it does not promise an immediate trade.
+
+12
+00:01:05.140 --> 00:01:08.880
+A missing signal or risk restriction can correctly prevent an entry.
+
+13
+00:01:12.400 --> 00:01:14.640
+A position is actual exposure.
+
+14
+00:01:15.640 --> 00:01:21.100
+An order is an instruction that may be open, partly filled, filled or canceled.
+
+15
+00:01:22.360 --> 00:01:24.680
+One agent can be active with no position.
+
+16
+00:01:25.800 --> 00:01:27.820
+Review positions and open orders together.
+
+17
+00:01:28.920 --> 00:01:34.060
+When a status looks inconsistent, compare the venue before issuing another instruction.
+
+18
+00:01:37.600 --> 00:01:43.700
+Use System Status to check the services and the latest update times available in your edition.
+
+19
+00:01:44.600 --> 00:01:48.520
+A page that loads is not proof that prices or orders are current.
+
+20
+00:01:49.480 --> 00:01:57.340
+If updates stop, avoid adding new exposure and contact support with the time, workspace and a redacted error.
+
+21
+00:02:00.840 --> 00:02:09.480
+Your first checkpoint is simple: identify the account, network, agent status, positions and latest update.
+
+22
+00:02:10.420 --> 00:02:14.580
+Practice navigating without starting an agent or signing a transaction.
+
+23
+00:02:15.380 --> 00:02:19.620
+Continue to the next lesson when you can explain what each of those fields means.

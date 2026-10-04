@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next';
 import { products } from '@/lib/products';
+import { productGuides } from '@/lib/product-learning';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.civalsystems.com').replace(/\/$/, '');
@@ -25,6 +26,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/refunds`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },
     { url: `${baseUrl}/refund-request`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.4 },
     { url: `${baseUrl}/docs/setup`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${baseUrl}/docs/products`, lastModified: new Date('2026-10-03T12:00:00Z'), changeFrequency: 'monthly', priority: 0.7 },
+    ...productGuides.map(guide => ({ url: `${baseUrl}/docs/products/${guide.id}`, lastModified: new Date('2026-10-03T12:00:00Z'), changeFrequency: 'monthly' as const, priority: 0.6 })),
     ...productUrls,
   ];
 }

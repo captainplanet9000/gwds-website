@@ -84,7 +84,7 @@ function SuccessContent() {
       <p style={{ fontSize: 17, lineHeight: 1.6, color: 'var(--color-neutral-800)', margin: '0 auto 28px', maxWidth: '50ch' }}>{message}</p>
       {orderId && <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--color-neutral-600)', marginBottom: 24 }}>Order {orderId}</p>}
       <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-        {paid && <Link href="/docs/setup" className="btn btn-secondary">Read the setup guide</Link>}
+        {paid && <Link href="/docs/products" className="btn btn-secondary">Open product guides & tutorials</Link>}
         {paid && <Link href="/account" className="btn btn-primary" style={{ height: 48, padding: '0 24px' }}>Open my account</Link>}
         <Link href={state === 'failed' ? '/checkout' : '/store'} className="btn btn-secondary" style={{ height: 48, padding: '0 24px' }}>
           {state === 'failed' ? 'Try checkout again' : 'Return to store'}
