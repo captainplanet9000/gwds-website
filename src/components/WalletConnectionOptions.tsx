@@ -63,8 +63,8 @@ export default function WalletConnectionOptions() {
     </div>
     <div style={{ fontSize: 14, color: 'var(--color-neutral-700)', lineHeight: 1.6 }}>
       <strong>Using a browser without a wallet?</strong>
-      <p style={{ margin: '6px 0' }}>Open the funding link in your wallet app’s browser, or in Chrome, Edge or Firefox with your wallet extension installed. Sign in to Cival there and connect the same wallet you verified for this workspace.</p>
-      {!walletConnectAvailable && <p style={{ margin: '6px 0' }}>QR wallet pairing is not available yet. Detected browser wallets appear above.</p>}
+      <p style={{ margin: '6px 0' }}>Choose Connect MetaMask to pair with the mobile app or browser extension. Other detected browser wallets appear above. You can also open this page in your wallet app’s browser and sign in to Cival there.</p>
+      {!walletConnectAvailable && <p style={{ margin: '6px 0' }}>Mobile pairing is available through MetaMask. Other wallet apps can use their built-in browser.</p>}
       <a href={fundingUrl} style={{ overflowWrap: 'anywhere' }}>{fundingUrl}</a>
       <div style={{ marginTop: 8 }}><button className="btn btn-secondary" onClick={async () => {
         try { await navigator.clipboard.writeText(fundingUrl); setCopied(true); }

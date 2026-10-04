@@ -94,7 +94,7 @@ export async function GET(req: NextRequest) {
           message: err.code === 'AMBIGUOUS_TENANT'
             ? 'Multiple workspaces are linked to this account — contact support to resolve which one to fund.'
             : (subscription
-              ? 'Your subscription is active, but no trading tenant has reached the control plane yet — check back shortly.'
+              ? 'Connect your wallet and sign the ownership message below. Your dashboard can be provisioned after verification; this page refreshes automatically.'
               : 'No trading tenant is provisioned for this account yet — subscribe on /hosted to get one.'),
         }, { headers: { 'Cache-Control': 'no-store' } });
       }

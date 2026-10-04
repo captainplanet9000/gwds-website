@@ -339,15 +339,29 @@ export default function FundingPage() {
             </div>
           )}
 
+          {data?.network?.name === 'testnet' && (
+            <div role="status" style={{ ...card, marginBottom: 20 }}>
+              <strong>This workspace is still on testnet.</strong>
+              <p style={{ margin: '8px 0 0', fontSize: 14 }}>
+                Connect and verify your wallet to finish setup. Testnet balances are not real money.
+                Do not deposit real funds for this workspace until it reports mainnet and you have
+                approved its trading agent on mainnet.
+              </p>
+            </div>
+          )}
+
           {!data ? (
             <div style={{ color: 'var(--color-neutral-600)' }}>Loading your funding status…</div>
           ) : !data.hasTenant || !data.tenant ? (
+            <div style={{ display: 'grid', gap: 20 }}>
             <div style={card}>
               <p>{data.message}</p>
               <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
                 <Link className="btn btn-primary" href="/hosted">View hosting plans</Link>
                 <Link className="btn btn-secondary" href="/account/hosting">Go to your hosting account</Link>
               </div>
+            </div>
+            {data.subscriptionId && <WalletConnectPanel fundingData={data} token={token} onVerified={reload} />}
             </div>
           ) : (
             <div style={{ display: 'grid', gap: 20 }}>
@@ -363,7 +377,7 @@ export default function FundingPage() {
                   <div>
                     <div style={label}>Deposit and withdraw</div>
                     <a className="btn btn-secondary" style={{ marginTop: 8 }}
-                      href={data.network?.name === 'mainnet' ? 'https://app.hyperliquid.xyz/portfolio/deposit' : 'https://app.hyperliquid-testnet.xyz/portfolio/deposit'}
+                      href={data.network?.name === 'mainnet' ? 'https://app.hyperliquid.xyz/' : 'https://app.hyperliquid-testnet.xyz/'}
                       target="_blank" rel="noopener noreferrer">Open Hyperliquid funding ↗</a>
                   </div>
                 </div>
@@ -379,7 +393,7 @@ export default function FundingPage() {
                     </button>
                   )}
                   <p style={{ color: 'var(--color-neutral-700)', fontSize: 13, marginTop: 12, lineHeight: 1.5 }}>
-                    Open Hyperliquid funding and connect this same wallet. Choose Deposit or Withdraw,
+                    Open Hyperliquid and connect this same wallet. Choose Deposit or Withdraw,
                     then review the network, token, destination, fee and amount before signing.
                     Hyperliquid displays the current route and limits. After the transfer completes,
                     return here and refresh balances. Sending USDC to your wallet alone does not fund

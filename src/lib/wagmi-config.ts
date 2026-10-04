@@ -8,13 +8,16 @@
 
 import { createConfig, http } from 'wagmi';
 import { arbitrum, arbitrumSepolia } from 'wagmi/chains';
-import { injected, walletConnect } from 'wagmi/connectors';
+import { injected, metaMask, walletConnect } from 'wagmi/connectors';
 import { arbitrumRpcUrl, isMainnet } from './hyperliquid-network';
 
 const chain = isMainnet() ? arbitrum : arbitrumSepolia;
 const walletConnectProjectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
 
-const connectors = [injected({ shimDisconnect: true })];
+const connectors = [
+  injected({ shimDisconnect: true }),
+  metaMask({ dapp: { name: 'Cival Systems', url: 'https://www.civalsystems.com' } }),
+];
 // WalletConnect requires a project id (from cloud.walletconnect.com). Omit the connector
 // entirely rather than initialize it with an empty id, which throws at runtime.
 if (walletConnectProjectId) {
