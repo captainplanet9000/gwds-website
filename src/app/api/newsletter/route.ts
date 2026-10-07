@@ -1,3 +1,4 @@
+import { civalEmailSender } from '@/lib/email-brand';
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { CommerceError, enforceRateLimit, errorResponseBody, getSiteUrl } from '@/lib/commerce';
@@ -16,7 +17,7 @@ export async function POST(req: NextRequest) {
     if (error) throw new CommerceError('NEWSLETTER_SAVE_FAILED', 'Subscription could not be saved.', 503);
 
     const apiKey = process.env.RESEND_API_KEY;
-    const from = process.env.RESEND_FROM_EMAIL;
+    const from = civalEmailSender();
     if (apiKey && from) {
       const unsubscribeUrl = `${getSiteUrl()}/api/newsletter/unsubscribe?email=${encodeURIComponent(email)}&token=${encodeURIComponent(newsletterToken(email))}`;
       const resend = new Resend(apiKey);

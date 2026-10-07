@@ -1,3 +1,4 @@
+import { civalEmailSender } from '@/lib/email-brand';
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { CommerceError, enforceRateLimit, errorResponseBody } from '@/lib/commerce';
@@ -27,7 +28,7 @@ export async function POST(req: NextRequest) {
     if (error) throw new CommerceError('CONTACT_SAVE_FAILED', 'Your message could not be saved. Please try again.', 503);
 
     const apiKey = process.env.RESEND_API_KEY;
-    const from = process.env.RESEND_FROM_EMAIL;
+    const from = civalEmailSender();
     const support = process.env.SUPPORT_EMAIL || 'support@civalsystems.com';
     if (apiKey && from) {
       const resend = new Resend(apiKey);

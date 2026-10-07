@@ -5,7 +5,7 @@ interface ProductJsonLdProps {
 }
 
 export default function ProductJsonLd({ product }: ProductJsonLdProps) {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gwds-website.vercel.app";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.civalsystems.com";
 
   const jsonLd = {
     "@context": "https://schema.org",

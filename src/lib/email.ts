@@ -1,3 +1,4 @@
+import { civalEmailSender } from '@/lib/email-brand';
 import { Resend } from 'resend';
 import { getProduct } from '@/lib/products';
 import { getSiteUrl } from '@/lib/commerce';
@@ -28,7 +29,7 @@ function escapeHtml(value: string): string {
 
 export async function sendOrderReadyEmail(email: string, order: OrderEmailData) {
   const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM_EMAIL;
+  const from = civalEmailSender();
   if (!apiKey || !from) throw new Error('Transactional email is not configured');
 
   const resend = new Resend(apiKey);
@@ -94,7 +95,7 @@ Software source code only. Trading involves substantial risk. No returns are gua
 }
 
 export function prepareHostingEmail(email: string, message: HostingEmailData) {
-  const from = process.env.RESEND_FROM_EMAIL;
+  const from = civalEmailSender();
   if (!from) throw new Error('Transactional email is not configured');
   const siteUrl = getSiteUrl();
   const accountUrl = `${siteUrl}/account/hosting`;

@@ -34,7 +34,7 @@ function GWDSText() {
           bevelSegments={10}
           letterSpacing={0.1}
         >
-          GWDS
+          CIVAL
           <meshStandardMaterial
             color="#9333EA"
             metalness={0.85}

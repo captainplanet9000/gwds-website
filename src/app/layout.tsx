@@ -50,9 +50,9 @@ export const metadata: Metadata = {
     description: "Dashboard, execution layer, risk engine, and six autonomous agents on Hyperliquid. Full TypeScript source. Editions from $99.",
     images: [
       {
-        url: "/images/og-image.png",
-        width: 1200,
-        height: 630,
+        url: "/images/cival-systems-brand-20261006.png",
+        width: 2172,
+        height: 724,
         alt: "Cival Systems — AI Agent Hedge Fund, Ready to Deploy",
       },
     ],
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Cival Systems — AI Agent Hedge Fund, Ready to Deploy",
     description: "Dashboard, execution layer, risk engine, and six autonomous agents on Hyperliquid. Editions from $99.",
-    images: ["/images/og-image.png"],
+    images: ["/images/cival-systems-brand-20261006.png"],
     creator: "@civalsystems",
   },
   icons: {
@@ -92,7 +92,7 @@ const jsonLd = {
       "@type": "Organization",
       "@id": `${siteUrl}/#organization`,
       name: "Cival Systems",
-      alternateName: "GWDS",
+      alternateName: "Cival Systems",
       url: siteUrl,
       logo: {
         "@type": "ImageObject",

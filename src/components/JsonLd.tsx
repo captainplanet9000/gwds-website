@@ -29,7 +29,7 @@ export function ProductJsonLd({ product }: { product: { name: string; id: string
     '@type': 'SoftwareApplication',
     name: product.name,
     description: product.description,
-    url: `https://gwds-website.vercel.app/store/${product.id}`,
+    url: `https://www.civalsystems.com/store/${product.id}`,
     applicationCategory: 'FinanceApplication',
     operatingSystem: 'Web',
     offers: {

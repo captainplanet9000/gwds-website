@@ -12,7 +12,7 @@ const EMAIL_TEMPLATES = {
     <h2 style="color: var(--admin-accent); font-size: 24px; margin-bottom: 12px;">Featured Product</h2>
     <p style="font-size: 16px; line-height: 1.6; color: #ccc;">An amazing description of your newest product goes here...</p>
   </div>
-  <a href="https://gwds-website.vercel.app/store" style="display: inline-block; padding: 16px 32px; background: linear-gradient(135deg, var(--admin-accent), var(--admin-accent)); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px;">Shop Now →</a>
+  <a href="https://www.civalsystems.com/store" style="display: inline-block; padding: 16px 32px; background: linear-gradient(135deg, var(--admin-accent), var(--admin-accent)); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px;">Shop Now →</a>
   <p style="font-size: 14px; color: var(--admin-text-dim); margin-top: 40px;">Thanks for being part of our community!</p>
 </div>`
   },
@@ -25,7 +25,7 @@ const EMAIL_TEMPLATES = {
     <h2 style="color: var(--admin-success); font-size: 48px; margin: 0; font-weight: 800;">25% OFF</h2>
     <p style="font-size: 18px; color: #ccc; margin-top: 8px;">Use code: <span style="background: var(--admin-accent); padding: 4px 12px; border-radius: 6px; font-family: monospace; font-weight: 700;">FLASH25</span></p>
   </div>
-  <a href="https://gwds-website.vercel.app/store" style="display: inline-block; padding: 16px 32px; background: linear-gradient(135deg, var(--admin-accent), var(--admin-accent)); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px;">Shop Sale →</a>
+  <a href="https://www.civalsystems.com/store" style="display: inline-block; padding: 16px 32px; background: linear-gradient(135deg, var(--admin-accent), var(--admin-accent)); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px;">Shop Sale →</a>
   <p style="font-size: 12px; color: var(--admin-text-dim); margin-top: 32px;">⏰ Sale ends in 24 hours. Don't miss out!</p>
 </div>`
   },
@@ -48,7 +48,7 @@ const EMAIL_TEMPLATES = {
     <p style="font-size: 15px; line-height: 1.6; color: #ccc;">Spotlight on our most popular products and services...</p>
   </div>
 
-  <a href="https://gwds-website.vercel.app/store" style="display: inline-block; padding: 16px 32px; background: linear-gradient(135deg, var(--admin-accent), var(--admin-accent)); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px;">Browse Store →</a>
+  <a href="https://www.civalsystems.com/store" style="display: inline-block; padding: 16px 32px; background: linear-gradient(135deg, var(--admin-accent), var(--admin-accent)); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px;">Browse Store →</a>
 
   <p style="font-size: 14px; color: var(--admin-text-dim); margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--admin-border);">Stay sharp,<br/>The Cival Systems Team</p>
 </div>`
@@ -66,7 +66,7 @@ const EMAIL_TEMPLATES = {
 
   <p style="font-size: 15px; line-height: 1.6; color: #ccc; margin-bottom: 24px;">If you have any questions, feel free to reach out to our support team.</p>
 
-  <a href="https://gwds-website.vercel.app/contact" style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, var(--admin-accent), var(--admin-accent)); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 15px;">Contact Support →</a>
+  <a href="https://www.civalsystems.com/contact" style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, var(--admin-accent), var(--admin-accent)); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 15px;">Contact Support →</a>
 
   <p style="font-size: 14px; color: var(--admin-text-dim); margin-top: 40px;">Thanks for your continued support!</p>
 </div>`

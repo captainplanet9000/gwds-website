@@ -6,13 +6,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Cival Systems Store — Source Editions & Strategy Add-ons",
     description: "Source editions, strategy add-ons, installation guides and managed hosting options.",
-    images: [{ url: "/images/og-store.png", width: 1200, height: 630, alt: "Cival Systems Store" }],
+    images: [{ url: "/images/cival-systems-brand-20261006.png", width: 2172, height: 724, alt: "Cival Systems" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Cival Systems Store — Source Editions & Strategy Add-ons",
     description: "Source editions, strategy add-ons, installation guides and managed hosting options.",
-    images: ["/images/og-store.png"],
+    images: ["/images/cival-systems-brand-20261006.png"],
   },
 };
 

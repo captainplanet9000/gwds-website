@@ -1,3 +1,4 @@
+import { civalEmailSender } from '@/lib/email-brand';
 import { NextRequest, NextResponse } from 'next/server';
 import { getSiteUrl } from '@/lib/commerce';
 import { newsletterToken } from '@/lib/newsletter';
@@ -13,7 +14,7 @@ export async function POST(req: NextRequest) {
     }
 
     const apiKey = process.env.RESEND_API_KEY;
-    const from = process.env.RESEND_FROM_EMAIL;
+    const from = civalEmailSender();
     if (!apiKey || !from) {
       return NextResponse.json({ error: 'Email delivery is not configured' }, { status: 503 });
     }
