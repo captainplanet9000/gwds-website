@@ -10,4 +10,7 @@ src/migrations
 campaigns
 .notification*.log
 notification-acceptance.json
+branding-*.html
+branding-*.png
+branding-*-url.txt
 .env*
